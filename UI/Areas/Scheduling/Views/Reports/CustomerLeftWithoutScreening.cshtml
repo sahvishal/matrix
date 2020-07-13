@@ -1,0 +1,232 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.CustomerLeftWithoutScreeningListModel
+@{
+    ViewBag.Title = "Customer Left Without Screening";
+}
+<h1>
+    Customer Left Without Screening
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("CustomerLeftWithoutScreening", "Reports", FormMethod.Get);}
+    @Html.Partial("CustomerLeftWithoutScreeningModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Scheduling/ExportableReports/CustomerLeftWithoutScreening?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV
+        </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <table id="list-view" style="width:200%;">
+            <tr>
+               
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().CustomerCode)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().CustomerName)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Gender)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Address)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Email)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().DateofBirth)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().PhoneHome)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().PhoneCell)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().PhoneBusiness)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().AppointmentTime)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().CheckInTime)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().CheckOutTime)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Package)
+                </th>               
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().TotalAmount)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().AmountDue)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().AdSource)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Pod)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Healthplan)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().EventId)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().EventDate)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Host)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().HostAddress)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().BookingAgent)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().RegistrationMode)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().RegistrationDate)
+                </th>
+                <th nowrap>
+                    PCP Appointment
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().LeftWithoutScreeningReason)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().LeftWithoutScreeningNotes)
+                </th>
+            </tr>
+            @foreach (var appointment in Model.Collection)
+            {
+                <tr>
+                   
+                    <td>
+                        @appointment.CustomerCode
+                    </td>
+                    <td>
+                        @appointment.CustomerName
+                    </td>
+                    <td>
+                        @appointment.Gender
+                    </td>
+                    <td class="address-column">
+                        @appointment.Address
+                    </td>
+                    <td>
+                        @appointment.Email
+                    </td>
+                    <td>
+                        @(appointment.DateofBirth.HasValue ? appointment.DateofBirth.Value.ToShortDateString() : "")
+                    </td>
+                    <td>
+                        @appointment.PhoneHome
+                    </td>
+                    <td>
+                        @appointment.PhoneCell
+                    </td>
+                    <td>
+                        @(!string.IsNullOrEmpty(appointment.PhoneOfficeExtension) ? appointment.PhoneBusiness + "/" + appointment.PhoneOfficeExtension : appointment.PhoneBusiness)
+                    </td>
+                    <td>
+                        @(appointment.AppointmentTime != null ? appointment.AppointmentTime.Value.ToString("hh:mm tt") : "N/A")
+                    </td>
+                    <td>
+                        @if (appointment.CheckInTime.HasValue)
+                        {
+                            <text>@appointment.CheckInTime.Value.ToString("hh:mm tt")</text>
+                        }
+                    </td>
+                    <td>
+                        @if (appointment.CheckOutTime.HasValue)
+                        {
+                            <text>@appointment.CheckOutTime.Value.ToString("hh:mm tt")</text>
+                        }
+                    </td>
+                    <td>
+                        @appointment.Package
+                    </td>                    
+                    <td>
+                        @appointment.TotalAmount.ToString("00.00")
+                    </td>
+                    <td>
+                        @appointment.AmountDue.ToString("00.00")
+                    </td>
+                    <td>
+                        @appointment.AdSource
+                    </td>
+                    <td>
+                        @appointment.Pod
+                    </td>
+                    <td>
+                        @(string.IsNullOrEmpty(appointment.Healthplan) ? "N/A" : appointment.Healthplan)
+                    </td>
+                    <td>
+                        @appointment.EventId
+                    </td>
+                    <td>
+                        @appointment.EventDate.ToShortDateString()
+                    </td>
+
+                    <td>
+                        @appointment.Host
+                    </td>
+                    <td class="address-column">
+                        @appointment.HostAddress
+                    </td>
+                    <td>
+                        @appointment.BookingAgent
+                    </td>
+                    <td>
+                        @appointment.RegistrationMode
+                    </td>
+                    <td>
+                        @(appointment.RegistrationDate.HasValue ? appointment.RegistrationDate.Value.ToShortDateString() : "")
+                    </td>
+                    <td>
+                        <span><b>Date: </b>@(appointment.PCPAppointmentDate.HasValue ? appointment.PCPAppointmentDate.Value.ToShortDateString() : "N/A")</span><br />
+                        <span><b>Time: </b>@(appointment.PCPAppointmentDate.HasValue ? appointment.PCPAppointmentTime : "N/A") </span>
+                    </td>
+                    <td>@(string.IsNullOrEmpty(appointment.LeftWithoutScreeningReason) ? "N/A" : appointment.LeftWithoutScreeningReason)</td>
+                    <td><div style="width: 120px;">@(string.IsNullOrEmpty(appointment.LeftWithoutScreeningNotes) ? "N/A" : appointment.LeftWithoutScreeningNotes)</div></td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

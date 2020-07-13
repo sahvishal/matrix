@@ -1,0 +1,422 @@
+﻿@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.EventCustomerPcpAppointmentEditModel
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <title>PCP Appointment</title>
+
+    <link type="text/css" href="@Url.Content("~/Content/Styles/jquery-ui-1.8.12.custom.css")" rel="Stylesheet" />
+    <script type="text/javascript" src="@Url.Content("/Scripts/jquery-1.5.2.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("/Scripts/jquery-ui-1.8.12.custom.min.js")"></script>
+    <link href="/Content/Styles/Style.css" rel="stylesheet" type="text/css">
+    <script language="javascript" type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+    <script type="text/javascript" src="@Url.Content("~/App/jquery/js/jQuery.autoCompleteExtender.js")"></script>
+    <script type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+    <link type="text/css" href="@Url.Content("~/App/jquery/css/AutoComplete/auto-search.css")" rel="Stylesheet" />
+</head>
+<body>
+    <div id="container" width="980" height="562">
+        <div id="content">
+            <div class="editor-row">
+                <div class="editor-column" style="width:29%">
+                    <h1>
+                        PCP Appointment
+                    </h1>
+                </div>
+            </div>
+            @if (Model != null)
+            {
+                @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+            }
+
+            <div class="row">
+                <fieldset>
+                    <legend><b>Customer Info:</b></legend>
+                    <div style="padding: 10px 10px 10px 15px;">
+                        <div class="editor-row" style="margin-top: 5px;">
+                            <span class="editor-label"><b>Id: </b></span>@Model.CustomerId
+                        </div>
+                        <div class="editor-row">
+                            <span class="editor-label"><b>Name: </b></span>@Model.CustomerName
+                        </div>
+                        <div class="editor-row">
+                            <span class="editor-label"><b>Email: </b></span>@Model.CustomerEmail
+                        </div>
+                        <div class="editor-row">
+                            <span class="editor-label"><b>Phone: </b></span>@Model.PhoneNumber
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+
+            <div class="row">
+                <fieldset>
+                    <legend><b>Screening Info</b></legend>
+                    <div style="padding: 10px 10px 10px 15px;">
+                        <div class="editor-row">
+                            <span class="editor-label"><b>Event Date: </b></span>@Model.ScreeningDate.Date.ToShortDateString()
+                        </div>
+                        <div class="editor-row">
+                            <span class="editor-label"><b>Event Location: </b></span>
+                            @Model.HostName  @Model.Location.ToString()
+                        </div>
+                        <div class="editor-row" style="display: none;">
+                            <span class="editor-label"><b>Screened For:</b></span>
+                            <div class="editor-row">
+                                @foreach (var screenTest in Model.ScreenedForTest)
+                                {
+                                    <div class="editor-column"><li>@screenTest</li> </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+
+
+            @using (Html.BeginForm())
+            {
+                @Html.HiddenFor(x => x.EventCustomerId)
+                @Html.HiddenFor(x => x.CustomerId)
+                @Html.HiddenFor(x => x.EventId)
+                @Html.HiddenFor(x => x.Print)
+                @Html.HiddenFor(x => x.BookAfterNumberOfDays);
+                <div>
+                    <div style="clear: both">
+                        <style>
+                            .small-textbox {
+                                width: 30% !important;
+                            }
+
+                            .reqiredmark {
+                                color: red;
+                                font: 11px arial;
+                            }
+                        </style>
+                        <fieldset>
+                            <legend><b>PCP Details</b> </legend>
+                            <div class="editor-row">
+                                <div class="editor-column-twoinrow">
+                                    <div class="editor-row">
+                                        <div class="editor-column" style="width: 120px">
+                                            <b>First Name: </b>  <span class="reqiredmark"><sup>*</sup> </span> @Html.ValidationMessageFor(x => x.Pcp.FullName.FirstName)
+                                            <div class="editor-row">
+                                                @Html.TextBoxFor(x => x.Pcp.FullName.FirstName, new { placeholder = "First Name" })
+                                            </div>
+                                        </div>
+                                        <div class="editor-column" style="width: 120px">
+                                            <b>Middle Name: </b>
+                                            @Html.TextBoxFor(x => x.Pcp.FullName.MiddleName, new { placeholder = "Middle Name" })                                            
+                                        </div>
+                                        <div class="editor-column" style="width: 120px">
+                                            <b>Last Name: </b>@Html.ValidationMessageFor(x => x.Pcp.FullName.LastName)
+                                            @Html.TextBoxFor(x => x.Pcp.FullName.LastName, new { placeholder = "Last Name" })
+                                        </div>
+                                    </div>
+                                    <div class="editor-row">
+                                        <div class="label">
+                                            <b> Email :</b> @Html.ValidationMessageFor(x => x.Pcp.Email)
+                                        </div>
+                                        <div class="editor-field">
+                                            @Html.TextBoxFor(x => x.Pcp.Email, new { @style = "width:175px;" })
+                                        </div>
+                                    </div>
+                                    <b> Phone Number :</b>
+                                    <div class="editor-row">
+                                        <div style="display: inline-block;">
+                                            @Html.HiddenFor(m => m.Pcp.PhoneNumber.CountryCode)
+                                            @Html.TextBoxFor(m => m.Pcp.PhoneNumber.AreaCode, new { autocomplete = "off", @class = "textbox", @style = "width:52px;", size = 3, maxlength = 3 })
+                                            @Html.TextBoxFor(m => m.Pcp.PhoneNumber.Number, new { autocomplete = "off", @class = "textbox number-after-areacode", @style = "width:120px;", maxlength = 7 })
+                                        </div>
+                                    </div>
+                                    <div class="editor-row">
+                                        <div class="label">
+                                            <b> Preferred Contact Method :</b> 
+                                        </div>
+                                        <div class="editor-field">
+                                            @if (!Model.NotAbleToSchedule)
+                                            {
+                                                @Html.DropDownListFor(m => m.PreferredContactMethod, DropDownHelper.GetPcpDispositionItems(PcpPreferredContactMethod.Email))
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownListFor(m => m.PreferredContactMethod, DropDownHelper.GetPcpDispositionItems(PcpPreferredContactMethod.Email), new { disabled = "disabled" })
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="editor-row appointment">
+                                        <div class="editor-column-twoinrow">
+                                            <b>Appointment Date : </b>  @Html.ValidationMessageFor(x => x.AppointmentDate)
+                                            <div class="editor-row">
+                                                @if (Model.NotAbleToSchedule)
+                                                {
+                                                    @Html.TextBoxFor(x => x.AppointmentDate, new { @class = "datePicker", @style = "width:40%", disabled = "disabled" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBoxFor(x => x.AppointmentDate, new { @class = "datePicker", @style = "width:40%" })
+                                                }
+                                                
+                                            </div>
+
+                                        </div>
+                                        <div class="editor-column-twoinrow">
+                                            <b> Appointment Time :</b> @Html.ValidationMessageFor(x => x.AppointmentTime)
+                                            <div class="editor-row">
+                                                @if (Model.NotAbleToSchedule)
+                                                {
+                                                    @Html.TextBoxFor(x => x.AppointmentTime, new { @class = "scheduled-time", @style = "width:40%", disabled = "disabled" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBoxFor(x => x.AppointmentTime, new { @class = "scheduled-time", @style = "width:40%" })
+                                                }
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="editor-row">
+                                        <i>Suggested date for Appointment would be after @Model.EventDate.AddDays(Model.BookAfterNumberOfDays).ToShortDateString()</i>
+                                    </div>
+
+                                    <div class="editor-row">
+                                        @Html.CheckBoxFor(m => m.NotAbleToSchedule) Not able to schedule Appointment
+                                    </div>
+                                    <div class="editor-row pcpDispsition">
+                                        <b>Reason: </b> @Html.ValidationMessageFor(x => x.DispositionId)
+                                        @if (Model.NotAbleToSchedule)
+                                        {
+                                            @Html.DropDownListFor(m => m.DispositionId, DropDownHelper.GetPcpDispositionItems(PcpAppointmentDisposition.DeniedNotCurrentPatient))
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownListFor(m => m.DispositionId, DropDownHelper.GetPcpDispositionItems(PcpAppointmentDisposition.DeniedNotCurrentPatient), new { disabled = "disabled" })
+                                        }
+                                    </div>
+
+                                    <div class="editor-row pcpDispsition">
+                                        <b>Notes: </b>
+                                        <br />
+                                        @if (Model.NotAbleToSchedule)
+                                        {
+                                            @Html.TextAreaFor(m => m.Notes, new { @rows = "8", @cols = "50" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextAreaFor(m => m.Notes, new { @rows = "8", @cols = "50", disabled = "disabled" })
+                                        }
+                                    </div>
+                                </div>
+                                <div class="editor-column-twoinrow">
+                                    <div class="editor-row">
+                                        <b>Address : </b><span class="reqiredmark"><sup>*</sup> </span> @Html.ValidationMessageFor(x => x.Pcp.Address.StreetAddressLine1)
+                                        @Html.TextBoxFor(x => x.Pcp.Address.StreetAddressLine1, new { placeholder = "Address Line 1" })
+                                    </div>
+                                    <div class="editor-row">
+                                        <b>Suite,Apt,etc : </b>@Html.ValidationMessageFor(x => x.Pcp.Address.StreetAddressLine2)
+                                        @Html.TextBoxFor(x => x.Pcp.Address.StreetAddressLine2, new { placeholder = "Address Line 2" })
+                                    </div>
+                                    <div class="editor-row">
+                                        <div class="editor-column" style="width: 115px">
+                                            <b>City : </b>@Html.ValidationMessageFor(x => x.Pcp.Address.City)
+                                            <div class="editor-row">
+                                                @Html.TextBoxFor(x => x.Pcp.Address.City, new { style = "115px;", @class = "auto-search-city", autocomplete = "off" })
+                                            </div>
+                                        </div>
+                                        <div class="editor-column" style="width: 95px">
+                                            <b> State : </b>@Html.ValidationMessageFor(x => x.Pcp.Address.StateId)
+                                            <div class="editor-row">
+                                                @Html.DropDownListFor(m => m.Pcp.Address.StateId, DropDownHelper.States(((Model.Pcp.Address == null) ? -1 : Model.Pcp.Address.StateId)), new { @class = "select ddl-states", @style = "width:90px;height:21px" })
+                                            </div>
+                                        </div>
+                                        <div class="editor-column" style="width: 90px; display: none;">
+                                            <b>Country  : </b>@Html.ValidationMessageFor(x => x.Pcp.Address.CountryId)
+                                            <div class="editor-row">
+                                                @Html.DropDownListFor(m => m.Pcp.Address.CountryId, DropDownHelper.Countries(((Model.Pcp.Address == null) ? -1 : Model.Pcp.Address.CountryId)), new { @class = "select", @style = "width:90px;" })
+                                            </div>
+                                        </div>
+                                        @Html.ValidationMessageFor(x => x.Pcp.Address.ZipCode)
+                                        <div class="editor-column" style="width: 90px">
+                                            <b> Zip : </b>
+                                            <div class="editor-row">
+                                                @Html.TextBoxFor(x => x.Pcp.Address.ZipCode, new { placeholder = "Zip", style = "width:100%;", maxlength = "5" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="editor-column-twoinrow">
+                                    <div class="editor-row">@Html.CheckBoxFor(x => x.Pcp.HasSameAddress) Has same mailing address</div>
+                                    <div style="@(Model.Pcp.HasSameAddress?"display:none":"display:block")" id="MailingAddress">
+                                        <div class="editor-row">
+                                            <b>Mailing Address : </b><span class="reqiredmark"><sup>*</sup> </span> @Html.ValidationMessageFor(x => x.Pcp.MailingAddress.StreetAddressLine1)
+                                            @Html.TextBoxFor(x => x.Pcp.MailingAddress.StreetAddressLine1, new { placeholder = "Address Line 1" })
+                                        </div>
+                                        <div class="editor-row">
+                                            <b>Mailing Suite,Apt,etc : </b>@Html.ValidationMessageFor(x => x.Pcp.MailingAddress.StreetAddressLine2)
+                                            @Html.TextBoxFor(x => x.Pcp.MailingAddress.StreetAddressLine2, new { placeholder = "Address Line 2" })
+                                        </div>
+                                        <div class="editor-row">
+                                            <div class="editor-column" style="width: 115px">
+                                                <b>Mailing City : </b>@Html.ValidationMessageFor(x => x.Pcp.MailingAddress.City)
+                                                <div class="editor-row">
+                                                    @Html.TextBoxFor(x => x.Pcp.MailingAddress.City, new { style = "115px;", @class = "auto-search-city", autocomplete = "off" })
+                                                </div>
+                                            </div>
+                                            <div class="editor-column" style="width: 100px">
+                                                <b> Mailing State : </b>@Html.ValidationMessageFor(x => x.Pcp.MailingAddress.StateId)
+                                                <div class="editor-row">
+                                                    @Html.DropDownListFor(m => m.Pcp.MailingAddress.StateId, DropDownHelper.States(((Model.Pcp.MailingAddress == null) ? -1 : Model.Pcp.MailingAddress.StateId)), new { @class = "select ddl-states", @style = "width:90px;height:21px" })
+                                                </div>
+                                            </div>
+                                            <div class="editor-column" style="width: 90px; display: none;">
+                                                <b>Mailing Country  : </b>@Html.ValidationMessageFor(x => x.Pcp.MailingAddress.CountryId)
+                                                <div class="editor-row">
+                                                    @Html.DropDownListFor(m => m.Pcp.MailingAddress.CountryId, DropDownHelper.Countries(((Model.Pcp.MailingAddress == null) ? -1 : Model.Pcp.MailingAddress.CountryId)), new { @class = "select", @style = "width:90px;" })
+                                                </div>
+                                            </div>
+                                            @Html.ValidationMessageFor(x => x.Pcp.MailingAddress.ZipCode)
+                                            <div class="editor-column" style="width: 90px">
+                                                <b> Mailing Zip : </b>
+                                                <div class="editor-row">
+                                                    @Html.TextBoxFor(x => x.Pcp.MailingAddress.ZipCode, new { placeholder = "Zip", style = "width:100%;", maxlength = "5" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </fieldset>
+
+                    </div>
+                    <div style="clear: both; float: right" class="btnrow save-settigs-btn">
+                        <input type="submit" value="Save" style="float: right; margin-right: 50px;margin-top: 5px;" class="btn" onclick="copyPrimaryAddress()">
+                        <input type="submit" value="Save & Print" id="saveAndPrint" style="float: right; margin-right: 5px; margin-top: 5px; " class="btn " onclick="copyPrimaryAddress()">
+                    </div>
+                    <div style="display: none; text-align: right; float: right; margin-right: 50px; padding-top: 6px" class="save-settigs-btn">
+                        <img alt="" src="/App/Images/loading.gif">
+                    </div>
+
+                </div>
+
+
+            }
+            <script type="text/javascript" language="javascript">
+
+                $(document).ready(function () {
+                    $('.auto-search-city').autoComplete({
+                        minchar: 3,
+                        autoChange: true,
+                        url: '/App/AutoCompleteService.asmx/GetCityByPrefixText',
+                        type: "POST",
+                        data: "prefixText"
+                    });
+
+                });
+
+                $("#NotAbleToSchedule").click(function() {
+                    if ($("#NotAbleToSchedule").is(":checked")) {
+                        $(".pcpDispsition select, .pcpDispsition textarea").removeAttr("disabled");
+                        $(".appointment input").val("");
+                        $(".appointment input").attr("disabled", "disabled");
+                        $("#PreferredContactMethod").attr("disabled", "disabled");
+                        $("#PreferredContactMethod").val(-1);
+                    } else {
+                        $(".pcpDispsition textarea").val("");
+                        $(".pcpDispsition select, .pcpDispsition textarea").attr("disabled", "disabled");
+                        $(".pcpDispsition select").val(-1);
+                        $(".appointment input ,#PreferredContactMethod").removeAttr("disabled");
+                        
+                    }
+                });
+
+                function closeWindow() {
+                    if (parent.ClosePopUp != null)
+                        parent.ClosePopUp();
+                    else {
+                        window.close();
+                    }
+                }
+
+                $("#saveAndPrint").click(function () {
+                    $("#Print").val(true);
+                    return true;
+                });
+
+            </script>
+            <script language="javascript" type="text/javascript">
+
+                $(function () {
+                    $(".scheduled-time").mask("29:69ghi", { message: "Please provide a valid input. The valid format is XX.XX AM/PM." });
+                });
+
+                $(document).ready(function () {
+                    @if (!string.IsNullOrEmpty(Model.PrintUrl))
+                    {
+                        <text> window.open('@Model.PrintUrl', '_blank'); closeWindow();</text>
+                    }
+                    @if (Model != null && Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+                    {
+                        <text> closeWindow();</text>
+                    }
+
+                    $('#Pcp_HasSameAddress').click(function () {
+                        var PcpStreetAddress1 = $("#Pcp_Address_StreetAddressLine1").val();
+                        var PcpStreetAddress2 = $("#Pcp_Address_StreetAddressLine2").val();
+                        var PcpCity = $("#Pcp_Address_City").val();
+                        var PcpState = $("#Pcp_Address_StateId").val();
+                        var PcpZipCode = $("#Pcp_Address_ZipCode").val();
+
+                        $("#Pcp_MailingAddress_StreetAddressLine1").val(PcpStreetAddress1);
+                        $("#Pcp_MailingAddress_StreetAddressLine2").val(PcpStreetAddress2);
+                        $("#Pcp_MailingAddress_City").val(PcpCity);
+                        $("#Pcp_MailingAddress_StateId").val(PcpState);
+                        $("#Pcp_MailingAddress_ZipCode").val(PcpZipCode);
+
+                        if ($(this).is(":checked")) {
+                            $("#MailingAddress").hide();
+                        }
+                        else {
+                            $("#MailingAddress").show();
+                        }
+
+                    });
+
+                });
+
+
+                function copyPrimaryAddress() {
+
+                    if ($("#Pcp_HasSameAddress").is(":checked")) {
+                        var PcpStreetAddress1 = $("#Pcp_Address_StreetAddressLine1").val();
+                        var PcpStreetAddress2 = $("#Pcp_Address_StreetAddressLine2").val();
+                        var PcpCity = $("#Pcp_Address_City").val();
+                        var PcpState = $("#Pcp_Address_StateId").val();
+                        var PcpZipCode = $("#Pcp_Address_ZipCode").val();
+
+                        $("#Pcp_MailingAddress_StreetAddressLine1").val(PcpStreetAddress1);
+                        $("#Pcp_MailingAddress_StreetAddressLine2").val(PcpStreetAddress2);
+                        $("#Pcp_MailingAddress_City").val(PcpCity);
+                        $("#Pcp_MailingAddress_StateId").val(PcpState);
+                        $("#Pcp_MailingAddress_ZipCode").val(PcpZipCode);
+                        $("#MailingAddress").css({ "display": "none" });
+                    }
+                    else {
+                        $("#MailingAddress").removeAttr("style");
+                    }
+                }
+
+            </script>
+        </div>
+    </div>
+</body>
+</html>

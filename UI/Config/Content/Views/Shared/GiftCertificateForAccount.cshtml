@@ -1,0 +1,79 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.DependencyResolution
+@model GiftCertificateViewModel
+
+@{
+    var settings = IoC.Resolve<ISettings>();
+
+}
+<style type="text/css">
+    .giftCertificate .editor-row {
+        overflow: hidden;
+        margin-bottom: 5px;
+        clear: both;
+        margin-left: 40px;
+    }
+
+    .giftCertificate input[type="text"] {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+</style>
+
+<div style="margin-left: 40px; clear: both; margin-top: 20px">
+    <img src="@settings.MediumLogo" />
+</div>
+<div class="giftCertificate" style="font-size: 20px;">
+    <div class="editor-row">
+        <div style="clear:both;margin-top: 20px;margin-bottom: 50px">
+            <div style="text-align: center;font-size: 25px;">
+                <b>Gift Card Reconciliation Form</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <b>Patient Id:</b> @Model.CustomerId
+    </div>
+    <div class="editor-row">
+        <b>Patient Name:</b> @Model.CustomerName.FullName
+    </div>
+    <div class="editor-row">
+        <b>Event Date:</b> @Model.EventDate.ToString("MM/dd/yyyy")
+    </div>
+
+    <div class="editor-row" style="margin-top: 150px">
+        <input type="checkbox" @(Model.GiftCardReceived.HasValue && Model.GiftCardReceived.Value ? "checked=checked" : "") /> I received my $@(String.Format("{0:0.00}", Model.GiftAmmount)) Gift Card.
+        @*[&nbsp;&nbsp;&nbsp;] I received my $@(String.Format("{0:0.00}", Model.GiftAmmount)) Gift Card.*@
+    </div>
+
+    <div class="editor-row" style="margin-top: 10px">
+        <input type="checkbox" @(Model.GiftCardReceived.HasValue && !Model.GiftCardReceived.Value ? "checked=checked" : "") /> I did not receive my $@(String.Format("{0:0.00}", Model.GiftAmmount)) Gift Card.
+        @*[&nbsp;&nbsp;&nbsp;] I did not receive my $@(String.Format("{0:0.00}", Model.GiftAmmount)) Gift Card.*@
+    </div>
+
+    <div class="editor-row" style="margin-top: 150px; display:table; height: 100px;">
+        <span style="display: table-cell; vertical-align: middle;"><b>Patient Signature:</b></span>
+        @if (!string.IsNullOrWhiteSpace(Model.PatientSignatureUrl))
+        {
+            <img src="@Model.PatientSignatureUrl" style="width: 250px;" />
+        }
+        else
+        {
+            <input type="text" style="width: 270px" />
+        }
+    </div>
+
+    <div class="editor-row" style="margin-top: 50px; display:table; height: 100px;">
+        <span style="display: table-cell; vertical-align: middle;"><b>Technician Signature:</b></span>
+        @if (!string.IsNullOrWhiteSpace(Model.PatientSignatureUrl))
+        {
+            <img src="@Model.TechnicianSignatureUrl" style="width: 250px;" />
+        }
+        else
+        {
+            <input type="text" style="width: 230px" />
+        }
+    </div>
+</div>

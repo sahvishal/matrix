@@ -1,0 +1,142 @@
+﻿@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.Application.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Finance.ViewModels.ManualRefundEditModel
+@{
+    ViewBag.Title = "ManualRefund";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml";
+    long currentRole = IoC.Resolve<Falcon.App.Core.Application.ISessionContext>().UserSession.CurrentOrganizationRole.GetSystemRoleId;
+}
+
+@{Html.BeginForm();}
+@if(Model.FeedbackMessage!=null)
+{
+    <div style="width:550px;">
+        @Html.Partial("Message",new ViewDataDictionary(Model.FeedbackMessage))     
+    </div>
+}
+<div style="float: left; width: 500px;">
+    @Html.EditorFor(m => m.EventId)
+    @Html.EditorFor(m => m.CustomerId)
+    <h2>
+        @Model.CustomerName (Id: @Model.CustomerId)
+    </h2>
+    @Html.HiddenFor(m => m.CustomerName)
+    <br />
+    @if (Model == null)
+    {
+        <h3>
+            No Valid Order found!
+        </h3>
+    }
+    else if(Model.Order.TotalAmountPaid<=0)
+    {
+        <h3>
+            This Order contains no payment.
+        </h3>
+    }
+    else
+    {
+        @Html.HiddenFor(m=>m.TotalRefundRequestAmount)
+        
+        <div style="margin-bottom:10px;">
+            <span><b>Order total</b> : $@Model.Order.DiscountedTotal.ToString("0.00")</span>
+            <span><b>Amount paid</b> : $@Model.Order.TotalAmountPaid.ToString("0.00")</span>
+            <span><b>Requested amount</b> : $@Model.TotalRefundRequestAmount.ToString("0.00")</span>
+        </div>
+        
+        bool refundQueueEnabled = IoC.Resolve<Falcon.App.Core.Application.ISettings>().IsRefundQueueEnabled;
+           
+        <div style="margin-bottom:10px;">
+            <div class="small-text">
+                Amount to refund
+            </div>
+            @Html.TextBox("AmountToRefund","")
+        </div>
+               
+        <div id="payment-action-div" style="margin-top: 10px; margin-bottom: 10px;">            
+            @if (refundQueueEnabled && (currentRole == (long)Falcon.App.Core.Enum.Roles.CallCenterRep || currentRole == (long)Falcon.App.Core.Enum.Roles.CallCenterManager || currentRole == (long)Falcon.App.Core.Enum.Roles.Technician))
+            {     
+                <fieldset>
+                    <legend>
+                        <h4>
+                            Refund Request
+                        </h4>
+                    </legend>
+                    @Html.EditorFor(m => m.RefundRequest)
+                </fieldset>  
+                      
+            }
+            else
+            {
+                <fieldset>
+                    <legend></legend>
+                    @Html.Partial("/Views/Shared/EditorTemplates/PaymentEditModel.cshtml", new ViewDataDictionary(Model.Payments))
+                </fieldset>
+                
+            }            
+        </div>
+         
+    }
+    <hr />
+    <div class="submit-button-row">
+        <a href="javascript:void(0);" onclick="closeWindow();">Close </a>&nbsp; &nbsp;
+        @Html.SubmitButton("Refund")
+    </div>
+    <script type="text/javascript" language="javascript">
+        function closeWindow() {
+            if(parent.ClosePopUp != null)
+                parent.ClosePopUp();
+            else
+            {
+                window.close();
+            }
+        }
+
+
+        function SetRefundAmount() {
+            
+            var amountToRefund;
+            if (isNaN($('#AmountToRefund').val()))
+                amountToRefund = 0;
+            else
+                amountToRefund = Number($('#AmountToRefund').val());
+            @if ((IoC.Resolve<Falcon.App.Core.Application.ISettings>().IsRefundQueueEnabled) && (currentRole == (long)Falcon.App.Core.Enum.Roles.CallCenterRep || currentRole == (long)Falcon.App.Core.Enum.Roles.CallCenterManager || currentRole == (long)Falcon.App.Core.Enum.Roles.Technician))
+            {
+                <text> setRequestAmount(amountToRefund); </text>
+            }
+            else
+            {
+                <text> setPaymentAmount(amountToRefund); </text>
+            }
+        }
+    </script>
+    <script type="text/javascript" language="text/javascript">
+        $('#AmountToRefund').bind("blur", function () { SetRefundAmount(); });
+    </script> 
+    @if (Model.FeedbackMessage!=null && (Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success ))
+    {
+    <script language="javascript" type="text/javascript">
+        function HidePayment() {            
+            $('#payment-action-div').hide();
+            $("#Submit").hide();
+        }
+        HidePayment();       
+
+        window.setTimeout(function () {
+            closeWindow();
+            if (parent.location == window.location) {
+                window.opener.location.reload();
+            }
+            else {
+                parent.location.reload();
+            }
+        }, 1000);
+
+    </script>
+    }
+</div>    
+@{Html.EndForm();}
+
+

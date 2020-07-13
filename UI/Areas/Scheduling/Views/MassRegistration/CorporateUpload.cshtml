@@ -1,0 +1,369 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model CorporateUploadEditModel
+@{
+    ViewBag.Title = "Corporate Upload";
+}
+<h2>
+    Corporate Upload (*.csv)
+</h2>
+<script src="~/Content/JavaScript/jquery-1.9.1.min.js"></script>
+<script src="~/Content/JavaScript/hoverIntent.js"></script>
+<link href="~/Content/Styles/select2.css" rel="stylesheet" />
+<script src="~/Content/JavaScript/select2.full.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<style type="text/css">
+    .select2-dropdown {
+        width: 200px;
+    }
+
+    .select2-selection__choice {
+        background-color: #00A6d8 !important;
+        border: solid 1px #00A6d8 !important;
+        font-size: 14px;
+        color: #ffffff;
+    }
+
+    .select2-selection__choice__remove {
+        color: #ffffff;
+    }
+</style>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{Html.BeginForm("CorporateUpload", "MassRegistration", FormMethod.Post, new { enctype = "multipart/form-data" });}
+
+
+@if (Model != null)
+{
+
+    <div style="float: left; width: 80%; margin-right: 5px; padding: 1%">
+        <div class="editor-row">
+            <label>Corporate Account:</label>
+            @Html.DropDownListFor(m => m.CorporateAccountId, DropDownHelper.GetCorporateAccounts())
+            <input type="button" value="Select" onclick="CheckCorporateAccount();" />
+        </div>
+        <div class="editor-row account-detail" style="display: none;">
+            <label><b>Name:</b></label>
+            <span id="CorporateAccountName">@Model.Name</span>
+        </div>
+        <div class="editor-row account-detail" style="display: none;">
+            <label><b>Customer Tagged As:</b></label>
+            <span id="CorporateAccountTag">@Model.Tag</span>
+            @if (Model.CustomTags != null && Model.CustomTags.Any())
+            {
+                var customTags = string.Join(",", Model.CustomTags);
+                <span>, @customTags</span>
+            }
+
+        </div>
+        <script id="customTagTemplate" type="text/x-jquery-tmpl">
+            <div class='mini-container' style="border: 1px solid gray !important;  width:444px;">
+                <div style="float: left; margin-right: 20px;">
+                    <h4>${Name}</h4>
+                </div>
+                [<a href="#" data-key="${Key}" onclick="RemoveCustomTag(this)">Remove</a>]
+                @*<div style="display: none;">
+                        <input type="hidden" name="CustomTags.Index" value="${Key}" />
+                        <input type="text" name="CustomTags[${Key}].Name" value="${Name}" />
+                    </div>*@
+            </div>
+        </script>
+        <div class="editor-row account-detail" style="display: none;padding-bottom: 10px;">
+            <label><b>Custom Tag(s):</b></label>  <select class="tokenizerCustomTag" style="width: 300px"></select> <input type="button" id="addCustomeTag" value="Add" />
+            <div id="customTagContainer">
+                <div class="info-box" id="divInfoBoxCustomTag" style="width:444px;">
+                    There is no CustomTag selected. Click on Add Button.
+                </div>
+            </div>
+        </div>
+        <div class="editor-row account-detail" id="upload-div" style="display: none; margin-top: 20px;">
+            Upload file:
+            <input type="file" name="CorporateUploadFile" />
+            <input type="submit" id="FileSubmit" value="Upload" onclick="SetCustomTags();checkUploadFile();" />
+            <a style="margin-left: 20px;" href='@(Model.UploadCsvMediaUrl + "Corporate_Upload_Sample.csv")'>Sample CSV</a> <a style="margin-left: 20px;" href='@(Model.UploadCsvMediaUrl + "Test_Alias_Sample.csv")'>Test Alias CSV</a>
+            <h4 style="width:250px;"> Please upload a csv file! </h4>
+        </div>
+        <div id="parse-in-progress-div" style="display: none;">
+            <br /><h4 style="width:250px;"> Parse in progress </h4><br />
+            <img src="/Content/Images/pbar-ani.gif" style="width:400px; height: 40px;" />
+        </div>
+
+        @if (Model.IsUploadSucceded)
+        {
+            <div class="editor-row">
+                <div style="float:left; width:33%;">
+                    <label><b>Total Customers:</b></label>
+                    <span class="total-customers">@Model.TotalCustomers </span>
+                </div>
+                <div style="float:left; width: 33%;">
+                    <label><b>Uploaded Customers:</b></label>
+                    <span class="uploaded-customers">@Model.UploadedCustomers </span>
+                </div>
+                <div style="float:left; width: 32%;">
+                    <label><b>Failed Customers:</b></label>
+                    <span class="failed-customers">@Model.FailedCustomers</span>
+                </div>
+            </div>
+        }
+        <div>
+            <a id="failedFilePath" style="margin-left: 20px; display: none" href=''>Failed Customers Records</a>
+        </div>
+        
+        <div id="adjustOrderFileDesc" style="padding-top: 15px;display: none;">
+            <div style="padding-bottom: 5px; margin-left: 20px;">
+                <h4> Adjust Order </h4>
+                Pre-approved package/Test has been updated for some of the customers listed in CSV . For download click on the following link.
+            </div>
+            <a id="adjustOrderFilePath" style="margin-left: 20px; " href=''>Adjust Order Records</a>
+        </div>
+    </div>
+    <div class="editor-row account-detail" style="display : none;clear:both;float: left;margin: 10px;">
+        <b>Instruction:</b>
+        <ul>
+            <li>
+                Refer to the "Sample CSV" file to view the format for file to be uploaded.
+            </li>
+            <li>
+                Refer to the "Test Alias CSV" file to view the list of approved alias name for existing test in HIP. When uploading pre-approved test you need to enter the Test Alias.
+            </li>
+        </ul>
+    </div>
+    <div id="customTagsContainer" style="display: none;">
+    </div>
+}
+<script id="customTagsTemplate" type="text/x-jquery-tmpl">
+    <div style="display: none;">
+        <input type="hidden" name="CustomTags.Index" value="${Id}" />
+        <input type="text" name="CustomTags[${Id}]" value="${Tag}" />
+    </div>
+</script>
+
+<script type="text/javascript">
+    var customTagList = new Object();
+    var customTagMasterList = new Object();
+
+    function checkUploadFile() {
+        $("#upload-div").hide();
+        $("#parse-in-progress-div").show();
+        return true;
+    }
+    function checkHideProgressBar() {
+        $("#upload-div").show();
+        $("#parse-in-progress-div").hide();
+        return true;
+    }
+    var pageSize = 50;
+
+    function UploadCustomersAsynchronous(fileName, pageNumber, logFileId, adjustOrderLogFileId) {
+
+        var data = {
+            FileName: fileName,
+            PageSize: pageSize,
+            Tag: '@Model.Tag',
+            PageNumber: pageNumber,
+            CustomTags: tokens,
+            FailedRecordsFile: '@Model.FailedRecordsFile',
+            UploadCorporateId: '@Model.UploadCorporateId',
+            AdjustOrderRecordsFile: '@Model.AdjustOrderRecordsFile',
+            LogFileId: logFileId,
+            AdjustOrderLogFileId: adjustOrderLogFileId
+        };
+
+        $.post("/Scheduling/MassRegistration/UploadCustomers", data, function (result) {
+            updateProgressBar(result.TotalCustomers, result.UploadedCustomers, result.FailedCustomers);
+
+            if (!result.IsParseSucceded) {
+                UploadCustomersAsynchronous(result.FileName, result.PageNumber, result.LogFileId, result.AdjustOrderLogFileId);
+            } else {
+                checkHideProgressBar();
+                if (result.FailedCustomersListPath != "") {
+                    $("#failedFilePath").attr("href", result.FailedCustomersListPath);
+                    $("#failedFilePath").show();
+                }
+                if (result.AdjustOrderRecordsFile != "") {
+                    $("#adjustOrderFilePath").attr("href", result.AdjustOrderRecordsFile);
+                    $("#adjustOrderFileDesc").show();
+                }
+                CheckCorporateAccount();
+            }
+        });
+    }
+
+    function updateProgressBar(totalCustomers, uploadedCustomers, failedCustomers) {
+
+        var customers = $(".uploaded-customers").text();
+        var failedCustomer = $(".failed-customers").text();
+        $(".uploaded-customers").text((uploadedCustomers + parseInt(customers)));
+        $(".failed-customers").text(failedCustomers + parseInt(failedCustomer));
+    }
+
+    function CheckCorporateAccount() {
+        var accountId = parseInt($("#CorporateAccountId").val());
+        $('select.tokenizerCustomTag').empty();
+        $("div.mini-container").remove();
+        $("#divInfoBoxCustomTag").show();
+        customTagList = new Object();
+        customTagMasterList = new Object();
+        if (accountId > 0) {
+            $.ajax({
+                type: "POST",
+                cache: false,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                url: "/Scheduling/MassRegistration/GetCorporateTag?accountId=" + accountId,
+                data: "{}",
+                success: function (result) {
+                    if (result.Tag != null && result.Tag.length > 0) {
+
+                        $("#CorporateAccountName").html($("#CorporateAccountId option:selected").text());
+                        $("#CorporateAccountTag").html(result.Tag);
+                        $("#CorporateAccountId").val(accountId);
+
+                        if (result.CustomTags != null && result.CustomTags.length > 0) {
+                            $("#addCustomeTag").show();
+                            $('.tokenizerCustomTag').append($('<option>', {
+                                value: "",
+                                text: "-- Select --"
+                            }));
+                            $.each(result.CustomTags, function (index, tag) {
+                                if ($('.tokenizerCustomTag option[value="' + tag + '"]').length > 0) {
+                                    $('.tokenizerCustomTag option[value="' + tag + '"]').val(tag);
+                                    $('.tokenizerCustomTag option[value="' + tag + '"]').text(tag);
+                                    $('.tokenizerCustomTag option[value="' + tag + '"]').attr("selected", "selected");
+                                } else {
+                                    $('.tokenizerCustomTag').append($('<option>', {
+                                        value: tag,
+                                        text: tag
+                                    }));
+                                }
+
+                                var customTagItem = new Object();
+                                customTagItem.Name = tag;
+                                customTagItem.Key = tag;
+                                customTagMasterList[customTagItem.Key] = customTagItem;
+
+                            });
+                        }
+                        else {
+                            $("#addCustomeTag").hide();
+                            $("#divInfoBoxCustomTag").hide();
+                        }
+                        $(".account-detail").show();
+                    }
+                    else {
+                        $("#CorporateAccountName").html("");
+                        $("#CorporateAccountTag").html("");
+                        $("#CorporateAccountId").val("0");
+                        $(".account-detail").hide();
+                        alert("Selected corporate does not have customer tag.");
+                    }
+                },
+                error: function (a, b, c) {
+
+                }
+            });
+        } else {
+            $(".account-detail").hide();
+            alert("Please select  corporate account.");
+        }
+    }
+    var tokens = null;
+
+    function addSelectedTags(tag) {
+
+        //$('.tokenizer').append($('<option selected="selected" value="' + tag + '" >' + tag + '</option>'));
+        //tokens.push(tag);
+        tokens.push(tag);
+        var customTagItem = new Object();
+        customTagItem.Name = tag;
+        customTagItem.Key = tag;
+        customTagList[customTagItem.Key] = customTagItem;
+
+    }
+
+    $(document).ready(function () {
+        @if (Model.CustomTags != null && Model.CustomTags.Any())
+        {
+            <text>tokens = new Array();</text>
+            foreach (var customTag in Model.CustomTags)
+            {
+                <text>addSelectedTags('@customTag');</text>
+            }
+            <text>renderCustomTag(); CheckCorporateAccount();</text>
+        }
+
+        $(".tokenizer").select2({
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+
+        @if (Model.CorporateAccountId > 0)
+        {
+         <text>
+        $(".account-detail").show();
+        </text>
+        }
+
+
+        @if (Model != null && Model.IsUploadSucceded && !Model.IsParseSucceded)
+        {
+            <text>
+        checkUploadFile()
+        UploadCustomersAsynchronous('@Model.FileName', 1, 0);
+        </text>
+        }
+    });
+
+    function SetCustomTags() {
+        $("#customTagsContainer").empty();
+        if (customTagList != null) {
+            $.each(customTagList, function (index, value) {
+                var obj = new Object();
+                obj.Id = index + 1;
+                obj.Tag = value.Name;
+                $("#customTagsTemplate").tmpl(obj).appendTo("#customTagsContainer");
+            });
+        }
+    }
+
+    $("#addCustomeTag").click(function () {
+        var key = $(".tokenizerCustomTag").val();
+
+        if (key == '') {
+            alert("Please select a CustomTag.");
+            return false;
+        }
+        if (customTagList[key] != null) {
+            alert("CustomTag already selected.");
+            return false;
+        }
+        else
+            customTagList[key] = customTagMasterList[key];
+
+        $("#divInfoBoxCustomTag").hide();
+        renderCustomTag();
+
+        return false;
+    });
+
+    function renderCustomTag() {
+        $("#divInfoBoxCustomTag").hide();
+        $("#customTagContainer div.mini-container").remove();
+        $.each(customTagList, function (key, customTagObj) {
+            $("#customTagTemplate").tmpl(customTagObj).appendTo("#customTagContainer");
+        });
+    }
+    function RemoveCustomTag(e) {
+        $(this).parents("div.mini-container:first").remove();
+        delete customTagList[$(e).attr('data-key')];
+        renderCustomTag();
+        if ($.isEmptyObject(customTagList)) {
+            $("#divInfoBoxCustomTag").show();
+        }
+        return false;
+    }
+</script>
+@{Html.EndForm();}
+

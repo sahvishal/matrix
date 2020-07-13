@@ -1,0 +1,88 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Geo.ViewModels.AddressEditModel
+<script type="text/javascript" src="/App/jquery/js/jQuery.autoCompleteExtender.js"></script>
+<link type="text/css" href="/App/jquery/css/AutoComplete/auto-search.css" rel="Stylesheet" />
+@Html.EditorFor(m => m.Id)
+<div class="addresseditmodel-div">
+    <ul style="padding-bottom:5px; padding-top:0px;">
+        <li>
+            <div class="full">
+                <label>Address <span class="txt-grey"><em> (Street, Apt/Suite)</em></span></label>
+                @Html.TextBoxFor(m => m.StreetAddressLine1, new { @class = "textbox street-address1", @style = "width:310px;" })
+                @Html.TextBoxFor(m => m.StreetAddressLine2, new { @class = "textbox street-address2", @style = "width:80px;" })
+            </div>
+            <div class="clearfix"></div>
+        </li>
+        @*<li>
+            <div class="left-float half">
+                <label>Country</label>
+                @Html.DropDownListFor(m => m.CountryId, DropDownHelper.Countries(((Model == null || Model.CountryId == null) ? -1 : Model.CountryId)), new { @class = "select address-country" })
+            </div>
+            <div class="clearfix"></div>
+        </li>*@
+        <li>
+            @Html.HiddenFor(m => m.CountryId)
+            <div class="left-float">
+                <label>State</label>
+                @Html.DropDownListFor(m => m.StateId, DropDownHelper.States(((Model == null || Model.StateId > 0) ? -1 : Model.StateId)), new { @class = "select address-state", @style="width:165px;" })
+            </div>
+            <div class="left-float" style="margin-left: 5px;">
+                <label>City</label>
+                @Html.TextBoxFor(m => m.City, new { @class = "textbox address-city", @style="width:153px;" })
+            </div>
+            <div class="left-float" style="margin-left: 5px;">
+                <label>ZipCode</label>
+                @Html.TextBoxFor(m => m.ZipCode, new { @class = "textbox address-zip", @style="width:67px;"})
+            </div>
+            <div class="clearfix"></div>
+        </li>
+    </ul>
+    <script language="javascript" type="text/javascript">
+        function getAddress(parentDiv){
+            var address = new Object();
+            var addressDiv = parentDiv.find(".addresseditmodel-div");
+
+            address.StreetAddressLine1 = addressDiv.find("[id*=StreetAddressLine1]").val();
+            address.StreetAddressLine2 = addressDiv.find("[id*=StreetAddressLine2]").val();
+
+            address.CountryId = addressDiv.find("input[id*=CountryId]").val();
+            address.StateId = addressDiv.find("select[id*=StateId] option:selected").val();
+            address.City = addressDiv.find("[id*=City]").val();
+            address.ZipCode = addressDiv.find("[id*=ZipCode]").val();
+            return address;
+        }
+
+        function clearAddress(parentDiv) {
+            var addressDiv = parentDiv.find(".addresseditmodel-div");
+            addressDiv.find("input[type=text]").val("");
+            addressDiv.find("select option:first").attr("selected", true);
+        }
+
+        function setAddress(parentDiv, address) {
+            clearAddress(parentDiv);
+            if (address == null)
+                return;
+
+            var addressDiv = parentDiv.find(".addresseditmodel-div");
+
+            addressDiv.find("[id*=StreetAddressLine1]").val(address.StreetAddressLine1);
+            addressDiv.find("[id*=StreetAddressLine2]").val(address.StreetAddressLine2);
+
+            addressDiv.find("input[id*=CountryId]").val(address.CountryId);
+            addressDiv.find("select[id*=StateId] option[value=" + address.StateId + "]").attr("selected", true);
+            addressDiv.find("[id*=City]").val(address.City);
+            addressDiv.find("[id*=ZipCode]").val(address.ZipCode);
+        }
+        
+        @{
+            var states = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Geo.IStateRepository>().GetAllStates();
+            var stateCountry = states.Select(s => new { s.CountryId, StateId = s.Id }).ToArray();
+
+            <text>
+                var stateIdCountryIdArray = new Array();
+                stateIdCountryIdArray = @Html.Raw((new System.Web.Script.Serialization.JavaScriptSerializer()).Serialize(stateCountry));
+            </text>
+        }
+        
+    </script>
+</div>

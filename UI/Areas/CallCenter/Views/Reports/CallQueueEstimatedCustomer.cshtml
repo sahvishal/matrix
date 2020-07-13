@@ -1,0 +1,58 @@
+﻿@using Falcon.App.Core.CallQueues.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.CallQueueEstimatedCustomerReportModel
+@{
+    ViewBag.Title = "Call Queue Estimated Customer Report";
+}
+<h1>
+    @Model.HealthPlanName
+</h1>
+
+<h2>
+    CallQueue: @Model.CallQueueName
+</h2>
+<div style="padding-left: 10px;padding-top: 5px;padding-bottom: 5px;">
+    @if (Model != null && Model.CallQueueCriteria != null)
+    {
+        if (Model.CallQueueCategory == HealthPlanCallQueueCategory.FillEventsHealthPlan)
+        {
+            <b> Booking percentage is less than <span>@Model.CallQueueCriteria.Percentage.ToString("##")%</span> and are scheduled in next @Model.CallQueueCriteria.NoOfDays @(@Model.CallQueueCriteria.NoOfDays > 1 ? "days" : "day").</b>
+        }
+    }
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("CallQueueEstimatedCustomer", "Reports", FormMethod.Get);}
+    @Html.Partial("EstimatedCustomerOutboundCallQueueFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+<div id="dvEstimatedCustomers" style="margin: 10px 0;">
+    <h4>Estimated customers in Call Queue</h4>
+
+    <table id="list-view">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Estimated Customers</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Today</b></td>
+                <td><span id="todayCustomers">@Model.CallQueueEstimatedCustomer.TodaysCustomers</span></td>
+            </tr>
+            <tr>
+                <td><b>Tomorrow</b></td>
+                <td><span id="tomorrowCustomers">@Model.CallQueueEstimatedCustomer.TomorrowCustomers</span></td>
+            </tr>
+            <tr>
+                <td><b>Day After Tomorrow</b></td>
+                <td><span id="dayAfterTomorrowCustomers">@Model.CallQueueEstimatedCustomer.DayAfterTomorrowCustomers</span></td>
+            </tr>
+            <tr>
+                <td><b>Overmorrow</b></td>
+                <td><span id="overmorrowCustomers">@Model.CallQueueEstimatedCustomer.OvermorrowCustomers</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

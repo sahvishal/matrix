@@ -1,0 +1,207 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.DailyVolumeListModel
+@{
+    ViewBag.Title = "Daily Volume";
+}
+
+<h1>
+    Daily Volume
+</h1>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<div id="list-filter">
+    @{Html.BeginForm("DailyVolume", "Reports", FormMethod.Get);}
+    @Html.Partial("DailyVolumeListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Scheduling/ExportableReports/DailyVolume?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV</a>
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-y: auto">
+        <table id="list-view">
+            <tr>
+                <th nowrap>
+                    Event Id
+                </th>
+                <th nowrap>
+                    Event Date
+                </th>
+                <th style="text-align: right" nowrap>
+                    Pod
+                </th>
+                <th style="text-align: right" nowrap>
+                    Corporate Sponsor
+                </th>
+                <th style="text-align: right" nowrap>
+                    City
+                </th>
+                <th style="text-align: right" nowrap>
+                    State
+                </th>
+                <th nowrap>
+                    Zip
+                </th>
+                <th nowrap>
+                    Total Slots
+                </th>
+                <th nowrap >
+                    <div style="display: none;" class="div-notes">
+                        <span>(Total Slots - Slots Booked)</span>
+                    </div>
+                    <span class="vacant-qtip">Vacant Slots <sup>*</sup></span>
+                </th>
+                <th nowrap  style="display:none;">
+                    Available Slots
+                </th>
+                <th nowrap>
+                    <div style="display: none;" class="div-notes">
+                        <span>(Same Day Cancels + Same Day Reschedules + Patients Booked)</span>
+                    </div>
+                    <span class="booked-qtip">Slots Booked <sup>*</sup></span>
+                   
+                </th>
+                <th nowrap>
+                    Same-Day Cancels
+                </th>
+                <th nowrap>
+                    Same-Day Reschedules
+                </th>
+                <th nowrap>
+                    Patients Booked
+                </th>
+               
+                <th nowrap>
+                    No Shows(s)
+                </th>
+                <th nowrap>
+                    Patient Left(s)
+                </th>
+                <th nowrap>
+                    Attended Cust.
+                </th>
+               
+            </tr>
+            @foreach (var selectedEvent in Model.Collection)
+            {
+                <tr>
+                    <td style="width:170px;">
+                        @selectedEvent.EventCode
+                    </td>
+                    <td>
+                        @selectedEvent.EventDate.ToShortDateString()
+                    </td>
+                    <td style="text-align: right">
+                        @selectedEvent.Pod
+                    </td>
+                    <td style="text-align: right">
+                        @(string.IsNullOrEmpty(selectedEvent.CorporateAccount) ? "N/A" : selectedEvent.CorporateAccount)
+                    </td>
+                    <td style="text-align: right">
+                        @selectedEvent.City
+                    </td>
+                    <td style="text-align: right">
+                        @selectedEvent.State
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.Zip
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.TotalSlots
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.VacantSlots
+                    </td>
+                    <td style="width:100px; display:none;">
+                        @selectedEvent.AvailableSlots
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.SlotsBooked
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.SameDayCancels
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.SameDayReschedules
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.PatientsBooked
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.CustomersNoShow
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.PatientLeft
+                    </td>
+                    <td style="width:100px;">
+                        @selectedEvent.CustomersAttended
+                    </td>
+                </tr>
+            }
+        </table>
+        
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        $(document).ready(function () {
+            $(".vacant-qtip").qtip({
+                position: {
+                    my: 'top left'
+                },
+                style: {
+                    width: '200px'
+                },
+                content: {
+                    title: "Vacant Slots",
+                    text: function (api) {
+                        return $(this).parent().find(".div-notes").html();
+                    }
+                }
+            });
+            $(".booked-qtip").qtip({
+                position: {
+                    my: 'top left'
+                },
+                style: {
+                    width: '200px'
+                },
+                content: {
+                    title: "Slots Booked",
+                    text: function (api) {
+                        return $(this).parent().find(".div-notes").html();
+                    }
+                }
+            });
+        });
+    </script>
+}

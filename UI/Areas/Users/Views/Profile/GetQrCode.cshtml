@@ -1,0 +1,6 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@{
+    Layout = null;
+}
+@Html.QRCode(string.Format("otpauth://totp/Healthfair?secret={0}", (string)ViewBag.EncodedSecret))
+     

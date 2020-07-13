@@ -1,0 +1,481 @@
+﻿.step-box
+{
+    width: 9%;
+    padding: 30px 0.5% 10px 0.5%;
+    float: left;
+    border: solid 1px #B8D7E6;
+    border-radius: 10px;
+    text-align: center;
+}
+.box-cursor
+{
+    cursor: pointer;
+}
+.label-step
+{
+    font-size: 13px;
+    font-weight: bold;
+}
+.label-step-info
+{
+    font-size: 10px;
+    clear: both;
+    float: left;
+    padding-top: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+.arrow-box
+{
+    width: 4%;
+    padding: 30px 0.5%;
+    float: left;
+    font-weight: bold;
+    color: #66AA66;
+}
+
+.step-active
+{
+    background-color: #DFF1F8;
+}
+.step-disabled
+{
+    background-color: #838383;
+}
+
+.message-box
+{
+    float: left;
+    clear: both;
+    margin-bottom: 10px;
+    width: 98%;
+}
+
+.side-container-childdiv
+{
+    float: left;
+    width: 98%;
+    margin-bottom: 10px;
+}
+
+fieldset
+{
+    width: 96%;
+    border: solid 1px #72BDDB;
+    border-radius: 10px;
+}
+
+fieldset legend
+{
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.side-container-childdiv .row
+{
+    float: left;
+    width: 98%;
+    padding: 1%;
+    min-height: 80px;
+    line-height: 17px;
+}
+
+.side-container-childdiv .row .label
+{
+    font-weight: bold;
+    font-size: 10pt;
+    padding: 2px 0px;
+    margin: 5px 0px;
+    border-bottom: solid 1px;
+}
+
+.side-container-childdiv .row .content
+{
+    font-size: 9pt;
+    padding: 0px 20px;
+}
+
+
+.sp-main-container
+{
+    float: left;
+    width: 68%;
+    padding: 0 0.5%;
+}
+
+.sp-side-container
+{
+    float: right;
+    width: 30%;
+    padding: 0 0.5%;
+}
+
+.package-block
+{
+    float: left;
+    width: 98%;
+    border: solid 1px;
+    border-radius: 4px;
+    margin: 1% 0px;
+    font-weight: bold;
+}
+.package-block .header
+{
+    float: left;
+    width: 98%;
+    padding: 5px 1%;
+    border-bottom: solid 1px;
+}
+.package-block .list-test
+{
+    float: left;
+    width: 98%;
+    padding: 5px 1%;
+    font-weight: normal;
+}
+.package-block .select-package-div
+{
+    float: left;
+    width: 98%;
+    border-top: solid 1px;
+    padding: 5px 1%;
+}
+
+.package-upsell-block
+{
+    float: left;
+    width: 98%;
+    border-bottom: solid 1px;
+    padding:5px;
+    margin-bottom: 10px;
+    font-size: 10pt;
+}
+.package-upsell-block .header
+{
+    float: left;
+    width: 98%;
+    padding: 5px 1%;
+    font-weight:bold;
+}
+.package-upsell-block .list-test
+{
+    float: left;
+    width: 96%;
+    padding: 10px 2%;
+}
+.package-upsell-block .select-package-div
+{
+    float: left;
+    width: 96%;
+    padding: 5px 2%;
+    padding-right: 5px;
+}
+
+.package-upsell-block .select-package-div a
+{
+    padding: 5px;
+    border: solid 1px #000;
+    border-radius: 5px;    
+    color: #000;
+    font-weight:bold;
+}
+
+
+.package-upsell-block .select-package-div a:hover
+{
+    padding: 5px;
+    border: solid 1px #72BDDB;
+    border-radius: 5px;
+    text-decoration:none;
+    color: #72BDDB;
+}
+
+.item-data
+{
+    float: left;
+    width: 100%;
+    max-height: 240px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.item-data .item-data-row
+{
+    float: left;
+    width: 98%;
+    padding: 1%;
+    border-bottom: solid 1px;
+}
+.item-data .item-data-row .item-label
+{
+    float: left;
+    width: 75%;
+}
+.item-data .item-data-row .item-price
+{
+    float: left;
+    width: 15%;
+    text-align: center;
+    font-weight: bold;
+}
+.item-data .item-data-row .item-select-div
+{
+    float: left;
+    width: 10%;
+    text-align: center;
+}
+.customertype-block
+{
+    width: 284px;
+    float: left;
+    border: solid 1px #B8D7E6;
+    padding: 5px;
+}
+.customertype-block .row-header
+{
+    width: 100%;
+    float: left;
+    margin-bottom: 5px;
+}
+.customertype-block .row-header .part-one
+{
+    width: 24px;
+    float: left;
+}
+
+.customertype-block .row-header .part-two
+{
+    width: 250px;
+    float: left;
+}
+
+#appointment-slots
+{
+    width: 98%;
+    float: left;
+    text-align: center;
+    border: 0;
+}
+#appointment-slots tr td
+{
+    text-align: center;
+    vertical-align: middle;
+}
+#appointment-slots tr td.no-border
+{
+    border: 0;
+}
+.time-slot-block
+{
+    width: 80px;
+    text-align: center;
+    padding: 5px;
+    border: solid 1px #000;
+    margin: 5px auto;
+}
+.slot-selected-box
+{
+    float: left;
+    width: 80px;
+    text-align: center;
+    padding: 5px;
+    border: solid 1px #000;
+    margin-left: 10px;
+    min-height: 15px;
+}
+
+
+.ol-eventlist-view
+{
+    width: 100%;
+    border: solid 1px #ababab;
+    font-size: 9pt;
+}
+
+.ol-eventlist-view tr
+{
+    border-bottom: 1px solid #ababab;
+}
+
+.ol-eventlist-view th
+{
+    background: #dedede;
+    border-bottom: #ababab;
+    text-align: left;
+    padding: 5px;
+}
+
+.ol-eventlist-view td
+{
+    padding: 5px;
+    border-width: 0px;
+    border-bottom: 1px solid #ababab;
+    vertical-align: top;
+}
+
+.ol-eventlist-view tr td.address-column, .ol-eventlist-view tr th.address-column
+{
+    width: 250px;
+}
+
+.ol-eventlist-view tr td.amount-column, .ol-eventlist-view tr th.amount-column
+{
+    width: 80px;
+    text-align: right;
+}
+
+.ol-eventlist-view tr td.order-price
+{
+    text-align: right;
+    font-weight: bold;
+}
+.ol-eventlist-view tr.sourcecode-discount
+{
+    color: Red;
+}
+
+.selected-package-bg
+{
+    background-color: #ababab;
+}
+
+.button-container
+{
+    float: left;
+    width: 99%;
+    padding: 0.5%;
+}
+.button-container .left
+{
+    float: left;
+    width: 48%;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: left;
+}
+.button-container .right
+{
+    float: right;
+    width: 48%;
+    text-align: right;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+
+.val-login
+{
+    float: left;
+    width: 330px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.val-login .input-wrapper label
+{
+    display: inline-block;
+    margin-top: 7px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+}
+
+.val-login .text-box
+{
+    color: #6f6f6f;
+    border: 1px solid #838383;
+    font-size: 20px;
+    margin: 4px 0px 0px 10px;
+    padding: 6px;
+    width: 91%;
+    border-radius: 5px;
+    height: auto;
+}
+
+.val-login input[type="button"]
+{
+    font-size: 13pt;
+    color: #fff;
+    font-weight: bold;
+    color: #fef4e9;
+    border: solid 1px #da7c0c;
+    background: #f78d1d;
+    background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
+    background: -moz-linear-gradient(top,  #faa51a,  #f47a20);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
+}
+
+
+.val-login input[type="button"]:hover
+{
+    background: #f47c20;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
+    background: -moz-linear-gradient(top,  #f88e11,  #f06015);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
+}
+.qtip-data-span
+{
+    font-size: 9pt;
+    line-height: 18px;
+}
+
+.qtip-title-span
+{
+    font-size: 9pt;
+    font-weight: bold;
+}
+.qtip-title
+{
+    display: none;
+}
+
+
+.jdbox-package
+{
+    float: left;
+    width: 650px;
+    margin-top: 5px;
+}
+
+.package-detail-childdiv
+{
+    float:left;
+    width:100%;
+    line-height: 17px;
+    font-size: 10pt;
+    max-height:400px;   
+}
+
+.package-detail-childdiv div
+{
+    float:left;
+    clear:both;
+    margin-bottom: 10px;
+}
+#appointmentexpired
+{
+    width:95%;
+    padding:10px;
+    font-size:11pt;
+    font-weight:bold;
+    background: #dedede;
+    border: solid 1px #dedeff;
+}
+
+
+#appointmentcounter
+{
+    width:97%;
+    padding:1%;
+    font-size:11pt;
+    font-weight:bold;
+    color: #F8953B;
+    background: #DFF1F8;
+    border: solid 1px #B8D7E6;
+    border-radius:5px;
+}
+
+#appointmentcounter table 
+{
+    width:100%;
+    text-align:center;
+}

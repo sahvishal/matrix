@@ -1,0 +1,103 @@
+﻿<div class="mainbodyouter" data-ng-controller="healthPlanCallQueue" us-spinner spinner-key="online-spinner">
+    <div class="bodycontnr clearfix">
+        <div class="wrapcrep_inpg wrapcrep_inpg2">
+            <!--<div class="bluheader">
+                <div>
+                    &nbsp;
+                </div>
+            </div>-->
+
+            <!--<div class="main_area_bdr clearfix">
+                <div class="maincontentrow_ccrep">
+                    <div class="regcust_innerrow">
+                        <div class="midrow_bcinfo">
+                            <div class="col-sm-12">
+                                <h2>
+                                    <span id="spSearchType">HealthPlan Call Queues</span>
+                                </h2>
+                                <ol>
+                                    <li>
+                                        Select HealthPlan
+                                    </li>
+                                    <li>
+                                        Select Custom Tag for HealthPlan
+                                    </li>
+                                    <li>
+                                        Click Next
+                                    </li>
+                                </ol>
+                            </div>
+                            <div class="fline_regcust">
+                            </div>
+                        </div>-->
+            <!--<div class="middivrow_regcust_healthPlan">
+                            <div class="pull-left healthPlan">
+                                <fieldset style="width:850px;">
+                                    <legend>HealthPlan Call Queue</legend>
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-4">
+                                            <label class="info-label">Choose the HealthPlan: </label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select ng-model="selectedplans" ng-options="plans as plans.HealthPlanName for plans in HealthPlans" ng-change="GetCustomTagDropdown()">
+                                                <option value="" ng-if="false"></option>
+                                            </select><span ng-show="IsHealthPlanNotSelected" class="error-text"> *required</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-4">
+                                            <label class="info-label">Corporate Tag: </label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <span ng-hide="selectedplans==null || selectedplans.Id <= 0" ng-bind="selectedplans.CorporateTag"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-4">
+                                            <label class="info-label">Custom Tag:</label>
+                                        </div>
+                                        <div style="float: left" ng-show="customTags != null && customTags.length > 0" class="col-lg-8 custom-tagContainer">
+                                            <ui-select multiple tagging ng-model="multipleDemo.selectedCustomTag" theme="bootstrap" sortable="true" ng-disabled="disabled" style="width: 520px;" title="Add custom tags">
+                                                <ui-select-match placeholder="Add custom tags...">{{$item.Text}}</ui-select-match>
+                                                <ui-select-choices repeat="color in customTags | filter:$select.search">
+                                                    {{color.Text}}
+                                                </ui-select-choices>
+                                            </ui-select>
+                                            <span ng-show="IsCustomTagNotSelected && multipleDemo.selectedCustomTag.length <=0" class="error-text"> Please add/select atleast one custom tag</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12" ng-show="customTags != null && customTags.length > 0">
+                                        <div class="col-lg-4">&nbsp;</div>
+                                        <div class="col-lg-6 checkbox" style="margin-left: 20px;">
+                                            <input type="checkbox" ng-model="UseCustomTagExclusively" ng-checked="UseCustomTagExclusively"/> <b>Use Custom Tag Search Exclusively</b>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 top-buffer-48">
+                                        <button type="button" class="pull-right" ng-click="gotoCallQueueCategory()">Next</button>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>-->
+
+            <div class="middivrow_regcust_healthPlan" style="clear: both; display: flex; align-items: center; justify-content: center;">
+                <div class="healthplans" style="width: 33.33vw; align-content: center;">
+                    hey
+                </div>
+
+                <div class="callqueue" style="width: 33.33vw; align-content: center;">
+                    how are
+                </div>
+
+                <div class="callQueueAssociatedData" style="width: 33.33vw; align-content: center;">
+                    you
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--</div>
+    </div>
+</div>-->

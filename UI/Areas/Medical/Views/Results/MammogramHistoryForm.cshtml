@@ -1,0 +1,521 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.MammogramHistoryFormViewModel
+
+@{
+    Layout = null;
+}
+<style type="text/css">
+    .full-width-mammo-history {
+        float: left;
+        width: 865px;
+        margin-top: 5px;
+    }
+</style>
+
+<div style="float: left; width: 97%; font-size: 15px;padding-left: 10px;">
+    <div style="float: left; width: 90%; text-align: left;">
+        <img src="/Config/Content/Images/Logo-Small-160x60.gif" />
+    </div>
+    <div class="full-width-mammo-history" style="text-align: center; font-size: 18px;">
+        <span style="float: left; width: 150px; text-align:left;">
+            PID: @Model.CustomerId
+        </span>
+        <b>MAMMOGRAPHY PATIENT HISTORY FORM</b>
+    </div>
+    <div class="full-width-mammo-history" style="margin-top: 15px;">
+        <span style="float: left; width: 250px; border-bottom: solid 1px #000000;">
+            @Model.CustomerName.LastName
+        </span>
+        <span style="float: left; width: 250px; border-bottom: solid 1px #000000; margin-left: 5px;">
+            @Model.CustomerName.FirstName
+        </span>
+        <span style="float: left; width: 50px; border-bottom: solid 1px #000000; margin-left: 5px;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 50px; border-bottom: solid 1px #000000; margin-left: 5px;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 60px; border-bottom: solid 1px #000000; margin-left: 5px;">
+            &nbsp;@(Model.Dob.HasValue ? Model.Dob.Value.Month.ToString() : "")
+        </span>
+        <span style="float: left; width: 5px; font-size: 21px;">
+            /
+        </span>
+        <span style="float: left; width: 60px; border-bottom: solid 1px #000000; margin-left: 5px;">
+            &nbsp;@(Model.Dob.HasValue ? Model.Dob.Value.Day.ToString() : "")
+        </span>
+        <span style="float: left; width: 5px; font-size: 21px;">
+            /
+        </span>
+        <span style="float: left; width: 60px; border-bottom: solid 1px #000000; margin-left: 5px;">
+            &nbsp;@(Model.Dob.HasValue ? Model.Dob.Value.Year.ToString() : "")
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 250px;">
+            Patient&#8217;s Last Name
+        </span>
+        <span style="float: left; width: 250px; margin-left: 5px; text-align: center;">
+            Patient&#8217;s First Name
+        </span>
+        <span style="float: left; width: 50px; margin-left: 5px; text-align: center;">
+            M.I.
+        </span>
+        <span style="float: left; width: 50px; margin-left: 5px; text-align: center;">
+            Age
+        </span>
+        <span style="float: left; width: 200px; margin-left: 5px; text-align: center;">
+            Date of Birth 
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 250px; height: 20px; padding-top: 15px; border-bottom: solid 1px #000000;">
+            @(Model.HomePhoneNumber!=null ?  Model.HomePhoneNumber.ToString():"")
+        </span>
+        <span style="float: left; width: 250px; height: 20px; padding-top: 15px; border-bottom: solid 1px #000000; margin-left: 15px; ">
+            @(Model.OfficePhoneNumber != null ? Model.OfficePhoneNumber.ToString() : "")
+        </span>
+        <span style="float: left; width: 250px; height: 20px; padding-top: 15px; border-bottom: solid 1px #000000; margin-left: 15px; ">
+            @(Model.CellPhoneNumber != null ? Model.CellPhoneNumber.ToString() : "")
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 250px;">
+            Home Telephone Number 
+        </span>
+        <span style="float: left; width: 250px; margin-left: 15px; text-align: center;">
+            Work Telephone Number
+        </span>
+        <span style="float: left; width: 250px; margin-left: 15px; text-align: center;">
+            Cell Phone Number 
+        </span>
+    </div>
+    <div class="full-width-mammo-history" style="margin-top: 15px;">
+        <span style="float: left; width: 180px;">
+            Date of Last Mammogram:
+        </span>
+        <span style="float: left; width: 150px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 110px;">
+            Name of facility:
+        </span>
+        <span style="float: left; width: 380px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 220px;">
+            Patient Allergies if any and Type:
+        </span>
+        <span style="float: left; width: 600px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 98%;">
+            <b>RISK FACTORS:</b>
+        </span>
+        <span style="float: left; width: 55px;">
+            Height: 
+        </span>
+        <span style="float: left; width: 100px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 55px; margin-left: 40px;">
+            Weight:
+        </span>
+        <span style="float: left; width: 100px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 290px;">
+            Personal History of Breast Cancer?
+        </span>
+        <span style="float: left; width: 55px; text-align: right;">
+            Yes
+        </span>
+        <span style="float: left; width: 40px; text-align: right; ">
+            No
+        </span>
+        <span style="float: left; width: 50px; text-align: right; ">
+            Type:
+        </span>
+        <span style="float: left; width: 385px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 290px;">
+            Family History of Breast or ovarian Cancer?
+        </span>
+        <span style="float: left; width: 55px; text-align: right;">
+            Yes
+        </span>
+        <span style="float: left; width: 40px; text-align: right; ">
+            No
+        </span>
+        <span style="float: left; width: 60px; text-align: right; ">
+            If YES:
+        </span>
+        <span style="float: left; width: 376px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 90px;">
+            Relationship:
+        </span>
+        <span style="float: left; width: 200px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 120px;">
+            Age at Diagnosis:
+        </span>
+        <span style="float: left; width: 70px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 50px;">
+            Type:
+        </span>
+        <span style="float: left; width: 290px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 90px;">
+            Relationship:
+        </span>
+        <span style="float: left; width: 200px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 120px;">
+            Age at Diagnosis:
+        </span>
+        <span style="float: left; width: 70px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 50px;">
+            Type:
+        </span>
+        <span style="float: left; width: 290px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 90px;">
+            Relationship:
+        </span>
+        <span style="float: left; width: 200px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 120px;">
+            Age at Diagnosis:
+        </span>
+        <span style="float: left; width: 70px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+        <span style="float: left; width: 50px;">
+            Type:
+        </span>
+        <span style="float: left; width: 290px; border-bottom: solid 1px #000000;">
+            &nbsp;
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 98%;">
+            <b>CURRENT BREAST COMPLAINTS:</b>(Please check all that apply) 
+        </span>
+        <span style="float: left; width: 95%; height: 20px; border-bottom: solid 1px #000000;"></span>
+        <span style="float: left; width: 95%; height: 25px; border-bottom: solid 1px #000000; "></span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 98%;">
+            <b>BREAST HISTORY:</b>(Please complete if you have ever had breast surgery or treatment) 
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Implants:
+            </span>
+            <span style="float: left; width: 80px;">
+                <input type="checkbox" /> Right
+            </span>
+            <span style="float: left; width: 190px;">
+                <input type="checkbox" /> Left  Silicone / Saline
+            </span>
+            <span style="float: left; width: 50px;">
+                Date:
+            </span>
+            <span style="float: left; width: 370px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Cyst Aspiration:
+            </span>
+            <span style="float: left; width: 80px;">
+                <input type="checkbox" /> Right
+            </span>
+            <span style="float: left; width: 190px;">
+                <input type="checkbox" /> Left  
+            </span>
+            <span style="float: left; width: 50px;">
+                Date:
+            </span>
+            <span style="float: left; width: 370px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Needle Biopsy:
+            </span>
+            <span style="float: left; width: 80px;">
+                <input type="checkbox" /> Right
+            </span>
+            <span style="float: left; width: 190px;">
+                <input type="checkbox" /> Left
+            </span>
+            <span style="float: left; width: 50px;">
+                Date:
+            </span>
+            <span style="float: left; width: 370px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Surgical Biopsy:
+            </span>
+            <span style="float: left; width: 80px;">
+                <input type="checkbox" /> Right
+            </span>
+            <span style="float: left; width: 190px;">
+                <input type="checkbox" /> Left
+            </span>
+            <span style="float: left; width: 50px;">
+                Date:
+            </span>
+            <span style="float: left; width: 370px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Lumpectomy:
+            </span>
+            <span style="float: left; width: 80px;">
+                <input type="checkbox" /> Right
+            </span>
+            <span style="float: left; width: 190px;">
+                <input type="checkbox" /> Left
+            </span>
+            <span style="float: left; width: 50px;">
+                Date:
+            </span>
+            <span style="float: left; width: 370px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Mastectomy:
+            </span>
+            <span style="float: left; width: 80px;">
+                <input type="checkbox" /> Right
+            </span>
+            <span style="float: left; width: 190px;">
+                <input type="checkbox" /> Left
+            </span>
+            <span style="float: left; width: 50px;">
+                Date:
+            </span>
+            <span style="float: left; width: 370px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Hysterectomy:
+            </span>
+            <span style="float: left; width: 80px;">
+                <input type="checkbox" /> Yes
+            </span>
+            <span style="float: left; width: 52px;">
+                <input type="checkbox" /> No
+            </span>
+            <span style="float: left; width: 60px;">
+                Full <input type="checkbox" />
+            </span>
+            <span style="float: left; width: 78px;">
+                Partial <input type="checkbox" />
+            </span>
+            <span style="float: left; width: 50px;">
+                Date:
+            </span>
+            <span style="float: left; width: 370px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Breast Reduction:
+            </span>
+            <span style="float: left; width: 80px;">
+                <input type="checkbox" /> Yes
+            </span>
+            <span style="float: left; width: 190px;">
+                <input type="checkbox" /> No
+            </span>
+            <span style="float: left; width: 50px;">
+                Date:
+            </span>
+            <span style="float: left; width: 370px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Chemotherapy:
+            </span>
+            <span style="float: left; width: 140px; text-align: center;">
+                Yes/No
+            </span>
+            <span style="float: left; width: 100px;">
+                Date Started:
+            </span>
+            <span style="float: left; width: 155px; border-bottom: solid 1px #000000;margin-right: 20px;">
+                &nbsp;
+            </span>
+            <span style="float: left; width: 100px;">
+                Date Ended:
+            </span>
+            <span style="float: left; width: 175px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 130px;">
+                Radiation Therapy:
+            </span>
+            <span style="float: left; width: 140px; text-align: center;">
+                Yes/No
+            </span>
+            <span style="float: left; width: 100px;">
+                Date Started:
+            </span>
+            <span style="float: left; width: 155px; border-bottom: solid 1px #000000;margin-right: 20px;">
+                &nbsp;
+            </span>
+            <span style="float: left; width: 100px;">
+                Date Ended:
+            </span>
+            <span style="float: left; width: 175px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 98%;">
+            <b>HORMONE HISTORY:</b>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 400px;">
+                Prior or Current use of Oral Contraceptives? Yes / No
+            </span>
+            <span style="float: left; width: 100px;">
+                Date Started:
+            </span>
+            <span style="float: left; width: 100px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 400px;">
+                Prior or Current use of Hormones? Yes / No
+            </span>
+            <span style="float: left; width: 100px;">
+                Date Started:
+            </span>
+            <span style="float: left; width: 100px; border-bottom: solid 1px #000000;margin-right: 20px;">
+                &nbsp;
+            </span>
+            <span style="float: left; width: 100px;">
+                Date Ended:
+            </span>
+            <span style="float: left; width: 100px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 230px;">
+                First day of Last Menstrual Period:
+            </span>
+            <span style="float: left; width: 250px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 98%;">
+            <b>PREGNANCY:</b>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 450px;">
+                To the best of my knowledge, I am not currently pregnant.
+            </span>
+            <span style="float: left; width: 100px;">
+                True / False
+            </span>
+        </span>
+    </div>
+    <div class="full-width-mammo-history" style="margin-top: 25px;">
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 500px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+            <span style="float: left; width: 300px; border-bottom: solid 1px #000000; margin-left: 25px;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 500px; text-align: center;">
+                Patient&#8217;s Signature
+            </span>
+            <span style="float: left; width: 300px; margin-left: 25px; text-align: center;">
+                Date
+            </span>
+        </span>
+    </div>
+    <div class="full-width-mammo-history" style="text-align: center;">
+        <img src="/Config/Content/Images/MammogramHistory.jpg" />
+    </div>
+    <div class="full-width-mammo-history">
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 135px;">
+                Technologist Notes:
+            </span>
+            <span style="float: left; width: 685px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+            <span style="float: left; width: 685px; margin-left: 135px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+        <span style="float: left; width: 100%;">
+            <span style="float: left; width: 135px;">
+                Tech Signature:
+            </span>
+            <span style="float: left; width: 400px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+            <span style="float: left; width: 135px;">
+                Date:
+            </span>
+            <span style="float: left; width: 150px; border-bottom: solid 1px #000000;">
+                &nbsp;
+            </span>
+        </span>
+    </div>
+</div>

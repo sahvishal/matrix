@@ -1,0 +1,28 @@
+@using Falcon.App.Core.CallCenter.ViewModels
+@model CampaignActivityEditModel
+@{
+    Layout = null;
+}
+
+
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+@using (Ajax.BeginForm("EditActivityModel", "Campaign", new AjaxOptions { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "campaign-activity", OnComplete = "activityToggle" }))
+{
+    <div id="campaign-activity">
+        @Html.Partial("EditActivityModel", Model)
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("input[type=submit]").click(function () {
+                activityToggle();
+            });
+        });
+        function activityToggle() {
+            $(".registration-model-btn").toggle();
+        }
+        
+    </script>
+
+}

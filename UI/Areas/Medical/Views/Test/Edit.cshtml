@@ -1,0 +1,507 @@
+﻿@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Medical.ViewModels.TestEditModel
+@{
+    ViewBag.Title = "Edit Test";
+}
+<h1>Edit Test</h1>
+<div class="option-links">
+    <a href="/Medical/Test/">+ Manage Tests </a>
+</div>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{Html.BeginForm("Edit", "Test");}
+<div class="content-main-column">
+    <fieldset>
+        @Html.EditorFor(m => m.TestId)
+        @Html.HiddenFor(m => m.Alias)
+        @Html.HiddenFor(m => m.DateCreated)
+        <h4>Basic Info</h4>
+        <div style="margin-left: 20px; margin-bottom: 10px;">
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.Name)@Html.ValidationMessageFor(m => m.Name)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.Name)
+                    </div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.CPTCode)@Html.ValidationMessageFor(m => m.CPTCode)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.CPTCode)
+                    </div>
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.DiagnosisCode)@Html.ValidationMessageFor(m => m.DiagnosisCode)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.DiagnosisCode)
+                    </div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.GroupId)
+                    </div>
+                    <div class="editor-field">
+                        @Html.DropDownListFor(m => m.GroupId, DropDownHelper.GetLookupSelectListItems((long)TestGroupType.None, Model.GroupId), new { @style = "width: 215px;" })
+                    </div>
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBoxFor(m => m.IsActive) Is Active
+                </div>
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBoxFor(m => m.IsReviewable) Is Reviewable By Physician
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBoxFor(m => m.ShowinCustomerPdf) Show in Result PDF
+                </div>
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBoxFor(m => m.ShowInAlaCarte) Show in A la Carte Online
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%">
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBoxFor(m => m.IsSelectedByDefaultforEvent) Default Selection for Event
+                </div>
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBoxFor(m => m.IsDefaultSelectionForPackage) Default Selection For Package
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%">
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBoxFor(m => m.IsDefaultSelectionForOrder) Default Selection for Order
+                </div>
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBox("IsTestRecordable", Model.IsRecordable) Is Recordable
+                    @Html.HiddenFor(m => m.IsRecordable)
+                </div>
+            </div>
+            <div class="editor-row" style="width: 100%; float: left; padding-top: 5px; clear: both; display: none;" id="div_testEntryType">
+                <div class="editor-column-twoinrow" style="float: left; clear: both; width: 33%; ">
+                    @Html.LabelFor(m => m.ResultEntryTypeId)
+                </div>
+                <div class="editor-column-twoinrow">
+                    @Html.DropDownList("ddlResultEntryTypeId", DropDownHelper.GetEnumBasePairs(ResultEntryType.Hip, Model.ResultEntryTypeId.HasValue ? Model.ResultEntryTypeId.Value : (long)ResultEntryType.Hip), new { @style = "width: 215px;" })
+                    @Html.HiddenFor(m => m.ResultEntryTypeId)
+                    @Html.HiddenFor(m => m.NotValidateChatStartDate)
+                </div>
+            </div>
+            <div class="editor-row" style="width: 100%; float: left; padding-top: 5px; clear: both; display: none;" id="dvChatStartDate">
+                <div class="editor-column-twoinrow" style="float: left; clear: both; width: 33%; ">
+                    @Html.LabelFor(m => m.ChatStartDate)
+
+                </div>
+                <div class="editor-column-twoinrow">
+                    @Html.TextBox("txtChatStartDate", Model.ChatStartDate.HasValue ? Model.ChatStartDate.Value.ToString("MM/dd/yyyy") : "", new { @placeholder = "CHAT Start Date", @title = "CHAT Start Date", @class = "datePickerChatStartDate" })
+                    @Html.ValidationMessageFor(m => m.ChatStartDate)
+                    @Html.HiddenFor(m => m.ChatStartDate)
+
+                </div>
+            </div>
+            <div class="editor-column" style="width: 100%; float: left; padding-top: 5px;clear: both;">
+                <div class="editor-column-twoinrow" style="float: left; clear: both; width: 33%; ">
+                    @Html.LabelFor(m => m.IsBillableToHealthPlan)
+                </div>
+                <div class="editor-column-twoinrow">
+                    @Html.RadioButtonFor(model => model.IsBillableToHealthPlan, true, new { id = "radio_IsBillableToHealthPlan_True" }) Yes
+                    @Html.RadioButtonFor(model => model.IsBillableToHealthPlan, false, new { id = "radio_IsBillableToHealthPlan_False" }) No
+                </div>
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Description)
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.Description, new { @cols = "50", @rows = "4" })
+            </div>
+        </div>
+        <h4>Price</h4>
+        <div style="margin-left: 20px; margin-bottom: 10px;">
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.Price)@Html.ValidationMessageFor(m => m.Price)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.Price)
+                    </div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.PackagePrice)@Html.ValidationMessageFor(m => m.PackagePrice)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.PackagePrice)
+                    </div>
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.RefundPrice)@Html.ValidationMessageFor(m => m.RefundPrice)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.RefundPrice)
+                    </div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.PackageRefundPrice)@Html.ValidationMessageFor(m => m.PackageRefundPrice)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.PackageRefundPrice)
+                    </div>
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.ReimbursementRate)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.ReimbursementRate)
+                    </div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.WithPackagePrice)@Html.ValidationMessageFor(m => m.WithPackagePrice)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.WithPackagePrice)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4>Additional Info</h4>
+        <div style="margin-left: 20px; margin-bottom: 10px;">
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.MinAge)@Html.ValidationMessageFor(m => m.MinAge)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.MinAge)
+                    </div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.MaxAge)@Html.ValidationMessageFor(m => m.MaxAge)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.MaxAge)
+                    </div>
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.RelativeOrder)@Html.ValidationMessageFor(m => m.RelativeOrder)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.RelativeOrder)
+                    </div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.ScreeningTime) @Html.ValidationMessageFor(m => m.ScreeningTime)
+                    </div>
+                    @{
+                        var selectListItems = new List<SelectListItem>();
+                        selectListItems.Add(new SelectListItem { Text = "Set Screening Time", Value = "-1" });
+                        for (int i = 0; i <= 30; i = i + 5)
+                        {
+                            selectListItems.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = Model.ScreeningTime == i });
+                        }
+                    }
+                    @Html.DropDownListFor(m => m.ScreeningTime, selectListItems, new { @style = "min-width: 60px; width: 65%;" })
+                    (minutes)
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.HealthAssessmentTemplateId)
+                        <a href="javascript:void(0);" id="view-template" onclick="viewHealthAssessmentTemplateQuestion();" style="margin-left: 10px;">View</a>
+                    </div>
+                    <div class="editor-field">
+                        @Html.DropDownListFor(m => m.HealthAssessmentTemplateId, DropDownHelper.GetHealthAssessmentTemplatesByType(HealthAssessmentTemplateType.Test))
+                    </div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">@Html.LabelFor(m => m.Gender)</div>
+                    <div class="editor-field">@Html.DropDownListFor(m => m.Gender, DropDownHelper.GetLookupSelectListItems((long)Gender.Unspecified, Model.Gender))</div>
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    @Html.CheckBoxFor(m => m.IsTestCoveredByInsurance) Is Covered by Insurance
+                </div>
+                <div class="editor-column-twoinrow billing-account-div">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.BillingAccountId)@Html.ValidationMessageFor(m => m.BillingAccountId)
+                    </div>
+                    <div class="editor-field">
+                        @Html.DropDownListFor(m => m.BillingAccountId, DropDownHelper.BillingAccounts())
+                    </div>
+                </div>
+            </div>
+            <div class="editor-row" style="width: 99%;">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">@Html.LabelFor(m => m.MediaUrl) @Html.ValidationMessageFor(m => m.MediaUrl)</div>
+                    <div class="editor-field">@Html.TextBoxFor(m => m.MediaUrl)</div>
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.PreQualificationQuestionTemplateId)
+                    </div>
+                    <div class="editor-field">
+                        @Html.DropDownListFor(m => m.PreQualificationQuestionTemplateId, DropDownHelper.GetPreQualificationTestQuestionTemplates(Model.TestId))
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4>Available to roles</h4>@Html.ValidationMessageFor(m => m.AvailableToRoleIds)
+        <div style="margin-left: 20px; margin-bottom: 10px;">
+            @if (Model.Roles != null && Model.Roles.Count() > 0)
+            {
+                <div>
+                    <input type="checkbox" id="SelectAllRolesCheckBox" onclick="SelectAllRoles();" />
+                    All
+                </div>
+                <div class="editor-row role-div" style="width: 99%;">
+                    @foreach (var role in Model.Roles)
+                    {
+                        <div class="editor-column" style="width: 40%;">
+                            @if (Model.AvailableToRoleIds != null && Model.AvailableToRoleIds.Contains(role.FirstValue))
+                            {
+                                <input type="checkbox" id="@role.FirstValue" checked="checked" onclick="FillRole(this);" /> @role.SecondValue
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="@role.FirstValue" onclick="FillRole(this);" /> @role.SecondValue
+                            }
+                            <input type="hidden" value="@role.FirstValue" />
+                        </div>
+                    }
+                </div>
+            }
+            @if (Model.AvailableToRoleIds != null && Model.AvailableToRoleIds.Count() > 0)
+            {
+                <script type="text/javascript" language="javascript">                    $(document).ready(function () { RenderAssignedRoles(); CheckRoleCheckBox(); });        </script>
+            }
+        </div>
+        <div id="assignedRolesContainer" style="display: none;">
+        </div>
+    </fieldset>
+</div>
+<div class="submit-button-row">
+    @Html.ActionLink("Close", "Index", "Test") &nbsp;&nbsp; @Html.SubmitButton("Update Test")
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+@* Set assigned roles *@
+<script type="text/javascript" language="javascript">
+    var assignedRoles = new Object();
+    @if ((Model.AvailableToRoleIds != null) && (Model.AvailableToRoleIds.Count() > 0))
+        {
+            <text>
+    var role = new Object();
+    </text>
+            foreach (var assignedRole in Model.AvailableToRoleIds)
+            {
+                    <text>
+    {
+        role = new Object();
+        role.Id = @assignedRole;
+        assignedRoles[role.Id] = role;
+    }
+    </text>
+            }
+        }
+
+    function FillRole(sourceCheckbox){//debugger;
+        var checkedBox = $(sourceCheckbox);
+        var val = checkedBox.parent().find("input:hidden").val();
+        if(sourceCheckbox.checked){
+            role = new Object();
+            role.Id = val;
+            assignedRoles[val] = role;
+            CheckRoleCheckBox();
+        }
+        else{
+            if(assignedRoles[val]  != null){
+                delete assignedRoles[val];
+                $('#SelectAllRolesCheckBox').attr("checked",false);
+            }
+        }
+        RenderAssignedRoles();
+    }
+
+    function RenderAssignedRoles() {
+        $("#assignedRolesContainer").empty();
+        $.each(assignedRoles, function (key, terr) {
+            $("#assignedRolesTemplate").tmpl(terr).appendTo("#assignedRolesContainer");
+        });
+    }
+
+    function SelectAllRoles()
+    {//debugger;
+        if($('#SelectAllRolesCheckBox').attr('checked'))
+        {
+            $('.role-div :checkbox').each(function(){
+                if ($(this).is(':checked')==false)
+                {
+                    $(this).attr('checked',true);
+                    $(this).click();
+                    $(this).attr('checked',true);
+                }
+            });
+        }
+        else
+        {
+            $('.role-div :checkbox').each(function(){
+                if ($(this).is(':checked'))
+                {
+                    $(this).attr('checked',false);
+                    $(this).click();
+                    $(this).attr('checked',false);
+                }
+            });
+        }
+    }
+
+    function CheckRoleCheckBox()
+    {//debugger;
+        var allSelected = true;
+        $('.role-div :checkbox').each(function(){
+            if ($(this).is(':checked')==false)
+                allSelected = false;
+        });
+        $('#SelectAllRolesCheckBox').attr('checked',allSelected);
+    }
+</script>
+<script id="assignedRolesTemplate" type="text/x-jquery-tmpl">
+    <div style="display: none;">
+        <input type="hidden" name="AvailableToRoleIds.Index" value="${Id}" />
+        <input type="text" name="AvailableToRoleIds[${Id}]" value="${Id}" />
+    </div>
+</script>
+@* End - Set assigned roles *@
+
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function () {
+        showHideViewTemplate();
+        resetBillingAccount();
+        $("#HealthAssessmentTemplateId").bind("change", function () { showHideViewTemplate(); });
+
+        $("#IsTestCoveredByInsurance").bind("click", function () { resetBillingAccount(); });
+
+        if($("#IsTestRecordable").is(":checked")) {
+            $("#div_testEntryType").show();
+        }
+        else {
+            $("#div_testEntryType").hide();
+        }
+
+        hideShowCHATStartDateDiv();
+
+        if($("#ddlResultEntryTypeId").val() == '@((long)ResultEntryType.Chat)' && $("#IsTestRecordable").is(":checked") && $("#dvChatStartDate .field-validation-error:first").html() == null)
+        {
+            $("#txtChatStartDate").attr('disabled', true);
+            $("#IsTestRecordable").attr('disabled', true);
+            $("#ddlResultEntryTypeId").attr('disabled', true);
+            $("#NotValidateChatStartDate").val('true');
+
+        }
+
+    });
+    function viewHealthAssessmentTemplateQuestion() {
+        var templateId = $("#HealthAssessmentTemplateId").val();
+        if (parseInt(templateId) > 0) {
+            window.open("/Medical/HealthAssessment/View?id=" + templateId, "Template_Question", "width=720, height=620, scrollbars=1");
+        }
+    }
+
+    function showHideViewTemplate() {
+        var templateId = $("#HealthAssessmentTemplateId").val();
+        if (parseInt(templateId) > 0) {
+            $("#view-template").show();
+        }
+        else {
+            $("#view-template").hide();
+        }
+    }
+
+    function resetBillingAccount() {
+
+        if ($("#IsTestCoveredByInsurance").is(":checked") == false) {
+            $("#BillingAccountId option[value=-1]").attr("selected", true);
+            $(".billing-account-div").hide();
+        } else {
+            $(".billing-account-div").show();
+        }
+    }
+
+    $("#IsTestRecordable").change(function(){
+        if($(this).is(":checked")) {
+            $("#div_testEntryType").show();
+            $("#ddlResultEntryTypeId").val(@((long)ResultEntryType.Hip));
+            $("#ResultEntryTypeId").val(@((long)ResultEntryType.Hip));
+        }
+        else {
+            $("#div_testEntryType").hide();
+            $("#ResultEntryTypeId").val('');
+        }
+        hideShowCHATStartDateDiv();
+        $("#IsRecordable").val($(this).is(":checked"));
+    });
+    function hideShowCHATStartDateDiv()
+    {
+        if($("#ddlResultEntryTypeId").val() == '@((long)ResultEntryType.Chat)' && $("#IsTestRecordable").is(":checked"))
+        {
+            $("#dvChatStartDate").show();
+          
+            var minimumDate = new Date();
+            minimumDate.setDate(minimumDate.getDate() + 1);
+
+            $(".datePickerChatStartDate").datepicker({
+                minDate: minimumDate,
+                dateFormat: 'mm/dd/yy'
+            });
+        }
+        else
+        {
+            $("#txtChatStartDate").val('');
+            $("#ChatStartDate").val('');
+            $("#dvChatStartDate").hide();
+        }
+    }
+
+    $("#ddlResultEntryTypeId").change(function(){
+        if($(this).val() == '@((long)ResultEntryType.Chat)')
+        {
+            if (!confirm("Are you sure want to enable Result entry by CHAT? If you enable this then you will never be able to revert it back.")) {
+                $(this).val('@((long)ResultEntryType.Hip)');
+                return false;
+            }
+        }
+        hideShowCHATStartDateDiv();
+    });
+    $("#txtChatStartDate").change(function(){  $("#ChatStartDate").val($(this).val()) });
+    $("#ddlResultEntryTypeId").change(function(){ $("#ResultEntryTypeId").val($(this).val()) });
+
+</script>
+@{Html.EndForm();}

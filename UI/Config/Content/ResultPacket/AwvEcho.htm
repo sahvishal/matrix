@@ -1,0 +1,673 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="Stylesheet" type="text/css" href="content/FinalPdf.css" />
+    <script type="text/javascript" src="content/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="content/jquery-ui-1.8.12.custom.min.js"></script>
+</head>
+<body>
+    <div id="AwvEcho-rpp-section" style="display: none;" class="mainContainer-wopb rpp-pagebreak">
+        <div class="centeralignimgtitlediv test-header-image">
+            <img src="content/yourechocardiogramscreening.jpg" alt="" />
+        </div>
+        <div class="centeralignimgtitlediv test-header-text" style="display: none;">
+            ECHOCARDIOGRAM RESULTS
+        </div>
+        <div class="divtestsection-withborder">
+            <div class="section">
+                <div class="section-left font-description">
+                    <div class="testsection-header">
+                        ECHOCARDIOGRAM ULTRASOUND
+                    </div>
+                    The echocardiogram is considered to be one of the best non-invasive methods of obtaining
+                    information about the heart’s size, strength, areas of weakness and valve function.
+                    Sound waves are used to create a video of the heart as it pumps blood throughout
+                    the body, allowing for a comprehensive evaluation of the heart’s function; only
+                    the coronary arteries are not directly seen.
+                    <br />
+                    <span><i style="font-weight: bold;">All echocardiogram results must correlate with clinical findings. PCP follow up is required for further discussion of  all Echo results and diagnosis.</i></span>
+                </div>
+                <div class="section-right">
+                    <img src="content/yourechocardiogramimage.jpg" alt="" />
+                </div>
+            </div>
+            <div class="section" style="display: none">
+                <span class="testsection-header">RESULTS:</span><span id="AwvEcho-rpp-resultspan" class="test-resultspan-font"></span>
+            </div>
+            <div class="section font-reading" style="display: none">
+                <div style="float: left; width: 100%; border-bottom: solid 1px black">
+                    <table cellspacing="0" cellpadding="0" id="AwvEchoFindings" style="border-collapse: collapse; float: left;"
+                           border="0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input name="AwvEchoFindingsRadioButton" class="rbt-finding" type="radio" />Normal
+                                </td>
+                                <td>
+                                    <input name="AwvEchoFindingsRadioButton" class="rbt-finding" type="radio" />
+                                    Abnormal
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="section font-reading">
+                <div style="float: left; width: 600px;">
+                    <div>
+                        <b>Estimated Ejection Fraction </b>
+                    </div>
+                    <div>
+                        <table cellspacing="0" cellpadding="0" id="AwvEchoEstimatedEjacFinding" style="border-collapse: collapse;" border="0">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input disabled="disabled" name="AwvEcho-finding-ejaction" class="rbt-finding" type="radio" />50% or more
+                                    </td>
+                                    <td>
+                                        <input disabled="disabled" name="AwvEcho-finding-ejaction" class="rbt-finding" type="radio" />50-54%
+                                    </td>
+                                    <td>
+                                        <input disabled="disabled" name="AwvEcho-finding-ejaction" class="rbt-finding" type="radio" />36-49%
+                                    </td>
+                                    <td>
+                                        <input disabled="disabled" name="AwvEcho-finding-ejaction" class="rbt-finding" type="radio" />21-35%
+                                    </td>
+                                    <td>
+                                        <input disabled="disabled" name="AwvEcho-finding-ejaction" class="rbt-finding" type="radio" />15-21%
+                                    </td>
+                                    <td>
+                                        <input disabled="disabled" name="AwvEcho-finding-ejaction" class="rbt-finding" type="radio" />Less than 15%
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="section font-reading">
+                <div style="float: left; width: 70px;">
+                    <div>
+                        <b>Valve </b>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="AwvEchoValveAorticCheckbox" />Aortic
+                    </div>
+                    <div>
+                        <input type="checkbox" id="AwvEchoValveMitralCheckbox" />Mitral
+                    </div>
+                    <div>
+                        <input type="checkbox" id="AwvEchoValvePulmonicCheckbox" />Pulmonic
+                    </div>
+                    <div>
+                        <input type="checkbox" id="AwvEchoValveTricuspidCheckbox" />Tricuspid
+                    </div>
+                </div>
+                <div style="float: left; width: 205px;">
+                    <div>
+                        <b>Regurgitation</b>
+                    </div>
+                    <div>
+                        <table cellspacing="0" cellpadding="0" id="AwvEchoAorticRegurgitationFinding" style="border-collapse: collapse;"
+                               border="0">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input name="AwvEchoregurgitationaortic-button" class="rbt-finding" type="radio" />Trace
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationaortic-button" class="rbt-finding" type="radio" />Mild
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationaortic-button" class="rbt-finding" type="radio" />Mod
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationaortic-button" class="rbt-finding" type="radio" />Severe
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <table cellspacing="0" cellpadding="0" id="AwvEchoMitralRegurgitationFinding" style="border-collapse: collapse;"
+                               border="0">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input name="AwvEchoregurgitationmitral-button" class="rbt-finding" type="radio" />Trace
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationmitral-button" class="rbt-finding" type="radio" />Mild
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationmitral-button" class="rbt-finding" type="radio" />Mod
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationmitral-button" class="rbt-finding" type="radio" />Severe
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <table cellspacing="0" cellpadding="0" id="AwvEchoPulmonicRegurgitationFinding" style="border-collapse: collapse;"
+                               border="0">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input name="AwvEchoregurgitationpulmonic-button" class="rbt-finding" type="radio" />Trace
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationpulmonic-button" class="rbt-finding" type="radio" />Mild
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationpulmonic-button" class="rbt-finding" type="radio" />Mod
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationpulmonic-button" class="rbt-finding" type="radio" />Severe
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <table cellspacing="0" cellpadding="0" id="AwvEchoTricuspidRegurgitationFinding" style="border-collapse: collapse;"
+                               border="0">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input name="AwvEchoregurgitationtricuspid-button" class="rbt-finding" type="radio" />Trace
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationtricuspid-button" class="rbt-finding" type="radio" />Mild
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationtricuspid-button" class="rbt-finding" type="radio" />Mod
+                                    </td>
+                                    <td>
+                                        <input name="AwvEchoregurgitationtricuspid-button" class="rbt-finding" type="radio" />Severe
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="float: left; width: 530px;">
+                    <div style="float: left; width: 100%;">
+                        <b>Morphology Characteristics </b>
+                    </div>
+                    <div style="clear:both;float:left;width: 100%;">
+                        <div style="float: left; clear: both;">
+                            <table cellspacing="0" cellpadding="0" id="AwvEchoAorticMorphologyFinding" style="border-collapse: collapse;"
+                                   border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input id="AwvEchoMorphologyaorticcheckbox" type="checkbox" />Sclerosis
+                                        </td>
+                                        <td>
+                                            <input id="AwvEchoMorphologyaorticcheckbox" type="checkbox" />Stenosis
+                                        </td>
+                                        <td>
+                                            <input id="AwvEchoMorphologyaorticcheckbox" type="checkbox" />Bicuspid AV
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="float: left;">
+                            &nbsp;Velocity<input style="width: 30px;" id="AwvEchoAorticVelocityTextbox" type="text" />
+                        </div>
+                        <div style="float: left">
+                            &nbsp;Peak Gradient
+                            <input type="text" style="width: 30px;" id="PeakGradient" />
+                        </div>
+                        <div style="float: left">
+                            &nbsp;&nbsp;Est. VA
+                            <input type="text" style="width: 30px;" id="AorticEstimatedValveArea" />
+                        </div>
+                        <div style="float: left;">
+                            &nbsp;&nbsp;Est. RV
+                            <input type="text" style="width: 30px;" id="AorticEstimatedRightValve" />
+                        </div>
+                    </div>
+                    <div style="float: left;clear:both;width:100%;">
+                        <div style="float: left;">
+                            <table cellspacing="0" cellpadding="0" id="AwvEchoMitralMorphologyFinding" style="border-collapse: collapse;"
+                                   border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input id="AwvEchoMorphologymitralcheckbox" type="checkbox" />Sclerosis
+                                        </td>
+                                        <td>
+                                            <input id="AwvEchoMorphologymitralcheckbox" type="checkbox" />Stenosis
+                                        </td>
+                                        <td>
+                                            <input id="AwvEchoMorphologymitralcheckbox" type="checkbox" />Mitral Prolapse
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="float: left;width: 70px;">
+                            &nbsp;&nbsp;P1/2T
+                            <input style="width: 30px;" id="AwvEchoPTTextbox" type="text" />
+                        </div>
+                        <div style="float: left; width: 80px; ">
+                            &nbsp;&nbsp;Est. VA
+                            <input type="text" style="width: 30px;" id="MitralEstimatedValveArea" />
+                        </div>
+                        <div style="float: left">
+                            &nbsp;&nbsp;Est. RV
+                            <input type="text" style="width: 30px;" id="MitralEstimatedRightValve" />
+                        </div>
+                    </div>
+                    <div style="clear:both;float:left;width: 100%;">
+                        <div style="float: left;">
+                            <table cellspacing="0" cellpadding="0" id="AwvEchoPulmonicMorphologyFinding" style="border-collapse: collapse;"
+                                   border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input id="Checkbox1" type="checkbox" />Sclerosis
+                                        </td>
+                                        <td>
+                                            <input id="Checkbox2" type="checkbox" />Stenosis
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="float: left;">
+                            &nbsp;&nbsp;Velocity
+                            <input id="AwvEchoVelocityPulmonicTextbox" style="width: 30px;" type="text" />
+                        </div>
+                        <div style="float: left">
+                            &nbsp;&nbsp;Est. VA
+                            <input type="text" style="width: 30px;" id="PulmonicEstimatedValveArea" />
+                        </div>
+                    </div>
+                    <div style="clear:both;float: left; width: 100%;">
+                        <div style="float: left;">
+                            <table cellspacing="0" cellpadding="0" id="AwvEchoTricuspidMorphologyFinding" style="border-collapse: collapse;"
+                                   border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input id="morphologytricuspidcheckbox" type="checkbox" />Sclerosis
+                                        </td>
+                                        <td>
+                                            <input id="morphologytricuspidcheckbox" type="checkbox" />Stenosis
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="float: left;">
+                            &nbsp;&nbsp;PAP
+                            <input id="AwvEchoPapTextbox" style="width: 30px;" type="text" />
+                        </div>
+                        <div style="float: left;">
+                            &nbsp;&nbsp;Velocity
+                            <input id="AwvEchoVelocityTricuspidTextbox" style="width: 30px;" type="text" />
+                        </div>
+                        <div style="float: left;width: 100px">
+                            &nbsp;&nbsp;Est. VA
+                            <input type="text" style="width: 30px;" id="TricuspidEstimatedValveArea" />
+                        </div>
+                        <div style="float: left;clear:both;width:220px">
+                            <input type="checkbox" id="AwvEchoMorphologyTricuspidHigh35MmHgOrGreaterCheckbox" />
+                            High, 35mmHg or greater
+                            <input type="checkbox" id="AwvEchoMorphologyTricuspidNormalCheckbox" />
+                            Normal
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section font-reading margin-0">
+                <div style="float: left; clear: both; margin-bottom: 5px; width: 100%">
+                    <div style="float: left; width: 150px;">
+                        <div class="margin-top-small">
+                            <input type="checkbox" id="AwvEchoDiastolicDysfunctionCheckbox" />Diastolic Dysfunction
+                        </div>
+                        <div class="margin-top-small">
+                            <span style="float: left; width: 17px;">
+                                <input type="checkbox" id="AwvEchoConsistentLvDiastolicFailureCheckbox" />
+                            </span>
+                            <span>
+                                Consistent with LV Diastolic Failure
+                            </span>
+                        </div>
+                        <div class="margin-top-small" style="display: block; white-space: nowrap;">
+                            <span style="float: left; width: 17px;">
+                                <input type="checkbox" id="AwvEchoConsistentHypertensiveHeartDiseaseWithDiastolicHeartFailureCheckbox" />
+                            </span>
+                            <span>
+                                Consistent with Hypertensive Heart Disease with Diastolic Heart Failure
+                            </span>
+                        </div>
+                        <div class="margin-top-small" style="padding-top: 5px;">
+                            <input type="checkbox" id="AwvEchoPericardialEffusionCheckbox" />Pericardial Effusion
+                        </div>
+                        <div class="margin-top-small">
+                            <input type="checkbox" id="AwvEchoAorticRootCheckbox" />Aortic Root
+                        </div>
+
+                        <div class="margin-top-small" style="padding-top: 17px;">
+                            <input type="checkbox" id="AwvEchoVentricularEnlargmentCheckbox" />Ventricular Enlargement
+                        </div>
+                        <div class="margin-top-small">
+                            <input type="checkbox" id="AwvEchoVentricularHypertrophyCheckbox" />Ventricular Hypertrophy
+                        </div>
+                        <div class="margin-top-small">
+                            <input type="checkbox" id="AwvEchoAtrialEnlargmentCheckbox" />Atrial Enlargement
+                        </div>
+                        <div class="margin-top-small">
+                            <input type="checkbox" id="AwvEchoArrythmiaCheckbox" />Arrhythmia
+                        </div>
+                        <div class="margin-top-small" style="margin-left: 15px;">
+                            <input type="checkbox" id="AwvEchoAFibCheckbox" />A-Fib
+                            <input type="checkbox" id="AwvEchoAFlutterCheckbox" />A-Flutter
+                        </div>
+                        <div class="margin-top-small" style="margin-left: 15px;">
+                            <input type="checkbox" id="AwvEchoPACCheckbox" />PAC
+                            <input type="checkbox" id="AwvEchoPVCCheckbox" />PVC
+                        </div>
+                    </div>
+                    <div style="float: left; width: 340px;">
+                        <div style="clear: both;">
+                            <div style="float:left;">
+                                <table cellspacing="0" cellpadding="0" id="AwvEchoDistolicDysfunctionFinding" style="border-collapse: collapse;" border="0">
+                                    <tr>
+                                        <td><input type="radio" checked="checked" />Grade I</td>
+                                        <td><input type="radio" checked="checked" />Grade II</td>
+                                        <td><input type="radio" checked="checked" />Grade III</td>
+                                        <td><input type="radio" checked="checked" />Grade IV</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="float:left; padding-left:5px; margin-top:-3px">
+                                E/e' Ratio
+                                <input type="text" style="width: 30px" id="DiastolicDysfunctionEeRatio" />
+                            </div>
+                        </div>
+                        <div class="margin-top-small">
+                            <span style="float: left; width: 17px;">
+                                <input type="checkbox" id="AwvEchoConsistentHypertensiveHeartDiseaseWithoutDiastolicHeartFailureCheckbox" />
+                            </span>
+                            <span>
+                                Consistent with Hypertensive Heart Disease without Diastolic Heart Failure
+                            </span>
+                        </div>
+                        <div style="clear: both; margin-top: 20px;">
+                            <table cellspacing="0" cellpadding="0" id="AwvEchoPericardialEffFinding" style="border-collapse: collapse;"
+                                   border="0">
+                                <tr><td><input type="checkbox" checked="checked" />Physiologic</td></tr>
+                            </table>
+                        </div>
+                        <div style="clear: both;" class="margin-top-small">
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoScleroticCheckbox" />Sclerotic
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoCalcifiedCheckbox" />Calcified
+                            </span>
+                            <span style="float: left; padding-left: 20px; margin-top: -3px">
+                                Dimension
+                                <input type="text" style="width: 40px" id="AwvEchoEnlargedTextbox" />cm
+                            </span>
+                        </div>
+                        <div style="clear: both;" class="margin-top-small">
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoAscendingAortaArchCheckbox" />Ascending Aorta/Arch
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoAtherosclerosis" />Atherosclerosis
+                            </span>
+                        </div>
+                        <div style="clear: both;" class="margin-top-small">
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoLeftVEnlargementCheckbox" />Left
+                                <input type="text" style="width: 40px" id="AwvEchoLeftVEnlargementTextbox" />cm
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoRightVEnlargementCheckbox" />Right
+                                <input type="text" style="width: 40px" id="AwvEchoRightVEnlargementTextbox" />cm
+                            </span>
+                        </div>
+                        <div style="clear: both;">
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoLeftVHypertrophyCheckbox" />Left
+                                <input type="text" style="width: 40px" id="AwvEchoLeftVHypertrophyTextbox" />cm
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoRightVHypertrophyCheckbox" />Right
+                                <input type="text" style="width: 40px" id="AwvEchoRightVHypertrophyTextbox" />cm
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoIvshCheckbox" runat="server" />IVSH
+                                <input type="text" style="width: 40px" id="AwvEchoIvshTextbox" />cm
+                            </span>
+                        </div>
+                        <div style="clear: both;">
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoLeftAtrialEnlargementCheckbox" />Left
+                                <input type="text" style="width: 40px" id="AwvEchoLeftAtrialEnlargementTextbox" />cm
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoRightAtrialEnlargementCheckbox" />Right
+                                <input type="text" style="width: 40px" id="AwvEchoRightAtrialEnlargementTextbox" />cm
+                            </span>
+                        </div>
+                        <div style="clear: both;">
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoAsdCheckbox" />ASD
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoPfoCheckbox" />PFO
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoFlailCheckbox" />Aneurysmal AS
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoVsdCheckbox" />VSD
+                            </span>
+                        </div>
+                    </div>
+                    <div style="float: left; width: 305px;">
+                        <div style="float: left;">
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoMitralAnnularCheckbox" />Mitral annular Ca++
+                            </span>
+                        </div>
+                        <div style="clear: both;">
+
+                        </div>
+                        <div style="clear: both;">
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoRestrictedLeafletCheckbox" />
+                                Restricted Leaflet Motion
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoRestrictedLeafletAorticCheckbox" />Aortic
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoRestrictedLeafletMitralCheckbox" />Mitral
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoRestrictedLeafletPulCheckbox" />Pul
+                            </span>
+                            <span style="float: left;">
+                                <input type="checkbox" id="AwvEchoRestrictedLeafletTriCheckbox" />Tri
+                            </span>
+                        </div>
+                        <div style="clear: both">
+                        </div>
+                        <div style="float: left; margin-top: 20px;">
+                            <div>
+                                <strong>Wall Motion Abnormality </strong>
+                            </div>
+                            <div>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoHypokineticCheckbox" />Hypokinetic
+                                </span>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoAkineticCheckbox" />Akinetic
+                                </span>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoDyskineticCheckbox" />Dyskinetic
+                                </span>
+                            </div>
+                            <div style="clear: both">
+                            </div>
+                            <div>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoAnteriorCheckbox" />Anterior
+                                </span>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoPosteriorCheckbox" />Posterior
+                                </span>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoApicalCheckbox" />Apical
+                                </span>
+                            </div>
+                            <div style="clear: both">
+                            </div>
+                            <div>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoSeptalCheckbox" />Septal
+                                </span>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoLateralCheckbox" />Lateral
+                                </span>
+                                <span style="float: left">
+                                    <input type="checkbox" id="AwvEchoInferiorCheckbox" />Inferior
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section font-reading margin-0">
+                <div style="display: none;" class="rsleft">
+                    <table cellspacing="0" cellpadding="0" id="AwvEchoUnableToScreen"></table>
+                </div>
+                <div class="rsright">
+                    <input id="TechnicalLimitedbutReadableAwvEchoCheckbox" type="checkbox" />Technically Limited&nbsp;&nbsp;
+                    <input id="RepeatStudyuneadableAwvEchoCheckbox" type="checkbox" />Repeat Study/Unreadable
+                </div>
+            </div>
+            <div class="section top-border margin-0">
+                <div class="section margin-0">
+                    <span class="testsection-header">REMARKS: </span><span id="physicianRemarksAwvEcho"></span>
+                </div>
+                <div class="section margin-0">
+                    <b>Technician: </b>
+                    <input type="text" id="techAwvEcho" style="width: 400px; border: none;" readonly="readonly" />
+                </div>
+                <div class="section margin-0">
+                    <div class="section margin-0" style="width: 20%;">
+                        <b>Physician Signature: </b>
+                        <div style="padding-top: 50px;">Electronically signed</div>
+                    </div>
+                    <div class="section margin-0" style="width: 75%;">
+                        <table cellspacing="13" class="physician-signature">
+                            <tr>
+                                <td id="AwvEcho-primaryEvalPhysicianSign" class="primaryEvalPhysicianSign" style="text-align: center;"></td>
+                                <td id="AwvEcho-overreadEvalPhysicianSign" class="overreadEvalPhysicianSign" style="text-align: center;"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="section top-border margin-0" id="AwvEcho-longdescription-div">
+                <span class="testsection-header">FOLLOW-UP: </span>
+                <p id="longdescription-AwvEcho" class="test-textcontent-rpp">
+                    <i>
+                        You have purchased the test, however due to technical reasons we could not perform
+                        this test on you. If you have any questions please feel free to call us.
+                    </i>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div id="AwvEcho-AdditionalReading-rpp-section" style="display: none;" class="mainContainer-wopb">
+        <div class="centeralignimgtitlediv test-header-image">
+            <img src="content/yourechocardiogramscreening.jpg" alt="" />
+        </div>
+        <div class="centeralignimgtitlediv test-header-text" style="display: none;">
+            ECHOCARDIOGRAM RESULTS
+        </div>
+        <div class="divtestsection-withborder">
+            <div class="section">
+                <span class="testsection-header">RESULTS:</span>
+            </div>
+            <div id="EjectionFractionFindingSection" class="FindingSection" style="display:none">
+                <div id="EjectionFractionFindingConclusion">
+
+                </div>
+            </div>
+            <div class="section font-reading">
+                <div id="LeftVentricleFindingSection" class="FindingSection" style="display:none">
+                    <h3>Left Ventricle</h3>
+                    <div id="LeftVentricleFindingConclusion">
+
+                    </div>
+                </div>
+                <div id="LeftAtriumIASFindingSection" class="FindingSection" style="display:none">
+                    <h3>Left Atrium + IAS</h3>
+                    <div id="LeftAtriumIASFindingConclusion">
+
+                    </div>
+                </div>
+                <div id="RightVentricleFindingSection" class="FindingSection" style="display:none">
+                    <h3>Right Ventricle</h3>
+                    <div id="RightVentricleFindingConclusion" class="FindingSection">
+
+                    </div>
+                </div>
+                <div id="RightAtriumFindingSection" class="FindingSection" style="display:none">
+                    <h3>Right Atrium</h3>
+                    <div id="RightAtriumFindingConclusion">
+
+                    </div>
+                </div>
+                <div id="AortaFindingSection" class="FindingSection" style="display:none">
+                    <h3>Aorta</h3>
+                    <div id="AortaFindingConclusion">
+
+                    </div>
+                </div>
+                <div id="MitralFindingSection" class="FindingSection" style="display:none">
+                    <h3>Mitral</h3>
+                    <div id="MitralFindingConclusion">
+
+                    </div>
+                </div>
+                <div id="PulmonaryFindingSection" class="FindingSection" style="display:none">
+                    <h3>Pulmonary</h3>
+                    <div id="PulmonaryFindingConclusion">
+
+                    </div>
+                </div>
+                <div id="TricuspidFindingSection" class="FindingSection" style="display:none">
+                    <h3>Tricuspid</h3>
+                    <div id="TricuspidFindingConclusion">
+
+                    </div>
+                </div>
+            </div>
+            <div class="section font-reading">
+                <b>Disclaimer:</b> Please see above report.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

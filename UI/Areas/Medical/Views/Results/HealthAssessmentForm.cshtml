@@ -1,0 +1,72 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.DependencyResolution
+@using Roles = Falcon.App.Core.Enum.Roles
+@model HealthAssessmentEditModel
+@{
+    ViewBag.Title = "HealthAssessmentForm";
+    Layout = null;
+    var userSession = IoC.Resolve<ISessionContext>().UserSession;
+    
+    if (userSession != null && userSession.CurrentOrganizationRole != null && userSession.CurrentOrganizationRole.CheckRole((long)Roles.Customer))
+    {
+        var vd = new ViewDataDictionary();
+        vd.Add("IsBulkPrint", true);
+        @Html.Partial("/Config/Content/Views/Shared/HealthAssessmentForm.cshtml", Model, vd)
+    }
+    else
+    {
+        @Html.Partial("/Config/Content/Views/Shared/HealthAssessmentForm.cshtml")
+    }
+}
+
+<script type="text/javascript" language="javascript">
+
+    var _onSuccessHealthAssessmentSave = null;
+    var _onFailureHealthAssessmentSave = null;
+
+    function setMethodonFormSave(onSuccess, onFailure) {
+        _onSuccessHealthAssessmentSave = onSuccess;
+        _onFailureHealthAssessmentSave = onFailure;
+    }
+
+
+    function saveForm() {
+        updateHAFAnswers();
+        var object = getHealthAssessmentModeltoSave();
+
+        object.isKynPurchased = $("#IsKynPurchased").val();
+        object.IsHKynPurchased = $("#IsHKynPurchased").val();
+        object.IsBioCheckAssessmentPurchased = $("#IsBioCheckAssessmentPurchased").val();
+
+        var kynObject = getkynHealthAssessmentEditModel();
+
+        if (kynObject != null)
+            setKynReload();
+
+        $.ajax({
+            url: '/Medical/Results/SaveHealthAssessmentForm',
+            type: 'Post',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            // data: "{ 'model' : " + JSON.stringify(object) + "}",
+            data: "{ 'model' : " + JSON.stringify(object) + ",'kynModel':" + JSON.stringify(kynObject) + " }",
+            success: function (data) {
+                if (_onSuccessHealthAssessmentSave != null) {
+                    _onSuccessHealthAssessmentSave(data);
+                }
+            },
+            error: function (a, b, c) {
+                if (_onFailureHealthAssessmentSave != null) {
+                    _onFailureHealthAssessmentSave(a);
+                }
+            }
+        });
+    }
+
+    function setKynReload() {
+        if (parent != null && parent.opener.setReloadForKyn != null) {
+            parent.opener.setReloadForKyn();
+        }
+    }
+</script>

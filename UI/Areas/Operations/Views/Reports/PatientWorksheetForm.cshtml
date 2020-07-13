@@ -1,0 +1,23 @@
+﻿@model Falcon.App.Core.Operations.ViewModels.PatientWorksheet
+@{
+    Layout = null;
+    var style = "font-family: sans-serif;";
+    style = style + (Model.PrintPatientWorkSheet? "page-break-before: always; clear:both;" :"") ;
+}
+@if (Model.PrintPatientWorkSheet)
+{
+    <div style="float:left; width: 860px; clear:both;">
+        @if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/PatientWorksheet.cshtml")))
+        {
+            @Html.Partial("/Config/Content/Views/Shared/PatientWorksheet.cshtml", Model)
+        }
+    </div>
+}
+
+@if (Model.PrintScreeningInfo)
+{
+    <div style="@style">
+        @Html.Partial("/Config/Content/Views/Shared/PatientUpsellForm.cshtml", Model)
+    </div>
+}
+

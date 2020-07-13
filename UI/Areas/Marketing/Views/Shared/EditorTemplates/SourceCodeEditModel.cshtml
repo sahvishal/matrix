@@ -1,0 +1,1067 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Marketing.Enum
+@using Falcon.App.Core.Scheduling.Enum
+@model Falcon.App.Core.Marketing.ViewModels.SourceCodeEditModel
+<style type="text/css">
+    textarea
+    {
+        width: 80%;
+    }
+    
+    .select-item-table
+    {
+        float: left;
+        width: 98%;
+    }
+    .select-item-table tr.message
+    {
+        padding: 2px;
+        color: Red;
+    }
+    .select-item-table tr.message td
+    {
+        border-top: none;
+        border-bottom: none;
+    }
+    .select-item-table td
+    {
+        padding: 5px;
+        border-top: solid 1px #000;
+        border-bottom: solid 1px #000;
+    }
+    .select-item-table td.name
+    {
+        width: 240px;
+    }
+    .select-item-table td input[type=text]
+    {
+        width: 50px;
+    }
+</style>
+<div class="leftside-div-with-roundborder" style="padding-left: 10px;">
+    @Html.EditorFor(m => m.Id)
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.CouponCode) @Html.ValidationMessageFor(m => m.CouponCode)
+        </div>
+        <div style="float: left; width: 60%;">@Html.TextBoxFor(m => m.CouponCode, new { @style = "width: 70%;" })</div>
+        @if (Model.Id < 1)
+        {
+            <div style="float: left; padding-left: 10px;">
+                <a href="javascript:autoGenerateSourceCode();">Generate Code </a>
+            </div>
+        }
+    </div>
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.CouponDescription)
+        </div>
+        @Html.EditorFor(m => m.CouponDescription)
+    </div>
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.SourceCodeTypeId) @Html.ValidationMessageFor(m => m.SourceCodeTypeId)
+        </div>
+        @Html.DropDownListFor(m => m.SourceCodeTypeId, DropDownHelper.SourceCodeTypes(), new { @style = "width:80%;" })
+    </div>
+    <div id="discount-amount-div" class="editor-row" style="margin-bottom: 10px; display: none;">
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.CouponValue) @Html.ValidationMessageFor(m => m.CouponValue)
+            </div>
+            @Html.TextBoxFor(m => m.CouponValue, new { @class = "discount-amount" })
+        </div>
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                &nbsp;
+            </div>
+            <input type="radio" @(Model.CouponValueType < 1 || Model.CouponValueType == (int)DiscountValueType.Money ? "checked=checked" : "") onclick="setCouponValueType('@((int)DiscountValueType.Money)');" name="sourcecodevaluetype" />
+            $
+            <input type="radio" @(Model.CouponValueType == (int)DiscountValueType.Percent ? "checked=checked" : "") onclick="setCouponValueType('@((int)DiscountValueType.Percent)');" name="sourcecodevaluetype" />
+            %
+            @Html.HiddenFor(m => m.CouponValueType)
+            @Html.ValidationMessageFor(m => m.CouponValueType)
+        </div>
+    </div>
+    <div id="package-test-discount-amt-div" style="display: none; margin-top: 10px;">
+        <hr />
+        @Html.ValidationMessageFor(m => m.PackageDiscounts)
+        @Html.ValidationMessageFor(m => m.TestDiscounts)
+        <div class="editor-row">
+            <div class="editor-column-twoinrow">
+                <b>Discount On</b> &nbsp; &nbsp;
+                <input type="radio" id="itemwise-package-radio" onclick="onClickPackageTestSelect(true);"
+                    name="coupontype-packagetest" />
+                Package
+            </div>
+            <div class="editor-column-twoinrow">
+                <input type="radio" id="itemwise-test-radio" onclick="onClickPackageTestSelect(false);"
+                    name="coupontype-packagetest" />
+                Test
+            </div>
+        </div>
+        <div id="add-package-div" class="editor-row margin-top" style="display: none;">
+            <div class="content-div">
+                <select id="package-selectbox" style="width: 250px;">
+                    <option value="-1">-- Select Package --</option>
+                    @for (int i = 0; i < Model.AllPackages.Count(); i++)
+                    {
+                        var item = Model.AllPackages.ElementAt(i);                
+                        <option value="@item.FirstValue">@item.SecondValue</option>
+                    }
+                </select>
+                <input type="button" value="Add" id="add-package-button" onclick="onAddPackageClick();" />
+            </div>
+            <div class="content-div">
+                <table id="selected-package-table" class="select-item-table">
+                </table>
+            </div>
+        </div>
+        <div id="add-test-div" class="editor-row margin-top" style="display: none;">
+            <div class="content-div">
+                <select id="test-selectbox" style="width: 250px;">
+                    <option value="-1">-- Select Test --</option>
+                    @for (int i = 0; i < Model.AllTests.Count(); i++)
+                    {
+                        var item = Model.AllTests.ElementAt(i);                
+                        <option value="@item.FirstValue">@item.SecondValue</option>
+                    }
+                </select>
+                <input type="button" value="Add" id="add-test-button" onclick="onAddTestClick();" />
+            </div>
+            <div class="content-div">
+                <table id="selected-test-table" class="select-item-table">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="product-discount-amt-div" style="display: none; margin-top: 10px;">
+        <hr />
+        @Html.ValidationMessageFor(m => m.ProductDiscounts)
+        <div id="add-product-div" class="editor-row margin-top">
+            <div class="content-div">
+                <select id="product-selectbox" style="width: 250px;">
+                    <option value="-1">-- Select Product --</option>
+                    @for (int i = 0; i < Model.AllProducts.Count(); i++)
+                    {
+                        var item = Model.AllProducts.ElementAt(i);                
+                        <option value="@item.FirstValue">@item.SecondValue</option>
+                    }
+                </select>
+                <input type="button" value="Add" id="add-product-button" onclick="onAddProductClick();" />
+            </div>
+            <div class="content-div">
+                <table id="selected-product-table" class="select-item-table">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="shipping-discount-amt-div" style="display: none; margin-top: 10px;">
+        <hr />
+        @Html.ValidationMessageFor(m => m.ShippingDiscounts)
+        <div id="add-shipping-div" class="editor-row margin-top">
+            <div class="content-div">
+                <select id="shipping-selectbox" style="width: 250px;">
+                    <option value="-1">-- Select shipping --</option>
+                    @for (int i = 0; i < Model.AllShippingOptions.Count(); i++)
+                    {
+                        var item = Model.AllShippingOptions.ElementAt(i);                
+                        <option value="@item.FirstValue">@item.SecondValue</option>
+                    }
+                </select>
+                <input type="button" value="Add" id="add-shipping-button" onclick="onAddShippingClick();" />
+            </div>
+            <div class="content-div">
+                <table id="selected-shipping-table" class="select-item-table">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rightside-div-with-roundborder">
+    <h4>
+        Rules & Restrictions</h4>
+    <br />
+    <div class="editor-row">
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                <b>Validity </b>@Html.LabelFor(m => m.ValidityStartDate)
+            </div>
+            @Html.TextBoxFor(m => m.ValidityStartDate, new { @class = "datePicker" })@Html.ValidationMessageFor(m => m.ValidityStartDate)
+        </div>
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.ValidityEndDate)
+            </div>
+            @Html.TextBoxFor(m => m.ValidityEndDate, new { @class = "datePicker" })
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-field">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.MinimumPurchaseAmount)
+            </div>
+            @Html.TextBoxFor(m => m.MinimumPurchaseAmount, new { @style = "width:90%;" })<br />
+            <i>($0 means applicable for all amounts)</i>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-field">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.MaximumNumberTimesUsed)
+            </div>
+            @Html.TextBoxFor(m => m.MaximumNumberTimesUsed, new { @style = "width:90%;" })<br />
+            <i>(0 means unlimited usage)</i>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-field">
+            <div class="editor-label">
+                <b>@Html.LabelFor(m => m.CustomerType)</b>
+            </div>
+            <input type="checkbox" class="customertype-item" @(Model.CustomerType == (int)CustomerType.Existing ? "checked=checked" : "") onclick="onClickCustomerType($(this), '@((int)CustomerType.Existing)');" />
+            Existing &nbsp;&nbsp;
+            <input type="checkbox" class="customertype-item" @(Model.CustomerType == (int)CustomerType.New ? "checked=checked" : "") onclick="onClickCustomerType($(this), '@((int)CustomerType.New)');" />
+            New
+        </div>
+        @Html.HiddenFor(m => m.CustomerType)
+    </div>
+    <div class="editor-row">
+        <div class="editor-field">
+            <div class="editor-label">
+                <b>Sign Up Mode:</b>
+            </div>
+            <table style="width: 80%;">
+                <tr>
+                    <td colspan="3">
+                        <input type="checkbox" class="signupmode-all" onclick="onClickSignupMode($(this));" />
+                        All
+                    </td>
+                </tr>
+                @{
+                    var index = 0;
+                    while (true)
+                    {
+                    <tr>
+                        @for (int i = 0; i < 3; i++)
+                        {
+                            if (index >= Model.AllSignUpModes.Count())
+                            {
+                                break;
+                            }
+
+                            var item = Model.AllSignUpModes.ElementAt(index++);
+                            var isSelected = Model.SelectedSignUpModes != null ? Model.SelectedSignUpModes.Where(c => c == item.FirstValue).Count() > 0 : false;
+                            <td>
+                                <input type="checkbox" @(isSelected ? "checked=checked" : "") onclick="onClickSignupMode($(this));" class="signupmode-item" />
+                                @item.SecondValue
+                                <input type="hidden" value="@item.FirstValue" />
+                            </td>
+                        }
+                        @for (int i = 0; i < (index % 3); i++)
+                        {
+                            <td>
+                            </td>
+                        }
+                        @if (index % 3 > 0 || index >= Model.AllSignUpModes.Count())
+                        {
+                            break;
+                        }
+                    </tr>
+                    }
+                }
+            </table>
+            <div id="selectedsignupmode-div" style="display: none;">
+                @if (Model.SelectedSignUpModes != null)
+                {
+                    for (int i = 0; i < Model.SelectedSignUpModes.Count(); i++)
+                    {
+                    @Html.Hidden("SelectedSignUpModes[" + i + "]", Model.SelectedSignUpModes.ElementAt(i))
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                <b>Event Specific:</b>
+            </div>
+            <a href="javascript:void(0);" onclick="openAddEventDialog(true);">Add Event</a>  <a href="javascript:void(0);" onclick="openAddEventDialog(false);" id="ViewEventAnchor" style="display:none;">View Event</a>            
+        </div>
+    </div>
+</div>
+
+<div id="add-event-dialogdiv">
+    <div id="add-event-div">
+        <h3>Add Event</h3>
+        <div style="padding-left: 5px; overflow: hidden;">
+            <div class="editor-column" style="width: 25%;">
+                <div class="small-text">
+                    @Html.Label("Event Id")
+                </div>             
+                <input type="text" id="EventId" style="width:60%;" />         
+            </div>
+            <div class="editor-column" style="width: 25%">
+                <div class="small-text">
+                    @Html.Label("Host")
+                </div>            
+                <input type="text" id="HostName" style="width:95%;" />
+            </div>
+            <div class="editor-column" style="width: 25%">
+                <div class="small-text">
+                    @Html.Label("Event Date")
+                </div>            
+                <input type="text" id="EventDate" class="datePicker" />
+            </div>        
+            <div class="editor-column" style="width: 20%; padding-top: 10px; text-align: right; float: right;">
+                <input type="button" id="add-event-button" value="Add" onclick="onAddEventClick();" />
+            </div>
+            <div class="editor-column" style="width: 75%">
+                <span class="small-text" style="font-style: italic">(Please provide either EventId or
+                    both Host and Event Date)</span>
+            </div>
+        </div>
+    </div>
+    <div class="content-div">
+        <table id="selected-event-table" class="select-item-table">
+        </table>
+    </div>
+</div>
+<div id="SelectedEventsDiv" style="display:none;">
+</div>
+<script src="/App/JavascriptFiles/JSonHelper.js" type="text/javascript"></script>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script src="/App/JavascriptFiles/JSonHelper.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function () {
+        @if (Model.Id > 0)
+        {
+            <text>
+            $("#CouponCode").attr("readonly", "readonly");
+            </text>
+        }
+
+        $("#ValidityStartDate").val('@(Model.ValidityStartDate.Year > 1950 ? Model.ValidityStartDate.ToShortDateString() : "")');
+        $("#ValidityEndDate").val('@(Model.ValidityEndDate != null ? Model.ValidityEndDate.Value.ToShortDateString() : "")');
+
+        $("#SourceCodeTypeId").change(onChangeDiscountType);
+        @if (Model.SourceCodeTypeId > 0)
+        {
+            <text>
+            onChangeDiscountType();
+            </text>
+            if (Model.SourceCodeTypeId == (int)DiscountType.PerPackage)
+            {
+                if (Model.PackageDiscounts != null && Model.PackageDiscounts.Count() > 0)
+                {
+                <text>
+                $("#itemwise-package-radio").attr("checked", true);
+                onClickPackageTestSelect(true);
+                </text>
+                }
+                else if (Model.TestDiscounts != null && Model.TestDiscounts.Count() > 0)
+                {
+                <text>
+                $("#itemwise-test-radio").attr("checked", true);
+                onClickPackageTestSelect(false);
+                </text>
+                }
+            }
+        }
+    });
+
+    $('form').submit(function(){        
+    
+        $(".discount-amount").each(function(){
+            if($.trim($(this).val()).length < 1){
+                $(this).val("0");
+            }
+        });
+
+        var val = $("#SourceCodeTypeId option:selected").val();
+
+        if(val !== '@((int)DiscountType.PerPackage)'){
+            $("#selected-package-table").empty();
+            $("#selected-test-table").empty();            
+        }
+        else{
+            if($("#itemwise-test-radio").attr("checked") == false){
+                $("#selected-test-table").empty();
+            }
+
+            if($("#itemwise-package-radio").attr("checked") == false){
+                $("#selected-package-table").empty();
+            }
+        }
+        
+        if(val != '@((int)DiscountType.PerProduct)'){
+            $("#selected-product-table").empty();
+        }
+
+        if(val != '@((int)DiscountType.PerShipping)'){
+            $("#selected-shipping-table").empty();        
+        }
+
+    });
+
+    function setCouponValueType(couponValueType) {
+        $("#CouponValueType").val(couponValueType);
+    }
+
+    function onChangeDiscountType() {
+        $("#package-test-discount-amt-div").hide();
+        $("#discount-amount-div").hide();
+        $("#product-discount-amt-div").hide();
+        $("#shipping-discount-amt-div").hide();
+
+        var selectedVal = $("#SourceCodeTypeId option:selected").val();
+        if (Number(selectedVal) < 1)
+            return;
+
+        if (selectedVal == '@((int)DiscountType.PerPackage)') {
+            $("#package-test-discount-amt-div").show();
+        }
+        else if (selectedVal == '@((int)DiscountType.PerOrder)')  {
+            $("#discount-amount-div").show();
+        }
+        else if (selectedVal == '@((int)DiscountType.PerProduct)')  {
+            $("#product-discount-amt-div").show();
+        }
+        else if (selectedVal == '@((int)DiscountType.PerShipping)')  {
+            $("#shipping-discount-amt-div").show();
+        }
+    }
+
+    function onClickPackageTestSelect(isPackageSelect) {
+        $("#add-test-div").hide();
+        $("#add-package-div").hide();
+
+        if (isPackageSelect) {
+            $("#add-package-div").show();
+        }
+        else {
+            $("#add-test-div").show();
+        }
+    }
+    
+</script>
+<script language="javascript" type="text/javascript">
+    function autoGenerateSourceCode() {
+        $.ajax({ type: 'GET', url: '/Marketing/SourceCode/GetRandomUniqueSourceCodeInstance', dataType: 'json', data: '{}', success: function (result) { $("#CouponCode").val(result); }, error: function () { } });
+    }
+
+    function onClickCustomerType(checkBoxRef, customerType) {
+        var allChecked = true;
+        var allUnchecked = true;
+
+        $(".customertype-item").each(function () {
+            if ($(this).attr("checked")) {
+                allUnchecked = false;
+            }
+            else {
+                allChecked = false;
+            }
+        });
+
+        if (!allChecked && !allUnchecked) {
+            if (checkBoxRef.attr("checked")) {
+                $("#CustomerType").val(customerType);
+            }
+            else {
+                $("#CustomerType").val(customerType == '@((int)CustomerType.New)' ? '@((int)CustomerType.Existing)' : '@((int)CustomerType.New)');
+            }
+        }
+        else {
+            $("#CustomerType").val("0");
+        }
+    }
+
+    function onClickSignupMode(checkBoxRef) {
+
+        var allChecked = true;
+        var allUnchecked = true;
+
+        if (!checkBoxRef.hasClass("signupmode-item")) {
+            $(".signupmode-item").each(function () {
+                $(this).attr("checked", checkBoxRef.attr("checked"));
+            });
+        }
+        else {
+            $(".signupmode-item").each(function () {
+                if ($(this).attr("checked")) {
+                    allUnchecked = false;
+                }
+                else {
+                    allChecked = false;
+                }
+            });
+
+            if (allChecked) {
+                $(".signupmode-all").attr("checked", true);
+            }
+        }
+
+        $("#selectedsignupmode-div").empty();
+
+        if (!allChecked && !allUnchecked) {
+            $(".signupmode-all").attr("checked", false);
+
+            var i = 0;
+            $(".signupmode-item").each(function () {
+                if ($(this).attr("checked") == false) return;
+
+                var signUpmode = $(this).parent().find("input[type=hidden]").val();
+                $("#selectedsignupmode-div").append("<input type='hidden' value='" + signUpmode + "' name='SelectedSignupModes[" + i + "]' /> ");
+                i = i + 1;
+            });
+        }
+
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+
+    var selectedPackages = new Object();
+    var key = 1;
+    var selectedPackage;
+
+    @if (Model.PackageDiscounts != null)
+    {
+        <text>
+        $(document).ready(function(){
+            @{
+        foreach (var item in Model.PackageDiscounts)
+        {
+                    <text>
+                    selectedPackage = new Object();
+                    selectedPackage.Id = '@item.Id';
+                    selectedPackage.Name = '@item.Name';
+                    selectedPackage.DiscountValueType = '@item.DiscountValueType';
+                    selectedPackage.Value = '@item.DiscountAmount';
+                    selectedPackage.Message = "@Html.Raw(item.FeedbackMessage != null ? item.FeedbackMessage.Message : "")";
+                    selectedPackage.Key = key;
+                    selectedPackages[key++] = selectedPackage;
+                    </text>
+        }
+            }
+            renderPackageSection();
+        });
+        </text>
+    }
+
+    function onAddPackageClick() {
+        var selectedValue = $("#package-selectbox option:selected").val();
+        if (Number(selectedValue) < 1) return;
+
+        var selectedPackageName = $("#package-selectbox option:selected").text();
+        addPackage(selectedValue, selectedPackageName);
+
+        renderPackageSection();
+    }
+
+    function addPackage(packageId, packageName) {
+        if (checkIfPackagexists(packageId)) return;
+
+        selectedPackage = new Object();
+        selectedPackage.Id = packageId;
+        selectedPackage.Name = packageName;
+        selectedPackage.DiscountValueType = '@((int)DiscountValueType.Money)';
+        selectedPackage.Value = '0';
+        selectedPackage.Message = "";
+        selectedPackage.Key = key;
+        selectedPackages[key++] = selectedPackage;
+    }
+
+    function checkIfPackagexists(packageId) {
+        var exists = false;
+        $("#selected-package-table input[type=hidden][name*='.Id']").each(function () {
+            if ($(this).val() == packageId)
+                exists = true;
+        });
+        return exists;
+    }
+
+    function setSelectedPackageDiscountType(refElement, selectedKey, value) {
+        refElement.parent().find("input[type=text]").val(value);
+        selectedPackages[selectedKey].DiscountValueType = value;
+    }
+
+    function setSelectedPackageValue(refElement, selectedKey) {
+        selectedPackages[selectedKey].Value = refElement.val();
+    }
+
+    function removePackage(keyToRemove) {
+        delete selectedPackages[keyToRemove];
+        renderPackageSection();
+    }
+
+    function renderPackageSection() {
+        $("#selected-package-table").empty();
+        $.each(selectedPackages, function (index_key, package) {
+            $("#selected-package-table").append($("#addpackage-template").tmpl(package));
+            $("#selected-package-table tr.message:last").html(package.Message);
+        });
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+
+    var selectedTests = new Object();
+    var key = 1;
+    var selectedTest;
+
+    
+    @if (Model.TestDiscounts != null)
+    {
+        <text>
+        $(document).ready(function(){
+            @{
+        foreach (var item in Model.TestDiscounts)
+        {
+                    <text>
+                    selectedTest = new Object();
+                    selectedTest.Id = '@item.Id';
+                    selectedTest.Name = '@item.Name';
+                    selectedTest.DiscountValueType = '@item.DiscountValueType';
+                    selectedTest.Value = '@item.DiscountAmount';
+                    selectedTest.Message = "@Html.Raw(item.FeedbackMessage != null ? item.FeedbackMessage.Message : "")";
+                    selectedTest.Key = key;
+                    selectedTests[key++] = selectedTest;
+                    </text>
+        }
+            }
+            renderTestSection();
+        });
+    </text>
+    }
+
+    function onAddTestClick() {
+        var selectedValue = $("#test-selectbox option:selected").val();
+        if (Number(selectedValue) < 1) return;
+
+        var selectedTestName = $("#test-selectbox option:selected").text();
+        addTest(selectedValue, selectedTestName);
+
+        renderTestSection();
+    }
+
+    function setSelectedTestDiscountType(refElement, selectedKey, value) {
+        refElement.parent().find("input[type=text]").val(value);
+        selectedTests[selectedKey].DiscountValueType = value;
+    }
+
+    function setSelectedTestValue(refElement, selectedKey) {
+        selectedTests[selectedKey].Value = refElement.val();
+    }
+
+    function addTest(testId, testName) {
+        if (checkIfTestxists(testId)) return;
+
+        var selectedTest = new Object();
+        selectedTest.Id = testId;
+        selectedTest.Name = testName;
+        selectedTest.DiscountValueType = '@((int)DiscountValueType.Money)';
+        selectedTest.Value = '0';
+        selectedTest.Message = "";
+        selectedTest.Key = key;
+
+        selectedTests[key++] = selectedTest;
+    }
+
+    function checkIfTestxists(testId) {
+        var exists = false;
+        $("#selected-test-table input[type=hidden][name*='.Id']").each(function () {
+            if ($(this).val() == testId)
+                exists = true;
+        });
+        return exists;
+    }
+
+    function removeTest(keyToRemove) {
+        delete selectedTests[keyToRemove];
+        renderTestSection();
+    }
+
+    function renderTestSection() {
+        $("#selected-test-table").empty();
+        $.each(selectedTests, function (index_key, test) {
+            $("#selected-test-table").append($("#addtest-template").tmpl(test));
+            $("#selected-test-table tr.message:last").html(test.Message);
+        });
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+
+    var selectProducts = new Object();
+    var key_product = 1;
+    var selectProduct;
+
+    
+    @if (Model.ProductDiscounts != null)
+    {
+        <text>
+        $(document).ready(function(){
+            @{
+        foreach (var item in Model.ProductDiscounts)
+        {
+                    <text>
+                    selectProduct = new Object();
+                    selectProduct.Id = '@item.Id';
+                    selectProduct.Name = '@item.Name';
+                    selectProduct.DiscountValueType = '@item.DiscountValueType';
+                    selectProduct.Value = '@item.DiscountAmount';
+                    selectProduct.Message = "@Html.Raw(item.FeedbackMessage != null ? item.FeedbackMessage.Message : "")";
+                    selectProduct.Key = key_product;
+                    selectProducts[key_product++] = selectProduct;
+                    </text>
+        }
+            }
+            renderProductSection();
+        });
+    </text>
+    }
+
+    function onAddProductClick() {
+        var selectedValue = $("#product-selectbox option:selected").val();
+        if (Number(selectedValue) < 1) return;
+
+        var selectedName = $("#product-selectbox option:selected").text();
+        addProduct(selectedValue, selectedName);
+
+        renderProductSection();
+    }
+
+    function setSelectedProductDiscountType(refElement, selectedKey, value) {
+        refElement.parent().find("input[type=text]").val(value);
+        selectProducts[selectedKey].DiscountValueType = value;
+    }
+
+    function setSelectedProductValue(refElement, selectedKey) {
+        selectProducts[selectedKey].Value = refElement.val();
+    }
+
+    function addProduct(productId, productName) {
+        if (checkIfProductExists(productId)) return;
+
+        selectProduct = new Object();
+        selectProduct.Id = productId;
+        selectProduct.Name = productName;
+        selectProduct.DiscountValueType = '@((int)DiscountValueType.Money)';
+        selectProduct.Value = '0';
+        selectProduct.Message = "";
+        selectProduct.Key = key_product;
+
+        selectProducts[key_product++] = selectProduct;
+    }
+
+    function checkIfProductExists(productId) {
+        var exists = false;
+        $("#selected-product-table input[type=hidden][name*='.Id']").each(function () {
+            if ($(this).val() == productId)
+                exists = true;
+        });
+        return exists;
+    }
+
+    function removeProduct(keyToRemove) {
+        delete selectProducts[keyToRemove];
+        renderProductSection();
+    }
+
+    function renderProductSection() {
+        $("#selected-product-table").empty();
+        $.each(selectProducts, function (index_key, product) {
+            $("#selected-product-table").append($("#addproduct-template").tmpl(product));
+            $("#selected-product-table tr.message:last").html(product.Message);
+        });
+    }
+
+</script>
+
+<script language="javascript" type="text/javascript">
+
+    var selectedEvents = new Object();
+    var key_event = 0;
+    var selectedEvent;
+
+    @if (Model.Events != null && Model.Events.Count()>0)
+    {
+        <text>
+        $(document).ready(function(){
+            @{
+        foreach (var item in Model.Events)
+        {
+                    <text>
+                    selectedEvent = new Object();
+                    selectedEvent.EventId = '@item.EventId';
+                    selectedEvent.EventName = '@item.EventName';
+                    selectedEvent.EventDate = '@item.EventDate.ToString("MM/dd/yyyy")';                    
+                    selectedEvent.Key = key_event;
+                    selectedEvents[key_event++] = selectedEvent;
+                    </text>
+        }
+            }
+            renderEventSection();
+        });        
+        </text>
+    }
+
+    function openAddEventDialog(addEvent)
+    {
+        if(!addEvent){
+            $('#add-event-div').hide();
+            $("#add-event-dialogdiv").dialog('option', 'title', 'View Event');
+        }
+        else{
+            $('#add-event-div').show();
+            $("#add-event-dialogdiv").dialog('option', 'title', 'Add Event');
+        }
+        $("#add-event-dialogdiv").dialog('open');         
+    }
+
+    function onAddEventClick() {
+       var parameter = "{'eventId' : '" + $('#EventId').val() + "'";
+       parameter += ",'hostName' : '" + $('#HostName').val() + "'";
+       parameter += ",'eventDate' : '" + $('#EventDate').val() + "'}";
+       $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/Marketing/SourceCode/SearchEvent",
+                data: parameter,
+                success: function (result) {
+                    if(result!=null){
+                        addEvent(result);
+                        renderEventSection();
+                    }
+                    else
+                    {
+                        alert("No event found");
+                    }
+                },
+                error: function (a, b, c) {
+                }
+            });        
+    }
+
+    function addEvent(eventData) {
+        if (checkIfEventExists(eventData.Id)) return;
+
+        selectedEvent = new Object();
+        selectedEvent.EventId = eventData.Id;
+        selectedEvent.EventName = eventData.Name;
+        selectedEvent.EventDate = correctDateExpression(eventData.EventDate).getMonth() + 1 + "/" + correctDateExpression(eventData.EventDate).getDate() + "/" + correctDateExpression(eventData.EventDate).getFullYear();                    
+        selectedEvent.Key = key_event;
+        selectedEvents[key_event++] = selectedEvent;
+    }
+
+    function checkIfEventExists(eventId) {
+        var exists = false;
+        $("#SelectedEventsDiv input[type=hidden][name*='.EventId']").each(function () {
+            if ($(this).val() == eventId)
+                exists = true;
+        });
+        return exists;
+    }
+
+    function removeEvent(keyToRemove) {
+        delete selectedEvents[keyToRemove];
+        renderEventSection();
+    }
+
+    function renderEventSection() {
+        $("#selected-event-table").empty();
+        $("#SelectedEventsDiv").empty();
+
+        if($.isEmptyObject(selectedEvents)){
+            $("#ViewEventAnchor").hide();
+        }
+        else{            
+            $("#ViewEventAnchor").show();
+            $("#selected-event-table").append("<tr><td style='text-align:center'>Event Id</td><td style='text-align:center'>Event Date</td><td style='text-align:center'>Event Name</td></tr>");
+        }
+        
+        $.each(selectedEvents, function (index_key, eventData) {
+            $("#selected-event-table").append($("#addevent-template").tmpl(eventData)); 
+            $("#SelectedEventsDiv").append($("#events-template").tmpl(eventData));            
+        });
+    }
+
+    $(document).ready(function () {
+            $('#add-event-dialogdiv').dialog({ width: 650, autoOpen: false, title: 'Add Event', resizable: false, draggable: true, modal: true });
+        });
+</script>
+<script language="javascript" type="text/javascript">
+
+    var selectedShippings = new Object();
+    var key_shipping = 1;
+    var selectedShipping;
+
+    
+    @if (Model.ShippingDiscounts != null)
+    {
+        <text>
+        $(document).ready(function(){
+            @{
+        foreach (var item in Model.ShippingDiscounts)
+        {
+                    <text>
+                    selectedShipping = new Object();
+                    selectedShipping.Id = '@item.Id';
+                    selectedShipping.Name = '@item.Name';
+                    selectedShipping.DiscountValueType = '@item.DiscountValueType';
+                    selectedShipping.Value = '@item.DiscountAmount';
+                    selectedShipping.Message = "@Html.Raw(item.FeedbackMessage != null ? item.FeedbackMessage.Message : "")";
+                    selectedShipping.Key = key_shipping;
+                    selectedShippings[key_shipping++] = selectedShipping;
+                    </text>
+        }
+            }
+            renderShippingSection();
+        });
+    </text>
+    }
+
+    function onAddShippingClick() {
+        var selectedValue = $("#shipping-selectbox option:selected").val();
+        if (Number(selectedValue) < 1) return;
+
+        var selectedName = $("#shipping-selectbox option:selected").text();
+        addShipping(selectedValue, selectedName);
+
+        renderShippingSection();
+    }
+
+    function setSelectedShippingDiscountType(refElement, selectedKey, value) {
+        refElement.parent().find("input[type=text]").val(value);
+        selectedShippings[selectedKey].DiscountValueType = value;
+    }
+
+    function setSelectedShippingValue(refElement, selectedKey) {
+        selectedShippings[selectedKey].Value = refElement.val();
+    }
+
+    function addShipping(shippingId, shippingName) {
+        if (checkIfShippingExists(shippingId)) return;
+
+        selectedShipping = new Object();
+        selectedShipping.Id = shippingId;
+        selectedShipping.Name = shippingName;
+        selectedShipping.DiscountValueType = '@((int)DiscountValueType.Money)';
+        selectedShipping.Value = '0';
+        selectedShipping.Message = "";
+        selectedShipping.Key = key_shipping;
+
+        selectedShippings[key_shipping++] = selectedShipping;
+    }
+
+    function checkIfShippingExists(shippingId) {
+        var exists = false;
+        $("#selected-shipping-table input[type=hidden][name*='.Id']").each(function () {
+            if ($(this).val() == shippingId)
+                exists = true;
+        });
+        return exists;
+    }
+
+    function removeShipping(keyToRemove) {
+        delete selectedShippings[keyToRemove];
+        renderShippingSection();
+    }
+
+    function renderShippingSection() {
+        $("#selected-shipping-table").empty();
+        $.each(selectedShippings, function (index_key, shipping) {
+            $("#selected-shipping-table").append($("#addshipping-template").tmpl(shipping));
+            $("#selected-shipping-table tr.message:last").html(shipping.Message);
+        });
+    }
+
+</script>
+<script id="addtest-template" type="text/x-jquery-tmpl">
+<tr class='message'><td colspan='4'> ${Message} </td></tr>
+<tr>
+    <td class='name'> ${Name} 
+        <input type="hidden" value="${Name}" name="TestDiscounts[${Key}].Name" />
+        <input type="hidden" value="${Key}" name="TestDiscounts.Index" />
+    </td>
+    <td> <input type="text" name="TestDiscounts[${Key}].DiscountAmount" onchange="setSelectedTestValue($(this), ${Key});" value="${Value}" class="discount-amount" /> </td>
+    <td> 
+        <input type="radio" ${DiscountValueType == '@((int)DiscountValueType.Money)' ? 'checked' : ''} name="${'disctype_test_' + Id}" onclick="setSelectedTestDiscountType($(this), ${Key}, '@((int)DiscountValueType.Money)');" /> $ &nbsp; 
+        <input type="radio" ${DiscountValueType == '@((int)DiscountValueType.Percent)' ? 'checked' : ''} name="${'disctype_test_' + Id}" onclick="setSelectedTestDiscountType($(this), ${Key}, '@((int)DiscountValueType.Percent)');" /> % 
+        <input type="text" style="display:none" value='${DiscountValueType}' name="TestDiscounts[${Key}].DiscountValueType" />
+    </td>
+    <td> <img src="/App/Images/red-crossbox.gif" onclick="removeTest(${Key});" alt="Remove" /> 
+        <input type="hidden" value="${Id}" name="TestDiscounts[${Key}].Id" />      
+    </td>
+</tr>
+</script>
+<script id="addpackage-template" type="text/x-jquery-tmpl">
+<tr class='message'><td colspan='4'> ${Message} </td></tr>
+<tr>
+    <td class='name'> ${Name} 
+        <input type="hidden" value="${Name}" name="PackageDiscounts[${Key}].Name" />
+        <input type="hidden" value="${Key}" name="PackageDiscounts.Index" />
+    </td>
+    <td> <input type="text" name="PackageDiscounts[${Key}].DiscountAmount" onchange="setSelectedPackageValue($(this), ${Key});" value="${Value}" class="discount-amount" /> </td>
+    <td><input type="radio" ${DiscountValueType == '@((int)DiscountValueType.Money)' ? 'checked' : ''} name="${'disctype_package_' + Id}" onclick="setSelectedPackageDiscountType($(this), ${Key}, '@((int)DiscountValueType.Money)');" /> $ &nbsp; 
+        <input type="radio" ${DiscountValueType == '@((int)DiscountValueType.Percent)' ? 'checked' : ''} name="${'disctype_package_' + Id}" onclick="setSelectedPackageDiscountType($(this), ${Key}, '@((int)DiscountValueType.Percent)');" /> % 
+    <input type="text" style="display:none" value='${DiscountValueType}' name="PackageDiscounts[${Key}].DiscountValueType" /></td>
+    <td> <img src="/App/Images/red-crossbox.gif" onclick="removePackage(${Key});" alt="Remove" /> 
+        <input type="hidden" value="${Id}" name="PackageDiscounts[${Key}].Id" />
+    </td>
+</tr>
+</script>
+<script id="addproduct-template" type="text/x-jquery-tmpl">
+<tr class='message'><td colspan='4'> ${Message} </td></tr>
+<tr>
+    <td class='name'> ${Name} 
+        <input type="hidden" value="${Name}" name="ProductDiscounts[${Key}].Name" />
+        <input type="hidden" value="${Key}" name="ProductDiscounts.Index" />
+    </td>
+    <td> <input type="text" name="ProductDiscounts[${Key}].DiscountAmount" onchange="setSelectedProductValue($(this), ${Key});" value="${Value}" class="discount-amount" /> </td>
+    <td><input type="radio" ${DiscountValueType == '@((int)DiscountValueType.Money)' ? 'checked' : ''} name="${'disctype_package_' + Id}" onclick="setSelectedProductDiscountType($(this), ${Key}, '@((int)DiscountValueType.Money)');" /> $ &nbsp; 
+        <input type="radio" ${DiscountValueType == '@((int)DiscountValueType.Percent)' ? 'checked' : ''} name="${'disctype_package_' + Id}" onclick="setSelectedProductDiscountType($(this), ${Key}, '@((int)DiscountValueType.Percent)');" /> % 
+    <input type="text" style="display:none" value='${DiscountValueType}' name="ProductDiscounts[${Key}].DiscountValueType" /></td>
+    <td> <img src="/App/Images/red-crossbox.gif" onclick="removeProduct(${Key});" alt="Remove" /> 
+        <input type="hidden" value="${Id}" name="ProductDiscounts[${Key}].Id" />
+    </td>
+</tr>
+</script>
+<script id="addshipping-template" type="text/x-jquery-tmpl">
+<tr class='message'><td colspan='4'> ${Message} </td></tr>
+<tr>
+    <td class='name'> ${Name} 
+        <input type="hidden" value="${Name}" name="ShippingDiscounts[${Key}].Name" />
+        <input type="hidden" value="${Key}" name="ShippingDiscounts.Index" />
+    </td>
+    <td> <input type="text" name="ShippingDiscounts[${Key}].DiscountAmount" onchange="setSelectedShippingValue($(this), ${Key});" value="${Value}" class="discount-amount" /> </td>
+    <td><input type="radio" ${DiscountValueType == '@((int)DiscountValueType.Money)' ? 'checked' : ''} name="${'disctype_package_' + Id}" onclick="setSelectedShippingDiscountType($(this), ${Key}, '@((int)DiscountValueType.Money)');" /> $ &nbsp; 
+        <input type="radio" ${DiscountValueType == '@((int)DiscountValueType.Percent)' ? 'checked' : ''} name="${'disctype_package_' + Id}" onclick="setSelectedShippingDiscountType($(this), ${Key}, '@((int)DiscountValueType.Percent)');" /> % 
+    <input type="text" style="display:none" value='${DiscountValueType}' name="ShippingDiscounts[${Key}].DiscountValueType" /></td>
+    <td> <img src="/App/Images/red-crossbox.gif" onclick="removeShipping(${Key});" alt="Remove" /> 
+        <input type="hidden" value="${Id}" name="ShippingDiscounts[${Key}].Id" />
+    </td>
+</tr>
+</script>
+
+<script id="addevent-template" type="text/x-jquery-tmpl">
+<tr>
+    <td style="text-align:center">${EventId}</td>
+    <td style="text-align:center">${EventDate}</td>
+    <td style="text-align:center">${EventName}</td>
+    <td style="text-align:center">
+        <img src="/App/Images/red-crossbox.gif" onclick="removeEvent(${Key});" alt="Remove" /> 
+    </td>    
+</tr>
+</script>
+
+<script id="events-template" type="text/x-jquery-tmpl">
+<input type="hidden" value="${Key}" name="Events.Index" />
+<input type="hidden" value="${EventId}" name="Events[${Key}].EventId" />  
+<input type="hidden" value="${EventDate}" name="Events[${Key}].EventDate" /> 
+<input type="hidden" value="${EventName}" name="Events[${Key}].EventName" /> 
+</script>

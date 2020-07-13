@@ -1,0 +1,107 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels;
+@model MemberUploadDetailsListModel
+
+@{
+    ViewBag.Title = "Member Upload Details";
+}
+<h1>Member Upload Details</h1>
+
+<div id="list-filter">
+    @{Html.BeginForm("MemberUploadDetails", "MassRegistration", FormMethod.Get);}
+    @Html.Partial("MemberUploadDetailsListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && Model.Collection != null && Model.Collection.Any())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="margin-bottom: 10px; overflow: auto;">
+        <table id="list-view">
+            <tr>
+
+                <th>
+                    Uploaded Date
+                </th>
+                <th style="width:20px;">
+                    Successfull Customer(s)
+                </th>
+                <th style="width:20px;">
+                    Failed Customer(s)
+                </th>
+
+                <th>
+                    Uploaded File
+                </th>
+                <th>
+                    Failed File
+                </th>
+
+            </tr>
+            @foreach (var upload in Model.Collection)
+            {
+                <tr>
+
+                    <td>@upload.UploadTime.ToShortDateString()</td>
+                    <td>@upload.SuccessfullCustomer</td>
+                    <td>@upload.FailedCustomer</td>
+                    <td>
+                        @if (upload.File != null)
+                        {
+
+                            <a href="/FileManager/Download/DownlaodMemberUploadDetailsReportFile?FileName=@upload.File.FileName">Download</a><br />
+
+                        }
+                        else
+                        {
+                            <text> N/A </text>
+                        }
+                    </td>
+                    <td>
+                        @if (upload.FailedFile != null && upload.File != null)
+                        {
+
+                            <a href="/FileManager/Download/DownlaodMemberUploadDetailsReportFile?FileName=@upload.FailedFile.FileName">Download</a><br />
+
+                        }
+                        else
+                        {
+                            <text> N/A </text>
+                        }
+                    </td>
+
+                </tr>
+            }
+        </table>
+
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records found!
+    </h2>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+
+
+
+
+    </script>
+}

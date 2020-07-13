@@ -1,0 +1,134 @@
+﻿{#param name=OrderId} {#param name=OrderTotal} {#param name=CustomerName} 
+{#param name=CustomerId} {#param name=RoleId}
+<h3>
+    Order History for {$P.CustomerName} ({$P.CustomerId})</h3>
+<table id="OrderDetailTemplateTable" class="divgrid_cl">
+    <thead>
+        <tr class="row1" style="font-size: 11px">
+            <th>
+                Ordered On
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Status
+            </th>
+            <th class="executed-by-role">
+                Executed By/Role
+            </th>
+            <th>
+                Description
+            </th>
+            <th class="amt" style="text-align: right">
+                Price
+            </th>
+            <th style="text-align: right">
+                Quantity
+            </th>
+            <th class="amt" style="text-align: right">
+                Total
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {#foreach $T as OrderViewData}
+        <tr class="smalltxt11">
+            <td>
+                {#if $T.OrderViewData.OrderDetailDateCreated != null}{$T.OrderViewData.OrderDetailDateCreated}{#else}N/A{#/if}
+            </td>
+            <td>
+                {$T.OrderViewData.OrderDetailType}
+            </td>
+            <td>
+                {$T.OrderViewData.OrderDetailStatus}
+            </td>
+            <td class="executed-by-role">
+                {#if $T.OrderViewData.CreatorRole == 'Customer'} Self {#else} {$T.OrderViewData.CreatorName}
+                / {$T.OrderViewData.CreationMode}{#/if}
+            </td>
+            <td>
+                {#if $T.OrderViewData.OrderDetailType == 'Refund' && $P.RoleId == '9'}Customer Service
+                {#else} {$T.OrderViewData.Description}{#/if}
+            </td>
+            <td class="amt" style="text-align: right">
+                {#if $T.OrderViewData.Price > 0} {FormatCurrency($T.OrderViewData.Price)} {#else}
+                {FormatCurrency((-1)*$T.OrderViewData.Price)}{#/if}
+            </td>
+            <td style="text-align: right">
+                {$T.OrderViewData.Quantity}
+            </td>
+            <td style="text-align: right; width: 60px">
+                {#if $T.OrderViewData.OrderDetailStatus == 'Cancelled' || ($T.OrderViewData.OrderDetailType
+                == 'Refund' && $T.OrderViewData.OrderDetailStatus == 'Applied')}({#if $T.OrderViewData.TotalCost > 0} {FormatCurrency($T.OrderViewData.TotalCost)}
+                {#else} {FormatCurrency((-1)*$T.OrderViewData.TotalCost)}{#/if}){#else} {#if $T.OrderViewData.TotalCost
+                > 0} {FormatCurrency($T.OrderViewData.TotalCost)} {#else} {FormatCurrency((-1)*$T.OrderViewData.TotalCost)}{#/if}{#/if}
+            </td>
+        </tr>
+        {#if $T.OrderViewData.SourceCode != null}
+        <tr class="smalltxt12">
+            <td>
+                {$T.OrderViewData.SourceCode.AppliedDate}
+            </td>
+            <td>
+                Source Code
+            </td>
+            <td>
+                Applied
+            </td>
+            <td class="executed-by-role">
+                {#if $T.OrderViewData.SourceCode.AppliedByRole == 'Customer'} Self {#else} {$T.OrderViewData.SourceCode.AppliedByName}
+                / {$T.OrderViewData.SourceCode.AppliedByRole}{#/if}
+            </td>
+            <td class="coupon-code">
+                {#if $P.RoleId == '9'}Applied Source Code {#else} {$T.OrderViewData.SourceCode.SourceCode}{#/if}
+                <input type="hidden" value="{$T.OrderViewData.EventCustomerId}" />
+            </td>
+            <td class="amt" style="text-align: right">
+                {FormatCurrency($T.OrderViewData.SourceCode.Amount)}
+            </td>
+            <td style="text-align: right">
+                1
+            </td>
+            <td class="amt" style="text-align: right; width: 60px">
+                ({FormatCurrency($T.OrderViewData.SourceCode.Amount* 1)})
+            </td>
+        </tr>
+        {#/if} {#foreach $T.OrderViewData.ShippingDetails as ShippingDetail}
+        <tr class="smalltxt11">
+            <td>
+                {$T.ShippingDetail.AppliedDate}
+            </td>
+            <td>
+                Shipping
+            </td>
+            <td>
+                {$T.ShippingDetail.Status}
+            </td>
+            <td class="executed-by-role">
+                {#if $T.ShippingDetail.AppliedByRole == 'Customer'} Self {#else} {$T.ShippingDetail.AppliedByName}
+                / {$T.ShippingDetail.AppliedByRole}{#/if}
+            </td>
+            <td>
+                {$T.ShippingDetail.ShippingOptionName}
+            </td>
+            <td class="amt" style="text-align: right">
+                {FormatCurrency($T.ShippingDetail.Price)}
+            </td>
+            <td style="text-align: right">
+                1
+            </td>
+            <td class="amt" style="text-align: right; width: 60px">
+            {#if $T.ShippingDetail.Status == 'Cancelled'}({FormatCurrency($T.ShippingDetail.Price)})
+                {#else}{FormatCurrency($T.ShippingDetail.Price)}{#/if}
+                
+            </td>
+        </tr>
+        {#/for} {#/for}
+        <tr>
+            <td colspan="8" style="text-align: right">
+                <strong>Order Total: ${$P.OrderTotal} </strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

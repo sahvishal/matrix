@@ -1,0 +1,75 @@
+﻿<div>
+    <div id="PagingDiv" style="text-align: right; padding: 5px">
+        <a id="PrevPage">Previous Page</a> <span id="PagingLinksSeparator">|</span>
+        <a id="NextPage">Next Page</a>
+    </div>
+    <div id="MedicalVendorPaymentRepeaterDiv" runat="server">
+        <table id="MedicalVendorStatisticTable" class="divgrid_clnew" cellspacing="3" width="100%">
+            <thead>
+                <tr>
+                    <th style="white-space:nowrap;">
+                        <b>Invoice #</b>
+                    </th>
+                    <th style="white-space:nowrap">
+                        <b>Physician Name</b>
+                    </th>
+                    <th style="white-space:nowrap;">
+                        <b>Invoice Date</b> 
+                    </th>                        
+                    <th style="white-space:nowrap;">
+                        <b>Pay Period</b>
+                    </th>
+                    <th style="white-space:nowrap;">
+                        <b>Evaluations #</b>
+                    </th>
+                    <th class="amt">
+                        <b>Amount</b>
+                    </th>
+                    <th style="white-space:nowrap;">
+                        <b>Approval Status</b>
+                    </th>
+                    <th style="white-space:nowrap;">
+                        <b>Payment Status</b>
+                    </th>
+                    <th style="white-space:nowrap;">
+                        <b>Actions</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {#foreach $T as MedicalVendorInvoiceStatistic}
+                <tr>
+                    <td style="white-space:nowrap;">
+                       {$T.MedicalVendorInvoiceStatistic.Id}
+                    </td>
+                    <td style="white-space:nowrap;">
+                       {$T.MedicalVendorInvoiceStatistic.PhysicianName}
+                    </td> 
+                    <td style="white-space:nowrap;">
+                       {DateDeserialize($T.MedicalVendorInvoiceStatistic.DateGenerated).format("shortDate")}
+                    </td>                        
+                    <td style="white-space:nowrap;">
+                        {DateDeserialize($T.MedicalVendorInvoiceStatistic.PayPeriodStartDate).format("shortDate")} -
+                        {DateDeserialize($T.MedicalVendorInvoiceStatistic.PayPeriodEndDate).format("shortDate")}
+                    </td>
+                    <td style="white-space:nowrap;">
+                        {$T.MedicalVendorInvoiceStatistic.NumberOfEvaluations}
+                    </td>
+                    <td style="white-space:nowrap;" class="amt">
+                        {FormatCurrency($T.MedicalVendorInvoiceStatistic.InvoiceAmount)}
+                    </td>  
+                    <td style="white-space:nowrap;">
+                        {$T.MedicalVendorInvoiceStatistic.ApprovalStatusName}
+                    </td>      
+                    <td style="white-space:nowrap;">
+                        {$T.MedicalVendorInvoiceStatistic.PaymentStatusName}
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <a href="#" onclick="LoadInvoiceDialog({$T.MedicalVendorInvoiceStatistic.Id})" class="SmallLinks">View Invoice</a>
+                    </td>
+                </tr>  
+                {#/for}
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,261 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title></title>
+    <style type="text/css">
+        td.bottomborder {
+            border-bottom: 1px solid #CECECE;
+        }
+
+        input[type="text"] {
+            background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+            border-color: -moz-use-text-color -moz-use-text-color #000000;
+            border-style: none none solid;
+            border-width: medium medium 1px;
+        }
+
+        body {
+            font-family: Arial,Helvetica,sans-serif;
+        }
+
+        p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .instruction {
+            text-align: right;
+            width: 160px;
+            padding-right: 6px;
+        }
+
+        .grid-cell {
+            float: left;
+            height: 20px;
+        }
+
+        .seprator {
+            border-right: solid 1px #ADD671;
+        }
+
+        .line-seprator {
+            border-bottom: solid 1px #ADD671;
+        }
+
+        .instruction-grid {
+            font-size: 15px;
+            display: table;
+            width: 786px;
+        }
+
+        .instruction-explain {
+            width: 610px;
+            padding-left: 6px;
+            border-left: solid 1px #ADD671;
+        }
+
+        .seperator-img {
+            width: 786px;
+            height: 22px;
+        }
+
+        .mainContainer-wopb {
+            width: 950px;
+            margin: 10px auto 10px auto;
+            padding: 10px 0px;
+            min-height: 940px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mainContainer-wopb">
+        <div style="width: 786px; padding-left: 60px;">
+            <img src="/config/content/images/hf_Logo.png" id="hflogo" alt="hflogo" />
+            <table border="0" width="786px" cellpadding="1">
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>Patient ID:</p>
+                    </td>
+                    <td class="bottomborder" width="200px">
+                        <label id="patientId">&nbsp;</label>
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>Date:</p>
+                    </td>
+                    <td class="bottomborder" width="200px">
+                        <label id="today-date">&nbsp;</label>
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>Patient Name:</p>
+                    </td>
+                    <td class="bottomborder" width="200px">
+                        <label id="patientname">&nbsp;</label>
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>Blood Sugar/Glucose:</p>
+                    </td>
+                    <td class="bottomborder" width="200px">
+                        <label id="blood-sugar-reading">&nbsp;</label>&nbsp;mg/dl
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>Total Cholesterol:</p>
+                    </td>
+                    <td class="bottomborder" width="200px">
+                        <label id="total-cholesterol-reading">&nbsp;</label>&nbsp;mg/dl
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>LDL (bad) Cholesterol:</p>
+                    </td>
+                    <td class="bottomborder" width="200px">
+                        <label id="ldl-cholesterol-reading">&nbsp;</label>&nbsp;mg/dl
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>HDL (good) Cholesterol:</p>
+                    </td>
+                    <td class="bottomborder" width="200px">
+                        <label id="hdl-cholesterol-reading">&nbsp;</label>&nbsp;mg/dl
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>Triglycerides:</p>
+                    </td>
+                    <td class="bottomborder" width="200px">
+                        <label id="triglycerides-reading">&nbsp;</label>&nbsp;mg/dl
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td class="bottomborder" width="300px">
+                        <p>Blood Pressure:</p>
+                    </td>
+                    <td width="300" class="bottomborder">
+                        <label id="blood-pressure-reading">&nbsp;</label>&nbsp;mmHg Systolic/Diastolic
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td width="300px" class="bottomborder">
+                        <p>Tech Name:</p>
+                    </td>
+                    <td width="200px" class="bottomborder">
+                        <label class="technician-name"></label>&nbsp;
+                    </td>
+                    <td width="176"></td>
+                </tr>
+                <tr>
+                    <td width="250px"></td>
+                    <td width="300px" class="bottomborder">
+                        <p>Quality Check:</p>
+                    </td>
+                    <td width="200px" class="bottomborder">
+                        <label>&nbsp;</label>
+                    </td>
+                    <td width="176"></td>
+                </tr>
+            </table>
+            <img class="seperator-img" src="../../content/images/green_line.png" alt="seprator">
+            <div class="instruction-grid">
+                <div class="line-seprator">
+                    <div class="instruction  instruction-label grid-cell">
+                        Cholesterol
+                    </div>
+
+                    <div class="instruction-explain grid-cell">
+                        High levels of cholesterol and various blood fats increase your risk for cardiovascular disease.
+                    </div>
+                </div>
+                <div class="line-seprator">
+                    <div class="instruction instruction-label grid-cell">
+                        Total Cholesterol
+                    </div>
+
+                    <div class="instruction-explain grid-cell">
+                        Normal levels should be less than 200 mg/dL unless accompained by a high HDL value.
+                    </div>
+                </div>
+                <div class="line-seprator">
+                    <div class="instruction  instruction-label grid-cell">
+                        HDL (Good) Cholesterol
+                    </div>
+
+                    <div class="instruction-explain grid-cell">
+                        Helps keep cholesterol from build-up and blockage in the arteries.<br />
+                        Normal leveles are 40 mg/dL or greater for men, 50 mg/dL or greater for women.
+                    </div>
+                </div>
+                <div class="line-seprator">
+                    <div class="instruction  instruction-label grid-cell">
+                        LDL (bad) Cholesterol
+                    </div>
+
+                    <div class="instruction-explain grid-cell">
+                        The main sourcr of cholesterol build-up and blockage in the arteries.<br />
+                        Optimal levels should be less than 100 mg/dL.
+                    </div>
+                </div>
+                <div class="line-seprator">
+                    <div class="instruction instruction-label grid-cell">
+                        Triglycerides
+                    </div>
+
+                    <div class="instruction-explain grid-cell">
+                        Another form of fat in your blood. Normal levels are less than 150 mg/dL.
+                    </div>
+                </div>
+                <div class="line-seprator">
+                    <div class="instruction instruction-label grid-cell">
+                        Glucose
+                    </div>
+
+                    <div class="instruction-explain grid-cell">
+                        Glucose is a form of sugar that is the body's primary fuel; glucose is broken down from food into energy or stored. Abnormal low or high levels often indicate metabolic disturbances (e.g. diabetes). Normal levels should be under 100 mg/dL.
+                    </div>
+                </div>
+                <div class="line-seprator">
+                    <div class="instruction instruction-label grid-cell">
+                        Blood Pressure
+                    </div>
+
+                    <div class="instruction-explain grid-cell">
+                        Blood pressure is recorded as two numbers. Systolic measures the pressure in the arteris when the heart beats. Diastolic measures the pressure between heartbeats. Normal systolic blood pressure is less than 120 mm Hg. Normal Diastolic blood pressure is less than 80 mm Hg. Unusally low levels should be evaluated for clinical significance.
+                    </div>
+                </div>
+            </div>
+            <img class="seperator-img" src="../../content/images/green_line.png" alt="seprator">
+
+        </div>
+    </div>
+
+</body>
+</html>

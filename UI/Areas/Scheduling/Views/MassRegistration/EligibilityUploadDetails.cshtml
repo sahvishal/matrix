@@ -1,0 +1,108 @@
+@model Falcon.App.Core.Sales.ViewModels.EligibilityUploadListModel
+
+@{
+    ViewBag.Title = "Eligibility Upload Details";
+}
+<h1>Eligibility Upload Details</h1>
+
+<div id="list-filter">
+    @{Html.BeginForm("EligibilityUploadDetails", "MassRegistration", FormMethod.Get);}
+    @Html.Partial("EligibilityUploadListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && Model.Collection != null && Model.Collection.Any())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="margin-bottom: 10px; overflow: auto;">
+        <table id="list-view">
+            <tr>
+                <th>
+                    Uploaded By
+                </th>
+                <th>
+                    Uploaded for Corporate Account
+                </th>
+                <th>
+                    Uploaded Date
+                </th>
+                <th style="width:20px;">
+                    Successfull Customer(s)
+                </th>
+                <th style="width:20px;">
+                    Failed Customer(s)
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Uploaded File
+                </th>
+                <th>
+                    Failed File
+                </th>
+
+            </tr>
+            @foreach (var upload in Model.Collection)
+            {
+                <tr>
+                    <td>@upload.UploadedBy</td>
+                    <td>@upload.UploadedForAccount</td>
+                    <td>@upload.UploadTime.ToShortDateString()</td>
+                    <td>@upload.SuccessfullCustomer</td>
+                    <td>@upload.FailedCustomer</td>
+                    <td>@upload.Status</td>
+                    <td>
+                        @if (upload.File != null)
+                        {
+                            var filePath = upload.File.Url + upload.File.FileName;
+                            <a href="@filePath" target="_blank" title="@upload.File.FileName">Download</a><br />
+                        }
+                        else
+                        {
+                            <text> N/A </text>
+                        }
+                    </td>
+                    <td>
+                        @if (upload.FailedFile != null && upload.File != null)
+                        {
+                            var failedfilePath = upload.File.Url + upload.FailedFile.FileName;
+                            <a href="@failedfilePath" target="_blank" title="@upload.FailedFile.FileName">Download</a><br />
+                        }
+                        else
+                        {
+                            <text> N/A </text>
+                        }
+                    </td>
+
+                </tr>
+            }
+        </table>
+
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records found!
+    </h2>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

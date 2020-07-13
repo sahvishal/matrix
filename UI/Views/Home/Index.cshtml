@@ -1,0 +1,65 @@
+﻿@using Falcon.App.Core.Interfaces
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Application
+
+@model Falcon.App.Core.Geo.ViewModels.ZipSearchModel
+
+@{
+    ViewBag.Title = "Search for an Event Screening Location";
+}
+<style type="text/css">
+
+#content {
+    clear: both;
+    margin-top: 3px;
+    min-height: 550px;
+    overflow: hidden;
+    padding: 5px;
+}
+</style>
+
+@* Search Box *@
+<div style="margin:10px;padding:10px;border:1px solid gray;" runat="server" id="divSearchEvent">
+    <h2>Step 1: Find a Screening Event Near You</h2>
+    @{Html.BeginForm();}
+        <p class="light-text">
+            <u>Enter</u> your Zip Code and <u>Click</u> on the Find Event button
+        </p> 
+        <p>
+            Zip Code: @Html.TextBoxFor(m => m.ZipCode)   @Html.SubmitButton("Find Event")        
+            @Html.HiddenFor(m=>m.Radius)
+            <a href="#" class="jtip" title='Help | @(IoC.Resolve<ISettings>().CompanyName) screening events are held at convenient locations throughout your community. <u>Enter</u> your U.S. Zip Code (5-digit zip code), and <u>Click</u> on the Find Event button and we can help you find screening events in your local area. If you need help finding an event, please call @(IoC.Resolve<ISettings>().PhoneTollFree).'>Click for Help!</a>
+        </p>
+    @{Html.EndForm();}
+</div>
+
+
+
+@section scripts {
+<link type="text/css" href="@Url.Content("/App/jquery/css/JTip/jquery.cluetip.css")"   rel="Stylesheet" />
+<script type="text/javascript" src="@Url.Content("/App/jquery/js/jquery.cluetip.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/App/jquery/js/jquery.hoverIntent.js")"></script>
+
+  <script type="text/javascript" language="javascript">
+
+      $(document).ready(function () {
+          $('.jtip').cluetip({ splitTitle: '|', cursor: 'pointer', tracking: true, cluetipClass: 'jtip', arrows: true, dropShadow: false, hoverIntent: false, width: 400 });
+      });
+
+      $("#Submit").click(function() {
+          var zip = $("#ZipCode").val();
+          var zipLength = $("#ZipCode").val().length;
+
+          if (zip == "" || zipLength != 5 || isNaN(zip)) {
+              alert("Please enter a valid zip code to find screening location near you. The zip code has to be 5 digits.");
+              return false;
+          }
+          
+      });
+
+    </script>
+ }
+ 
+
+

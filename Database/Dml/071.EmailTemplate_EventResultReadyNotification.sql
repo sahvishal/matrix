@@ -1,0 +1,27 @@
+
+USE [$(dbName)]
+Go
+
+if not Exists (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'EventResultReadyNotification')
+begin
+	INSERT INTO [TblEmailTemplate]
+			   ([EmailTitle],[EmailSubject],[EmailBody],[DateCreated],[DateModified])
+	VALUES
+	('EventResultReadyNotification','Event Result Ready Notification' 
+		,'<table style="border-collapse: collapse; border-color: black; width: 600px;" border="1" cellspacing="0" cellpadding="0">  <tbody>  <tr>  <td style="width: 600px; border: 1px;">  <table style="font-family: Arial; width: 600px;" border="0" cellspacing="0" cellpadding="10">  <tbody>  <tr>  <td style="height: 143px;">  <table style="width: 600px;" border="0" cellspacing="0" cellpadding="10">  <tbody>  <tr>  <td style="width: 250px;"><img src="@Model.EmailCommunicationBaseInfo.EmailNotificationLogoRelativePath" alt="" /></td>  <td style="color: #5db3ed; width: 350px;" align="right"><span style="font: bold 14px arial; color: #47a942;">Results Are Ready</span></td>  </tr>  </tbody>  </table>  </td>  </tr>  <tr>  <td style="font-size: 13px; width: 600px;">Dear @Model.Name,<br /> <br /> This is to inform you that results of customers screened for event (Id: <strong>@Model.EventId</strong>) are ready and are available for further processing. <br /> <br />  <table border="1" cellspacing="0">  <tbody>  <tr>  <td>Name</td>  <td>@Model.EventName</td>  </tr>  <tr>  <td>Date</td>  <td>@Model.EventDate.ToString("MM/dd/yyyy")</td>  </tr>  <tr>  <td>Event Location</td>  <td>@Model.AddressOfVenue.ToString()</td>  </tr>  </tbody>  </table>  </td>  </tr>  <tr>  <td><hr style="border: solid 1px #000000;" /></td>  </tr>  <tr>  <td class="normaltxt_pw" style="font-size: 12px;">&copy; <a href="@Model.EmailCommunicationBaseInfo.PrivacyPolicyUrl" target="_blank">Privacy Policy</a> and <a href="@Model.EmailCommunicationBaseInfo.TermsConditionsUrl" target="_blank">Terms of Service</a> <br /> Reminder: @Model.EmailCommunicationBaseInfo.CompanyName will never ask for your password or creditcard number in an email.<br /> <br /> <strong>@Model.EmailCommunicationBaseInfo.CompanyName</strong><br /> @Model.EmailCommunicationBaseInfo.CompanyAddress.StreetAddressLine1<br /> @Model.EmailCommunicationBaseInfo.CompanyAddress.StreetAddressLine2<br /> @Model.EmailCommunicationBaseInfo.CompanyAddress.City, @Model.EmailCommunicationBaseInfo.CompanyAddress.State&nbsp; @Model.EmailCommunicationBaseInfo.CompanyAddress.ZipCode<br /> <span style="color: blue;">855-726-8378</span> (Toll free) <br /> <br /> <strong>THIS IS AN AUTOMATED MESSAGE</strong> - PLEASE DO NOT REPLY DIRECTLY TO THIS EMAIL. IF YOU WISH TO CONTACT HEALTHFAIR VIA EMAIL PLEASE USE <a href="mailto:INFO@HEALTHFAIR.COM">INFO@HEALTHFAIR.COM</a></td>  </tr>  </tbody>  </table>  </td>  </tr>  </tbody>  </table>'
+		,getDate(),getDate())
+
+end
+else
+begin
+	update TblEmailTemplate 
+	set [EmailBody] = '<table style="border-collapse: collapse; border-color: black; width: 600px;" border="1" cellspacing="0" cellpadding="0">  <tbody>  <tr>  <td style="width: 600px; border: 1px;">  <table style="font-family: Arial; width: 600px;" border="0" cellspacing="0" cellpadding="10">  <tbody>  <tr>  <td style="height: 143px;">  <table style="width: 600px;" border="0" cellspacing="0" cellpadding="10">  <tbody>  <tr>  <td style="width: 250px;"><img src="@Model.EmailCommunicationBaseInfo.EmailNotificationLogoRelativePath" alt="" /></td>  <td style="color: #5db3ed; width: 350px;" align="right"><span style="font: bold 14px arial; color: #47a942;">Results Are Ready</span></td>  </tr>  </tbody>  </table>  </td>  </tr>  <tr>  <td style="font-size: 13px; width: 600px;">Dear @Model.Name,<br /> <br /> This is to inform you that results of customers screened for event (Id: <strong>@Model.EventId</strong>) are ready and are available for further processing. <br /> <br />  <table border="1" cellspacing="0">  <tbody>  <tr>  <td>Name</td>  <td>@Model.EventName</td>  </tr>  <tr>  <td>Date</td>  <td>@Model.EventDate.ToString("MM/dd/yyyy")</td>  </tr>  <tr>  <td>Event Location</td>  <td>@Model.AddressOfVenue.ToString()</td>  </tr>  </tbody>  </table>  </td>  </tr>  <tr>  <td><hr style="border: solid 1px #000000;" /></td>  </tr>  <tr>  <td class="normaltxt_pw" style="font-size: 12px;">&copy; <a href="@Model.EmailCommunicationBaseInfo.PrivacyPolicyUrl" target="_blank">Privacy Policy</a> and <a href="@Model.EmailCommunicationBaseInfo.TermsConditionsUrl" target="_blank">Terms of Service</a> <br /> Reminder: @Model.EmailCommunicationBaseInfo.CompanyName will never ask for your password or creditcard number in an email.<br /> <br /> <strong>@Model.EmailCommunicationBaseInfo.CompanyName</strong><br /> @Model.EmailCommunicationBaseInfo.CompanyAddress.StreetAddressLine1<br /> @Model.EmailCommunicationBaseInfo.CompanyAddress.StreetAddressLine2<br /> @Model.EmailCommunicationBaseInfo.CompanyAddress.City, @Model.EmailCommunicationBaseInfo.CompanyAddress.State&nbsp; @Model.EmailCommunicationBaseInfo.CompanyAddress.ZipCode<br /> <span style="color: blue;">855-726-8378</span> (Toll free) <br /> <br /> <strong>THIS IS AN AUTOMATED MESSAGE</strong> - PLEASE DO NOT REPLY DIRECTLY TO THIS EMAIL. IF YOU WISH TO CONTACT HEALTHFAIR VIA EMAIL PLEASE USE <a href="mailto:INFO@HEALTHFAIR.COM">INFO@HEALTHFAIR.COM</a></td>  </tr>  </tbody>  </table>  </td>  </tr>  </tbody>  </table>'
+	where EmailTitle = 'EventResultReadyNotification'
+end
+
+
+	
+
+	
+
+

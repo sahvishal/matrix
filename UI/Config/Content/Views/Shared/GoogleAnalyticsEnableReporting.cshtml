@@ -1,0 +1,72 @@
+@model Falcon.App.Core.Scheduling.ViewModels.GoogleAnalyticsEnableReportingDataModel
+@{
+    var funcReplace = new Func<string, string>(x => x.Replace("\"", "\\\"").Replace("'", "\\'"));
+}
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-8222763-2']);
+    _gaq.push(['_setDomainName', 'healthfair.com']);
+    _gaq.push(['_trackPageview']);
+    _gaq.push(['_addTrans',
+                '@Model.CustomerId', // order ID
+                'healthfair.com', // affiliation or store name (use healthfair.com)
+                '@Model.TotalPrice.ToString("0.00")', // total sale amount including tax and shipping
+                '0.00', // tax
+                '@(Model.Shipping.ToString("0.00"))', // shipping
+                '@funcReplace(Model.Address.City)', // city
+                '@funcReplace(Model.Address.State)', // state or province
+                '@funcReplace(Model.Address.Country)' // country
+            ]);
+@if (Model.EventPackage != null)
+{
+    <text>
+    _gaq.push(['_addItem',
+        '@Model.CustomerId', // order ID (same as above in addTrans) - Passing in Customer Id after discussion
+        '@Model.EventPackage.Id', // SKU/code
+        '@funcReplace(Model.EventPackage.Package.Name)', // product name
+        '', // category or variation
+        '@Model.EventPackage.Price.ToString("0.00")', // unit price or item purchased
+        '1' // quantity of item purchased
+        ]);
+    </text>
+}
+@if (Model.EventTests != null && Model.EventTests.Any())
+{
+    foreach (var item in Model.EventTests)
+    {
+        <text>
+        _gaq.push(['_addItem',
+            '@Model.CustomerId', // order ID (same as above in addTrans) - Passing in Customer Id after discussion
+            '@item.Id', // SKU/code
+            '@funcReplace(item.Test.Name)', // product name
+            '', // category or variation
+            '@item.Price.ToString("0.00")', // unit price or item purchased
+            '1' // quantity of item purchased
+            ]);
+        </text>
+    }
+}
+@if (Model.Products != null && Model.Products.Any())
+{
+    foreach (var item in Model.Products)
+    {
+        <text>
+        _gaq.push(['_addItem',
+            '@Model.CustomerId', // order ID (same as above in addTrans) - Passing in Customer Id after discussion
+            '@item.Id', // SKU/code
+            '@funcReplace(item.Name)', // product name
+            '', // category or variation
+            '@item.Price.ToString("0.00")', // unit price or item purchased
+            '1' // quantity of item purchased
+            ]);
+        </text>
+    }
+}
+    _gaq.push(['_trackTrans']); //submits transaction to the Analytics servers
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>

@@ -1,0 +1,219 @@
+﻿<div class="row">
+    <div class="col-sm-3">
+        <b>Customer ID: </b>
+        <span ng-show="patientInfo.CustomerId == null || patientInfo.CustomerId <= 0">N/A</span>
+        <b ng-show="patientInfo.CustomerId != null && patientInfo.CustomerId > 0" ng-bind="patientInfo.CustomerId"></b>
+    </div>
+    <div class="col-sm-3">
+        <b>Name: </b><span ng-bind="patientInfo.FirstName"></span> <span ng-bind="patientInfo.LastName"></span>
+    </div>
+    <div class="col-sm-3" ng-if="IsHealthPlanQueue">
+        <div class="col-sm-11" ng-style="IsEligible(patientInfo)" style="border: solid 1px black;">
+            <b>Is Eligible: </b> <span ng-if="patientInfo.IsEligible=== null">N/A</span> <span ng-if="patientInfo.IsEligible">Yes</span> <span ng-if="patientInfo.IsEligible===false">No</span>
+        </div>
+    </div>
+</div>
+<!--<div class="row">
+    <div class="col-sm-12"><b>Name: </b><span ng-bind="patientInfo.FirstName"></span> <span ng-bind="patientInfo.LastName"></span></div>
+</div>-->
+<div class="row">
+    <div class="col-sm-3">
+        <b>DOB: </b>
+        <span ng-if="patientInfo.DateOfBirth == null">N/A</span>
+        <span ng-if="patientInfo.DateOfBirth != null" ng-bind="patientInfo.DateOfBirth | date : 'MM/dd/yyyy'"></span>
+    </div>
+    <div class="col-sm-3">
+        <b>Gender: </b>
+        <span ng-if="patientInfo.Gender==Null || patientInfo.Gender==Gender.Unspecified">N/A</span>
+        <span ng-if="patientInfo.Gender == Gender.Male">Male</span>
+        <span ng-if="patientInfo.Gender == Gender.Female">Female</span>
+    </div>
+    <div class="col-sm-6">
+        <b>Email: </b>
+        <span ng-if="patientInfo.Email == null || patientInfo.Email ==''">N/A</span>
+        <span ng-if="patientInfo.Email != null && patientInfo.Email !=''" ng-bind="patientInfo.Email"></span>
+    </div>
+</div>
+<!--<div class="row">
+    <div class="col-sm-12">
+        <b>Alternate Email: </b>
+        <span ng-if="patientInfo.AlternateEmail == null || patientInfo.AlternateEmail ==''">N/A</span>
+        <span ng-if="patientInfo.AlternateEmail != null && patientInfo.AlternateEmail !=''" ng-bind="patientInfo.AlternateEmail"></span>
+    </div>
+</div>-->
+<div class="row">
+    <div class="col-sm-3">
+        <b>HICN Number: </b> <span ng-if="patientInfo.HicnNumber === null || patientInfo.HicnNumber === ''">N/A</span><span ng-if="patientInfo.HicnNumber != null && patientInfo.HicnNumber !== ''" ng-bind="patientInfo.HicnNumber"></span>
+    </div>
+    <div class="col-sm-3">
+        <b>Member Id: </b><span ng-if="patientInfo.MemberId=== null || patientInfo.MemberId === ''">N/A</span> <span ng-if="patientInfo.MemberId != null && patientInfo.MemberId !== ''" ng-bind="patientInfo.MemberId"></span>
+    </div>
+    <div class="col-sm-6">
+        <b>MBI Number: </b><span ng-if="patientInfo.MbiNumber=== null || patientInfo.MbiNumber === ''">N/A</span> <span ng-if="patientInfo.MbiNumber != null && patientInfo.MbiNumber !== ''" ng-bind="patientInfo.MbiNumber"></span>
+        
+    </div>
+</div>
+
+<!--<div class="row">
+    <div class="col-sm-6">
+        <b>DOB: </b>
+        <span ng-if="patientInfo.DateOfBirth == null">N/A</span>
+        <span ng-if="patientInfo.DateOfBirth != null" ng-bind="patientInfo.DateOfBirth | date : 'MM/dd/yyyy'"></span>
+    </div>
+    <div class="col-sm-6">
+        <b>Gender: </b>
+        <span ng-if="patientInfo.Gender==Null || patientInfo.Gender==Gender.Unspecified">N/A</span>
+        <span ng-if="patientInfo.Gender == Gender.Male">Male</span>
+        <span ng-if="patientInfo.Gender == Gender.Female">Female</span>
+    </div>
+</div>-->
+
+<div class="row">
+    <div class="col-sm-12" style="padding-right: 0; padding-left: 0;" >
+        <div class="col-sm-3">
+            <b>Phone Home: </b><span ng-if="patientInfo.CallBackPhoneNumber == null || patientInfo.CallBackPhoneNumber.FormatPhoneNumber == ''">N/A</span>
+            <a ng-if="patientInfo.CallBackPhoneNumber != null && PhoneHomeUrl != ''" href="javascript:void(0)" ng-click=StartOutboundCall(PhoneHomeUrl,patientInfo.CallBackPhoneNumber.FormatPhoneNumber)>{{patientInfo.CallBackPhoneNumber.FormatPhoneNumber}}</a>
+            <span ng-if="patientInfo.CallBackPhoneNumber != null && PhoneHomeUrl == ''" ng-bind="patientInfo.CallBackPhoneNumber.FormatPhoneNumber"></span>
+        </div>
+        <div class="col-sm-3" ng-if="patientInfo.CustomerId != null && patientInfo.CustomerId > 0 && patientInfo.OfficePhoneNumber != null">
+            <b>Phone Office: </b><span ng-if="patientInfo.OfficePhoneNumber.FormatPhoneNumber == ''">N/A</span>
+            <a ng-if="patientInfo.OfficePhoneNumber != null && PhoneOfficeUrl != ''" href="javascript:void(0)" ng-click=StartOutboundCall(PhoneOfficeUrl,patientInfo.OfficePhoneNumber.FormatPhoneNumber)>{{patientInfo.OfficePhoneNumber.FormatPhoneNumber}}</a>
+            <span ng-if="patientInfo.OfficePhoneNumber != null && PhoneOfficeUrl == ''" ng-bind="patientInfo.OfficePhoneNumber.FormatPhoneNumber"></span>
+        </div>
+        <div class="col-sm-3" ng-if="patientInfo.CustomerId != null && patientInfo.CustomerId > 0 && patientInfo.MobilePhoneNumber != null">
+            <b>Phone Mobile: </b><span ng-if="patientInfo.MobilePhoneNumber.FormatPhoneNumber == ''">N/A</span>
+            <a ng-if="patientInfo.MobilePhoneNumber != null && PhoneMobileUrl != ''" href="javascript:void(0)" ng-click=StartOutboundCall(PhoneMobileUrl,patientInfo.MobilePhoneNumber.FormatPhoneNumber)>{{patientInfo.MobilePhoneNumber.FormatPhoneNumber}}</a>
+            <span ng-if="patientInfo.MobilePhoneNumber != null && PhoneMobileUrl == ''" ng-bind="patientInfo.MobilePhoneNumber.FormatPhoneNumber"></span>
+        </div>
+    </div>
+</div>
+<div class="row" >
+    <div class="col-sm-12" style="padding-right: 0; padding-left: 0;">
+        <div class="col-sm-3">
+            <b>Aces Id: </b> <span ng-if="patientInfo.AcesId == null || patientInfo.AcesId == ''">N/A</span> <span ng-if="patientInfo.AcesId != null && patientInfo.AcesId !== ''" ng-bind="patientInfo.AcesId"></span>
+        </div>
+    </div>
+</div>
+    <div class="row">
+        <div class="col-sm-12">
+            <b>Custom Tags: </b> <span ng-if="patientInfo.CustomCorporateTags == null || patientInfo.CustomCorporateTags == ''">N/A</span> <span ng-if="patientInfo.CustomCorporateTags != null && patientInfo.CustomCorporateTags !== ''" ng-bind="patientInfo.CustomCorporateTags"></span>
+        </div>
+        <!--<div class="col-sm-12">
+                <b>HICN Number: </b> <span ng-if="patientInfo.HicnNumber === null || patientInfo.HicnNumber === ''" >N/A</span><span ng-if="patientInfo.HicnNumber != null && patientInfo.HicnNumber !== ''" ng-bind="patientInfo.HicnNumber"></span>
+            </div>
+            <div class="col-sm-12">
+                <b>Member Id: </b><span ng-if="patientInfo.MemberId=== null || patientInfo.MemberId === ''" >N/A</span> <span ng-if="patientInfo.MemberId != null && patientInfo.MemberId !== ''" ng-bind="patientInfo.MemberId"></span>
+            </div>-->
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <b>Address: </b><span ng-if="patientInfo.AddressViewModel != null && patientInfo.AddressViewModel.StreetAddressLine1 != '' ">{{patientInfo.AddressViewModel.StreetAddressLine1}},</span>
+            <span ng-if="patientInfo.AddressViewModel != null && patientInfo.AddressViewModel.StreetAddressLine2 != '' ">{{patientInfo.AddressViewModel.StreetAddressLine2}}, </span>
+            <span ng-if="patientInfo.AddressViewModel != null && patientInfo.AddressViewModel.City != '' ">{{patientInfo.AddressViewModel.City}},</span>
+            <span ng-if="patientInfo.AddressViewModel != null && patientInfo.AddressViewModel.State != '' ">{{patientInfo.AddressViewModel.State}},</span>
+            <span ng-if="patientInfo.AddressViewModel != null && patientInfo.AddressViewModel.Country != '' ">{{patientInfo.AddressViewModel.Country}} -</span>
+            <span ng-if="patientInfo.AddressViewModel != null && patientInfo.AddressViewModel.ZipCode != '' ">{{patientInfo.AddressViewModel.ZipCode}}</span>
+        </div>
+    </div>
+    <div class="row" ng-hide="IsHealthPlanQueue">
+        <div class="col-sm-12">
+            <b>Type of Contact : </b> <span ng-if="patientInfo.ContactType != null" ng-bind="patientInfo.ContactType"></span>
+        </div>
+    </div>
+    <div class="row" ng-hide="IsHealthPlanQueue">
+        <div class="col-sm-12">
+            <b>Prospect Tag : </b> <span ng-if="patientInfo.ProspectTag != null" ng-bind="patientInfo.ProspectTag"></span>
+        </div>
+    </div>
+
+    <div class="row" ng-show="patientInfo.PrimaryCarePhysician != null && IsHealthPlanQueue">
+        <div class="col-sm-12">
+            <h4>PCP Details</h4>
+        </div>
+        <div class="col-sm-3">
+            <b>PCP Name: </b><span ng-bind="patientInfo.PrimaryCarePhysician.FullName.FirstName"></span> <span ng-bind="patientInfo.PrimaryCarePhysician.FullName.LastName"></span>
+        </div>
+
+        <div class="col-sm-3">
+            <b>PCP Email: </b>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Email == null || patientInfo.PrimaryCarePhysician.Email ==''">N/A</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Email != null && patientInfo.PrimaryCarePhysician.Email !=''" ng-bind="patientInfo.PrimaryCarePhysician.Email"></span>
+        </div>
+
+        <!--<div class="col-sm-12" ng-hide="patientInfo.PrimaryCarePhysician.Address != null">
+            <b>PCP Address: </b><span>N/A</span>
+        </div>
+        <div class="col-sm-12" ng-show="patientInfo.PrimaryCarePhysician.Address != null">
+            <b>PCP Address: </b><span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.StreetAddressLine1 != '' ">{{patientInfo.PrimaryCarePhysician.Address.StreetAddressLine1}},</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.StreetAddressLine2 != '' ">{{patientInfo.PrimaryCarePhysician.Address.StreetAddressLine2}}, </span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.City != '' ">{{patientInfo.PrimaryCarePhysician.Address.City}},</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.State != '' ">{{patientInfo.PrimaryCarePhysician.Address.State}},</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.Country != '' ">{{patientInfo.PrimaryCarePhysician.Address.Country}} -</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.ZipCode != '' ">{{patientInfo.PrimaryCarePhysician.Address.ZipCode}}</span>
+        </div>-->
+        <div class="col-sm-6">
+            <div>
+                <b>PCP Phone Number: </b><span ng-if="patientInfo.PrimaryCarePhysician.PhoneNumber == null || patientInfo.PrimaryCarePhysician.PhoneNumber.FormatPhoneNumber == ''">N/A</span> <span ng-if="patientInfo.PrimaryCarePhysician.PhoneNumber != null" ng-bind="patientInfo.PrimaryCarePhysician.PhoneNumber.FormatPhoneNumber"></span>
+            </div>
+        </div>
+        <div class="col-sm-12" ng-show="patientInfo.PrimaryCarePhysician.Address != null">
+            <b>PCP Address: </b><span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.StreetAddressLine1 != '' ">{{patientInfo.PrimaryCarePhysician.Address.StreetAddressLine1}},</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.StreetAddressLine2 != '' ">{{patientInfo.PrimaryCarePhysician.Address.StreetAddressLine2}}, </span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.City != '' ">{{patientInfo.PrimaryCarePhysician.Address.City}},</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.State != '' ">{{patientInfo.PrimaryCarePhysician.Address.State}},</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.Country != '' ">{{patientInfo.PrimaryCarePhysician.Address.Country}} -</span>
+            <span ng-if="patientInfo.PrimaryCarePhysician.Address != null && patientInfo.PrimaryCarePhysician.Address.ZipCode != '' ">{{patientInfo.PrimaryCarePhysician.Address.ZipCode}}</span>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-sm-6">
+            <b>Pre-Approved Test :</b> <span ng-if="preApprovedTest != null" ng-repeat="testName in preApprovedTest">"{{testName}}"{{$last ? '' : ', '}}</span>
+            <span ng-if="preApprovedTest == null">N/A</span>
+        </div>
+        <div class="col-sm-6">
+            <b>Pre-Approved Package :</b> <span ng-if="preApprovedPackage != null" ng-repeat="packageName in preApprovedPackage">"{{packageName}}"{{$last ? '' : ', '}}</span>
+            <span ng-if="preApprovedPackage == null">N/A</span>
+        </div>
+    </div>
+    <!--<div class="row" style="margin-top: 10px;">
+        <div class="col-sm-6">
+            <b>Required Test :</b> <span ng-if="requiredTest != null" ng-repeat="testName in requiredTest">"{{testName}}"{{$last ? '' : ', '}}</span>
+            <span ng-if="requiredTest == null">N/A</span>
+        </div>
+        
+    </div>-->
+
+    <!--<div class="row">
+        <div class="col-sm-6">
+            <b>Pre-Approved Package :</b> <span ng-if="preApprovedPackage != null" ng-repeat="packageName in preApprovedPackage">"{{packageName}}"{{$last ? '' : ', '}}</span>
+            <span ng-if="preApprovedPackage == null">N/A</span>
+        </div>
+    </div>-->
+    <div class="row">
+        <div class="col-sm-3">
+            <b>Activity :</b> <span ng-if="patientInfo.Activity != null && patientInfo.Activity != ''">{{patientInfo.Activity}}</span>
+            <span ng-if="patientInfo.Activity == null || patientInfo.Activity == ''">N/A</span>
+        </div>
+        <div class="col-sm-3">
+            <b>Group Name: </b><span ng-if="patientInfo.GroupName === null || patientInfo.GroupName === ''">N/A</span> <span ng-if="patientInfo.GroupName != null && patientInfo.GroupName !== ''" ng-bind="patientInfo.GroupName"></span>
+        </div>
+    </div>
+    <!--<div class="row">
+        <div class="col-sm-12">
+            <b>Group Name: </b><span ng-if="patientInfo.GroupName=== null || patientInfo.GroupName === ''">N/A</span> <span ng-if="patientInfo.GroupName != null && patientInfo.GroupName !== ''" ng-bind="patientInfo.GroupName"></span>
+        </div>
+    </div>-->
+<div class="row">
+    <div class="col-sm-12">
+        <b>Product: </b><span ng-if="patientInfo.Product=== null || patientInfo.Product === ''">N/A</span> <span ng-if="patientInfo.Product != null && patientInfo.Product !== ''" ng-bind="patientInfo.Product"></span>
+    </div>
+</div>
+    <div class="row">
+        <div class="col-sm-6" ng-repeat="field in additionalfields">
+            <b>{{field.FirstValue}} :</b> <span>{{field.SecondValue}}</span>
+        </div>
+    </div>
+<input type="hidden" id="hfIsSearchNonMammoEvent" />
+<input type="hidden" id="hfAllowNonMammoPatients" />
+<input type="hidden" id="hfPreviousEventId" value="0" />

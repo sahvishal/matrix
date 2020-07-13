@@ -1,0 +1,26 @@
+﻿<div ng-if="childquestion.ControlType == displayControlTypes.Radio" class="clearfix">
+    <div ng-if="childquestion.ControlValues.length == 2">
+        <div class="single-question-no pull-left">
+            <span>&nbsp;</span>
+        </div>
+        <div class="single-question-text pull-left top-buffer-10">
+            <span ng-bind="childquestion.Question"></span>
+        </div>
+        <div class="single-question-opt pull-left top-buffer-10">
+            <div class="styled-radio small" ng-repeat="controlValue in childquestion.ControlValues">
+                <input type="radio" name="question_{{childquestion.QuestoinId}}" ng-checked="childquestion.Answer===controlValue" ng-model="childquestion.Answer" ng-value="childquestion.ControlValues[$index]" ng-disabled="childquestion.disable" ng-click="SaveSelectedObject(childquestion,controlValue)">
+                <label ng-bind="controlValue | uppercase"></label>
+            </div>
+        </div>
+    </div>
+    <div ng-if="childquestion.ControlValues.length > 2">
+        <p class="top-buffer-10 bottom-buffer-0" ng-bind="childquestion.Question"></p>
+        <div class="single-question-text-full top-buffer-10 clearfix">
+            <div class="styled-radio small" ng-repeat="controlValue in childquestion.ControlValues">
+                <input type="radio" name="question_{{childquestion.QuestoinId}}" ng-disabled="childquestion.disable" ng-model="childquestion.Answer" ng-value="childquestion.ControlValues[$index]" ng-click="SaveSelectedObject(childquestion,controlValue)" />
+                <label ng-bind="controlValue"></label>
+            </div>
+        </div>
+    </div>
+</div>
+    

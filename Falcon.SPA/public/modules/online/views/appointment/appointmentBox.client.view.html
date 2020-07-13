@@ -1,0 +1,7 @@
+﻿<div class="app-check top-buffer-10" ng-class="{  'un-available' : slotdetail.AppointmentStatus != 148}">
+    <input type="radio" value="true" ng-checked="slotdetail.isChecked" name="{{radiogroupname}}" ng-click="selectThisOption()" ng-disabled="slotdetail.AppointmentStatus != 148">
+    <label>
+        <span class="app-check-yes">selected</span>
+        <span class="app-check-no">{{slotdetail.StartTime | date:'hh:mm a' }}</span>
+    </label>
+</div>

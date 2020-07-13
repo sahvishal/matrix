@@ -1,0 +1,363 @@
+@using Elmah.ContentSyndication
+@using Falcon.App.Core.CallQueues.Enum
+@using Falcon.App.Core.Extensions
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.HealthPlanCallQueueListModel
+@{
+    ViewBag.Title = "Manage Call Queue Assignment";
+}
+<h2>
+    Manage Call Queue Assignment
+    <span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New", "Create")
+    </span>
+</h2>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+<style type="text/css">
+    .assignments-list ul li {
+        list-style-type: none;
+    }
+</style>
+<div id="list-filter">
+    @{Html.BeginForm("ManageCriteria", "HealthPlanCallQueueCriteria", FormMethod.Get);}
+    @Html.Partial("HealthPlanCallQueueListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Collection != null && Model.Collection.Any())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="margin-bottom: 10px; overflow: auto;">
+        <table id="list-view">
+            <tr>
+                <th nowrap>Name</th>
+                <th>HealthPlan</th>
+                <th>Patient(s) In Queue</th>
+                <th nowrap>CallQueue</th>
+                <th nowrap>Assignment</th>
+                <th nowrap>Modified By</th>
+                <th nowrap>Modified On</th>
+                <th>Action</th>
+            </tr>
+            @foreach (var item in Model.Collection)
+            {
+                <tr>
+                    <td>
+                        @if (string.IsNullOrEmpty(item.Criterias.CriteriaName))
+                        {
+                            if (item.Criterias.Category == HealthPlanCallQueueCategory.UncontactedCustomers)
+                            {
+                                <div>
+                                    Never been contacted in last one year
+                                </div>
+                            }
+
+                            if (item.Criterias.Category == HealthPlanCallQueueCategory.LanguageBarrier)
+                            {
+                                <div>
+                                    Customer has been marked as Language Barrier
+                                </div>
+                            }
+
+                            if (item.Criterias.Category == HealthPlanCallQueueCategory.FillEventsHealthPlan)
+                            {
+                                <div>
+                                    Booking percentage is less than @(item.Criterias.Percentage)% and are scheduled in next @(item.Criterias.NoOfDays + (item.Criterias.NoOfDays > 1 ? "days" : "day"))
+                                </div>
+
+                            }
+                            if (item.Criterias.Category == HealthPlanCallQueueCategory.CallRound)
+                            {
+                                var textForNumberOfDays = DropDownHelper.GetCallRoundNumberOfDays().Single(x => x.Value == item.Criterias.NoOfDays.ToString()).Text;
+                                var roundOfCalls = DropDownHelper.GetCallRoundRoundOfCalls().Single(x => x.Value == item.Criterias.RoundOfCalls.ToString()).Text;
+
+                                <div>
+                                    @(roundOfCalls + (item.Criterias.RoundOfCalls > 0 ? " number of outbound calls completed" : string.Empty)) in last @(textForNumberOfDays)
+                                </div>
+                            }
+                            if (item.Criterias.Category == HealthPlanCallQueueCategory.NoShows)
+                            {
+                                <div>Marked as No Show between from @(item.Criterias.StartDate.Value.ToShortDateString()) and @(item.Criterias.EndDate.Value.ToShortDateString())</div>
+                            }
+                            if (item.Criterias.Category == HealthPlanCallQueueCategory.ZipRadius)
+                            {
+                                var textForRadius = DropDownHelper.Redius().SingleOrDefault(x => x.Value == item.Criterias.Radius.ToString());
+
+                                <div>
+                                    Customers have zip code @(item.Criterias.Zipcode) in  @(textForRadius.Text)
+                                </div>
+
+                            }
+                            if (item.Criterias.Category == HealthPlanCallQueueCategory.MailRound)
+                            {
+                                <div>
+                                    @item.Criterias.CampaignName
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div>
+                                @item.Criterias.CriteriaName
+                            </div>
+                        }
+                    </td>
+                    <td style="width:200px;">
+                        @if (item.IsDefault)
+                        {
+                            <text>All Health Plan</text>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.HealthPlan)
+                        }
+
+                    </td>
+                    <td>
+                        @item.CustomerCount
+                    </td>
+                    <td>
+                        <a class="viewCallQueueCriteria" href=" javascript:void(0)">@Html.DisplayFor(modelItem => item.HealthPlanCallQueue)</a>
+                        <div class="dvCallQueueCriteria" style="display: none;">
+                            @if (item.Criterias.Category == HealthPlanCallQueueCategory.LanguageBarrier)
+                            {
+                                <div>
+                                    Customer has been marked as Language Barrier
+                                </div>
+                            }
+                            @if (item.Criterias.Category == HealthPlanCallQueueCategory.FillEventsHealthPlan)
+                            {
+                                <div>
+                                    Booking percentage is less than @(item.Criterias.Percentage)% and are scheduled in next @(item.Criterias.NoOfDays + (item.Criterias.NoOfDays > 1 ? " days" : " day"))
+                                </div>
+                            }
+                            @if (item.Criterias.Category == HealthPlanCallQueueCategory.MailRound)
+                            {
+                                if (!item.Criterias.DirectMailDates.IsNullOrEmpty())
+                                {
+                                    <div>
+                                        <b>Direct Mail Dates</b>
+                                        @foreach (var directMailDate in item.Criterias.DirectMailDates)
+                                        {
+                                            <span>@directMailDate.ToString("MM/dd/yyyy")</span><br />
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </td>
+                    <td style="width:130px;">
+                        @if (item.IsDefault || item.Criterias.Category == HealthPlanCallQueueCategory.UncontactedCustomers)
+                        {
+                            <text>All Agents </text>
+                        }
+                        else
+                        {
+                            if (item.Assignments != null && item.Assignments.Any())
+                            {
+                                <a class="viewAssignment" onclick="showEditCallQueueAssignmentDialog(@item.Id)" href=" javascript:void(0)">View Agents</a>
+                                @*<div class="assignments-list" style="display: none;">
+                                        <ul style="padding: 0;margin: 0px">
+                                            @foreach (var assignment in item.Assignments)
+                                                    {
+                                                    <li style="list-style-type: none;padding:5px 10px;">@assignment</li>
+                                                    }
+                                        </ul>
+                                    </div>*@
+                            }
+                            else if (item.TeamAssignment != null && item.TeamAssignment.Any())
+                            {
+                                <a class="viewAssignment" onclick="showEditCallQueueTeamAssignmentDialog(@item.Id)" href=" javascript:void(0)">View Teams</a>
+                            }
+                            else
+                            {
+                                <text>N/A</text>
+                            }
+                        }
+
+                    </td>
+                    <td> @item.ModifiedBy</td>
+                    <td> @item.ModifiedOn.ToShortDateString()</td>
+                    <td>
+                        @if (!item.IsDefault)
+                        {
+                            if (item.Criterias.Category == HealthPlanCallQueueCategory.LanguageBarrier || item.Criterias.Category == HealthPlanCallQueueCategory.AppointmentConfirmation)
+                            {
+                                <a href="/callcenter/healthplancallqueuecriteria/edit?criteriaId=@item.Id">Edit</a> <a href="javascript:void(0);" onclick="RegenerateQueue(@item.Id)">Regenerate</a>
+                            }
+                            else if (item.Criterias.Category == HealthPlanCallQueueCategory.UncontactedCustomers)
+                            {
+                                <a href="javascript:void(0);" onclick="RegenerateQueue(@item.Id)">Regenerate</a>
+                            }
+                            else
+                            {
+                                <a href="/callcenter/healthplancallqueuecriteria/edit?criteriaId=@item.Id">Edit</a>
+                            }
+                        }
+
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+<div id="edit-assignment">
+    @using (Ajax.BeginForm("EditCallQueueAssignment", "HealthPlanCallQueueCriteria", null, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "edit-assignment-endDate", InsertionMode = InsertionMode.Replace, OnSuccess = "SuccessEditCallQueueAssignment" }))
+    {
+        <div id="edit-assignment-endDate" style="max-height:500px; overflow-y:auto;">
+
+        </div>
+        <div class="editor-row">
+            <br />
+            <div style="float: right; padding-right: 10px; padding-top: 6px"><button type="submit">Update</button></div>
+            <a href="javascript:void(0)" onclick="closePopup();" style="float: right; margin-right: 10px; padding-top: 6px">Close</a>
+        </div>
+    }
+</div>
+
+<div id="edit-team-assignment">
+    @using (Ajax.BeginForm("EditTeamAssignment", "HealthPlanCallQueueCriteria", null, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "edit-team-assignment-endDate", InsertionMode = InsertionMode.Replace, OnSuccess = "successEditCallQueueTeamAssignment" }))
+    {
+        <div id="edit-team-assignment-endDate" style="max-height:500px; overflow-y:auto;">
+
+        </div>
+        <div class="editor-row">
+            <br />
+            <div style="float: right; padding-right: 10px; padding-top: 6px"><button type="submit">Update</button></div>
+            <a href="javascript:void(0)" onclick="closeTeamAssignmentPopup();" style="float: right; margin-right: 10px; padding-top: 6px">Close</a>
+        </div>
+    }
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+                function () {
+                    $(this).removeClass('row-hover');
+                });
+        });
+
+        function closeTeamAssignmentPopup() {
+            $('#edit-team-assignment').dialog("close");
+        }
+
+        $(document).ready(function () {
+            //$("a.viewAssignment").each(function (index) {
+            //    $(this).qtip({
+            //        position: {
+            //            my: 'right top'
+            //        },
+            //        content: {
+            //            title: "Assigned To",
+            //            text: function (api) {
+            //                return $(this).parent().find(".assignments-list").html();
+            //            }
+            //        }
+            //    });
+            //});
+
+            $('#edit-assignment').dialog({
+                width: 600, autoOpen: false, modal: true, title: 'Edit Assignment Date', resizable: true, draggable: true, create: function () {
+                    $(this).css("maxHeight", 600).css("padding-top", 20);
+                }
+            });
+
+            $('#edit-team-assignment').dialog({
+                width: 600, autoOpen: false, modal: true, title: 'Edit Team Assignment', resizable: true, draggable: true, create: function () {
+                    $(this).css("maxHeight", 600).css("padding-top", 20);
+                }
+            });
+
+
+
+            $("a.viewCallQueueCriteria").each(function (index) {
+                $(this).qtip({
+                    position: {
+                        my: 'right top'
+                    },
+                    content: {
+                        title: "Criteria",
+                        text: function (api) {
+                            return $(this).parent().find(".dvCallQueueCriteria").html();
+                        }
+                    }
+                });
+            });
+        });
+
+        function RegenerateQueue(criteriaId) {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/callcenter/healthplancallqueuecriteria/regeneratehealthplancriteria?criteriaId=" + criteriaId,
+                data: "{}",
+                success: function (result) {
+                    if (result) {
+                        alert(result.Message);
+                        location.reload();
+                    }
+                },
+                error: function (a) {
+
+                }
+            });
+        }
+
+        function showEditCallQueueAssignmentDialog(criteriaId) {
+            $.ajax({
+                type: 'GET',
+                contentType: "application/json; charset=utf-8",
+                dataType: 'html',
+                url: '/callcenter/HealthPlanCallQueueCriteria/EditCallQueueAssignment?criteriaId=' + criteriaId,
+                success: function (data) {
+                    $("#edit-assignment-endDate").html(data);
+                    $('#edit-assignment').dialog('open');
+                }
+            });
+        }
+
+        function SuccessEditCallQueueAssignment() {
+            if ($("[class*='validation-tip'], [class*='validation-error'], [class*='error-message']").length < 1) {
+                alert('End date updated successfully');
+                $('#edit-assignment').dialog('close');
+                location.reload();
+            }
+        }
+
+        function showEditCallQueueTeamAssignmentDialog(criteriaId) {
+            $.ajax({
+                type: 'GET',
+                contentType: "application/json; charset=utf-8",
+                dataType: 'html',
+                url: '/callcenter/HealthPlanCallQueueCriteria/EditTeamAssignment?criteriaId=' + criteriaId,
+                success: function (data) {
+                    $("#edit-team-assignment-endDate").html(data);
+                    $('#edit-team-assignment').dialog('open');
+                }
+            });
+        }
+
+        function successEditCallQueueTeamAssignment() {
+            if ($("[class*='validation-tip'], [class*='validation-error'], [class*='error-message']").length < 1) {
+                $('#edit-assignment').dialog('close');
+                location.reload();
+            }
+        }
+    </script>
+}

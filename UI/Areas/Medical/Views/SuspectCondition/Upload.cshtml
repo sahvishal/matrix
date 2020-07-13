@@ -1,0 +1,127 @@
+﻿@using Falcon.App.Core.Medical.ViewModels 
+@using Falcon.App.UI.HtmlHelpers
+@model SuspectConditionFileUploadEditModel
+
+@{
+    ViewBag.Title = "Suspect Condition Upload";
+}
+<h2>
+    Suspect Condition Upload (*.csv)
+</h2>
+
+
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+
+@{Html.BeginForm("Upload", "SuspectCondition", FormMethod.Post, new { enctype = "multipart/form-data" });}
+@if (Model != null)
+{
+    <div class="editor-row account-detail" id="upload-div" style="margin-top: 20px;">
+        Upload file:
+        <input type="file" name="suspectConditionUploadFile" accept=".csv" />
+        <input type="submit" id="FileSubmit" value="Upload" onclick="checkUploadFile();" />
+        <a style="margin-left: 20px;" href='@(Model.SampleCsvMediaUrl + "SuspectConditionUpload_Sample.csv")'>Sample CSV</a>
+        <h4 style="width:250px;">Please upload a csv file! </h4>
+    </div>
+
+    <div id="parse-in-progress-div" style="display: none;">
+        <br /><h4 style="width:250px;"> Parse in progress </h4><br />
+        <img src="/Content/Images/pbar-ani.gif" style="width:400px; height: 40px;" />
+    </div>
+    
+    if (Model.IsUploadSucceded)
+        {
+            <div class="editor-row">
+                <div style="float:left; width:33%;">
+                    <label><b>Total Records:</b></label>
+                    <span class="total-customers">@Model.TotalRecords </span>
+                </div>
+                <div style="float:left; width: 33%;">
+                    <label><b>Uploaded Records:</b></label>
+                    <span class="uploaded-customers">@Model.UploadedRecords </span>
+                </div>
+                <div style="float:left; width: 32%;">
+                    <label><b>Failed Records:</b></label>
+                    <span class="failed-customers">@Model.FailedRecords</span>
+                </div>
+            </div>
+        }
+        <div>
+            @*<a id="failedFilePath" style="margin-left: 20px; display: none" href=''>Failed Records</a>*@
+            <span id="spfailedRecords" style="display:none">You can download the failed records from Suspect Condition Upload Archive page</span>
+        </div>
+}
+
+
+<script type="text/javascript">
+
+    function checkUploadFile() {
+        $("#upload-div").hide();
+        $("#parse-in-progress-div").show();
+        return true;
+    }
+    function checkHideProgressBar() {
+        $("#upload-div").show();
+        $("#parse-in-progress-div").hide();
+        return true;
+    }
+
+    var pageSize = 50;
+
+    function UploadSuspectConditionAsynchronous(fileName, pageNumber, logFileId) {
+        $("#spfailedRecords").hide();
+        var data = {
+            FileName: fileName,
+            PageSize: pageSize,
+            PageNumber: pageNumber,
+            FailedRecordsFile: '@Model.FailedRecordsFile',
+            SuspectConditionUploadId: '@Model.SuspectConditionUploadId',
+            LogFileId: logFileId,
+        };
+
+        $.post("/Medical/SuspectCondition/UploadSuspectConditions", data, function (result) {
+            updateProgressBar(result.TotalRecords, result.UploadedRecords, result.FailedRecords);
+            
+            if (result.FeedbackMessage == null) {
+                if (!result.IsParseSucceded) {
+                    UploadSuspectConditionAsynchronous(result.FileName, result.PageNumber, result.LogFileId);
+                } else {
+                    checkHideProgressBar();
+                    //if (result.FailedRecordsListPath != "") {
+                    //    $("#failedFilePath").attr("href", result.FailedRecordsListPath);
+                    //    $("#failedFilePath").show();
+                    //}
+                    if (result.FailedRecords > 0) {
+                        $("#spfailedRecords").show();
+                    }
+                }
+            }
+            else {
+                alert('Some internal error occurred while processing file. Message: ' + result.FeedbackMessage.Message)
+                checkHideProgressBar();
+            }
+        });
+    }
+
+    function updateProgressBar(totalCustomers, uploadedCustomers, failedCustomers) {
+
+        var customers = $(".uploaded-customers").text();
+        var failedCustomer = $(".failed-customers").text();
+        $(".uploaded-customers").text((uploadedCustomers + parseInt(customers)));
+        $(".failed-customers").text(failedCustomers + parseInt(failedCustomer));
+    }
+
+    $(document).ready(function () {
+        @if (Model != null && Model.IsUploadSucceded && !Model.IsParseSucceded)
+        {
+            <text>
+                checkUploadFile()
+                UploadSuspectConditionAsynchronous('@Model.FileName', 1, 0);
+            </text>
+        }
+    });
+
+</script>
+@{Html.EndForm();}

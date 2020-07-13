@@ -1,0 +1,36 @@
+﻿@using Falcon.App.Core.Users.ViewModels
+@model ResultConfigEditModel
+
+@using (Ajax.BeginForm("ResultConfigModel", "CorporateAccount", new AjaxOptions { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "result-config", OnComplete = "resultToggle" }))
+{
+    <div style="margin:10px;">
+        <div id="result-config">@Html.Partial("ResultConfigModel")</div>
+        <div class="btnrow">
+            <input type="submit" class="btn result-config-btn" style="float: right;margin-right: 10px;display: block" value="Save & Close" /> <a href="/Users/CorporateAccount" style="float: right;padding-right: 10px;padding-top: 6px">Close</a>
+        </div>
+        <div class="result-config-btn" style="display: none; text-align: right;"><img src="/App/Images/loading.gif" alt="" />Saving</div>
+    </div>
+     <script type="text/javascript">
+
+        $(document).ready(function() {
+            $("input[type=submit]").click(function () {
+                setCustomerResultTestDependency();
+                setPcpResultTestDependency();
+                setHealthPlanResultTestDependency();
+                
+                resultToggle();
+            });
+        });
+        function resultToggle() {
+            $(".result-config-btn").toggle();
+        }
+    </script>
+}
+<style type="text/css">
+    .btnrow {
+        width: 100%;
+        height: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+</style>

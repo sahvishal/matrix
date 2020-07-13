@@ -1,0 +1,155 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentHeaderEditModel
+
+
+<div style="float: left; width: 97%;">
+    <div class="row-div1" style="font-size: 11px;">
+        <div style="float: left; width: 200px;">
+            <b>Customer Id:</b>@Model.CustomerId
+        </div>
+        <div style="float: left; width: 300px;">
+            <b>Customer Name:</b>@Model.CustomerName.ToString()
+        </div>
+        <div style="float: right; width: 150px; text-align: right;">
+            <b>Event Date:</b>@Model.EventDate.ToShortDateString()
+        </div>
+    </div>
+</div>
+<div class="section-withborder" style="padding-top: 20px; font-size: 12pt;">
+    <div style="font-weight: bold; width: 100%; text-align: center">CAGE SCORE</div>
+    <div style="margin-top: 20px;">
+        <span style="margin-top:20px;">What is your history of alcohol use?</span>
+        <div style="margin-left:10px;">
+            <input type="radio" style="margin-top:20px;" name="alcohalHistory">Never Used Alcohol<br />
+            <input type="radio" style="margin-top:20px;" name="alcohalHistory"> Social Alcohol Use<br />
+            <input type="radio" style="margin-top:20px;" name="alcohalHistory"> Alcohol Abuse<br />
+            <input type="radio" style="margin-top:20px;" name="alcohalHistory">Alcohol Dependency (Current)<br />
+            <input type="radio" style="margin-top:20px;" name="alcohalHistory">Alcohol Dependency (Remission)
+        </div>
+    </div>
+    <div style="margin-left:10px; margin-top:20px;">
+        <input type="checkbox">If you intake alcohol, does it have any complications (Mood, Psychotic, Sleep, Anxiety, Sexual, or Unspecified Disorders)<br>
+    </div>
+    <div>
+        <div style="margin-left:10px; margin-top:20px;">
+            <input type="radio" name="alcohallevel">Yes
+            <input type="radio" name="alcohallevel">No
+            <span style=" margin-left:30px;">Do you drink 7 or more alcoholic drinks per week or 3 or more per episode of drinking?</span>
+        </div>
+    </div>
+    @*<div style="float:left; width:100%; margin-top: 20px; ">
+        <div style="text-align:left; margin-top:20px;">
+            <span><b>Alcohol Misuse Screen (C.A.G.E.)</b></span>
+        </div>
+        <div style="float:left; margin-top:20px;">
+            <div style="float:left; width:120px;">
+                <input type="radio" name="cage_c">Yes
+                <input type="radio" name="cage_c">No
+            </div>
+            <div style="float:left; width: 760px;">C: Have you ever felt you should cut down on your drinking?</div>
+        </div>
+        <div style="float:left; margin-top:20px;">
+            <div style="float:left; width:120px;">
+                <input type="radio" name="cage_c">Yes
+                <input type="radio" name="cage_c">No
+            </div>
+            <div style="float:left; width: 760px;">A: Have people annoyed you by criticizing your drinking?</div>
+        </div>
+        <div style="float:left; margin-top:20px;">
+            <div style="float:left; width:120px;">
+                <input type="radio" name="cage_c">Yes
+                <input type="radio" name="cage_c">No
+            </div>
+            <div style="float:left; width: 760px;">G: Have you ever felt bad or guilty about your drinking?</div>
+        </div>
+        <div style="float:left; margin-top:20px;">
+            <div style="float:left; width:120px;">
+                <input type="radio" name="cage_c">Yes
+                <input type="radio" name="cage_c">No
+            </div>
+            <div style="float:left; width: 760px;">E: Have you ever had a drink first thing in the morning to steady your nerves or to get rid of a hangover?</div>
+        </div>
+    </div>*@
+    <div style="float:left; width:95%; margin-top:20px;">
+        <table style="border-collapse: collapse;">
+            <tbody>
+                <tr>
+                    <th colspan="2">
+                        <div style="text-align: left; margin-top: 10px;">
+                            <span><b>CAGE Questionnaire</b></span>
+                        </div>
+                    </th>
+                </tr>
+                <tr style="border-bottom: 3px solid white;">
+                    <td colspan="2">
+                        <div style="margin-top: 20px;">
+                            <span>Have you ever felt you should Cut down on your drinking?</span>
+                            <div style="float:right; margin-right:20px;">
+                                <input type="radio" name="drink_a">Yes
+                                <input type="radio" name="drink_a">No
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr style="border-bottom: 3px solid white;">
+                    <td colspan="2">
+                        <div style="margin-top: 20px;">
+                            <span>Have people Annoyed you by criticising your drinking?</span>
+                            <div style="float:right; margin-right:20px;">
+                                <input type="radio" name="drink_b">Yes
+                                <input type="radio" name="drink_b">No
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr style="border-bottom: 3px solid white;">
+                    <td colspan="2">
+                        <div style="margin-top: 20px;">
+                            <span>Have you ever felt bad or Guilty about your drinking?</span>
+                            <div style="float:right; margin-right:20px;">
+                                <input type="radio" name="drink_c">Yes
+                                <input type="radio" name="drink_c">No
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr style="border-bottom: 3px solid white;">
+                    <td colspan="2">
+                        <div style="margin-top: 20px; width:100%;">
+                            <div style=" width:65%; float:left;">
+                                <span>Have you ever had a drink first thing in the morning to steady your nerves or to get rid of a hangover (Eye opener)?</span>
+                            </div>
+
+                            <div style="float:right; margin-right:20px;">
+                                <input type="radio" name="drink_d">Yes
+                                <input type="radio" name="drink_d">No
+                            </div>
+                        </div><br />
+                    </td>
+                </tr>
+                <tr style="border-bottom: 3px solid white;">
+                    <td colspan="2">
+                        <div style="margin-top: 20px;">
+                            <div style="text-align:center">
+                                <span>Total=</span>
+                                <input type="text" style="width:50px;" name="total">&nbsp;/4
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+        </table>
+    </div>
+</div>
+<div style="float: left; width: 97%;">
+    <div class="row-div1" style="font-size: 11px;">
+        <div style="float: left; width: 200px;">
+            <b>Customer Id:</b>@Model.CustomerId
+        </div>
+        <div style="float: left; width: 300px;">
+            <b>Customer Name:</b>@Model.CustomerName.ToString()
+        </div>
+        <div style="float: right; width: 150px; text-align: right;">
+            <b>Event Date:</b>@Model.EventDate.ToShortDateString()
+        </div>
+    </div>
+</div>

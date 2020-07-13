@@ -1,0 +1,37 @@
+﻿@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.Scheduling.ViewModels
+@model EnableTextingEditModel
+@{
+    Layout = null;
+}
+<div>
+    <div class="small-text">
+        Receive SMS : @Html.CheckBoxFor(m => m.EnableTexting, new { @onclick = "CheckSMSCellPhone(this)", @id = "chksmsenable" })
+        @Html.HiddenFor(m => m.CustomerId)
+        @Html.HiddenFor(m => m.EventCustomerId)
+    </div>
+    <br />
+    <div class="small-text" id="divPhoneCell" style="@(Model.EnableTexting ? "display:block":"display:none")">
+        @Html.EditorFor(m => m.PhoneCell)
+        @Html.ValidationMessageFor(m => m.PhoneCell)
+      
+    </div>
+</div>
+<div class="-buttons" style="padding-top: 20px; float: right;">
+    <input type="submit" value="Update" /> &nbsp;<input type="button" onclick="cancelEnableTextingPopup()" value="Cancel" />
+</div>
+<script type="text/javascript">
+    @if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+         {
+            <text>
+            $("#EnableTextingDialogDiv").html('<img src="/App/Images/loading.gif"/>');
+            window.parent.location.reload();
+            $('#EnableTextingDialogDiv').dialog('close');
+            $(".update-enable-texting-anchor").hide();
+            </text>
+         }
+    function cancelEnableTextingPopup() {
+        $("#EnableTextingDialogDiv").html('<img src="/App/Images/loading.gif"/>');
+        $('#EnableTextingDialogDiv').dialog('close');
+    }
+</script>

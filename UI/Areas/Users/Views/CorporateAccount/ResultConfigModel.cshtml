@@ -1,0 +1,741 @@
+﻿@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.Communication.Enum
+@using Falcon.App.Core.Marketing.Enum
+@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model ResultConfigEditModel
+@if (Model != null && Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType != UserInterfaceMessageType.Success)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+else if (Model != null && Model.FeedbackMessage != null)
+{
+    <script type="text/javascript">window.location.href = "/Users/CorporateAccount/Index"</script>
+}
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="/Content/JavaScript/validations.js?v=@DateTime.Now.Ticks"></script>
+
+<fieldset>
+    <legend>
+        <h3>Result Settings</h3>
+    </legend>
+    @Html.HiddenFor(m => m.AccountId)
+    <div class="editor-row">
+        <div class="small-text">
+            Marketing Letter <a id="fluffletter-qtip"></a>
+        </div>
+        @if (Model != null)
+        {
+            var vd = new ViewDataDictionary
+            {
+                TemplateInfo = new TemplateInfo
+                {
+                    HtmlFieldPrefix = "FluffLetter"
+                },
+
+            };
+            vd["fileTypeExtention"] = "pdf";
+
+            @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.FluffLetter, vd)
+        }
+    </div>
+    <div class="editor-row" style="font-size: 8pt;">
+        *<i> Upload only PDF</i>
+    </div>
+    <hr />
+    @*Crate Host Section*@
+    <div class="editor-row">
+        <div style="width: 33%; float: left;">
+            @Html.CheckBoxFor(m => m.SendSurveyMail) Send Survey Mail
+        </div>
+        <div style="width: 65%; float: left; clear: right">
+            Survey Mail Template @Html.DropDownListFor(m => m.SurveyMailTemplateId, DropDownHelper.GetEmailTemplatesByNotificationTypeAlias(NotificationTypeAlias.SurveyEmailNotification, Model.SurveyMailTemplateId)) @Html.ValidationMessageFor(m => m.SurveyMailTemplateId)
+        </div>
+    </div>
+
+    <div class="editor-row" style="">
+        <div style="width: 33%; float: left;">
+            @Html.CheckBoxFor(m => m.SendResultReadyMail) Send Result Ready Mail
+        </div>
+        <div style="width: 65%; float: left; clear: right">
+            Result Ready Mail Template  @Html.DropDownListFor(m => m.ResultReadyMailTemplateId, DropDownHelper.GetEmailTemplatesByNotificationTypeAlias(NotificationTypeAlias.ResultsReady, Model.SurveyMailTemplateId))   @Html.ValidationMessageFor(m => m.ResultReadyMailTemplateId)
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="float: left; width: 33%; ">
+            @Html.CheckBoxFor(m => m.GeneratePcpLetterWithDiagnosisCode) Generate PCP Letter With Diagnosis Code
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.GeneratePcpLetter)  Generate PCP Letter
+            <div id="dvGeneratePcpLetterOption" style="display:none">
+                <input type="radio" id="UploadPcpLetterPdf" name="IsPcpCoverLetterSelected" @(!Model.IsPcpCoverLetterSelected ? "checked='checked'" : "") value="false" />
+                <label for="UploadPcpLetterPdf">Upload PCP Letter</label>
+                &nbsp;&nbsp;
+                <input type="radio" id="SelectPcpLetterPdf" name="IsPcpCoverLetterSelected" @(Model.IsPcpCoverLetterSelected ? "checked='checked'" : "") value="true" />
+                <label for="SelectPcpLetterPdf">Select PCP Letter</label>
+                <br />
+            </div>
+        </div>
+        <div style=" width: 33%; float: left" id="pcpLetterPdfdiv">
+            Pcp Letter PDF
+            @Html.ValidationMessageFor(m => m.PcpLetterPdf)
+            @{
+                var vdcs = new ViewDataDictionary
+                {
+                    TemplateInfo = new TemplateInfo
+                    {
+                        HtmlFieldPrefix = "PcpLetterPdf"
+                    }
+                };
+                vdcs["fileTypeExtention"] = "pdf";
+                @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.PcpLetterPdf, vdcs)                                              
+
+            }
+        </div>
+        <div style="width: 33%; float: left; display: none;" id="dvPcpCoverLetter">
+            PCP Cover Letter @Html.ValidationMessageFor(m => m.PcpCoverLetterTemplateId)<br />
+            @Html.DropDownListFor(m => m.PcpCoverLetterTemplateId, DropDownHelper.GetEmailTemplatesByNotificationTypeAlias(NotificationTypeAlias.CoverLetterTemplate, Model.PcpCoverLetterTemplateId, (long)CoverLetterType.PcpCoverLetter))
+        </div>
+    </div>    
+
+    <div class="editor-row">
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.ShowBasicBiometricPage) Show Basic Biometric Page
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.AllowCobranding) Allow cobranding in customer portal
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.AllowCustomerPortalLogin) Allow Customer Portal Login
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.CorporateWhiteLabeling) Include Corporate Letter
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.SendResultReadyMailWithFax) Send Result Ready Mail With Fax
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.AddImagesForAbnormal) Add Images For Abnormal Results
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.CaptureAbnStatus) Capture ABN Status
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.CapturePcpConsent) Capture PCP Consent
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.RemoveLongDescription) Remove Long Description
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.UseHeaderImage) Use Header Image
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.AttachScannedDoc) Attach Scanned Document With Result
+        </div>
+        <div style="float: left; width: 33%;">
+            Result Format For SFTP @Html.DropDownListFor(m => m.ResultFormatTypeId, DropDownHelper.GetLookupSelectListItems((long)ResultFormatType.PDF), new { @style = "width: 135px" })
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.AttachUnreadableTest) Show Unreadable test(s) in Result Report
+        </div>
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.GenerateBmiReport) Generate BMI Report
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="float: left; width: 55%;">
+            @Html.CheckBoxFor(m => m.SendEventResultReadyNotification) Send Event Result Ready Notification to Account Admin
+        </div>
+        <div style="width: 40%; float: left;">
+            @Html.CheckBoxFor(m => m.PrintPcpAppointmentForResult) Print Pcp Appointment with Result PDF
+            <span class="result-setting-info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="result-setting-prop-tip-info" style="display: none;">
+                If selected, then system will generate the PCP Appointment Letter along with Result PDF for the event.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.EnablePgpEncryption) Encrypt SFTP file(s) Using Public Key
+        </div>
+        <div style="width: 33%; float: left" id="enablePgpEncryptiondiv">
+            Public Key
+            @Html.ValidationMessageFor(m => m.PublicKeyFile)
+            @if (Model != null)
+            {
+
+                var publicKey = new ViewDataDictionary
+                {
+                    TemplateInfo = new TemplateInfo
+                    {
+                        HtmlFieldPrefix = "PublicKeyFile"
+                    }
+                };
+                publicKey["fileTypeExtention"] = "asc";
+
+                @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.PublicKeyFile, publicKey)
+            }
+        </div>
+    </div>
+
+    <div class="editor-row">
+
+        <div style="float: left; width: 38%;">
+            @Html.CheckBoxFor(m => m.IncludeMemberLetter) Include Member Letter
+             <div id="dvIncludeMemberLetterOption" style="display:none">
+                <input type="radio" id="UploadMemberLetterPdf" name="IsMemberCoverLetterSelected" @(!Model.IsMemberCoverLetterSelected ? "checked='checked'" : "") value="false" />
+                <label for="UploadMemberLetterPdf">Upload Member Letter</label>
+                 &nbsp;&nbsp;
+                <input type="radio" id="SelectMemberLetterPdf" name="IsMemberCoverLetterSelected" @(Model.IsMemberCoverLetterSelected ? "checked='checked'" : "") value="true" />
+                <label for="SelectMemberLetterPdf">Select Member Letter</label>
+                <br />
+            </div>
+        </div>
+        <div style="width: 33%; float: left" id="enableMemberLetterdiv">
+            Member Letter PDF
+            @Html.ValidationMessageFor(m => m.MemberLetter)
+            @if (Model != null)
+            {
+
+                var memberLetter = new ViewDataDictionary
+                {
+                    TemplateInfo = new TemplateInfo
+                    {
+                        HtmlFieldPrefix = "MemberLetter"
+                    }
+                };
+                memberLetter["fileTypeExtention"] = "pdf";
+
+                @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.MemberLetter, memberLetter)
+            }
+        </div>
+        <div style="width: 33%; float: left; display:none;" id="dvMemberCoverLetter">
+            Member Cover Letter @Html.ValidationMessageFor(m => m.MemberCoverLetterTemplateId)<br />
+            @Html.DropDownListFor(m => m.MemberCoverLetterTemplateId, DropDownHelper.GetEmailTemplatesByNotificationTypeAlias(NotificationTypeAlias.CoverLetterTemplate, Model.MemberCoverLetterTemplateId, (long)CoverLetterType.MemberCoverLetter))
+        </div>
+    </div>
+
+
+    <div class="editor-row">
+        <div style="float: left; width: 33%;">
+            @Html.CheckBoxFor(m => m.MarkPennedBack) Mark Patients as Penned Back
+            <span class="info-tip" style="vertical-align: middle;"> <img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                Mark Patients as Penned Back to append specific penned back text in the Result PDF file name.
+            </div>
+        </div>
+        <div id="pennedBackTextDiv" style="float: left; width: 50%; @(Model.MarkPennedBack? "" : "display:none;")">
+            Penned Back Text  &nbsp;&nbsp; @Html.TextBoxFor(m => m.PennedBackText, new { @class = "isFileName", @style = "width:30%", @maxlength = "25" })&nbsp;&nbsp;&nbsp;@Html.ValidationMessageFor(m => m.PennedBackText)
+            <br />
+            <span id="file-name-validation" style="color:red; display: none;">A file name can't contain any of the following characters : \ / : * ? " < > |</span>
+        </div>
+    </div>
+
+    <div class="editor-row" style="padding-top: 15px">
+        <div style="float: left; clear: both">
+            @Html.CheckBoxFor(m => m.GenerateCustomerResult) Generate Customer Result
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.GenerateEawvPreventionPlanReport)
+
+    <div class="editor-row customer-default-dependency-tests" style="padding-left: 20px; display: @(Model.GenerateCustomerResult ? "block" : "none")">
+        <div class="editor-row">
+            <div style="float: left;width: 48%;">
+                <input type="radio" id="normalResultPdf" name="IsCustomerResultsTestDependent" @(!Model.IsCustomerResultsTestDependent ? "checked='checked'" : "") value="false" />
+                Generate Result PDF <span id="normal-pdf-generation-tip"><i>(i)</i></span><br />
+
+                <input type="radio" id="eawvPreventionPlanReport" name="IsCustomerResultsTestDependent" @(Model.GenerateEawvPreventionPlanReport ? "checked='checked'" : "") value="false" />
+                Generate EAwv Prevention Plan Report Only <span id="eawv-Prevention-Plan-generation-tip"><i>(i)</i></span><br />
+
+                <input type="radio" id="testdependentResultPdf" name="IsCustomerResultsTestDependent" @(Model.IsCustomerResultsTestDependent ? "checked='checked'" : "") value="true" />
+                Generate Result PDF based on Tests selected <span id="test-dependent-pdf-generation-tip"><i>(i)</i></span>
+                <br /> @Html.ValidationMessageFor(m => m.CustomerResultTestDependency)<br />
+            </div>
+            <div style="width: 33%; float: left">
+                <div id="participationForm" style="@(Model.GenerateCustomerResult ? "display:block" : "display:none")">
+                    Participant Letter
+
+                    @if (Model != null)
+                    {
+
+                        var participantLetter = new ViewDataDictionary
+                        {
+                            TemplateInfo = new TemplateInfo
+                            {
+                                HtmlFieldPrefix = "ParticipantLetter"
+                            }
+                        };
+                        participantLetter["fileTypeExtention"] = "pdf";
+
+                        @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.ParticipantLetter, participantLetter)
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div id="customer-result-dependency" style="float: left; clear: both; margin: 20px 0; display: @(Model.IsCustomerResultsTestDependent ? "block" : "none")">
+            <fieldset>
+                <legend>Result Dependencies</legend>
+                @foreach (var test in Model.RecordableTests)
+                {
+                    var isSelected = Model.CustomerResultTestDependency != null && Model.CustomerResultTestDependency.Any(x => x == test.Id);
+                    <div style="float: left; width: 20%">
+                        <input type="checkbox" @(isSelected ? "checked=checked" : string.Empty) value="@test.Id" />
+                        @test.Alias
+                    </div>
+                }
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="float: left; clear: both">
+            @Html.CheckBoxFor(m => m.GeneratePcpResult) Generate PCP Result<span id="generate-Pcp-Result-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span> @Html.ValidationMessageFor(m => m.PcpResultTestDependency)
+        </div>
+        <div id="pcp-result-dependency" style="float: left; clear: both; margin: 20px 0;padding-left: 20px; display: @(Model.GeneratePcpResult ? "block" : "none")">
+            <fieldset>
+                <legend>Result Dependencies</legend>
+                @foreach (var test in Model.RecordableTests)
+                {
+                    var isSelected = Model.PcpResultTestDependency != null && Model.PcpResultTestDependency.Any(x => x == test.Id);
+                    <div style="float: left; width: 20%">
+                        <input type="checkbox" @(isSelected ? "checked=checked" : string.Empty) value="@test.Id" />
+                        @test.Alias
+                    </div>
+                }
+            </fieldset>
+        </div>
+
+        <div style="float: left; clear: both">
+            @Html.CheckBoxFor(m => m.GenerateHealthPlanReport) Generate Healthplan Result<span id="generate-HealthPlan-Result-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span> @Html.ValidationMessageFor(m => m.HealthPlanResultTestDependency)
+        </div>
+        <div id="HealthPlan-result-dependency" style="float: left; clear: both; margin: 20px 0;padding-left: 20px; display: @(Model.GenerateHealthPlanReport ? "block" : "none")">
+            <fieldset>
+                <legend>Result Dependencies</legend>
+                @foreach (var test in Model.RecordableTests)
+                {
+                    var isSelected = Model.HealthPlanResultTestDependency != null && Model.HealthPlanResultTestDependency.Any(x => x == test.Id);
+                    <div style="float: left; width: 20%">
+                        <input type="checkbox" @(isSelected ? "checked=checked" : string.Empty) value="@test.Id" />
+                        @test.Alias
+                    </div>
+                }
+            </fieldset>
+        </div>
+        <div id="AttachAttestationForm-healthPlan" style="float: left; clear: both;padding-top: 10px;display: @(Model.GenerateHealthPlanReport ? "block" : "none")">
+            @Html.CheckBoxFor(m => m.AttachAttestationForm) Attach Attestation Form in Healthplan Result
+        </div>
+        <div class="result-dependencyDiv" style="float: left; clear: both">
+            @Html.CheckBoxFor(m => m.AttachEawvPreventionPlan) Attach E-AWV Prevention Plan For PCP/Healthplan Result
+        </div>
+    </div>
+
+</fieldset>
+<script id="selectedCustomerDependencyTemplate" type="text/x-jquery-tmpl">
+    <input type="hidden" name="CustomerResultTestDependency.Index" value="${Id}" />
+    <input type="hidden" name="CustomerResultTestDependency[${Id}]" value="${Id}" />
+</script>
+<div id="customer-result-test-dependency-container"></div>
+
+<script id="selectedPcpDependencyTemplate" type="text/x-jquery-tmpl">
+    <input type="hidden" name="PcpResultTestDependency.Index" value="${Id}" />
+    <input type="hidden" name="PcpResultTestDependency[${Id}]" value="${Id}" />
+</script>
+<div id="pcp-result-test-dependency-container"></div>
+
+<script id="selectedHealthPlanDependencyTemplate" type="text/x-jquery-tmpl">
+    <input type="hidden" name="HealthPlanResultTestDependency.Index" value="${Id}" />
+    <input type="hidden" name="HealthPlanResultTestDependency[${Id}]" value="${Id}" />
+</script>
+<div id="HealthPlan-result-test-dependency-container"></div>
+
+<script type="text/javascript">
+    var customerResultTests = new Array();
+    var pcpResultTests = new Array();
+    var healthPlanResultTests = new Array();
+
+    function setCustomerResultTestDependency() {
+        customerResultTests = new Array();
+        $("#customer-result-dependency input[type=checkbox]:checked").each(function () {
+            var val = $(this).val();
+            var obj = new Object();
+            obj.Id = val;
+            customerResultTests.push(obj);
+        });
+
+        renderCustomerResultTests();
+    }
+
+
+    function renderCustomerResultTests() {
+        $("#customer-result-test-dependency-container").empty();
+        $.each(customerResultTests, function (key, terr) {
+            $("#selectedCustomerDependencyTemplate").tmpl(terr).appendTo("#customer-result-test-dependency-container");
+        });
+    }
+
+    function setPcpResultTestDependency() {
+        pcpResultTests = new Array();
+        $("#pcp-result-dependency input[type=checkbox]:checked").each(function () {
+            var val = $(this).val();
+            var obj = new Object();
+            obj.Id = val;
+            pcpResultTests.push(obj);
+        });
+
+        renderPcpResultTests();
+    }
+
+    function renderPcpResultTests() {
+        $("#pcp-result-test-dependency-container").empty();
+        $.each(pcpResultTests, function (key, terr) {
+            $("#selectedPcpDependencyTemplate").tmpl(terr).appendTo("#pcp-result-test-dependency-container");
+        });
+    }
+
+    function setHealthPlanResultTestDependency() {
+        healthPlanResultTests = new Array();
+        $("#HealthPlan-result-dependency input[type=checkbox]:checked").each(function () {
+            var val = $(this).val();
+            var obj = new Object();
+            obj.Id = val;
+            healthPlanResultTests.push(obj);
+        });
+
+        renderHealthPlanResultTests();
+    }
+
+    function renderHealthPlanResultTests() {
+        $("#HealthPlan-result-test-dependency-container").empty();
+        $.each(healthPlanResultTests, function (key, terr) {
+            $("#selectedHealthPlanDependencyTemplate").tmpl(terr).appendTo("#HealthPlan-result-test-dependency-container");
+        });
+    }
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#GenerateCustomerResult").click(function () {
+            var isChecked = $("#GenerateCustomerResult").is(":checked");
+            if (isChecked) {
+                $(".customer-default-dependency-tests").show();
+                $("#participationForm").show();
+            } else {
+                $(".customer-default-dependency-tests").hide();
+                $("#customer-result-dependency").hide();
+                $("#participationForm").hide();
+
+                $("#normalResultPdf").attr('checked', true);
+                $("#eawvPreventionPlanReport").attr('checked', false);
+                $("#testdependentResultPdf").attr('checked', false);
+
+                $("#GenerateEawvPreventionPlanReport").val(false);
+                $(".customer-default-dependency-tests").find(".field-validation-error").hide();
+
+                checkUncheckAllCheckboxex($("#customer-result-dependency input[type=checkbox]"), false);
+            }
+        });
+
+        $("#normalResultPdf").click(function () {
+            checkUncheckAllCheckboxex($("#customer-result-dependency input[type=checkbox]"), false);
+            $("#customer-result-dependency").hide();
+            $("#GenerateEawvPreventionPlanReport").val(false);
+            $(this).closest("div").find(".field-validation-error").hide();
+        });
+
+        $("#testdependentResultPdf").click(function () {
+            $("#customer-result-dependency").show();
+            $("#GenerateEawvPreventionPlanReport").val(false);
+        });
+
+        $("#eawvPreventionPlanReport").click(function () {
+            checkUncheckAllCheckboxex($("#customer-result-dependency input[type=checkbox]"), false);
+            $("#customer-result-dependency").hide();
+            $("#GenerateEawvPreventionPlanReport").val(true);
+            $(this).closest("div").find(".field-validation-error").hide();
+        });
+
+        $("#GeneratePcpResult").click(function () {
+            var isChecked = $(this).is(":checked");
+            if (isChecked) {
+                $("#pcp-result-dependency").show();
+            } else {
+                checkUncheckAllCheckboxex($("#pcp-result-dependency input[type=checkbox]"), false);
+                $("#pcp-result-dependency").hide();
+                $(this).closest("div").find(".field-validation-error").hide();
+            }
+            hideEawvPreventionPlan();
+        });
+
+        $("#GenerateHealthPlanReport").click(function () {
+            var isChecked = $(this).is(":checked");
+            if (isChecked) {
+                $("#HealthPlan-result-dependency").show();
+                $("#AttachAttestationForm-healthPlan").show();
+            } else {
+                checkUncheckAllCheckboxex($("#HealthPlan-result-dependency input[type=checkbox]"), false);
+                $("#HealthPlan-result-dependency").hide();
+                $(this).closest("div").find(".field-validation-error").hide();
+                $("#AttachAttestationForm-healthPlan").hide();
+                $("#AttachAttestationForm").attr('checked', false);
+            }
+            hideEawvPreventionPlan();
+        });
+
+        function hideEawvPreventionPlan() {
+            if ($("#GenerateHealthPlanReport").is(":checked") || $("#GeneratePcpResult").is(":checked")) {
+                $(".result-dependencyDiv").show();
+
+            } else {
+                $(".result-dependencyDiv").hide();
+                $("#AttachEawvPreventionPlan").attr('checked', false);
+            }
+        }
+        
+        if ($("#GeneratePcpLetter").is(":checked")) {
+            $("#dvGeneratePcpLetterOption").show();            
+
+            if ($("#UploadPcpLetterPdf").is(":checked")) {
+                $("#pcpLetterPdfdiv").show();
+                $("#dvPcpCoverLetter").hide();
+            } else {
+                $("#pcpLetterPdfdiv").hide();
+                $("#dvPcpCoverLetter").show();
+            }
+        }
+        else {
+            $("#dvGeneratePcpLetterOption").hide();
+            $("#pcpLetterPdfdiv").hide();
+            $("#dvPcpCoverLetter").hide();
+        }
+
+        if ($("#IncludeMemberLetter").is(":checked")) {
+            $("#dvIncludeMemberLetterOption").show();
+
+            if ($("#UploadMemberLetterPdf").is(":checked")) {
+                $("#enableMemberLetterdiv").show();
+                $("#dvMemberCoverLetter").hide();
+            } else {
+                $("#enableMemberLetterdiv").hide();
+                $("#dvMemberCoverLetter").show();
+            }
+        }
+        else {
+            $("#dvIncludeMemberLetterOption").hide();
+            $("#enableMemberLetterdiv").hide();
+            $("#dvMemberCoverLetter").hide();
+        }
+
+        $("#EnablePgpEncryption").is(":checked") ? $("#enablePgpEncryptiondiv").show() : $("#enablePgpEncryptiondiv").hide();  
+
+        $("#UploadPcpLetterPdf").click(function () {
+            $("#pcpLetterPdfdiv").show();
+            $("#dvPcpCoverLetter").hide();
+        });
+
+        $("#SelectPcpLetterPdf").click(function () {
+            $("#pcpLetterPdfdiv").hide();
+            $("#dvPcpCoverLetter").show();
+        });
+
+        $("#UploadMemberLetterPdf").click(function () {
+            $("#enableMemberLetterdiv").show();
+            $("#dvMemberCoverLetter").hide();
+        });
+
+        $("#SelectMemberLetterPdf").click(function () {
+            $("#enableMemberLetterdiv").hide();
+            $("#dvMemberCoverLetter").show();
+        });
+
+    });
+
+    $("#GeneratePcpLetter").change(function () {
+        if ($(this).is(":checked")) {
+            $("#dvGeneratePcpLetterOption").show();
+            $("#pcpLetterPdfdiv").show();
+            $("#dvPcpCoverLetter").hide();
+        } else {
+            $("#dvGeneratePcpLetterOption").hide();
+            $("#pcpLetterPdfdiv").hide();
+            $("#dvPcpCoverLetter").hide();
+            $("#UploadPcpLetterPdf").attr('checked', true);
+        }
+    });
+
+    $("#IncludeMemberLetter").change(function () {
+        if ($(this).is(":checked")) {
+            $("#dvIncludeMemberLetterOption").show();
+            $("#enableMemberLetterdiv").show();
+            $("#dvMemberCoverLetter").hide();
+        } else {
+            $("#dvIncludeMemberLetterOption").hide();
+            $("#enableMemberLetterdiv").hide();
+            $("#dvMemberCoverLetter").hide();
+            $("#UploadMemberLetterPdf").attr('checked', true);
+        }
+    });
+
+    $("#EnablePgpEncryption").change(function () {
+        $(this).is(":checked") ? $("#enablePgpEncryptiondiv").show() : $("#enablePgpEncryptiondiv").hide();
+    });
+    
+    function checkUncheckAllCheckboxex(source, check) {
+        $(source).attr('checked', check);
+    }
+
+    (function () {
+        $("#normal-pdf-generation-tip").qtip({
+            content: {
+                text: function (api) {
+                    return 'The result PDF generated for customer will contain pages for all tests.';
+                }
+            },
+            position: {
+                corner: {
+                    target: 'topRight',
+                    tooltip: 'bottomLeft'
+                }
+            }
+        });
+        $("#eawv-Prevention-Plan-generation-tip").qtip({
+            content: {
+                text: function (api) {
+                    return 'The result PDF generated for customer will contain only E-AWV Prevention Plan Report and PCP appointment info.';
+                }
+            },
+            position: {
+                corner: {
+                    target: 'topRight',
+                    tooltip: 'bottomLeft'
+                }
+            }
+        });
+        $("#test-dependent-pdf-generation-tip").qtip({
+            content: {
+                text: function (api) {
+                    return 'The result PDF generated for customer will contain pages for only tests selected below.';
+                }
+            },
+            position: {
+                corner: {
+                    target: 'topRight',
+                    tooltip: 'bottomLeft'
+                }
+            }
+        });
+        $("#generate-Pcp-Result-tip").qtip({
+            content: {
+                title: function (api) {
+                    return "";
+                },
+                text: function (api) {
+                    return 'The result PDF generated for PCP will contain pages for only tests selected below.';
+                }
+            },
+
+            position: {
+                corner: {
+                    target: 'topRight',
+                    tooltip: 'bottomLeft'
+                }
+            }
+        });
+
+        $("#generate-HealthPlan-Result-tip").qtip({
+            content: {
+                title: function (api) {
+                    return "";
+                },
+                text: function (api) {
+                    return 'The result PDF generated for Healthplan will contain pages for only tests selected below.';
+                }
+            },
+
+            position: {
+                corner: {
+                    target: 'topRight',
+                    tooltip: 'bottomLeft'
+                }
+            }
+        });
+
+        $(".result-setting-info-tip").qtip({
+            content: {
+                title: function (api) {
+                    return "";
+                },
+                text: function (api) {
+                    return $(this).parent().find('.result-setting-prop-tip-info').html();
+                }
+            },
+            style: {
+                width: '300px'
+            },
+            position: {
+                viewport: $('#result-config'),
+                adjust: {
+                    method: 'shift'
+                }
+            },
+        });
+    })();
+
+    $("#MarkPennedBack").change(function () {
+        $(this).is(":checked") ? $("#pennedBackTextDiv").show() : $("#pennedBackTextDiv").hide();
+    });
+
+    $(".info-tip").qtip({
+        content: {
+            title: function (api) {
+                return "";
+            },
+            text: function (api) {
+                return $(this).parent().find('.prop-tip-info').html();
+            }
+        },
+        style: {
+            width: '300px'
+        },
+        position: {
+            viewport: $("#result-config"),
+            adjust: {
+                method: 'shift'
+            }
+        },
+    });
+
+    $("#PennedBackText").keydown(function (e) {
+        if (!Validate_CheckForFileName(e)) {
+            $("#file-name-validation").show();
+            return false;
+        } else {
+            $("#file-name-validation").hide();
+        }
+    });
+
+    /*function check_fileName(control) {
+        var oldValue = control.defaultValue;
+        var newValue = control.value;
+        if (!Validate_CheckForFileName(newValue)) {
+            alert("A file name can't contain any of the following characters : \/:*?\"<>|");
+            $(control).val(oldValue);
+        }
+    }*/
+</script>

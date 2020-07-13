@@ -1,0 +1,1337 @@
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.CallQueues.Enum
+@using Falcon.App.Core.Extensions
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.HealthPlanCallQueueCriteriaEditModel
+
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<style type="text/css">
+    .col1 {
+        float: left;
+        width: 300px;
+    }
+</style>
+<div class="leftside-div-with-roundborder" id="criteriaDiv" style="padding-left: 10px; width: 50%;min-height:250px;">
+    @Html.HiddenFor(m => m.CallQueueId)
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.UploadFileName)
+    @Html.HiddenFor(m => m.IsTeamAssignment)
+    <div class="editor-row">
+        <div class="col1">
+            <div class="editor-label">
+                Select @Html.LabelFor(m => m.HealthPlanId) @Html.ValidationMessageFor(m => m.HealthPlanId)
+            </div>
+            @if (Model.Id > 0)
+            {
+                @Html.DropDownListFor(x => x.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:240px;", @onchange = "GetCampaignByHealthPlanId($(this).val())" })
+                @Html.HiddenFor(m => m.HealthPlanId)
+            }
+            else
+            {
+                @Html.DropDownListFor(x => x.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:240px;", @onchange = "GetCampaignByHealthPlanId($(this).val())" })
+            }
+
+        </div>
+        <div style="float:left;">
+            <div class="editor-label">
+                Select @Html.LabelFor(m => m.CallQueue) @Html.ValidationMessageFor(m => m.CallQueue)
+            </div>
+
+            @if (Model.Id > 0)
+            {
+                @Html.DropDownListFor(x => x.CallQueue, DropDownHelper.GetHealthPlanCallQueueCategories(), new { @style = "width:150px;" })
+                @Html.HiddenFor(m => m.CallQueue)
+            }
+            else
+            {
+                @Html.DropDownListFor(x => x.CallQueue, DropDownHelper.GetHealthPlanCallQueueCategories(), new { @style = "width:150px;" })
+            }
+
+
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="padding-top: 20px;">
+            <div class="editor-row" id="criteriaName">
+                <div style="float: left;">
+                    <div class="editor-label">
+                        Name
+                        @Html.ValidationMessageFor(m => m.CriteriaName)
+                    </div>
+                    <div>
+                        @Html.TextBoxFor(x => x.CriteriaName, new { @style = "width:250px;", @id = "criteriaNameInput", @minlength = "5", @maxlength = "255" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="criteria FillEventsHealthPlan">
+                <div style="float: left; width: 150px;">
+                    <div class="editor-label">
+                        Number Of Days <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                        <div class="prop-tip-info" style="display: none;">
+                            Enter the number for days which should be considered when pulling the events.
+                        </div>
+                    </div>
+
+                    <div>
+                        @Html.TextBoxFor(x => x.NoOfDaysOfEvents, new { @style = "width:100px;", @class = "digit", @maxlength = "3" })<br />@Html.ValidationMessageFor(m => m.NoOfDaysOfEvents)
+                    </div>
+                </div>
+
+                <div style="float: left">
+                    <div class="editor-label">
+                        Percentage <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                        <div class="prop-tip-info" style="display: none;">
+                            Enter the percentage which should be considered when pulling the events for queue.
+                        </div>
+                    </div>
+                    <div> @Html.TextBoxFor(x => x.Percentage, "", new { @style = "width:100px;", @class = "digit", @maxlength = "2" })<br /> @Html.ValidationMessageFor(m => m.Percentage)</div>
+                </div>
+            </div>
+
+            <div class="criteria MailRound">
+                <div style="float: left; width: 49%;">
+                    <div class="editor-label">Campaign  @Html.ValidationMessageFor(m => m.CampaignDirectMailDates)</div>
+                    @Html.DropDownList("CampaignId", DropDownHelper.GetCampaignsForHealthPlan(0), new { @style = "width:240px;", @onChange = "loadDirectMailDates();" })
+                </div>
+
+                <div id="activities" class="col1" style="float: left; width: 45%; margin-left: 20px; display: none;">
+                    <div style="float: left; width: 60%;">
+                        <div class="editor-label">Direct Mail Dates</div>
+                        <select id="ActivityId" multiple="multiple" style="width: 100%;"></select>
+                    </div>
+                    <div style="float: right; width: 20%;">
+                        <div class="editor-label">&nbsp;</div>
+                        <input type="button" value="Add" onclick=" addCampaignActivity(); " />
+                    </div>
+                </div>
+
+                <div id="campaign-activity-container" style="display: none; float: left; width: 99%;">
+                    <div id="divCampaignActivity" style="margin-top: 20px;"></div>
+                </div>
+
+                <script id="campaignActivityTemplate" type="text/x-jquery-tmpl">
+                    <div class="campaign-activity-div" style="margin-bottom: 5px; float: left;width: 98%;">
+                        <span class="field-validation-error">${ErrorMessage}</span>
+                        <div style="border:1px solid #000000; padding: 5px; float: left;width: 100%; margin-top: 5px;">
+                            <div style="float: left; width:84%">
+                                <span><b>Campaign: </b>${Name}</span><br />
+                                <span><b>Custom Tag(s): </b>${CustomTags}</span><br />
+                                <div style="margin-top:5px;">
+                                    <b>Direct Mail Dates: </b>
+                                    <div id="directMailDates_${Key}" style="margin-top:5px;">
+
+                                    </div>
+                                </div>
+                                <div style="display: none;">
+                                    <input type="hidden" name="CampaignDirectMailDates.Index" value="${Key}" />
+                                    <input type="text" name="CampaignDirectMailDates[${Key}].CampaignId" value="${Id}" />
+                                    <div id="input_directMailDates_${Key}">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="float: left; width: 15%">
+                                <a href="javascript:void(0);" data-key="${Key}" class="removeCampaignActivity" style="float: right">Remove</a>
+                            </div>
+                        </div>                        
+                    </div>
+                </script>
+            </div>
+
+            <div class="criteria AppointmentConfirmation">
+                <div class="editor-label">
+                    Language  @Html.ValidationMessageFor(m => m.LanguageId)
+                </div>
+                <div>
+                    @Html.DropDownListFor(m => m.LanguageId, DropDownHelper.GetLanguages(Model.LanguageId.HasValue ? Model.LanguageId.Value : -1), new { style = "width:240px;" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="assignmentsDiv" class="rightside-div-with-roundborder" style="width: 46%; min-height: 250px;">
+    <h2>Assigned To</h2>
+    <div id="assignmentSelectionRadio">
+        <input type="radio" name="assignmentType" value="manual" checked />Pick Agents&nbsp;&nbsp;&nbsp;
+        <input type="radio" name="assignmentType" value="bulkcsv" />Upload Csv&nbsp;&nbsp;&nbsp;
+        <input type="radio" name="assignmentType" value="groupAssignment">Team Assignment
+    </div>
+    <br />
+    <div id="normalAssignment">
+        <div class="editor-row">
+            <div class="editor-label">
+                Call Center Agent @Html.ValidationMessageFor(m => m.Assignments)
+            </div>
+            @Html.TextBox("AgentName", "", new { @class = "auto-search-agents", id = "AgentName", @style = "width:70%;" })
+            <input id="assignedId" value="0" type="hidden" />
+            @*@Html.DropDownList("assignedId", DropDownHelper.GetCallCenterRep(), new { @style = "width:240px;" })*@
+            @*<input id="addAssignmentButton" type="button" value="Add" onclick="addAssignment();" />*@
+        </div>
+        <div class="editor-row">
+            <div style="float: left">
+                <div class="editor-label">
+                    Start Date
+                </div>
+                <input id="txtStartDate" class="datePicker" type="text" style="width: 110px">
+            </div>
+            <div style="float: left; margin-left: 10px">
+                <div class="editor-label">
+                    End Date
+                </div>
+                <input id="txtEndDate" class="datePicker" type="text" style="width: 110px">
+                <input id="addAssignmentButton" type="button" value="Add" onclick="addAssignment(); " />
+            </div>
+        </div>
+        <div id="sdfd"></div>
+    </div>
+
+    <div id="bulkUploadAssignment" style="display: none">
+        <div class="editor-row" id="upload-div" style="margin-top: 10px;">
+            Upload file:
+            <input id="chooseFileButton" type="file" name="massAssignmentFile" />
+            <input style="float: right; margin-right: 10px;" type="button" id="FileSubmit" value="Upload" onclick=" fileUploadOperations() " />
+            <a style="float: right; padding-top: 5px; margin-right: 10px;" target="_blank" href='@(IoC.Resolve<IMediaRepository>().GetSamplesLocation().Url + "Assignment_Upload_Sample.csv")'>Sample CSV</a>
+            <a id="failedRecordsCsv" style="float: right; padding-top: 5px; margin-right: 10px; display: none" target="_blank; " href=''>Failed Records</a>
+            <h4 style="width: 70%; padding-top: 5px; float: left"> Please upload a csv file! </h4>
+        </div>
+        <div id="parse-in-progress-div" style="display: none;">
+            <br /><h4 style="width: 250px;"> Upload in progress </h4><br />
+            <img src="/Content/Images/pbar-ani.gif" style="width: 350px; height: 35px;" />
+        </div>
+    </div>
+
+    <div class="editor-row" id="assignment-container">
+        <table id="list-view" style="margin-top: 20px">
+            <thead>
+                <tr>
+                    <th>Call Center Agent</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tBodyAssignment"></tbody>
+        </table>
+    </div>
+
+    <div id="teamAssignment" style="display: none">
+        <div class="editor-row">
+            <div class="label" style="padding-bottom: 5px;">
+                Select Team
+            </div>
+            @Html.DropDownList("agentList", DropDownHelper.GetAgentTeams(), new { @id = "agentTeam", @style = "width:70%;" })
+        </div>
+        <div class="editor-row">
+            <div style="float: left">
+                <div class="editor-label">
+                    Start Date
+                </div>
+                <input id="teamStartDate" class="datePicker" type="text" style="width: 110px">
+            </div>
+            <div style="float: left; margin-left: 10px">
+                <div class="editor-label">
+                    End Date
+                </div>
+                <input id="teamEndDate" class="datePicker" type="text" style="width: 110px">
+                <input id="teamAddAssignmentButton" type="button" value="Add" onclick=" teamAddAssignment(); " />
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-row" id="team-assignment-container" style="display: none;">
+        <table id="list-view" style="margin-top: 20px">
+            <thead>
+                <tr>
+                    <th>Team Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="teamBodyAssignment">
+                @if (Model != null && Model.CallCenterTeamAssignments != null && Model.CallCenterTeamAssignments.Any())
+                {
+                    foreach (var assignment in Model.CallCenterTeamAssignments)
+                    {
+                        <tr>
+                            <td>@assignment.Name</td>
+                            <td>@assignment.StartDate.Date</td>
+                            <td>@(assignment.EndDate == null ? "N/A" : assignment.EndDate.Value.Date.ToString())</td>
+                            <td><a href='javascript:void(0);' data='@assignment.TeamId' class='removeTeamAssignment'>Remove</a></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div id="team-input-tags"></div>
+</div>
+
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script id="assignmentTemplate" type="text/x-jquery-tmpl">
+    <tr class="assignment-row">
+        <td>${Name}</td>
+        <td>${GetDate(StartDate)}</td>
+        <td>${GetDate(EndDate)}</td>
+        <td>
+            <a href="javascript:void(0);" data-key="${Key}" class="removeAssignment">Remove</a>
+            <div style="display: none;">
+                <input type="hidden" name="Assignments.Index" value="${Key}" />
+                <input type="text" name="Assignments[${Key}].AssignedOrgRoleUserId" value="${AssignedOrgRoleUserId}" />
+                <input type="text" name="Assignments[${Key}].Name" value="${Name}" />
+                <input type="text" name="Assignments[${Key}].IsExistInOtherCriteria" value="${IsExistInOtherCriteria}" />
+                <input type="text" name="Assignments[${Key}].StartDate" value="${StartDate}" />
+                <input type="text" name="Assignments[${Key}].EndDate" value="${EndDate}" />
+                <input type="text" name="Assignments[${Key}].IsEdited" value="${IsEdited}" />
+            </div>
+            <div>
+                {{if IsExistInOtherCriteria===true }}
+                <span>
+                    <a href="javascript:void(0);" class="alreadyExistmsg"><img src="/App/Images/info-icon.gif"></a>
+                    <div class="isAlreadExist-div" style="width: 300px; display: none;">
+                        Start date is overlapping with already assigned date for same health plan and same call queue.
+                    </div>
+                </span>
+                {{/if}}
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        hideCriteria();
+        hideCriteriaName();
+        //In Case of Editing the Criteria
+        var preSelectedCallQueueName = $("select[id='CallQueue'] option:selected").val();
+        if (preSelectedCallQueueName == "@HealthPlanCallQueueCategory.FillEventsHealthPlan") {
+            showCriteriaName();
+        }
+
+        if ($("select[id='HealthPlanId'] option:selected").index() <= 0) {
+            hideCallqueue();
+        }
+        if ($("select[id='CallQueue'] option:selected").index() <= 0) {
+            hideAssignment();
+            disableUpload();
+        }
+
+        if ($("#Id").val() > 0) {
+            hideCallqueue();
+            hideHealthPlan();
+        }
+        @if (!string.IsNullOrEmpty(Model.CallQueue))
+        {
+            <text>ShowCallQueueCriteria('@Model.CallQueue')</text>
+        }
+
+        $(".digit").keypress(function (e) {
+            var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+
+            if ((charCode < 48 || charCode > 57) & charCode != 8) {
+                return false;
+            }
+        });
+    });
+
+    $("#HealthPlanId").change(function () {
+        clearAssignmentObject();
+        hideCallqueue();
+        clearCampaignObject();
+        disableUpload();
+
+        clearTeamAssignmentObject();
+
+        if ($("select[id='HealthPlanId'] option:selected").index() > 0) {
+            showCallqueue();
+        }
+        else {
+            $('#CallQueue').val('0').change();
+        }
+    });
+
+
+    $("#CallQueue").change(function () {
+
+        hideCriteria();
+        hideAssignment();
+        hideCriteriaName();
+        $('#criteriaNameInput').removeAttr('value');
+        ShowCallQueueCriteria($(this).val());
+        if ($("select[id='CallQueue'] option:selected").index() > 0) {
+            showAssignment();
+            enableUpload();
+            enableTeamTabData();
+        }
+
+        if ($(this).val() == ("@HealthPlanCallQueueCategory.FillEventsHealthPlan")) {
+            showCriteriaName();
+        }
+    });
+
+
+
+    function ShowCallQueueCriteria(category) {
+        $("." + category).show();
+    }
+    function hideCriteria() {
+        $(".criteria").hide();
+
+    }
+
+    function hideHealthPlan() {
+        $("#HealthPlanId").attr("disabled", "disabled");
+    }
+
+    function hideCallqueue() {
+        $("#CallQueue").attr("disabled", "disabled");
+    }
+
+    function showCallqueue() {
+        $("#CallQueue").removeAttr("disabled");
+    }
+
+    function disableUpload() {
+        $("#chooseFileButton").attr("disabled", "disabled");
+    }
+
+    function enableUpload() {
+        $("#chooseFileButton").removeAttr("disabled");
+    }
+
+    function hideAssignment() {
+        $("#assignedId").attr("disabled", true);
+        $("#txtStartDate").attr("disabled", true);
+        $("#txtEndDate").attr("disabled", true);
+        $("#addAssignmentButton").attr("disabled", true);
+
+        $("#teamStartDate").attr("disabled", true);
+        $("#teamEndDate").attr("disabled", true);
+        clearAssignmentObject();
+        clearTeamAssignmentObject();
+    }
+
+    function showAssignment() {
+        $("#assignedId").attr("disabled", false);
+        $("#txtStartDate").attr("disabled", false);
+        $("#txtEndDate").attr("disabled", false);
+        $("#addAssignmentButton").removeAttr("disabled");
+    }
+
+    function clearAssignmentObject() {
+        $('#assignedId').val('-1').change();
+        $("#tBodyAssignment").empty();
+        $("#assignment-container").hide();
+        $("#txtStartDate").val('');
+        $("#txtEndDate").val('');
+        assignments = {};
+    }
+
+    function hideCriteriaName() {
+        $('#criteriaName').hide();
+    }
+
+    function showCriteriaName() {
+        $('#criteriaName').show();
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    function GetDate(jsonDate) {
+        var value = new Date(jsonDate);
+
+        var date = value.getMonth() + 1 + "/" + value.getDate() + "/" + value.getFullYear();
+        if (value == 'Invalid Date' || date == 'NaN/NaN/NaN')
+            return 'N/A';
+        else
+            return date;
+
+    }
+
+    function validateDate(date) {
+        var date_regex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
+        return date_regex.test(date);
+    }
+
+    var assignments = new Object();
+    var teamAssignments = new Object();
+
+    @if (Model.Assignments != null && Model.Assignments.Any())
+    {
+        <text>
+    var assignmentKey = "";
+    var assignment = new Object();
+    </text>
+        foreach (var queueAssignment in Model.Assignments)
+        {
+            <text>
+    assignment = new Object();
+    assignment.AssignedOrgRoleUserId = '@queueAssignment.AssignedOrgRoleUserId';
+    assignment.Name = "@queueAssignment.Name";
+    assignment.Percentage = '@queueAssignment.Percentage';
+    assignment.IsExistInOtherCriteria = '@(queueAssignment.IsExistInOtherCriteria)' == 'True';
+    assignmentKey = "@queueAssignment.AssignedOrgRoleUserId";
+    assignment.StartDate = "@queueAssignment.StartDate";
+    assignment.EndDate = "@queueAssignment.EndDate";
+    assignment.IsEdited = false;
+    assignment.Key = assignmentKey;
+    assignments[assignmentKey] = assignment;
+    </text>
+        }
+    }
+
+    @if (Model.CallCenterTeamAssignments!=null&&Model.CallCenterTeamAssignments.Any())
+    {
+        <text>
+    var teamAssignment = new Object();
+    </text>
+        foreach (var assignment in Model.CallCenterTeamAssignments)
+        {
+            <text>
+    teamAssignment = new Object();
+    teamAssignment.TeamId = '@assignment.TeamId';
+    teamAssignment.TeamName = '@assignment.Name';
+    teamAssignment.StartDate = '@assignment.StartDate';
+    teamAssignment.EndDate = '@assignment.EndDate';
+    teamAssignment.IsExistInOtherCriteria = false;
+    teamAssignments[teamAssignment.TeamId] = teamAssignment;
+    </text>
+        }
+    }
+
+    function addAssignment() {
+        var assignedId = $("#assignedId").val();
+        var startDate = $("#txtStartDate").val();
+        var endDate = $("#txtEndDate").val();
+
+        if (assignedId <= 0) {
+            alert("Please select Call center agent.");
+            return false;
+        }
+        if (startDate == '') {
+            alert('Please enter start date.');
+            return false;
+        }
+        else if (!validateDate(startDate)) {
+            alert('Please enter valid start date in mm/dd/yyyy format.');
+            return false;
+        }
+        else if (new Date(startDate) < new Date().setHours(0, 0, 0, 0)) {
+            alert('Start date should be greater than or equal to current date');
+            return false;
+        }
+
+        if (endDate != '' && !validateDate(endDate)) {
+            alert('Please enter valid end date in mm/dd/yyyy format.');
+            return false;
+        }
+
+        if (endDate != '' && new Date(startDate) > new Date(endDate)) {
+            alert('End date should be greter than or equal to start date.');
+            return false;
+        }
+
+        //clearTeamAssignmentObject();
+
+        var assignment = new Object();
+        assignment.AssignedOrgRoleUserId = assignedId;
+        assignment.Name = $("#AgentName").val();
+        assignment.Percentage = "0";
+        assignment.StartDate = startDate;
+        assignment.EndDate = endDate;
+        assignment.Key = assignment.AssignedOrgRoleUserId;
+        assignment.IsExistInOtherCriteria = false;
+        assignment.IsEdited = true;
+
+        if (assignments[assignment.Key] != undefined) {
+            alert("This assignment has already been added.");
+            return false;
+        }
+
+        var healthPlan = $("#HealthPlanId").val();
+        var callQueueCategory = $("#CallQueue").val();
+        var criteriaId = $("#Id").val();
+
+        if (callQueueCategory === 'FillEventsHealthPlan') {
+
+            checkHealthPlanAssignment(healthPlan, callQueueCategory, criteriaId, startDate, assignment, endDate);
+        }
+        else {
+            assignments[assignment.Key] = assignment;
+            renderassignment();
+            $("#assignedId").val('-1');
+            $("#AgentName").val("");
+            $("#txtStartDate").val('');
+            $("#txtEndDate").val('');
+        }
+
+        return false;
+    }
+
+    function showToolTip() {
+        $(".alreadyExistmsg").qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: "Info",
+                text: function (api) {
+                    return $(this).parent().find(".isAlreadExist-div").html();
+                }
+            }
+        });
+    };
+
+    function renderassignment() {
+        if ($.isEmptyObject(assignments)) {
+            $("#tBodyAssignment").empty();
+            $("#assignment-container").hide();
+        }
+        else {
+            $("#tBodyAssignment").empty();
+            $.each(assignments, function (key, assignment) {
+                $("#assignmentTemplate").tmpl(assignment).appendTo("#tBodyAssignment");
+                showToolTip();
+            });
+            $("#assignment-container").show();
+        }
+    }
+
+    function checkHealthPlanAssignment(healthPlan, callQueueCategory, criteriaId, startDate, assignmentObj, endDate) {
+
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/CallCenter/HealthPlanCallQueueCriteria/IsAlreadyAssignedToHealthPlanCallQueue?healthPlan=" + healthPlan + "&callQueueCategory=" + callQueueCategory + "&criteriaId=" + criteriaId + "&assignmentTo=" + assignmentObj.AssignedOrgRoleUserId + "&startDate=" + startDate + "&endDate=" + endDate,
+            data: "{}",
+            success: function (result) {
+                if (!result.isExist) {
+                    assignmentObj.IsExistInOtherCriteria = result.isExist;
+                    assignments[assignmentObj.Key] = assignmentObj;
+                    renderassignment();
+                    $("#assignedId").val('-1');
+                    $("#AgentName").val("");
+                    $("#txtStartDate").val('');
+                    $("#txtEndDate").val('');
+                }
+                else {
+                    alert('Start date is overlapping with already assigned date for same health plan and same call queue.');
+                }
+            },
+            error: function (a) {
+
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        renderassignment();
+
+        $("a.removeAssignment").live("click", function () {
+
+            $(this).parents("tr.assignment-row:first").remove();
+            delete assignments[$(this).attr('data-key')];
+
+            if ($.isEmptyObject(assignments)) {
+                //$("#assignment-container").empty();
+                $("#assignment-container").hide();
+            }
+            else { $("#assignment-container").show(); }
+
+            return false;
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    var campaignList = new Object();
+    var customTagList = [];
+
+    function GetCampaignByHealthPlanId(healthPlanId) {
+        $('#CampaignId').empty();
+        $('#CampaignId').append($('<option></option>').val('-1').html('--Select--'));
+
+        var innerHtml = "";
+        var hiddenFieldHtml = "";
+
+        if (healthPlanId > 0) {
+            var parameter = "{'healthPlanId':" + healthPlanId + "}";
+
+            var messageUrl = '/CallCenter/HealthPlanCallQueueCriteria/GetCampaignByAccountId';
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: messageUrl,
+                data: parameter,
+                success: function (result) {
+                    FillCampaign(result);
+
+                    $.each(result, function (index, item) {
+                        var objCustomTag = { CampaignId: item.Id, CustomTags: item.CustomTags };
+                        customTagList.push(objCustomTag);
+                    });
+
+                    @{
+                        var index = 0;
+                        if (Model != null && Model.CampaignDirectMailDates != null && Model.CampaignDirectMailDates.Any())
+                        {
+                            foreach (var item in Model.CampaignDirectMailDates)
+                              {
+                                  <text>
+                    var error="";
+                                      @if (ViewData.ModelState["CampaignDirectMailDates[" + index + "]"] != null && ViewData.ModelState["CampaignDirectMailDates[" + index + "]"].Errors != null)
+                                      {
+                                          <text>
+                                            error = '@ViewData.ModelState["CampaignDirectMailDates[" + index + "]"].Errors[0].ErrorMessage';
+                                            </text>
+                                      }
+
+                    var returnedData = $.grep(result, function (element, index) {
+                        return element.Id == '@item.CampaignId';
+                    });
+
+                    var campaignActivities = [];
+                    var counter = 0;
+                    innerHtml = "";
+                    hiddenFieldHtml = "";
+                    @if (!item.DirectMailDateActivities.IsNullOrEmpty())
+                    {
+                        foreach (var activity in item.DirectMailDateActivities)
+                        {
+                            <text>
+                    campaignActivities.push({ ActivityId: '@activity.ActivityId', ActivityDate: '@activity.ActivityDate.ToString("MM/dd/yyyy")' });
+                    innerHtml += '<span>' + '@activity.ActivityDate.ToString("MM/dd/yyyy")' + '</span><br>';
+                    hiddenFieldHtml += '<input type="text" name="CampaignDirectMailDates[' + '@item.CampaignId' + '].DirectMailDateActivities[' + counter + '].ActivityId" value="' + '@activity.ActivityId' + '" />';
+                    hiddenFieldHtml += '<input type="text" name="CampaignDirectMailDates[' + '@item.CampaignId' + '].DirectMailDateActivities[' + counter + '].ActivityDate" value="' + '@activity.ActivityDate.ToString("MM/dd/yyyy")' + '" />';
+                    counter++;
+                    </text>
+                        }
+                    }
+
+                    var key = 0;
+                    var objCampaign = new Object();
+
+                    objCampaign.Id = returnedData[0].Id;
+                    objCampaign.Name = returnedData[0].Name;
+                    objCampaign.CustomTags = returnedData[0].CustomTags;
+                    objCampaign.DirectMailDateActivities = campaignActivities;
+                    objCampaign.DirectMailDateInnerHtml = innerHtml;
+                    objCampaign.DirectMailDateHiddenFieldHtml = hiddenFieldHtml;
+                    objCampaign.ErrorMessage = error;
+                    key = returnedData[0].Id;
+                    objCampaign.Key = key;
+                    campaignList[key] = objCampaign;
+                    
+                                  
+                                  </text>
+                    index++;
+                              }
+
+                        }
+                  }
+
+                },
+                complete: function () { renderCampaignActivity(); },
+                error: function (a, b, c) {
+                    //alert(a.responseText);
+                }
+            });
+        }
+    }
+
+    function FillCampaign(listItem) {
+        if (listItem.length > 0) {
+            for (var i = 0; i < listItem.length; i++) {
+                $('#CampaignId').append($('<option></option>').val(listItem[i].Id).html(listItem[i].Name));
+
+            }
+        }
+    }
+
+    function addCampaign() {
+        if ($("#CampaignId").val() <= 0) {
+            alert("Please select campaign.");
+            return false;
+        }
+
+        var objCampaign = new Object();
+        objCampaign.Id = $("#CampaignId").val();
+        objCampaign.Name = $("#CampaignId option:selected").text();
+        objCampaign.CustomTags = '';
+
+        var objCustomTag = $.grep(customTagList, function (item, index) {
+            return item.CampaignId == objCampaign.Id;
+        });
+
+        if (objCustomTag != null) {
+            objCampaign.CustomTags = objCustomTag[0].CustomTags;
+        }
+
+        objCampaign.Key = objCampaign.Id;
+
+        if (campaignList[objCampaign.Key] != undefined) {
+            alert("This Campaign has already been added.");
+            return false;
+        }
+        campaignList[objCampaign.Key] = objCampaign;
+
+        renderCampaign();
+        $("#CampaignId").val('-1');
+        return false;
+    }
+
+    function renderCampaign() {
+        if ($.isEmptyObject(campaignList)) {
+            {
+                $("#tBodyCampaign").empty();
+                $("#campaign-container").hide();
+            }
+        }
+        else {
+            $("#tBodyCampaign").empty();
+            $.each(campaignList, function (key, objCampaign) {
+                $("#campaignTemplate").tmpl(objCampaign).appendTo("#tBodyCampaign");
+            });
+            $("#campaign-container").show();
+        }
+    }
+
+    function clearCampaignObject() {
+        $("#tBodyCampaign").empty();
+        $("#campaign-container").hide();
+        campaignList = {};
+    }
+
+    $(".info-tip").qtip({
+        content: {
+            title: function (api) {
+                return "";
+            },
+            text: function (api) {
+                return $(this).parent().find('.prop-tip-info').html();
+            }
+        },
+        style: {
+            width: '300px'
+        },
+        position: {
+            viewport: $("#criteriaDiv"),
+            adjust: {
+                method: 'shift'
+            }
+        },
+    });
+
+    $(document).ready(function () {
+        GetCampaignByHealthPlanId($("#HealthPlanId").val());
+
+        $("a.removeCampaignActivity").live("click", function () {
+
+            $(this).parents(".campaign-activity-div:first").remove();
+            delete campaignList[$(this).attr('data-key')];
+
+            if ($.isEmptyObject(campaignList)) {
+                $("#campaign-activity-container").hide();
+                $("#CampaignId").removeAttr("disabled");
+            }
+            else { $("#campaign-activity-container").show(); }
+
+            return false;
+        });
+
+        $(function () {
+            $("#AgentName").bind('input', function () {
+                if (this.value == '') {
+                    $("#assignedId").val(0);
+                }
+            });
+        });
+    });
+
+    $(".auto-search-agents").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '@Url.Action("GetAgentsList", "HealthPlanCallQueueCriteria")',
+                dataType: "json",
+                type: "POST",
+                data: {
+                    searchText: $("#AgentName").val()
+                },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,
+                            val: item.id
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 3,
+        select: function (event, ui) {
+            $("#AgentName").val(ui.item.label);
+            $("#assignedId").val(ui.item.val);
+        }
+    });
+
+    $('input[type=radio][name=assignmentType]').change(function () {
+        //clearAssignmentObject();
+        var radioValue = this.value;
+        if (radioValue == 'manual') {
+            $("#bulkUploadAssignment").hide();
+            $("#teamAssignment").hide();
+            $("#team-assignment-container").hide();
+            $("#normalAssignment").show();
+            renderassignment();
+        } else if (radioValue == 'bulkcsv') {
+            $("#normalAssignment").hide();
+            $("#teamAssignment").hide();
+            $("#team-assignment-container").hide();
+            $("#bulkUploadAssignment").show();
+            renderassignment();
+        } else if (radioValue == 'groupAssignment') {
+            $("#normalAssignment").hide();
+            $("#bulkUploadAssignment").hide();
+            $("#teamAssignment").show();
+            $("#assignment-container").hide();
+            renderTeamAssignment();
+        }
+    });
+
+
+    $('input[type=file]').live('change', prepareUpload);
+    var massAssignmentFile;
+
+    function prepareUpload(event) {
+        massAssignmentFile = event.target.files[0];
+    }
+
+    function fileUploadOperations() {
+        $('input[name=assignmentType]').attr("disabled", true);
+
+        $("#upload-div").hide();
+        $("#parse-in-progress-div").show();
+        $("#failedRecordsCsv").hide();
+        $("#failedRecordsCsv").attr("href", "");
+
+        var formData = new FormData();
+        formData.append("MassAssignmentFile", massAssignmentFile);
+        formData.append("HealthPlanId", $("#HealthPlanId").val());
+        formData.append("CallQueueCategory", $("#CallQueue").val());
+        formData.append("CriteriaId", $("#Id").val());
+        //formData.append("AssignmentsfromUi", assignments);
+
+        var tempAssignment = {};
+        var counter = 0;
+        if (typeof assignments != 'undefined' && assignments != null && Object.keys(assignments).length > 0) {
+            for (var k in assignments) {
+                if (assignments.hasOwnProperty(k)) {
+                    tempAssignment = assignments[k];
+                    formData.append("AssignmentsfromUi[" + counter + "].AssignedOrgRoleUserId", tempAssignment.AssignedOrgRoleUserId);
+                    formData.append("AssignmentsfromUi[" + counter + "].Name", tempAssignment.Name);
+                    formData.append("AssignmentsfromUi[" + counter + "].StartDate", tempAssignment.StartDate);
+                    formData.append("AssignmentsfromUi[" + counter + "].EndDate", tempAssignment.EndDate);
+                    formData.append("AssignmentsfromUi[" + counter + "].IsExistInOtherCriteria", tempAssignment.IsExistInOtherCriteria);
+                    formData.append("AssignmentsfromUi[" + counter + "].IsEdited", tempAssignment.IsEdited);
+                    counter++;
+                }
+            }
+        }
+
+        //clearTeamAssignmentObject();
+
+        $.ajax({
+            url: '@Url.Action("MassAssignment", "HealthPlanCallQueueCriteria")',
+            type: 'POST',
+            data: formData,
+            enctype: 'multipart/form-data',
+            cache: false,
+            processData: false,
+            contentType: false,
+            method: 'POST',
+            success: function (result) {
+                if (typeof result.ErrorMessage != 'undefined' && result.ErrorMessage != null && result.ErrorMessage != '') {
+                    alert(result.ErrorMessage);
+                    $("#upload-div").show();
+                    $("#parse-in-progress-div").hide();
+                    return;
+                } else if (typeof result.SuccessAssignments != 'undefined' && result.SuccessAssignments != null && result.SuccessAssignments.length > 0) {
+                    result.SuccessAssignments.forEach(function (element) {
+                        if (assignments[element.AssignedOrgRoleUserId] != undefined) {
+                            return;
+                        }
+                        var startDate = new Date(parseInt(element.StartDate.substr(6))).toLocaleDateString();
+                        var endDate;
+                        if (element.EndDate != null) {
+                            endDate = new Date(parseInt(element.EndDate.substr(6))).toLocaleDateString();
+                        } else {
+                            endDate = "";
+                        }
+
+                        var assignment = new Object();
+                        assignment.AssignedOrgRoleUserId = element.AssignedOrgRoleUserId;
+                        assignment.Name = element.Name;
+                        assignment.Percentage = "0";
+                        assignment.StartDate = startDate;
+
+                        assignment.EndDate = endDate;
+                        assignment.Key = element.AssignedOrgRoleUserId;
+                        assignment.IsExistInOtherCriteria = element.IsExistInOtherCriteria;
+                        assignment.IsEdited = true;
+
+                        assignments[assignment.Key] = assignment;
+                    });
+                    renderassignment();
+                    if (typeof result.LogFileName != 'undefined' && result.LogFileName != null && result.LogFileName != '') {
+                        $("#failedRecordsCsv").show();
+                        $("#failedRecordsCsv").attr("href", "@(IoC.Resolve<IMediaRepository>().GetTempMediaFileLocation().Url)" + result.LogFileName);
+                    }
+                }
+                else {
+                    if (typeof result.LogFileName != 'undefined' && result.LogFileName != null && result.LogFileName != '' && typeof result != 'string') {
+                        $("#failedRecordsCsv").show();
+                        $("#failedRecordsCsv").css("display", "");
+                        $("#failedRecordsCsv").attr("href", "@(IoC.Resolve<IMediaRepository>().GetTempMediaFileLocation().Url)" + result.LogFileName);
+                    }
+                    if (typeof result == 'string') {
+                        alert(result);
+                    }
+                }
+                $("#UploadFileName").val(result.UploadedCsvFileName);
+                $("#upload-div").show();
+                $("#parse-in-progress-div").hide();
+                $('input[name=assignmentType]').attr("disabled", false);
+            },
+            error: function (error) {
+                console.log(error);
+                alert("CSV processing failed,some error occurred, contact support");
+                $("#upload-div").show();
+                $("#parse-in-progress-div").hide();
+                $('input[name=assignmentType]').attr("disabled", false);
+            }
+        });
+    }
+
+    function teamAddAssignment() {
+        var teamId = $("#agentTeam").val();
+        var startDate = $("#teamStartDate").val();
+        var endDate = $("#teamEndDate").val();
+
+        if (teamId <= 0) {
+            alert("Please select Team.");
+            return false;
+        }
+        if (startDate == '') {
+            alert('Please enter start date.');
+            return false;
+        } else if (!validateDate(startDate)) {
+            alert('Please enter valid start date in mm/dd/yyyy format.');
+            return false;
+        } else if (new Date(startDate) < new Date().setHours(0, 0, 0, 0)) {
+            alert('Start date should be greater than or equal to current date')
+            return false;
+        }
+        if (endDate != '' && !validateDate(endDate)) {
+            alert('Please enter valid end date in mm/dd/yyyy format.');
+            return false;
+        }
+        if (endDate != '' && new Date(startDate) > new Date(endDate)) {
+            alert('End date should be greter than or equal to start date.');
+            return false;
+        }
+
+        //clearAssignmentObject();
+
+        var teamAssignment = new Object();
+        teamAssignment.TeamId = teamId;
+        teamAssignment.TeamName = $("#agentTeam :selected").text();
+        teamAssignment.StartDate = startDate;
+        teamAssignment.EndDate = endDate;
+        teamAssignment.IsExistInOtherCriteria = false;
+
+        if (teamAssignments[teamAssignment.TeamId] != undefined) {
+            alert("This assignment has already been added.");
+            return false;
+        }
+
+        var healthPlan = $("#HealthPlanId").val();
+        var callQueueCategory = $("#CallQueue").val();
+        var criteriaId = $("#Id").val();
+
+        if (callQueueCategory === 'FillEventsHealthPlan') {
+            checkTeamAssignment(healthPlan, callQueueCategory, criteriaId, startDate, teamAssignment, endDate);
+        } else {
+            teamAssignments[teamAssignment.TeamId] = teamAssignment;
+            renderTeamAssignment();
+            $("#agentTeam").val('-1');
+            $("#teamStartDate").val('');
+            $("#teamEndDate").val('');
+        }
+        return false;
+    }
+
+    function checkTeamAssignment(healthPlan, callQueueCategory, criteriaId, startDate, teamAssignmentObject, endDate) {
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/CallCenter/HealthPlanCallQueueCriteria/IsTeamAlreadyAssignedToHealthPlanCallQueue?healthPlan=" + healthPlan + "&callQueueCategory=" + callQueueCategory + "&criteriaId=" + criteriaId + "&teamId=" + teamAssignmentObject.TeamId + "&startDate=" + startDate + "&endDate=" + endDate,
+            data: "{}",
+            success: function (result) {
+                if (!result.isExist) {
+                    teamAssignmentObject.IsExistInOtherCriteria = result.isExist;
+                    teamAssignments[teamAssignmentObject.TeamId] = teamAssignmentObject;
+                    renderTeamAssignment();
+                    $("#agentTeam").val('-1');
+                    $("#teamStartDate").val('');
+                    $("#teamEndDate").val('');
+                } else {
+                    alert('Start date is overlapping with already assigned date for same health plan and same call queue.');
+                }
+            },
+            error: function (a) {
+
+            }
+        });
+    }
+
+    function renderTeamAssignment() {
+        $("#teamBodyAssignment").empty();
+        if ($.isEmptyObject(teamAssignments)) {
+            $("#team-assignment-container").hide();
+        } else {
+            $("#team-assignment-container").show();
+            $.each(teamAssignments, function (index, object) {
+                var markup = "<tr class='team-assignment-row'>" +
+                    "<td>" + object.TeamName + "</td>" +
+                    "<td>" + GetDate(object.StartDate) + "</td>" +
+                    "<td>" + GetDate(object.EndDate) + "</td>" +
+                    "<td>" + "<a href='javascript:void(0);' data='" + object.TeamId + "' class='removeTeamAssignment'>Remove</a>" + "</td>" +
+                    "</tr>";
+                $("#teamBodyAssignment").append(markup);
+            });
+        }
+    }
+
+    $("a.removeTeamAssignment").die("click").live("click", function () {
+        $(this).parents("tr.team-assignment-row:first").remove();
+        delete teamAssignments[$(this).attr('data')];
+
+        if ($.isEmptyObject(teamAssignments)) {
+            $("#team-assignment-container").hide();
+        } else {
+            $("#team-assignment-container").show();
+        }
+        return false;
+    });
+
+    function clearTeamAssignmentObject() {
+        $("#agentTeam").val('-1');
+        $("#teamStartDate").val('');
+        $("#teamEndDate").val('');
+        $("#team-assignment-container").hide();
+        $("#teamBodyAssignment").empty();
+        teamAssignments = {};
+    }
+
+    function enableTeamTabData() {
+        $("#teamStartDate").attr("disabled", false);
+        $("#teamEndDate").attr("disabled", false);
+    }
+
+    function checkAndSubmit() {
+
+        //if ((teamAssignments == null || $.isEmptyObject(teamAssignments)) && (assignments == null || $.isEmptyObject(assignments))) {
+        //    alert("No teams or agents assigned.");
+        //    return false;
+        //}
+
+        //if ($('input[type=radio][name=assignmentType]:checked').val() == 'groupAssignment' && (teamAssignments == null || $.isEmptyObject(teamAssignments))) {
+        //    alert("Add team(s) to assign to criteria");
+        //    return false;
+        //}
+
+        //if ($('input[type=radio][name=assignmentType]:checked').val() != 'groupAssignment' && (assignments == null || $.isEmptyObject(assignments))) {
+        //    alert("Add agent(s) to assign to criteria");
+        //    return false;
+        //}
+
+        if ('@Model.Id' > 0 && ('@Model.IsTeamAssignment' == 'True' || '@Model.IsTeamAssignment' == 'true') && $('input[type=radio][name=assignmentType]:checked').val() != 'groupAssignment') {
+            var decision = confirm("Warning: Switiching from Team assignment to Agent assignment will result in loss of all previous Team assignments\nPress Ok to continue ,Cancel to prevent this operation");
+            if (decision == false) {
+                return false;
+            }
+        }
+        if ('@Model.Id' > 0 && ('@Model.IsTeamAssignment' == 'False' || '@Model.IsTeamAssignment' == 'false') && $('input[type=radio][name=assignmentType]:checked').val() == 'groupAssignment') {
+            var decision1 = confirm("Warning: Switiching from Agent assignment to Team assignment will result in loss of all previous Agent assignments\nPress Ok to continue ,Cancel to prevent this operation");
+            if (decision1 == false) {
+                return false;
+            }
+        }
+
+        $("#team-input-tags").empty();
+        if ($('input[type=radio][name=assignmentType]:checked').val() == 'groupAssignment') {
+            $("#IsTeamAssignment").val("true");
+            if (!$.isEmptyObject(teamAssignments)) {
+                //alert("Select some teams to be assigned to criteria");
+                //return false;
+
+                var counter = 0;
+                $.each(teamAssignments, function (index, object) {
+                    var markup =
+                        "<input type='hidden' id='CallCenterTeamAssignments_" + counter + "_TeamId'    name='CallCenterTeamAssignments[" + counter + "].TeamId'    value='" + object.TeamId + "'>" +
+                        "<input type='hidden' id='CallCenterTeamAssignments_" + counter + "_Name'      name='CallCenterTeamAssignments[" + counter + "].Name'      value='" + object.TeamName + "'>" +
+                        "<input type='hidden' id='CallCenterTeamAssignments_" + counter + "_StartDate' name='CallCenterTeamAssignments[" + counter + "].StartDate' value='" + object.StartDate + "'>" +
+                        "<input type='hidden' id='CallCenterTeamAssignments_" + counter + "_EndDate'   name='CallCenterTeamAssignments[" + counter + "].EndDate'   value='" + object.EndDate + "'>";
+                    counter++;
+                    $("#team-input-tags").append(markup);
+                });
+            }
+        } else {
+            $("#IsTeamAssignment").val("false");
+        }
+        $("#masterForm").submit();
+    }
+
+    function clearCampaignActivity() {
+        $('#activities').hide();
+        $('#ActivityId').html('');
+    }
+
+    function loadDirectMailDates() {
+        clearCampaignActivity();
+
+        var selectedCampaignId = $("#CampaignId").val();
+        if (selectedCampaignId <= 0)
+            return false;
+
+        $.ajax({
+            url: '/CallCenter/HealthPlanCallQueueCriteria/GetDirectMailActivityDates?campaignId=' + selectedCampaignId,
+            type: 'GET',
+            success: function (result) {
+                $('#activities').show();
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        $('#ActivityId').append($('<option></option>').val(result[i].FirstValue).html(result[i].SecondValue));
+                    }
+                }
+            },
+            error: function () {
+                alert('Some error occurred while loading Direct Mail Dates.');
+                return false;
+            }
+        });
+    }
+
+    function addCampaignActivity() {
+        if ($("#CampaignId").val() <= 0) {
+            alert("Please select campaign.");
+            return false;
+        }
+
+        var objCampaign = new Object();
+        objCampaign.Id = $("#CampaignId").val();
+        objCampaign.Name = $("#CampaignId option:selected").text();
+        objCampaign.CustomTags = '';
+
+        var objCustomTag = $.grep(customTagList, function (item, index) {
+            return item.CampaignId == objCampaign.Id;
+        });
+
+        if (objCustomTag != null) {
+            objCampaign.CustomTags = objCustomTag[0].CustomTags;
+        }
+
+        var selectedActivities = [];
+        var innerHtml = "";
+        var hiddenFieldHtml = "";
+        var counter = 0;
+        $('#ActivityId option:selected').each(function () {
+            var activity = { ActivityId: $(this).val(), ActivityDate: $(this).text() };
+            selectedActivities.push(activity);
+            innerHtml += "<span>" + $(this).text() + "</span></br>";
+            hiddenFieldHtml += '<input type="text" name="CampaignDirectMailDates[' + objCampaign.Id + '].DirectMailDateActivities[' + counter + '].ActivityId" value="' + $(this).val() + '" />';
+            hiddenFieldHtml += '<input type="text" name="CampaignDirectMailDates[' + objCampaign.Id + '].DirectMailDateActivities[' + counter + '].ActivityDate" value="' + $(this).text() + '" />';
+            counter++;
+        });
+
+        if (selectedActivities.length <= 0) {
+            alert("Please select direct mail dates.");
+            return false;
+        }
+
+        objCampaign.DirectMailDateActivities = selectedActivities;
+        objCampaign.DirectMailDateInnerHtml = innerHtml;
+        objCampaign.DirectMailDateHiddenFieldHtml = hiddenFieldHtml;
+
+        objCampaign.Key = objCampaign.Id;
+
+        if (campaignList[objCampaign.Key] != undefined) {
+            alert("This Campaign has already been added.");
+            return false;
+        }
+        campaignList[objCampaign.Key] = objCampaign;
+
+        renderCampaignActivity();
+
+        /*$("#directMailDates_" + objCampaign.Id).html(innerHtml);
+        $("#input_directMailDates_" + objCampaign.Id).html(hiddenFieldHtml);*/
+
+        $("#CampaignId").val('-1');
+        clearCampaignActivity();
+        return false;
+    }
+
+    function renderCampaignActivity() {
+        if ($.isEmptyObject(campaignList)) {
+            {
+                $("#divCampaignActivity").empty();
+                $("#campaign-activity-container").hide();
+            }
+        }
+        else {
+            $("#divCampaignActivity").empty();
+            $.each(campaignList, function (key, objCampaign) {
+                $("#campaignActivityTemplate").tmpl(objCampaign).appendTo("#divCampaignActivity");
+            });
+            $("#campaign-activity-container").show();
+
+            $.each(campaignList, function (key, objCampaign) {
+                $("#directMailDates_" + objCampaign.Id).html(objCampaign.DirectMailDateInnerHtml);
+                $("#input_directMailDates_" + objCampaign.Id).html(objCampaign.DirectMailDateHiddenFieldHtml);
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        if ('@Model.IsTeamAssignment' == 'True' || '@Model.IsTeamAssignment' == 'true') {
+            $("input[type=radio][name=assignmentType][value=groupAssignment]").attr("checked", true);
+            $("#bulkUploadAssignment").hide();
+            $("#normalAssignment").hide();
+            $("#assignment-container").hide();
+            renderTeamAssignment();
+
+            $("#teamAssignment").show();
+            $("#team-assignment-container").show();
+        }
+        if ('@Model.IsTeamAssignment' == 'True') {
+            $("input[type=radio][name=assignmentType][value=groupAssignment]").attr("checked", true);
+        }
+        @*if ('@Model.CallCenterTeamAssignments.IsNullOrEmpty()' == 'false' && '@Model.CallCenterTeamAssignments.Any()' == 'true') {
+        renderTeamAssignment();
+    }*@
+    });
+</script>

@@ -1,0 +1,511 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.Core.Scheduling.ViewModels
+@model OnSiteRegistrationEditModel
+@{
+    ViewBag.Title = "Customer Resgistration";
+}
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+<script type="text/javascript" src="/Scripts/addresseditmodel.helper.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<style type="text/css">
+    .container-div
+    {
+        width: 97%;
+        margin-top: 15px;
+        padding-left: 5px;
+    }
+    
+    .editor-label
+    {
+        color: #000000;
+        font-size: 9pt;
+    }
+    
+    .small-text
+    {
+        color: #000000;
+        font-size: 9pt;
+    }
+</style>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{Html.BeginForm();}
+
+@{
+    
+    var feetDropValues = new[]{
+                        new SelectListItem {Value = "0", Text = "0"} ,                        
+                        new SelectListItem {Value = "3", Text = "3"} ,
+                        new SelectListItem {Value = "4", Text = "4"} ,
+                        new SelectListItem {Value = "5", Text = "5"} ,
+                        new SelectListItem {Value = "6", Text = "6"} ,
+                        new SelectListItem {Value = "7", Text = "7"}                          
+                      };
+                      
+    var inchDropDownValus = new[]{
+                        new SelectListItem {Value = "0", Text = "0"} ,
+                        new SelectListItem {Value = "1", Text = "1"} ,
+                        new SelectListItem {Value = "2", Text = "2"} ,
+                        new SelectListItem {Value = "3", Text = "3"} ,
+                        new SelectListItem {Value = "4", Text = "4"} ,
+                        new SelectListItem {Value = "5", Text = "5"} ,
+                        new SelectListItem {Value = "6", Text = "6"} ,
+                        new SelectListItem {Value = "7", Text = "7"} ,
+                        new SelectListItem {Value = "8", Text = "8"} ,
+                        new SelectListItem {Value = "9", Text = "9"} ,
+                        new SelectListItem {Value = "10", Text = "10"} ,
+                        new SelectListItem {Value = "11", Text = "11"} ,
+                      };
+}
+<div style="width: 97%; border: solid 1px #000000; padding: 10px;">
+    <h2>
+        Customer Registration</h2>
+    <div class="editor-row container-div">
+        You will be registered for - @(Model.EventName)
+        on @(Model.EventDate.ToShortDateString())
+        @Html.HiddenFor(m=>m.EventId)
+    </div>
+    <div class="container-div">
+        <fieldset>
+            <legend>Customer Info</legend>
+            <div class="editor-row">
+                <div class="editor-column" style="width: 17%;">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.FirstName) @Html.ValidationMessageFor(m => m.FirstName)
+                    </div>
+                    @Html.TextBoxFor(m => m.FirstName, new { autocomplete = "off", @style = "width:95%;" })
+                </div>
+                <div class="editor-column" style="width: 17%;">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.LastName) @Html.ValidationMessageFor(m => m.LastName)
+                    </div>
+                    @Html.TextBoxFor(m => m.LastName, new { autocomplete = "off", @style = "width:95%;" })
+                </div>
+                <div class="editor-column" style="width: 28%;">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.Email) @Html.ValidationMessageFor(m => m.Email)
+                    </div>
+                    @Html.TextBoxFor(m => m.Email, new { autocomplete = "off", @style = "width:95%;" })
+                </div>
+                @Html.EditorFor(m => m.HomeNumber)
+            </div>
+            <div class="editor-row">
+                <div class="editor-column">
+                    <div class="editor-label">
+                        @Html.ValidationMessageFor(m => m.Gender)
+                    </div>
+                    @Html.LabelFor(m => m.Gender) :
+                    <input type="radio" id="@(Gender.Male)" name="GenderRadioButton" @(Model.Gender == (int)Gender.Male ? "checked=checked" : "") onclick="setGender('@((int)Gender.Male)');" />@(Gender.Male)
+                    &nbsp; &nbsp;
+                    <input type="radio" id="@(Gender.Female)" name="GenderRadioButton" @(Model.Gender == (int)Gender.Female ? "checked=checked" : "") onclick="setGender('@((int)Gender.Female)');" />@(Gender.Female)
+                    @Html.HiddenFor(m => m.Gender)
+                </div>
+                <div class="editor-column">
+                    <div class="editor-label">
+                        @Html.ValidationMessageFor(m => m.DateofBirth)
+                    </div>
+                    @Html.LabelFor(m => m.DateofBirth) : @Html.TextBoxFor(m => m.DateofBirth, new { @class = "datePicker-dob" })
+                </div>
+                <div class="editor-column" style="width:16%;">
+                    <div class="editor-label">Height</div>
+                    @Html.DropDownListFor(m=>m.HeightInFeet,feetDropValues) ft
+                    @Html.DropDownListFor(m=>m.HeightInInch,inchDropDownValus) inch
+                </div>
+                <div class="editor-column" style="width:16%;">
+                    <div class="editor-label">
+                        @Html.LabelFor(m=>m.Weight)
+                    </div>
+                    @Html.TextBoxFor(m => m.Weight, new { @style = "width:50px;" }) lbs
+                </div>
+            </div>
+            <div class="editor-row">
+                <div class="editor-column">
+                    <div class="editor-label">
+                        @Html.LabelFor(m=>m.EmployeeId)
+                    </div>
+                    @Html.TextBoxFor(m => m.EmployeeId, new { @style="width:95%;" })
+                </div>
+                <div class="editor-column">
+                    <div class="editor-label">
+                        @Html.LabelFor(m=>m.InsuranceId)
+                    </div>
+                    @Html.TextBoxFor(m => m.InsuranceId, new { @style = "width:95%;" })
+                </div>
+                <div class="editor-column">
+                    <div class="editor-label">
+                        @Html.LabelFor(m=>m.Race)
+                    </div>
+                    @Html.DropDownListFor(m=>m.Race, DropDownHelper.AllRace())
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div class="container-div">
+        <fieldset>
+            <legend>Address</legend>
+            @Html.EditorFor(m => m.Address)
+        </fieldset>
+    </div>
+    <div class="container-div">
+        <fieldset>
+            <legend>Screening Info</legend>
+            <div style="float: left; width: 40%; margin-right: 10px;">
+                @if (Model.AllEventPackages != null && Model.AllEventPackages.Count() > 0)
+                {
+
+                    var packageListItem = new[] { new SelectListItem { Text = "-- Select--", Value = "-1" } }
+                        .Concat(Model.AllEventPackages.Select(p => new SelectListItem { Text = p.Name + " - $" + p.Price, Value = p.EventPackageId.ToString(), Selected = p.EventPackageId == Model.SelectedPackageId }));
+                
+                
+                    <div class="editor-row">
+                        <div class="editor-label">
+                            Package: @Html.ValidationMessageFor(m=>m.SelectedPackageId)
+                        </div>
+                        @Html.DropDownListFor(m => m.SelectedPackageId, packageListItem, new { @style = "width: 90%;" })
+                        <a href="javascript:void(0);" class="package-qtip"><b>?</b></a>
+                    </div>
+                    foreach (var item in Model.AllEventPackages)
+                    {
+                    <div class="package-item" style="display: none;">
+                        <input type="hidden" value="@item.EventPackageId" />
+                        <input type="text" style="display:none;" class="item-id" value="@item.PackageId" />
+                        <input type="text" style="display:none;" class="item-name" value="@item.Name" />
+                        <input type="text" style="display:none;" class="item-price" value="@item.Price.ToString("0.00")" />
+                        @foreach (var test in item.Tests)
+                        {                                        
+                            <input type="text" class="package-test" style="display:none;" value="@test.EventTestId" />
+                            <input type="text" class="package-test-name" style="display:none;" value="@test.Name" />
+                        }
+                        <div class="package-qtip-div">
+                            <div>@(item.Description)</div>
+                            <br />
+                            <div>
+                                <b>Price:</b> $@(item.Price.ToString("0.00"))</div>
+                        </div>
+                    </div>   
+                    }
+                }
+                @if (Model.Appointments != null && Model.Appointments.Count() > 0)
+                {
+                    var appointmentListItem = new[] { new SelectListItem { Text = "--Select--", Value = "-1" } }
+                        .Concat(Model.Appointments.Select(ap => new SelectListItem { Text = ap.StartTime.ToShortTimeString(), Value = ap.Id.ToString(), Selected = ap.Id == Model.SelectedAppointmentId }));
+                    
+                    <div class="editor-row">
+                        <div class="editor-label">
+                            Appointment Time: @Html.ValidationMessageFor(m=>m.SelectedAppointmentId)
+                        </div>
+                        @Html.DropDownListFor(m => m.SelectedAppointmentId, appointmentListItem)
+                    </div>
+                }
+            </div>
+            <div style="float: left; width: 58%;">
+                @if (Model.AllEventTests != null && Model.AllEventTests.Count() > 0)
+                {
+                    <div class="editor-row">
+                        <div class="editor-label">
+                            Add-on Test(s):
+                        </div>                        
+                    </div>
+                    foreach (var item in Model.AllEventTests)
+                    {
+                    <div class="editor-column test-item">
+                        @if (Model.SelectedTestIds != null && Model.SelectedTestIds.Contains(item.EventTestId))
+                        {
+                            <input type="checkbox" id="@item.EventTestId" checked="checked" onclick="addTest(this, '@item.EventTestId');" /> @item.Alias                              
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="@item.EventTestId" onclick="addTest(this,'@item.EventTestId');" /> @item.Alias                               
+                        }
+                        <a href="javascript:void(0);" class="test-qtip"><b>?</b></a>
+                        <input type="hidden" value="@item.EventTestId" />
+                        <input type="text" style="display:none;" class="item-id" value="@item.TestId" />
+                        <input type="text" style="display:none;" class="item-name" value="@item.Name" />
+                        <input type="text" style="display:none;" class="item-price" value="@item.Price.ToString("0.00")" />
+                        <input type="text" style="display:none;" class="item-withpackage-price" value="@item.WithPackageprice.ToString("0.00")" />
+                        <div class="test-qtip-div" style="display: none;">
+                            <div>@(item.Description)</div>
+                            <br />
+                            <div>
+                                <b>Price:</b> $@(item.Price.ToString("0.00"))</div>
+                        </div>
+                    </div> 
+                    }
+                }
+            </div>
+            <div id="selectedtest-div" style="display: none;">
+            </div>
+        </fieldset>
+    </div>    
+    <div class="container-div">
+        <fieldset>
+            <legend>Order Summary</legend>
+            <div id="ordersummary-packagesummary-div">
+                <div class="editor-row"><b>Package:</b></div>
+                <div class="editor-row">
+                    <div id="ordersummary-packagesummary-name-div" class="editor-column-twoinrow"></div>
+                    <div id="ordersummary-packagesummary-price-div" class="editor-column-twoinrow"></div>
+                </div>
+            </div>
+            <div id="ordersummary-addontestummary-div">
+                <div class="editor-row"><b>Add-on Test(s):</b></div>
+                <div id="ordersummary-addontest-div">
+                </div>
+            </div>
+            <div id="ordersummary-total-div" style="margin-top:10px;">
+                <div class="editor-row">
+                    <div class="editor-column-twoinrow"><b>Total:</b></div>
+                    <div id="ordersummary-total-price-div" class="editor-column-twoinrow"></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div class="submit-button-row">
+        <div class="submit-btn-toggle">
+            <a href="/Scheduling/EventCustomerList/Index?id=@(Model.EventId)">Cancel</a>&nbsp; &nbsp;
+            <input type="button" value="Register" onclick="onClickFinish();" />
+        </div>
+        <div class="submit-btn-toggle" style="display: none; text-align: right;">
+            <img src="/App/Images/loading.gif" />
+        </div>
+    </div>
+</div>
+@{Html.EndForm();}
+<script language="javascript" type="text/javascript">
+    function onClickFinish() {
+        $(".submit-btn-toggle").toggle();
+
+        var valPhone = $("div.phone-number-div input[type=text].number-after-areacode").val();
+        $("div.phone-number-div input[type=text].number-after-areacode").val(valPhone.replace(/-/gi, ""));
+
+        $('form').submit();
+        return true;
+    }
+
+    $(document).ready(function () {
+        //debugger;
+        hideCountryCode();
+        showTopValidationMessage();
+        onStartTestSelection();
+        onStartPackageSelection();
+        $("div.phone-number-div input[type=text].number-after-areacode").mask('999-9999');
+        $("#SelectedPackageId").bind("change", function () { setPackageHelp(); selectPackage(); });
+
+        $(".test-qtip").qtip({
+            position: {
+                my: 'top left'
+            },
+            style: {
+                width: '400'
+            },
+            content: {
+                title: function (api) {
+                    return $(this).parent().find('.item-name').val();
+                },
+                text: function (api) {
+                    return $(this).parent().find(".test-qtip-div").html();
+                }
+            }
+        });
+
+        setOrderSummary();
+    });
+
+    function setGender(gender) {
+        $('#Gender').val(gender);
+    }
+
+    function setPackageHelp() {//debugger;
+        var eventPackageId = $("#SelectedPackageId").val();
+        var packageItemBlock = $(".package-item input[type=hidden][value=" + eventPackageId + "]").parents(".package-item:first");
+
+        $(".package-qtip").qtip({
+            position: {
+                my: 'top left'
+            },
+            style: {
+                width: '400'
+            },
+            content: {
+                title: $(packageItemBlock).find('.item-name').val(),
+                text: function (api) {
+                    return $(packageItemBlock).find(".package-qtip-div").html();
+                }
+            }
+        });
+    }
+
+    function setOrderSummary() {
+        var totalPrice = 0;
+        var eventPackageId = $("#SelectedPackageId").val();
+        if (eventPackageId > 0) {
+            $("#ordersummary-packagesummary-div").show();
+
+            var packageItemBlock = $(".package-item input[type=hidden][value=" + eventPackageId + "]").parents(".package-item:first");
+            $("#ordersummary-packagesummary-name-div").html($(packageItemBlock).find('.item-name').val());
+            var packagePrice = $(packageItemBlock).find('.item-price').val();
+            totalPrice += parseFloat(packagePrice);
+            $("#ordersummary-packagesummary-price-div").html("$" + packagePrice);
+        }
+        else {
+            $("#ordersummary-packagesummary-div").hide();
+        }
+
+        var orderSummaryTests = new Array();
+        if (selectedTests != null) {                       
+            var orderSummaryTest = null;
+            var summaryTestKey = 0;
+            $.each(selectedTests, function (key, test) {
+                var testItemBlock = $(".test-item input[type=hidden][value=" + test.TestId + "]").parents(".test-item:first");
+                orderSummaryTest = new Object();
+                orderSummaryTest.Name = $(testItemBlock).find('.item-name').val();
+                if (eventPackageId > 0)
+                    orderSummaryTest.Price = $(testItemBlock).find('.item-withpackage-price').val();
+                else
+                    orderSummaryTest.Price = $(testItemBlock).find('.item-price').val();
+
+                orderSummaryTests.Key = summaryTestKey;
+                orderSummaryTests[summaryTestKey++] = orderSummaryTest;
+            });
+        }
+
+        if (orderSummaryTests != null && orderSummaryTests.length > 0) {
+            $("#ordersummary-addontestummary-div").show();
+            $("#ordersummary-addontest-div").empty();
+            $.each(orderSummaryTests, function (key, test) {
+                totalPrice += parseFloat(test.Price);
+                $("#ordersummary-addontest-div").append($("#orderSummaryTestTemplate").tmpl(test));
+            });
+        }
+        else {
+            $("#ordersummary-addontestummary-div").hide();
+        }
+
+        $("#ordersummary-total-price-div").html("$" + totalPrice.toFixed(2));
+
+    }
+</script>
+<script id="orderSummaryTestTemplate" type="text/x-jquery-tmpl">    
+    <div class="editor-row">
+        <div class="editor-column-twoinrow">${Name}</div>
+        <div class="editor-column-twoinrow"><span>$</span>${Price}</div>
+    </div>
+</script>
+<script type="text/javascript" language="javascript">
+
+    function selectPackage() {
+        unHideTestforSelectedPackage();
+
+        var eventPackageId = $("#SelectedPackageId").val();
+
+        if (eventPackageId > 0) {
+            var packageItemBlock = $(".package-item input[type=hidden][value=" + eventPackageId + "]").parents(".package-item:first");
+            hideTestforSelectedPackage(packageItemBlock);
+        }
+        
+        setOrderSummary();
+    }
+
+    function unHideTestforSelectedPackage() {
+        $(".test-item").each(function () {
+            $(this).show();            
+        });
+    }
+
+    function hideTestforSelectedPackage(packageBlock) {
+        unHideTestforSelectedPackage();
+
+        packageBlock.find(".package-test").each(function () {
+            var packageTestId = $(this).val();
+            removeTest(packageTestId);
+
+            var testBlockChild = $(".test-item input[type=hidden][value=" + packageTestId + "]");
+            if (testBlockChild.length > 0) {
+                var parentBox = testBlockChild.parents(".test-item:first");
+                $(parentBox).find("input[type=checkbox]").removeAttr("checked");
+                parentBox.hide();
+            }
+        });        
+        renderTestHtmlTemplate();
+    }
+
+    function onStartPackageSelection() {
+        @if (Model.SelectedPackageId > 0)
+        {
+            <text> 
+                var selectedPackageBlock = $(".package-item input[type=hidden][value=@Model.SelectedPackageId]").parents(".package-item:first");
+                hideTestforSelectedPackage(selectedPackageBlock);
+            </text>
+        }
+    }
+
+</script>
+<script type="text/javascript" language="javascript">
+    var selectedTests = new Object();
+
+    var selectedTest = null;
+    var keyTest = 1;
+
+    function addTest(sourceCheckbox, eventTestId) {//debugger;
+        var checkedBox = $(sourceCheckbox);
+        if (sourceCheckbox.checked) {
+            selectedTest = new Object();
+            selectedTest.TestId = eventTestId;
+            selectedTest.Key = keyTest;
+            selectedTests[keyTest++] = selectedTest;
+        }
+        else {
+            removeTest(eventTestId);
+        }
+        renderTestHtmlTemplate();
+
+        setOrderSummary();
+    }
+
+    function removeTest(eventTestId){
+        var key = null;
+        $.each(selectedTests, function(){
+            if(this.TestId == eventTestId){
+                key = this.Key;
+                return false;
+            }
+        });
+
+        if(key == null) return;
+        delete selectedTests[key];
+    }
+
+    function renderTestHtmlTemplate(){
+        $("#selectedtest-div").empty();
+        $.each(selectedTests, function (key, test) {            
+            $("#selectedtest-div").append($("#selectedTestTemplate").tmpl(test));            
+        });
+    }
+
+    function onStartTestSelection(){        
+        @if (Model.SelectedTestIds != null && Model.SelectedTestIds.Count() > 0)
+        {
+            foreach (var item in Model.SelectedTestIds)
+            {
+                <text>
+                    selectedTest = new Object();
+                    selectedTest.TestId = '@item';
+                    selectedTest.Key = keyTest;
+                    selectedTests[keyTest++] = selectedTest;
+                </text>
+            }
+            <text>
+                renderTestHtmlTemplate();
+            </text>
+        }
+    }
+</script>
+<script id="selectedTestTemplate" type="text/x-jquery-tmpl">    
+    <input type="hidden" name="SelectedTestIds.Index" class='selectedtest-key' value="${Key}" />
+    <input type="text" name="SelectedTestIds[${Key}]" class='selectedtest-value' value="${TestId}" />    
+</script>

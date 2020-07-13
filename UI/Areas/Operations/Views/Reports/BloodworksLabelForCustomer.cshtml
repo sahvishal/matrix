@@ -1,0 +1,43 @@
+﻿@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model Falcon.App.Core.Operations.ViewModels.BloodworksLabelViewModel
+           
+@{
+    Layout = null;
+}
+
+@{
+    var settings = IoC.Resolve<ISettings>();
+    var bloodWorksAccountDetails = settings.BloodWorksAccountDetails;
+    
+}
+@*<style type="text/css">
+    body
+    {
+        width:389px;
+        height:221px;
+        margin: 0px;
+        padding: 0px;
+    }
+</style>*@
+<div style="font-size: 16px; width:384px; height:221px; padding-left:25px; padding-top:20px;">
+    <b>Test Date:</b> @Model.TestDate.ToShortDateString()
+    <br />
+    <b>PID:</b> @Model.CustomerId
+    <br />
+    <b>Patient Name:</b> @Model.CustomerName
+    <br />
+    <b>Patient Address:</b> @Model.CustomerAddress.ToString()
+    <br />
+    <b>Phone Number:</b> @Model.PhoneNumber.ToString()
+    <br />
+    <b>Date of Birth:</b> @(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToShortDateString() : "") 
+    <br />
+    <b>Age (in yrs):</b> @(Model.DateOfBirth.HasValue ? Model.Age.ToString() : "")   <b>Gender:</b> @Model.Gender
+    <br />
+    <b>Blood Test(s):</b> @(string.IsNullOrEmpty(Model.BloodTests) ? "N/A" : Model.BloodTests)
+    <br/>
+    @Html.Raw(bloodWorksAccountDetails)
+</div>
+
+

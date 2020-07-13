@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Falcon.App.Core.Communication.Domain.TemplateMacro>
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <tr class="macros">
+            <td onclick="insertMacro('@(Falcon.App.Core.Communication.Domain.TemplateMacro.GetIdentifierUiString(item.IdentifierName))')">
+                @item.IdentifierName
+            </td>
+        </tr>
+    }
+
+}

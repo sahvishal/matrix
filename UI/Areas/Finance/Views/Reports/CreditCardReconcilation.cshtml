@@ -1,0 +1,114 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Finance.ViewModels
+@model CreditCardReconcileListModel
+@{
+    ViewBag.Title = "Credit Card Reconcilation";
+}
+<h1>
+    Credit Card Reconcilation</h1>
+<div id="list-filter">
+    @{Html.BeginForm("CreditCardReconcilation", "Reports", FormMethod.Get);}
+    @Html.Partial("CreditCardReconcileModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/ExportableCreditCardReconcilation?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>        
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>     
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().EventId)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().CustomerName) 
+            </th>   
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().DateApproved) 
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().CardType) 
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().ReceiptNumber) 
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Amount) 
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Pod) 
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().IsOnline) 
+            </th>            
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Prepaid) 
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().EventType)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().CorporatePartner)
+            </th>
+        </tr>
+        @foreach (var selectedModel in Model.Collection)
+        {
+            <tr>
+                <td>
+                    @selectedModel.EventId
+                </td>
+                <td>@selectedModel.CustomerName
+                </td>
+                <td>@selectedModel.DateApproved
+                </td>
+                <td>@selectedModel.CardType
+                </td>
+                <td>@selectedModel.ReceiptNumber
+                </td>
+                <td>$@selectedModel.Amount.ToString("00.00")
+                </td>
+                <td>@selectedModel.Pod
+                </td>
+                <td>@(selectedModel.IsOnline ? "Yes" : "No")
+                </td>
+                <td>@selectedModel.Prepaid
+                </td>
+                <td>
+                    @selectedModel.EventType
+                </td>
+                <td>
+                    @selectedModel.CorporatePartner
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

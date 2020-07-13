@@ -1,0 +1,51 @@
+﻿
+ 
+
+<input type="hidden" name="EventCustomerId" id="PriorityInQueueEventCustomerIdHidden" />
+<input type="hidden" name="CustomerId" id="PriorityInQueueCustomerIdHidden" />
+<input type="hidden" name="CustomerId" id="PriorityInQueueEventIdHidden" />
+<input type="hidden" id="IsPriorityInQueueSetHidden" value="False"/>
+Note : <textarea id="PriorityInQueueNote" cols="84" rows="5" maxlength="5000" style="width:auto;"></textarea>
+<div style="margin-top: 10px; width: 620px;">
+    <div style="float:right;width:150px;">
+        <input type="button" value="Cancel" onclick="closePriorityInQueue()">
+
+        <input type="button" value="Save" onclick="closePriorityInQueueAfterSave()">
+    </div>
+    <img src="/App/Images/loading.gif" style="display: none;">
+</div>
+<script type="text/javascript" language="javascript">
+    function closePriorityInQueue() {
+        //debugger;
+        if ($('#IsPriorityInQueueSetHidden').val() == 'False') {
+            var checkBoxId = '#PriorityInQueueCheckbox' + $('#PriorityInQueueEventCustomerIdHidden').val();
+            var checkBox = $(checkBoxId);
+            if (checkBox != undefined && checkBox != null)
+                checkBox.attr("checked", false);
+            if ($("#priorityInQueue-dialog").dialog('isOpen'))
+                $("#priorityInQueue-dialog").dialog('close');
+        } else {
+            $('#IsPriorityInQueueSetHidden').val('False');
+        }
+        
+        $('#PriorityInQueueNote').val('');
+        $('#PriorityInQueueEventCustomerIdHidden').val('');
+    }
+     
+
+    function closePriorityInQueueAfterSave() {
+        var note = $.trim($('#PriorityInQueueNote').val());
+        if (note == '') {
+            alert('Please enter the reason');
+            }
+        else
+        {
+            var eventCustomerId = $('#PriorityInQueueEventCustomerIdHidden').val();
+            var checkBoxId = '#PriorityInQueueCheckbox' + eventCustomerId;
+            var checkBox = $(checkBoxId);
+            savePriorityInQueue(eventCustomerId, $(checkBox), note);
+            $('#IsPriorityInQueueSetHidden').val('True');
+            $("#priorityInQueue-dialog").dialog('close');
+        }
+    }
+</script>

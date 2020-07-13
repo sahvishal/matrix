@@ -1,0 +1,12 @@
+USE [$(dbname)]
+GO
+
+CREATE TABLE TblChaseGroup
+(
+	ChaseGroupId BIGINT IDENTITY(1,1) NOT NULL,
+	Name VARCHAR(255) NULL,
+	Number VARCHAR(50) NULL,
+	Division VARCHAR(50) NULL,
+	CONSTRAINT PK_TblChaseGroup PRIMARY KEY (ChaseGroupId)
+)
+GO

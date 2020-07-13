@@ -1,0 +1,246 @@
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.CallQueues.ViewModels.OutboundCallQueueListModel
+@{
+    Layout = null;
+}
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/Scripts/jquery-ui-1.8.12.custom.min.js"></script>
+
+<style type="text/css">
+    .notes-description {
+        float: left;
+        width: 100%;
+        border-bottom: solid 1px;
+        margin-bottom: 10px;
+        padding-top: 10px;
+    }
+
+    .notes-createdby {
+        float: right;
+        width: 190px;
+    }
+
+    .notes-createdon {
+        float: left;
+        width: 190px;
+    }
+</style>
+@if (Model != null && !Model.OutboundCallQueues.IsNullOrEmpty())
+{
+    <table id="list-view" style="width:100%;">
+        <tr>
+            <th style="width:200px;">
+                Name
+            </th>
+            <th style="width:70px;">
+                Number
+            </th>
+            <th style="width: 200px;">Call Reason</th>
+            <th style="width: 100px;">Inserted In Queue</th>
+            <th style="width: 100px;">Time In Queue</th>
+            <th style="width: 100px;">Call History</th>
+            <th>Action
+            <th>
+        </tr>
+        @foreach (var item in Model.OutboundCallQueues)
+        {
+            <tr>
+                <td style="width:200px;">
+                    @item.FirstName @item.LastName
+                    <br />
+                    <b>Gender: </b>@item.Gender.ToString()<br />
+                    <b>Dob: </b>@(item.DateOfBirth.HasValue ? item.DateOfBirth.Value.ToShortDateString() : "")
+
+                    @if (item.ProspectCreatedOn.HasValue)
+                    {<br />
+                        <b>Created On:&nbsp;</b>@item.ProspectCreatedOn.Value.ToShortDateString()
+                    }
+
+                </td>
+                <td style="width:70px;">
+                    @item.CallBackPhoneNumber.ToString()
+                </td>
+                <td style="width: 200px;">
+                    @item.CallReason
+                </td>
+                <td style="width: 100px;">
+                    @item.CreatedOn.ToShortDateString()<br />
+                    @Html.Raw("@ ") @item.CreatedOn.ToShortTimeString()
+                </td>
+                <td style="width: 100px;">
+                    @{
+                    var queueTimeGap = DateTime.Now - item.CreatedOn;
+                    if (queueTimeGap.Days > 0)
+                    {
+                        <span>@queueTimeGap.Days day(s) @queueTimeGap.Hours hrs @queueTimeGap.Minutes mins</span>
+                    }
+                    else if (queueTimeGap.Hours > 0)
+                    {
+                        <span>@queueTimeGap.Hours hrs @queueTimeGap.Minutes mins</span>
+                    }
+                    else
+                    {
+                        <span>@queueTimeGap.Minutes mins</span>
+                    }
+                    }
+                </td>
+                <td style="width: 100px;">
+                    @if (item.CallHistory != null && item.CallHistory.Any())
+                    {
+                        <a href="javascript:void(0);" class="call-history">@item.CallHistory.Count() previous call(s)</a>
+                        <div class="call-div" style="width:300px; display: none;">
+                            @foreach (var history in item.CallHistory)
+                            {
+                                <div>On @(history.DateCreated.ToShortDateString() + " @ " + history.DateCreated.ToShortTimeString()) </div>
+                                if (history.Notes != null && history.Notes.Any())
+                                {
+                                    <div><b>Notes:</b></div>
+                                    foreach (var note in history.Notes)
+                                    {
+                                        @note.Note<br />
+                                    }
+                                }
+                                <hr />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <span>No Previous Calls</span>
+                    }
+
+                    @if (item.Notes != null && item.Notes.Any())
+                    {
+                        <br />
+                        <a class="tag-notes" href="javascript:void(0);"> <b>Notes</b></a>
+                        <div style="display: none;" class="tag-notes-tip">
+                            @foreach (var note in item.Notes)
+                            {
+                                if (string.IsNullOrEmpty(note.CreatedByUser))
+                                {
+                                    @Html.Raw(note.Note)
+                                }
+                                else
+                                {
+                                    <div style="float: left; width: 100%;">
+                                        <span class="notes-createdon"><b>On: </b>@(note.EnteredOn.HasValue ? note.EnteredOn.Value.ToShortDateString() : string.Empty)</span>
+                                        <span class="notes-createdby"><b>By: </b>@note.CreatedByUser</span>
+                                    </div>
+                                    <div class="notes-description"><b>Notes: </b>@note.Note</div> <br />
+                                }
+                            }
+                        </div>
+                    }
+                </td>
+                <td>
+                    <a href="/Marketing/Reports/StartOutboundCall?customerId=@(item.CustomerId.HasValue ? item.CustomerId.Value : 0)&prospectCustomerId=@(item.ProspectCustomerId.HasValue ? item.ProspectCustomerId.Value : 0)&callQueueCustomerId=@(item.CallQueueCustomerId)">
+                        <img src="/App/Images/CCRep/startcall-small-btn.gif" alt="Start Call">
+                    </a>
+                    <br />
+                    @{
+            var name = item.FirstName.Replace("\"", "\\\"") + " " + item.LastName.Replace("\"", "\\\"");
+                    }
+                    <a href="javascript:void(0);" onclick='removeQueue("@item.CallQueueCustomerId", "@name");'>Remove</a>
+                <td>
+            </tr>
+        }
+    </table>
+    <div class="pager">
+        <div class="record-count">
+            Total Record(s) : @Model.PagingModel.NumberOfItems
+        </div>
+        @if (Model.PagingModel.PageCount > 1)
+        {
+            <div class="page-nav">
+                Pages:
+                @if (Model.PagingModel.CurrentPage > 1)
+                {
+                    <a href="javascript:void(0);" onclick="setPage(1)" class="first">&laquo; First</a>
+                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.CurrentPage - 1)')" class="previous">&lsaquo; Previous</a>
+                }
+
+                @foreach (int pageNumber in Model.PagingModel.GetPages())
+                {
+                    if (pageNumber > 1 && !Model.PagingModel.IsPageIncluded(pageNumber - 1))
+                    {
+                        <span class="elide">...</span>
+                    }
+                    <a href="javascript:void(0);" onclick="setPage('@pageNumber')" class="page @(Model.PagingModel.CurrentPage == pageNumber ? "current" : "") ">@pageNumber</a>
+                }
+
+                @if (Model.PagingModel.CurrentPage < Model.PagingModel.PageCount)
+                {
+                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.CurrentPage + 1)')" class="next">Next &rsaquo;</a>
+                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.PageCount)')" class="last">Last &raquo;</a>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="graybdrbox950_blankblock">
+        @if (Model != null && Model.IsQueueGenerated)
+        {
+            <span style="font-weight: bold; font-size: 15px; color: #4490B2;">
+                No Record(s) Found
+            </span>
+        }
+        else
+        {
+            <span style="font-weight: bold; font-size: 15px; color: #4490B2;">
+                Data for selected call queue is still not generated. Please check after some time.
+            </span>
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("table#list-view tr:even").addClass("alt-row");
+    });
+
+
+    $(function () {
+        $("tr:not(:has(th))").hover(function () {
+            $(this).addClass('row-hover');
+        },
+        function () {
+            $(this).removeClass('row-hover');
+        });
+    });
+
+    function setTotalRecords() {
+        $(".total-records").html('@(Model != null?Model.PagingModel.NumberOfItems:0)');
+    }
+
+    $(document).ready(function () {
+        $("a.call-history").each(function (index) {
+            $(this).qtip({
+                position: {
+                    my: 'left top'
+                },
+                content: {
+                    title: "Call History",
+                    text: function (api) {
+                        return $(this).parent().find(".call-div").html();
+                    }
+                }
+            });
+        });
+        $('.tag-notes').qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                text: function (api) {
+                    return $(this).parent().find('.tag-notes-tip').html();
+                }
+            },
+            style: {
+                width: '450px'
+            }
+        });
+    });
+</script>

@@ -1,0 +1,24 @@
+﻿@using Falcon.App.Core.Application.Enum
+@model Falcon.App.Core.Application.ViewModels.FeedbackMessageModel
+@{
+    string messageClass = "success-message";
+}
+@if (Model != null)
+{
+    {
+        switch (Model.MessageType)
+        {
+            case UserInterfaceMessageType.Error:
+                messageClass = "error-message";
+                break;
+            case UserInterfaceMessageType.Warning:
+                messageClass = "warning-message";
+                break;
+        }
+    }
+    <div style="clear:both;">
+        <div class="@messageClass">
+            @Html.Raw(Model.Message)
+        </div>
+    </div>
+}

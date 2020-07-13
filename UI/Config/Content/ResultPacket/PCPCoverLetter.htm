@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="Stylesheet" type="text/css" href="content/FinalPdf.css" />
+    <script type="text/javascript" src="content/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="content/jquery-ui-1.8.12.custom.min.js"></script>
+    <style type="text/css">
+        .test-textcontent-rpp {
+            font-size: 16px;
+            text-align: justify;
+        }
+        .pcp-letter-page {
+            page-break-before: always;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mainContainer-wopb" >
+        <div style="margin-top: 100px; margin-bottom: 10px; margin-left: 130px;">
+            <span style="font-size:12pt;font-weight:bold">If undelivered, please return to:</span><br />
+            <div style="width: 280px; border-radius: 10px; border: 1px solid #ccc; line-height: 24px; font-size: 12pt;padding: 20px;">
+                <span id="return-address-name" style="font-weight: bold;"></span>
+                <br />
+                <span id="return-address-line1"></span>
+                <span id="return-address-line2"></span>
+                <br />
+                <span id="return-address-city"></span>, <span id="return-address-state"></span>&nbsp;&nbsp;<span id="return-address-zip"></span>
+            </div>
+
+        </div>
+        <div style="float: left; width: 280px; border-radius: 10px; border: 1px solid #ccc; line-height: 24px; font-size: 12pt; margin-bottom: 50px; margin-left: 130px; padding: 20px;" id="pcp-coverletter-address">
+            <span id="pcp-coverletter-name" style="font-weight: bold;"></span>
+            <br />
+            <span id="pcp-coverletter-address-line1"></span>
+            <span id="pcp-coverletter-address-line2"></span>
+            <br />
+            <span id="pcp-coverletter-address-city"></span>, <span id="pcp-coverletter-address-state"></span>&nbsp;&nbsp;<span id="pcp-coverletter-address-zip"></span>
+        </div>
+    </div>
+    <div class="mainContainer-wopb pcp-letter-page" id="pcp-letter" >
+        <div style="width: 830px; margin: 0 auto">
+            <div style="height: 135px;">
+                <img src="" alt="" style="width: 324px; height: 135px; float: left" id="siteLogo" />
+                <img src="" alt="" style="width: 300px; height: 135px; float: right" id="corporatelogo" />
+            </div>
+
+            <div style="clear: both; margin-bottom: 35px; margin-top: 25px;" class="test-textcontent-rpp">
+                Dear <span id="physicianName"></span>,
+            </div>
+            <p class="test-textcontent-rpp" style="margin-bottom: 25px;">
+                Your patient <span id="patientName"></span> recently conducted their Medicare Wellness Visit  with <span id="organizatinName"></span> & HealthFair.
+                Attached is a Personalized Prevention Plan developed as a result of their visit.
+                During this visit a detailed health risk assessment, basic biometric screening, and recommended screening schedule was
+                reviewed one-on-one with a board-certified physician or physician assistant.
+            </p>
+            <p class="test-textcontent-rpp" style="margin-bottom: 25px;">
+                The purpose of the visit is to provide you and your patient with additional information and
+                identify any potential health risks and preventive services that may have not been received based
+                on Medicare guidelines. This information is not intented to replace your professional advice and
+                we do not intend on treating your patient for additional services that may have been indicated on
+                the prevention plan.
+            </p>
+            <p class="test-textcontent-rpp" style="margin-bottom: 25px;">
+                Should you have any questions, please feel free to contact the HealthFair medical staff at <a href="mailto:doctalk@healthfair.com">doctalk@healthfair.com</a> or call us at <b>855-352-8378</b>.
+            </p>
+
+            <p class="test-textcontent-rpp" style="margin-bottom: 25px;">
+                Best Regards,
+            </p>
+            <p class="test-textcontent-rpp" style="margin-bottom: 25px;">
+                <img src="content/pcp_coverletter_signature.jpg" alt="" style="width: 170px" id="signature" />
+
+                <div style="clear: both" class="test-textcontent-rpp">
+                    <span>Robert P. Oristaglio, D.O.</span><br />
+                    <span>National Medical Director, HealthFair</span>
+                </div>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

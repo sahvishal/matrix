@@ -1,0 +1,314 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.PackageSelectionInfoEditModel
+@{
+    Layout = null;
+}
+<style type="text/css">
+    .radio-question-block {
+        width: 15%;
+        float: left;
+        margin-left: 20px;
+    }
+
+    .question-line-height {
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+</style>
+<div id="package-selection-info">
+    <div class="left-float container" style="width: 685px;">
+        <div class="header-title" style="float: left; width: 665px;">
+            <strong>The following information will help us customize a package for you.</strong>
+        </div>
+        <div style="float: left; margin: 10px;">
+            <div class="left-float">
+                <div class="half">
+                    <label>
+                        Gender:*
+                    </label>
+                </div>
+                <div class="half">
+                    @Html.DropDownListFor(m => m.Gender, DropDownHelper.Genders(), new { @class = "select" })
+                </div>
+            </div>
+            <div class="left-float">
+                <div class="half">
+                    <label>
+                        Date Of Birth:*
+                    </label>
+                </div>
+                <div class="half">
+                    @Html.TextBoxFor(m => m.Dob, new { @class = "datePicker-dob textbox" })
+                </div>
+            </div>
+
+        </div>
+        @if (Model.ShowPreQualifiedQuestion && !Model.SkipPreQualificationQuestion)
+        {
+            <div class="skipContinueQuestions">
+                <div class="sequence-block" questionname="ChestPain" style="clear: both;">
+                    <div style="margin-left: 10px; float: left; width: 80%; margin-bottom: 5px; margin-top: 5px;" class="question-line-height">
+                        1. Have you experienced severe chest pain from exertion, activity, or while at rest within the last 4 days?
+                    </div>
+                    <div class="front-radio-block radio-question-block question-line-height">
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerYes)" name="chestPain_raidogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerYes.GetDescription()
+                        </span>
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerNo)" name="chestPain_raidogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerNo.GetDescription()
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.ChestPain)
+                </div>
+                <div class="sequence-block" questionname="DiagnosedHeartProblem" style="clear: both;">
+                    <div style="margin-left: 10px; float: left; width: 80%" class="question-line-height">
+                        2. In the last 30 days have you seen a Cardiologist for a diagnosed heart condition?
+                    </div>
+                    <div class="front-radio-block radio-question-block question-line-height">
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerYes)" name="diagnoseheartProblem_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerYes.GetDescription()
+                        </span>
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerNo)" name="diagnoseheartProblem_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerNo.GetDescription()
+                        </span>
+                        @Html.HiddenFor(m => m.DiagnosedHeartProblem)
+                    </div>
+                </div>
+
+
+                <div class="sequence-block" questionname="HighBloodPressure" style="clear: both;">
+                    <div style="margin-left: 10px; float: left; width: 80%" class="question-line-height">
+                        3. Have you ever been told you have high blood pressure?
+                    </div>
+                    <div class="front-radio-block radio-question-block question-line-height">
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerYes)" name="highhloodpressure_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerYes.GetDescription()
+                        </span>
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerNo)" name="highhloodpressure_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerNo.GetDescription()
+                        </span>
+                        @Html.HiddenFor(m => m.HighBloodPressure)
+                    </div>
+                </div>
+                <div class="sequence-block" questionname="HighCholestrol" style="clear: both;">
+                    <div style="margin-left: 10px; float: left; width: 80%" class="question-line-height">
+                        4. Have you ever been told you have elevated cholesterol?
+                    </div>
+                    <div class="front-radio-block radio-question-block question-line-height">
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerYes)" name="highcholestrol_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerYes.GetDescription()
+                        </span>
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerNo)" name="highcholestrol_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerNo.GetDescription()
+                        </span>
+                        @Html.HiddenFor(m => m.HighCholestrol)
+                    </div>
+                </div>
+                <div class="sequence-block" questionname="Smoker" style="clear: both;">
+                    <div style="margin-left: 10px; float: left; width: 80%" class="question-line-height">
+                        5. Do you currently smoke or have you smoked in the past?
+                    </div>
+                    <div class="front-radio-block radio-question-block question-line-height">
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerYes)" name="smoker_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerYes.GetDescription()
+                        </span>
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerNo)" name="smoker_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerNo.GetDescription()
+                        </span>
+                        @Html.HiddenFor(m => m.Smoker)
+                    </div>
+                </div>
+
+
+                <div class="sequence-block" questionname="HeartDisease" style="clear: both; margin-bottom: 5px; margin-top: 5px;">
+                    <div style="margin-left: 10px; float: left; width: 80%" class="question-line-height">
+                        6. Do you have a family history of any heart related disease or illness?
+                    </div>
+                    <div class="front-radio-block radio-question-block question-line-height">
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerYes)" name="heartdisease_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerYes.GetDescription()
+                        </span>
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerNo)" name="heartdisease_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerNo.GetDescription()
+                        </span>
+                        @Html.HiddenFor(m => m.HeartDisease)
+                    </div>
+                </div>
+                <div class="sequence-block" questionname="Diabetic" style="clear: both; margin-bottom: 5px; margin-top: 5px;">
+                    <div style="margin-left: 10px; float: left; width: 80%" class="question-line-height">
+                        7. Are you a diabetic or have been told you are a diabetic?
+                    </div>
+                    <div class="front-radio-block radio-question-block question-line-height">
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerYes)" name="diabetic_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerYes.GetDescription()
+                        </span>
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerNo)" name="diabetic_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerNo.GetDescription()
+                        </span>
+                        @Html.HiddenFor(m => m.Diabetic)
+                    </div>
+                </div>
+                <div class="sequence-block" questionname="OverWeight" style="clear: both; margin-bottom: 5px; margin-top: 5px;">
+                    <div style="margin-left: 10px; float: left; width: 80%" class="question-line-height">
+                        8. Are you overweight or have you been told you are overweight?
+                    </div>
+                    <div class="front-radio-block radio-question-block question-line-height">
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerYes)" name="overweight_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerYes.GetDescription()
+                        </span>
+                        <span>
+                            <input type="radio" value="@((long)OnlineScreeningQuestionAnswers.AnswerNo)" name="overweight_radiogrp" />
+                            @OnlineScreeningQuestionAnswers.AnswerNo.GetDescription()
+                        </span>
+                        @Html.HiddenFor(m => m.OverWeight)
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+    <div class="right-float">
+        @Html.HiddenFor(m => m.ShowPreQualifiedQuestion)
+        @Html.HiddenFor(m => m.SkipPreQualificationQuestion)
+        @if (Model.ShowPreQualifiedQuestion && !Model.SkipPreQualificationQuestion)
+        {
+            <input type="button" id="skipContinueButton" value="Skip Questions" width="180px" class="button_green" onclick="skipPackageSelectionInfo();" />    
+            <input type="button" id="viewQuestions" value="View Questions" style="width: 180px;display:none;" class="button_green" onclick="viewQuestions();" />
+        }
+
+        <input type="button" value="Continue" style="width: 180px;" class="button_green" onclick='validatePackageSelectionInfo();' />
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+    var idontKnow = '@((long)OnlineScreeningQuestionAnswers.Idonotknow)';
+    var answeryes = '@((long)OnlineScreeningQuestionAnswers.AnswerYes)';
+    var answerno = '@((long)OnlineScreeningQuestionAnswers.AnswerNo)';
+
+    $(document).ready(function () {
+        $("#package-selection-info").find("div.sequence-block input[type='hidden']").each(function () {
+            //debugger;
+            var selected = parseInt($(this).val());
+            if (selected > 0) {
+                $(this).closest("div.sequence-block").find("input:radio[value='" + selected + "']").attr("checked", "checked");
+            }
+        });
+
+    });
+
+    function validatePackageSelectionInfo() {
+        //debugger;
+        if (parseInt($('#Gender').val()) < 0) {
+            alert("Please select gender.");
+            return false;
+        }
+
+        if ($.trim($('#Dob').val()).length < 1) {
+            alert("Please enter date of birth.");
+            return false;
+        }
+        var isAllQuestionAnswered = true;
+        //debugger;
+        if ($('#SkipPreQualificationQuestion').val() == "@Boolean.FalseString") {
+            $("#package-selection-info").find("div.sequence-block input[type='hidden']").each(function () {
+                var selected = parseInt($(this).val());
+                if (selected <= 0 && (selected != idontKnow || selected != answeryes || selected != answerno)) {
+                    isAllQuestionAnswered = false;
+                }
+            });
+        }
+
+        if (!isAllQuestionAnswered) {
+            alert("Please answer all questions.");
+            return false;
+        }
+
+        var regExPattern = /^(?=\d)(?:(?:(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})|(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))|(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2}))($|\ (?=\d)))?(((0?[1-9]|1[012])(:[0-5]\d){0,2}(\ [AP]M))|([01]\d|2[0-3])(:[0-5]\d){1,2})?$/;
+        if ($('#Dob').val().match(regExPattern) == null) {
+            alert("Please enter a date in mm/dd/yyyy format.");
+            return false;
+        }
+        _gaq.push(['_trackEvent', 'Pre-Qualification Question', 'Submitted', getGuid()]);
+
+        $("#package-selection-info-dialog").dialog("close");
+    }
+
+    function skipPackageSelectionInfo() {
+
+        $("#SkipPreQualificationQuestion").val('@Boolean.TrueString');
+
+        _gaq.push(['_trackEvent', 'Pre-Qualification Question', 'Skipped', getGuid()]);
+
+        $("#skipContinueButton").hide();
+        $(".skipContinueQuestions").hide();
+        $(".viewQuestions").show();
+    }
+
+    function viewQuestions() {
+        $("#skipContinueButton").show();
+        $(".skipContinueQuestions").show();
+        $(".viewQuestions").hide();
+    }
+
+
+    function getPackageSelectionInfo() {
+        var packageSelectionInfo = new Object();
+        packageSelectionInfo.Gender = $('#Gender').val();
+        packageSelectionInfo.Dob = $('#Dob').val();
+
+        @if (Model.ShowPreQualifiedQuestion)
+        {
+        <text>
+        packageSelectionInfo.HighBloodPressure = $('#HighBloodPressure').val();
+        packageSelectionInfo.HighCholestrol = $("#HighCholestrol").val();
+        packageSelectionInfo.Smoker = $('#Smoker').val();
+        packageSelectionInfo.HeartDisease = $('#HeartDisease').val();
+        packageSelectionInfo.Diabetic = $('#Diabetic').val();
+        packageSelectionInfo.ChestPain = $('#ChestPain').val();
+        packageSelectionInfo.DiagnosedHeartProblem = $('#DiagnosedHeartProblem').val();
+        packageSelectionInfo.OverWeight = $("#OverWeight").val();
+        </text>
+        }
+        packageSelectionInfo.SkipPreQualificationQuestion = $("#SkipPreQualificationQuestion").val();
+        packageSelectionInfo.ShowPreQualifiedQuestion = $('#ShowPreQualifiedQuestion').val();
+        return packageSelectionInfo;
+    }
+
+    $("div.sequence-block input:radio").click(function () {
+        $(this).closest("div.sequence-block").find("input:hidden").val($(this).val());
+    });
+</script>
+
+
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-8222763-2']);
+    _gaq.push(['_setDomainName', 'healthfair.com']);
+
+
+    $(document).ready(function () {
+        _gaq.push(['_trackEvent', 'Pre-Qualification Question', 'Opened', getGuid()]);
+    });
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>

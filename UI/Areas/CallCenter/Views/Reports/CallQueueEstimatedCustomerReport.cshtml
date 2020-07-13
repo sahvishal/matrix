@@ -1,0 +1,156 @@
+﻿@using Falcon.App.Core.CallQueues.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.HealthPlanCallQueueListModel
+@{
+    ViewBag.Title = "Call Queue Estimated Customer Report";
+}
+<h1>
+    Call Queue Estimated Customer Report
+</h1>
+<style type="text/css">
+    .assignments-list ul li {
+        list-style-type: none;
+    }
+</style>
+<div id="list-filter">
+    @{Html.BeginForm("CallQueueEstimatedCustomerReport", "Reports", FormMethod.Get);}
+    @Html.Partial("CallQueueCustomerReports", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Collection != null && Model.Collection.Any())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="margin-bottom: 10px; overflow: auto;">
+        <table id="list-view">
+            <tr>
+                <th nowrap>Criteria</th>
+                <th>HealthPlan</th>
+                <th nowrap>CallQueue</th>
+                @*<th nowrap>Modified By</th>
+                    <th nowrap>Modified On</th>*@
+                <th nowrap>Action</th>
+            </tr>
+            @foreach (var item in Model.Collection)
+            {
+                <tr>
+                    <td>
+                        @if (item.Criterias.Category == HealthPlanCallQueueCategory.UncontactedCustomers)
+                        {
+                            <div>
+                                Never been contacted in last one year
+                            </div>
+                        }
+
+                        @if (item.Criterias.Category == HealthPlanCallQueueCategory.LanguageBarrier)
+                        {
+                            <div>
+                                Customer has been marked as Language Barrier
+                            </div>
+                        }
+
+                        @if (item.Criterias.Category == HealthPlanCallQueueCategory.FillEventsHealthPlan)
+                        {
+                            <div>
+                                Booking percentage is less than @(item.Criterias.Percentage)% and are scheduled in next @(item.Criterias.NoOfDays + (item.Criterias.NoOfDays > 1 ? "days" : "day"))
+                            </div>
+
+                        }
+                        @if (item.Criterias.Category == HealthPlanCallQueueCategory.CallRound)
+                        {
+                            var textForNumberOfDays = DropDownHelper.GetCallRoundNumberOfDays().Single(x => x.Value == item.Criterias.NoOfDays.ToString()).Text;
+                            var roundOfCalls = DropDownHelper.GetCallRoundRoundOfCalls().Single(x => x.Value == item.Criterias.RoundOfCalls.ToString()).Text;
+
+                            <div>
+                                @(roundOfCalls + (item.Criterias.RoundOfCalls > 0 ? " number of outbound calls completed" : string.Empty)) in last @(textForNumberOfDays)
+                            </div>
+                        }
+                        @if (item.Criterias.Category == HealthPlanCallQueueCategory.NoShows)
+                        {
+                            <div>Marked as No Show between from @(item.Criterias.StartDate.Value.ToShortDateString()) and @(item.Criterias.EndDate.Value.ToShortDateString())</div>
+                        }
+                        @if (item.Criterias.Category == HealthPlanCallQueueCategory.ZipRadius)
+                        {
+                            var textForRadius = DropDownHelper.Redius().SingleOrDefault(x => x.Value == item.Criterias.Radius.ToString());
+
+                            <div>
+                                Customers have zip code @(item.Criterias.Zipcode) in  @(textForRadius.Text)
+                            </div>
+
+                        }
+                        @if (item.Criterias.Category == HealthPlanCallQueueCategory.MailRound)
+                        {
+                            <div>
+                                @item.Criterias.CampaignName
+                            </div>
+                        }
+                    </td>
+                    <td style="width:200px;">
+                        @if (item.IsDefault)
+                        {
+                            <text>Default Criteria</text>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.HealthPlan)
+                        }
+
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.HealthPlanCallQueue)</td>
+                    @*<td> @item.ModifiedBy</td>
+                        <td> @item.ModifiedOn.ToShortDateString()</td>*@
+                    <td nowrap>
+                        @if (item.Criterias.Category == HealthPlanCallQueueCategory.MailRound)
+                        {
+                            <a href="javascript:void(0);" onclick="getEstimatedCustomers(@item.CallQueueId, @item.Id, @item.Criterias.CampaignId, @item.Criterias.IsQueueGenerated);"> View Estimated Customers</a>
+                        }
+                        else
+                        {
+                            <a href="javascript:void(0);" onclick="getEstimatedCustomers(@item.CallQueueId, @item.Id, null, @item.Criterias.IsQueueGenerated);"> View Estimated Customers</a>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+
+@section scripts {
+    <script type="text/javascript">
+    function getEstimatedCustomers(callQueueId, criteriaId, campaignId, isQueueGenerated) {
+        if (!isQueueGenerated)
+        {
+            alert("Please wait for 10 minutes(max) as your Call center manager has changed the criteria so that the queue is regenerated.");
+            return false;
+        }
+
+
+        window.open(
+          "/CallCenter/Reports/CallQueueEstimatedCustomer?CallQueueId=" +callQueueId + "&CriteriaId=" + criteriaId + "&HealthPlanId=" + @Model.Filter.HealthPlanId +"&CampaignId=" + campaignId,
+          '_blank'
+        );
+    }
+
+    $(function () {
+        $("table#list-view tr:even").addClass("alt-row");
+    });
+
+
+    $(function () {
+        $("tr:not(:has(th))").hover(function () {
+            $(this).addClass('row-hover');
+        },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+    });
+    </script>
+}

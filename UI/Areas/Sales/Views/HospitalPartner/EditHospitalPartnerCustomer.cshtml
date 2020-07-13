@@ -1,0 +1,96 @@
+﻿@using Falcon.App.Core.Application.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Sales.ViewModels.HospitalPartnerCustomerEditModel
+@{
+    ViewBag.Title = Model.CustomerName + " - Update Information";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml";
+}
+
+@{Html.BeginForm();}
+@if(Model.FeedbackMessage!=null)
+{
+    @Html.Partial("Message",new ViewDataDictionary(Model.FeedbackMessage))     
+}
+
+<div style="float: left; width: 400px;">
+    <div class="editor-row" style="width:99%;">
+        <div class="editor-column" style="width:100%;">
+            <div class="editor-label">
+                 @Html.ValidationMessageFor(m=>m.Status)
+            </div>
+            <div class="editor-field">
+                <div style="float:left; width:110px;">
+                    @Html.LabelFor(m=>m.Status):
+                </div>
+                <div style="float:left; width:100px;">
+                    @Html.DropDownListFor(m => m.Status, DropDownHelper.GetHospitalPartnerCustomerStatus(Model.Status))
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="editor-row" style="width:99%;">
+        <div class="editor-column" style="width:100%;">
+            <div class="editor-label">
+                 @Html.ValidationMessageFor(m=>m.Outcome)
+            </div>
+            <div class="editor-field">
+                <div style="float:left; width:110px;">
+                    @Html.LabelFor(m=>m.Outcome):
+                </div>
+                <div style="float:left; width:100px;">
+                    @Html.DropDownListFor(m => m.Outcome, DropDownHelper.GetHospitalPartnerCustomerOutcome(Model.Outcome))
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="editor-row" style="width:99%;">
+        <div class="editor-column" style="width:100%;">
+            <div class="editor-field">
+                <div style="float:left; width:110px;">
+                    @Html.LabelFor(m=>m.PrimaryCarePhysicianName):
+                </div>
+                <div style="float:left; width:100px;">
+                   @Html.TextBoxFor(m => m.PrimaryCarePhysicianName)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="editor-row" style="width:99%;">
+        <div class="editor-column" style="width:100%;">            
+            <div class="editor-field"> 
+                <div style="float:left; width:110px;">
+                    @Html.LabelFor(m=>m.Notes):   
+                </div>     
+                <div style="float:left; width:150px;"> 
+                    @Html.TextAreaFor(m => m.Notes, new { @rows = "5", @cols = "30" })                    
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.HospitalPartnerCustomerId)
+    @Html.HiddenFor(m => m.EventId)
+    @Html.HiddenFor(m => m.CustomerId)
+    @Html.HiddenFor(m => m.CareCoordinatorOrgRoleUserId)
+    @Html.HiddenFor(m => m.CreatedByOrgRoleUserId)
+    @Html.HiddenFor(m => m.DateCreated)
+    <hr />
+    <div class="submit-button-row">
+        <a href="javascript:void(0);" onclick="closeWindow();">Cancel </a>&nbsp; &nbsp;
+        @Html.SubmitButton("Save and Close")
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+    function closeWindow() {
+        parent.ClosePopUp();
+        }
+</script>
+@if (Model.FeedbackMessage!=null && (Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success || Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Warning))
+    {
+    <script language="javascript" type="text/javascript">
+        function closeAndReloadWindow() {
+            parent.ClosePopUpAndReload('@Model.EventId', '@Model.CustomerId')            
+        }
+        closeAndReloadWindow()
+    </script>
+    }
+@{Html.EndForm();}

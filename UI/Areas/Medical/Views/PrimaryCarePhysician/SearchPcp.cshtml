@@ -1,0 +1,101 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Medical.ViewModels.PhysicianMasterListModel
+@{
+    Layout = null;
+}
+
+<script type="text/javascript" src="/Scripts/jquery-ui-1.8.12.custom.min.js"></script>
+
+
+@if (Model != null && !Model.Physicians.IsNullOrEmpty())
+{
+    <div class="pager">
+        <div class="record-count">
+            Total Record(s) : @Model.PagingModel.NumberOfItems
+        </div>
+    </div>
+    <table id="list-view" style="width:100%;">
+        <tr>
+            <th style="width:200px;">
+                Name
+            </th>
+            <th style="width:250px;">
+                Address
+            </th>
+            <th style="width: 150px;">Contact Info</th>
+            <th>Action
+            </th>
+        </tr>
+        @foreach (var item in Model.Physicians)
+        {
+            <tr>
+                <td style="width:200px;">@item.NameString()</td>
+                <td style="width:250px;">@item.ToShortAddressString()</td>
+                <td style="width:150px;">
+                    <b>Phone:</b> @item.PracticePhone.ToString()<br />
+                    <b>Fax:</b> @(item.PracticeFax == null || string.IsNullOrEmpty(item.PracticeFax.ToString()) ? "N/A" : item.PracticeFax.ToString())
+                </td>
+                <td class="physician-master">
+                    <input type="button" value="Select" onclick="SetPhysicianMaster(@item.Id);" />
+                    <input type="hidden" value="@item.Id" />
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="pager">
+        @if (Model.PagingModel.PageCount > 1)
+        {
+            <div class="page-nav">
+                Pages:
+                @if (Model.PagingModel.CurrentPage > 1)
+                {
+                    <a href="javascript:void(0);" onclick="setPage(1)" class="first">&laquo; First</a>
+                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.CurrentPage - 1)')" class="previous">&lsaquo; Previous</a>
+                }
+
+                @foreach (int pageNumber in Model.PagingModel.GetPages())
+                {
+                    if (pageNumber > 1 && !Model.PagingModel.IsPageIncluded(pageNumber - 1))
+                    {
+                        <span class="elide">...</span>
+                    }
+                    <a href="javascript:void(0);" onclick="setPage('@pageNumber')" class="page @(Model.PagingModel.CurrentPage == pageNumber ? "current" : "") ">@pageNumber</a>
+                }
+
+                @if (Model.PagingModel.CurrentPage < Model.PagingModel.PageCount)
+                {
+                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.CurrentPage + 1)')" class="next">Next &rsaquo;</a>
+                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.PageCount)')" class="last">Last &raquo;</a>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="graybdrbox950_blankblock">
+        <span style="font-weight: bold; font-size: 15px; color: #4490B2;">
+            No Record(s) Found
+        </span>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("table#list-view tr:even").addClass("alt-row");
+    });
+
+
+    $(function () {
+        $("tr:not(:has(th))").hover(function () {
+            $(this).addClass('row-hover');
+        },
+        function () {
+            $(this).removeClass('row-hover');
+        });
+    });
+
+    function setTotalRecords() {
+        $(".total-records").val('@(Model != null?Model.PagingModel.NumberOfItems:0)');
+    }
+</script>

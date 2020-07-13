@@ -1,0 +1,95 @@
+@using System.Linq
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.CallCenter.ViewModels.AgentConversionReportListModel
+@{
+    ViewBag.Title = "Agent Conversion Report";
+}
+<div>
+    <h1>
+        Agent Conversion Report
+        <span style="font-size:12px;">
+            <a href="javascript:void(0);" onclick="openHelp();">What's this?</a>
+        </span>
+    </h1>
+</div>
+
+
+<div id="list-filter">
+    @{Html.BeginForm("AgentConversionReport", "Reports", FormMethod.Get);}
+    @Html.Partial("AgentConversionReportFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (!Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/CallCenter/ExportableReports/AgentConversionReport?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <div>
+        <table id="list-view">
+            <tr>
+                <th>Agent</th>
+                <th>Outbound</th>
+                <th>Connections</th>
+                <th>Booked</th>
+                <th>Conversion</th>
+            </tr>
+            @foreach (var item in Model.Collection)
+            {
+                <tr>
+                    <td>@item.AgentName</td>
+                    <td>@item.OutboundCalls</td>
+                    <td>@item.TalkedToPatient</td>
+                    <td>@item.BookedAppointment</td>
+                    <td>@item.Conversion</td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+else
+{
+    <h2>No Records Found</h2>
+}
+<div id="help-dialog" style="display: none;">
+    <div>
+        <ul>
+            <li>
+                <p><b>Outbound</b> is the number of calls made by agent through Health Plan Call Queues.</p>
+            </li>
+            <li>
+                <p><b>Connections</b> is the count of calls marked as talked to patient.</p>
+            </li>
+            <li>
+                <p><b>Booked</b> is the count of connected calls in which appointments were booked.</p>
+            </li>
+            <li>
+                <p><b>Conversion</b> is the percentage of connected calls converted to booked appointment.</p>
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("table#list-view tr:even").addClass("alt-row");
+    });
+
+    $(function () {
+        $("tr:not(:has(th))").hover(function () {
+            $(this).addClass('row-hover');
+        },
+        function () {
+            $(this).removeClass('row-hover');
+        });
+    });
+
+    function openHelp() {
+        $('#help-dialog').dialog('open');
+    }
+
+    $(document).ready(function () {
+        $('#help-dialog').dialog({ width: 300, autoOpen: false, modal: true, title: 'Help', resizable: false, draggable: true });
+    });
+</script>

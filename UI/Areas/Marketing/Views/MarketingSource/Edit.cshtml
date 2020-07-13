@@ -1,0 +1,17 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Marketing.ViewModels.MarketingSourceEditModel
+@{
+    ViewBag.Title = "Edit Marketing Source";
+}
+<h1>
+   Edit Marketing Source</h1>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{Html.BeginForm();}
+@Html.EditorForModel()
+<div class="submit-button-row" style="margin-right: 10px;">
+    @Html.ActionLink("Close", "Index", "MarketingSource") &nbsp;&nbsp; @Html.SubmitButton("Edit Marketing Source")
+</div>
+@{Html.EndForm();}

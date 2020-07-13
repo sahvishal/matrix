@@ -1,0 +1,6 @@
+﻿<div class="pull-left new-check" ng-if="childquestion.ControlType == displayControlTypes.CheckBox">
+    <div class="styled-check small" style="float: left;">
+        <input type="checkBox" ng-model="childquestion.Answer" ng-checked="childquestion.Question===childquestion.Answer" ng-disabled="childquestion.disable" ng-true-value="'{{childquestion.Question}}'" ng-false-value="''" ng-change="SaveSelectedObject(childquestion,'')" />
+        <label ng-bind="childquestion.Question"></label>
+    </div>
+</div>

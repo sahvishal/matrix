@@ -1,0 +1,286 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Finance.Enum
+@using Falcon.App.UI.HtmlHelpers;
+@using Falcon.App.Core.Finance.ViewModels;
+@model PayPeriodEditModel
+
+
+
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+@if (Model != null)
+{
+    if (Model.FeedbackMessage != null)
+    {
+        @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+    }
+}
+@Html.HiddenFor(m => m.PayPeriodId)
+@Html.HiddenFor(m => m.IsPublished)
+
+@if (Model != null)
+{
+    <div style="float: left; width: 100%; margin-right: 5px; padding: 1%; padding-bottom: 40px;">
+
+        <div class="editor-row">
+            <div style="float: left; width: 30%;">
+                <div class="editor-label">
+                    Effective Date
+                </div>
+                @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker", @style = "width:200px;", @value = DateTime.Now, @onchange = "ShowHideCriteria();" })<br />
+                @Html.ValidationMessageFor(m => m.FromDate)
+            </div>
+            <div style="float: left; margin-left: 20px; width: 30%;">
+                <div class="editor-label">
+                    Period
+                </div>
+                @Html.DropDownListFor(m => m.NumberOfWeek, DropDownHelper.GetPayPeriodWeeks(Model.NumberOfWeek), new { @style = "width:200px;", @onchange = "ShowHideCriteria()" })<br />
+                @Html.ValidationMessageFor(m => m.NumberOfWeek)
+            </div>
+        </div>
+        <script id="criteriaTemplate" type="text/x-jquery-tmpl">
+            <div class='mini-container criteriadiv' style="border: 1px solid gray !important;">
+                {{if TypeId == @((long)PayPeriodCriteriaType.LessThanEqualTo)}}
+                <div style="float: left; margin-right: 20px; white-space:nowrap; width: 50%;" class="less_than">
+                    Less than equal to &nbsp; <input type="text" style="width: 175px;" maxlength="10" name="Criteria[${Key}].MaxCustomer" data-key="${Key}" value="${MaxCustomer}" class="criteriaclass maxCustomer" />
+                </div>
+                {{/if}}
+                {{if TypeId == @((long)PayPeriodCriteriaType.GreaterThanEqualTo)}}
+                <div style="float: left; margin-right: 20px; white-space:nowrap; width: 50%;" class="greater_than">
+                    Greater than equal to &nbsp; <input type="text" style="width: 156px;" maxlength="10" name="Criteria[${Key}].MinCustomer" data-key="${Key}" value="${MinCustomer}" class="criteriaclass minCustomer" />
+                </div>
+                {{/if}}
+                {{if TypeId == @((long)PayPeriodCriteriaType.Between)}}
+                <div style="float: left; margin-right: 20px; white-space:nowrap; width: 50%;" class="between">
+                    Between &nbsp; <input type="text" style="width: 100px;" maxlength="10" name="Criteria[${Key}].MinCustomer" data-key="${Key}" value="${MinCustomer}" class="criteriaclass minCustomer" />
+                    &nbsp; - &nbsp; <input type="text" style="width: 100px;" maxlength="10" name="Criteria[${Key}].MaxCustomer" data-key="${Key}" value="${MaxCustomer}" class="criteriaclass maxCustomer" />
+                </div>
+                {{/if}}
+                <div style="float: left; margin-right: 20px; white-space:nowrap;">
+                    Amount &nbsp;$ <input type="text" maxlength="10" name="Criteria[${Key}].Amount" data-key="${Key}" value="${Amount}" class="criteriaclass amount" />
+                </div>
+                &nbsp; [<a href="javascript:void(0);" data-key="${Key}" class="unAssignCriteria criteriaclass">Remove</a>]
+
+                <div style="display: none;">
+                    <input type="hidden" name="Criteria[${Key}].Index" value="${Index}" />
+                    <input type="hidden" name="Criteria[${Key}].PayPeriodCriteriaId" value="${PayPeriodCriteriaId}" />
+                    <input type="hidden" name="Criteria[${Key}].PayPeriodId" value="${PayPeriodId}" />
+                    <input type="hidden" name="Criteria[${Key}].TypeId" value="${TypeId}" />
+                </div>
+            </div>
+        </script>
+
+        <div class="editor-row" id="packagediv">
+            <fieldset style="margin-right: 20px;">
+                <legend><h3>Tier</h3></legend>
+                <div class="row">
+                    <div class="editor-label">
+                        Tier Type : @Html.DropDownList("criteriaType", DropDownHelper.PayPeriodCriteriaTypes(), new { @id = "criteria-type" })
+                        <input type="button" style="margin-left: 20px;" value="Add" id="btnAddCriterias" />
+                    </div>
+                </div>@Html.ValidationMessageFor(m => m.Criteria)
+                <div id="packageContainer">
+                    <div class="info-box" id="divInfoBoxPackage" style="@(!Model.Criteria.IsNullOrEmpty()?"display:none;":"")">
+                        No Criteria Provided.
+                    </div>
+                    @if (!Model.Criteria.IsNullOrEmpty())
+                    {
+                        @Html.EditorFor(m => m.Criteria)
+                    }
+                </div>
+            </fieldset>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        ShowHideCriteria();
+
+        $(".minCustomer").live('blur', function () {
+            var key = $(this).attr("data-key");
+            var minCustomer = $(this).attr("value");
+            criteriaList[key].MinCustomer = minCustomer;
+        });
+
+        $(".maxCustomer").live('blur', function () {
+            var key = $(this).attr("data-key");
+            var maxCustomer = $(this).attr("value");
+            criteriaList[key].MaxCustomer = maxCustomer;
+        });
+
+        $(".amount").live('blur', function () {
+            var key = $(this).attr("data-key");
+            var amount = $(this).attr("value");
+            criteriaList[key].Amount = amount;
+        });
+    });
+</script>
+<script type="text/javascript" language="javascript">
+    var criteriaList = new Array();
+    var key = 0;
+
+    @{
+    if ((Model.Criteria != null) && (Model.Criteria.Any()))
+    {
+        foreach (var criteria in Model.Criteria)
+        {
+            <text>
+    {
+        criteriaList[key] = new Object();
+        criteriaList[key].PayPeriodCriteriaId = '@criteria.PayPeriodCriteriaId';
+        criteriaList[key].PayPeriodId = '@criteria.PayPeriodId';
+        criteriaList[key].MinCustomer = '@criteria.MinCustomer';
+        criteriaList[key].MaxCustomer = '@criteria.MaxCustomer';
+        criteriaList[key].TypeId = '@criteria.TypeId';
+        criteriaList[key].Amount = '@criteria.Amount';
+        criteriaList[key].Index = '@criteria.Index';
+        criteriaList[key].Key = key++;
+
+    }
+    </text>
+
+        }
+    }
+   }
+
+
+    function ShowHideCriteria() {
+        var effectiveDate = $(".datePicker").val();
+        var payPeriodId = parseInt($("#NumberOfWeek").val());
+        if (payPeriodId > 0 && (effectiveDate != null && effectiveDate != '')) {
+            $("#packagediv").show();
+        }
+        else {
+            $("#packagediv").hide();
+        }
+    }
+
+    $("#btnAddCriterias").click(assignCriteria);
+
+    function assignCriteria() {
+        var criteriaType = $("#criteria-type").val();
+        if (criteriaType == "-1") {
+            alert('Please select Tier type.');
+            return;
+        }
+        var alreadyAdded = false;
+        if (criteriaType == '@((long)PayPeriodCriteriaType.LessThanEqualTo)' || criteriaType == '@((long)PayPeriodCriteriaType.GreaterThanEqualTo)') {
+            criteriaList.forEach(function (item, index) {
+                if (item.TypeId == criteriaType) {
+                    alreadyAdded = true;
+                }
+            });
+        }
+
+        if (alreadyAdded) {
+            alert('Tier type "Less than" and "Greater than" can only be added once.');
+            return;
+        }
+
+        createCriteriaListObject(criteriaType);
+
+        renderCriteria();
+
+        if (criteriaList.length > 0)
+            $("#divInfoBoxPackage").hide();
+        else
+            $("#divInfoBoxPackage").show();
+
+        $("#criteria-type").val("-1");
+    }
+
+    function renderCriteria() {
+        $("#packageContainer div.mini-container").remove();
+        $.each(criteriaList, function (key, criteriaObj) {
+            $("#criteriaTemplate").tmpl(criteriaObj).appendTo("#packageContainer");
+        });
+    }
+
+    function createCriteriaListObject(criteriaType) {
+        if (criteriaType == '@((long)PayPeriodCriteriaType.LessThanEqualTo)') {
+            var tempList = new Array();
+            var index = 0;
+            tempList[index] = new Object();
+            tempList[index].PayPeriodCriteriaId = 0;
+            tempList[index].PayPeriodId = 0;
+            tempList[index].MinCustomer = '';
+            tempList[index].MaxCustomer = '';
+            tempList[index].TypeId = Number(criteriaType);
+            tempList[index].Amount = '';
+            tempList[index].Index = index;
+            tempList[index].Key = index;
+
+            for (var i = 0; i < criteriaList.length; i++) {
+                index++;
+                tempList[index] = criteriaList[i];
+            }
+            criteriaList = tempList;
+        }
+        else if (criteriaType == '@((long)PayPeriodCriteriaType.Between)') {
+            var greaterThanCriteria = null;
+            $.each(criteriaList, function (key, criteriaObj) {
+                if (criteriaObj.TypeId == '@((long)PayPeriodCriteriaType.GreaterThanEqualTo)') {
+                    greaterThanCriteria = criteriaObj;
+                    criteriaList.splice(key, 1);
+                }
+            });
+            var index = 0;
+            var tempList = new Array();
+            for (var i = 0; i < criteriaList.length; i++) {
+                tempList[index] = criteriaList[i];
+                index++;
+            }
+
+            tempList[index] = new Object();
+            tempList[index].PayPeriodCriteriaId = 0;
+            tempList[index].PayPeriodId = 0;
+            tempList[index].MinCustomer = '';
+            tempList[index].MaxCustomer = '';
+            tempList[index].TypeId = Number(criteriaType);
+            tempList[index].Amount = '';
+            tempList[index].Index = index;
+            tempList[index].Key = index;
+            index++;
+            if (greaterThanCriteria != null)
+                tempList[index] = greaterThanCriteria;
+
+            criteriaList = tempList;
+        }
+        else {
+            var key = 0;
+            if (criteriaList.length > 0) {
+                key = criteriaList.length;
+            }
+
+            criteriaList[key] = new Object();
+            criteriaList[key].PayPeriodCriteriaId = 0;
+            criteriaList[key].PayPeriodId = 0;
+            criteriaList[key].MinCustomer = '';
+            criteriaList[key].MaxCustomer = '';
+            criteriaList[key].TypeId = Number(criteriaType);
+            criteriaList[key].Amount = '';
+            criteriaList[key].Index = key;
+            criteriaList[key].Key = key;
+        }
+        resetKeys();
+    }
+
+    $("a.unAssignCriteria").live("click", function () {
+        criteriaList.splice($(this).attr('data-key'), 1);
+        resetKeys();
+        renderCriteria();
+
+        if ($.isEmptyObject(criteriaList)) {
+            $("#divInfoBoxPackage").show();
+        }
+
+        return false;
+
+    });
+
+    function resetKeys() {
+        $.each(criteriaList, function (index, item) {
+            item.Key = index;
+        });
+    }
+</script>

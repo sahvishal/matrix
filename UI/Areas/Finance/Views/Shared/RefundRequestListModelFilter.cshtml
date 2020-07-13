@@ -1,0 +1,55 @@
+﻿@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Extensions
+@model RefundRequestListModelFilter
+<h2>
+    Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 15%">
+        <div class="small-text">
+            <b>Date</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker", @style="width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 15%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker", @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 19%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.DateType)
+        </div>
+        @Html.DropDownListFor(m => m.DateType, Falcon.App.Core.Finance.Enum.FilterDateType.EventDate.GetNameValuePairs().Select(dt => new SelectListItem() { Text = dt.SecondValue, Value = dt.FirstValue.ToString(), Selected = ((int)Model.DateType == dt.FirstValue ? true : false) }))
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.CustomerName)
+        </div>
+        @Html.TextBoxFor(m => m.CustomerName)
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.CustomerId)
+        </div>
+        @Html.TextBoxFor(m => m.CustomerId)
+    </div>
+</div>
+<div style="padding-left: 5px; margin-top: 10px; overflow: hidden;">
+    <div class="editor-column" style="width: 15%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.RefundRequestStatus)
+        </div>
+        @Html.DropDownListFor(m => m.RefundRequestStatus, DropDownHelper.RequestStatusList())
+    </div>    
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.RefundType)
+        </div>
+        @Html.DropDownListFor(m => m.RefundType, DropDownHelper.RefundTypes())
+    </div>
+    <div class="editor-column" style="padding-top: 10px; float: right; text-align: right;">
+        @Html.ActionLink("Clear", "Index", "RefundRequest") | @Html.SubmitButton("Search")
+    </div>
+</div>

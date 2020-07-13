@@ -1,0 +1,52 @@
+﻿{#param name=rank value=1}
+{#param name=callCenterCallCenterUserId}
+<h4 id="AverageSalesGlobalMetricsHeader" title="Average Sales|Average Revenue Per Client for the customers you booked [total revenue booked/total # of customers = average sales].  This metric demonstrates your effectiveness in upselling.">&nbsp;Average Sales (<a href="#">?</a>)</h4>
+<table id="AverageSalesGlobalMetricsTable" class="divgrid_clnew" cellspacing="0" cellpadding="0" width="100%" style="font-size: xx-small">
+    <tr class="trhead">
+        <th>
+            <b>Call Center Rep</b>
+        </th>
+        <th>
+            <b>Rank</b>
+        </th>
+        <th style="text-align:right">
+            <b>Avg Sales</b>
+        </th>
+    </tr>
+    {#foreach $T as CallCenterRepMetricPair}
+    {#if $T.CallCenterRepMetricPair.FirstValue.CallCenterRepId == $P.callCenterCallCenterUserId}
+    <tr style="color: Red;font-weight: bold;" class="trheight">
+    {#else}
+    <tr class="trheight">
+    {#/if}
+        <td>
+            {$T.CallCenterRepMetricPair.FirstValue.NameAsString}
+        </td>
+        <td>
+            {$P.rank}
+            {#param name=rank value=$P.rank+1}
+        </td>
+        <td style="text-align: right">
+            <span style="float:right; text-align: right;" class="ccrep-amount"> {FormatCurrency($T.CallCenterRepMetricPair.SecondValue.AverageSaleAmount)} </span>
+            <span style="float:right; display:none; text-align: right;" class="ccrep-amount">
+                <a href="#" class="detail-anchor"> {FormatCurrency($T.CallCenterRepMetricPair.SecondValue.AverageSaleAmount)}  </a>
+                <input type="hidden" class='ccrepid-input-hidden' value={$T.CallCenterRepMetricPair.FirstValue.CallCenterRepId} />
+            </span> 
+        </td>
+    </tr>
+    {#/for}
+</table>
+
+{#literal}
+<script type="text/javascript">
+    $(function()
+    {
+        $('#AverageSalesGlobalMetricsHeader').cluetip(
+        {
+            splitTitle: '|',
+            positionBy: 'mouse',
+            tracking: true
+        });
+    });
+</script>
+{#/literal}

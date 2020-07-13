@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8E863A5E-7E0A-4381-B372-0826936436B6}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>API</RootNamespace>
+    <AssemblyName>API</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=1.1.0.188, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation, Version=5.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FluentValidation.5.5.0.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation.WebApi, Version=5.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FluentValidation.WebApi.5.5.0.0\lib\Net45\FluentValidation.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.DQE.SqlServer.NET20, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SD.LLBLGen.Pro.DQE.SqlServer.NET20.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.LinqSupportClasses.NET35, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SD.LLBLGen.Pro.LinqSupportClasses.NET35.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses.NET20, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SD.LLBLGen.Pro.ORMSupportClasses.NET20.dll</HintPath>
+    </Reference>
+    <Reference Include="SecuritySwitch">
+      <HintPath>..\..\lib\SecuritySwitch.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.0\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.0\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.2\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.30506.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Spatial, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\System.Spatial.5.2.0\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Twilio.Api, Version=3.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Twilio.Api.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApiDependencyRegistrar.cs" />
+    <Compile Include="AppSessionContext.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Application\ApplicationAreaRegistration.cs" />
+    <Compile Include="Areas\Application\Controllers\BaseController.cs" />
+    <Compile Include="Areas\Application\Controllers\GeoController.cs" />
+    <Compile Include="Areas\CallCenter\CallCenterAreaRegistration.cs" />
+    <Compile Include="Areas\CallCenter\Controllers\CallQueueController.cs" />
+    <Compile Include="Areas\CallCenter\Controllers\HealthPlanContactCustomerController.cs" />
+    <Compile Include="Areas\CallCenter\Controllers\ContactCustomerController.cs" />
+    <Compile Include="Areas\CallCenter\Controllers\HealthPlanCallQueueController.cs" />
+    <Compile Include="Areas\CallCenter\Controllers\HealthPlanCriteriaController.cs" />
+    <Compile Include="Areas\CallCenter\Controllers\PreAssessmentCallQueueController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Areas\CallCenter\Controllers\ViciDialerCallParsingController.cs" />
+    <Compile Include="Areas\Communication\CommunicationAreaRegistration.cs" />
+    <Compile Include="Areas\Communication\Controllers\WebHookController.cs" />
+    <Compile Include="Areas\Finance\Controllers\OnlinePaymentController.cs" />
+    <Compile Include="Areas\Finance\Controllers\CustomerOrderController.cs" />
+    <Compile Include="Areas\Finance\Controllers\PaymentController.cs" />
+    <Compile Include="Areas\Finance\FinanceAreaRegistration.cs" />
+    <Compile Include="Areas\Finance\ICustomerPaymentService.cs" />
+    <Compile Include="Areas\Finance\Impl\CustomerPaymentService.cs" />
+    <Compile Include="Areas\Finance\Impl\GiftCertificateFactory.cs" />
+    <Compile Include="Areas\Finance\IGiftCertificateFactory.cs" />
+    <Compile Include="Areas\Finance\Models\GiftCertificateModel.cs" />
+    <Compile Include="Areas\Finance\Models\CustomerRefundRequest.cs" />
+    <Compile Include="Areas\Finance\Models\GiftCertificatPaymentModel.cs" />
+    <Compile Include="Areas\Finance\Models\PaymentViewModel.cs" />
+    <Compile Include="Areas\Finance\Models\PaymentEditModel.cs" />
+    <Compile Include="Areas\Medical\Controllers\ChaperoneController.cs" />
+    <Compile Include="Areas\Medical\Controllers\ExitInterviewController.cs" />
+    <Compile Include="Areas\Medical\Controllers\FluConsentController.cs" />
+    <Compile Include="Areas\Medical\Controllers\GiftCardController.cs" />
+    <Compile Include="Areas\Medical\Controllers\ParticipationConsentController.cs" />
+    <Compile Include="Areas\Medical\Controllers\OnlineHealthAssessmentController.cs" />
+    <Compile Include="Areas\Medical\Controllers\PhysicianRecordRequestController.cs" />
+    <Compile Include="Areas\Medical\MedicalAreaRegistration.cs" />
+    <Compile Include="Areas\Marketing\MarketingAreaRegistration.cs" />
+    <Compile Include="Areas\Medicare\Controllers\MedicareController.cs" />
+    <Compile Include="Areas\Medicare\Controllers\MedicareEventCustomerResultController.cs" />
+    <Compile Include="Areas\Medicare\MedicareAreaRegistration.cs" />
+    <Compile Include="Areas\Scheduling\Controllers\EventController.cs" />
+    <Compile Include="Areas\Scheduling\Controllers\OnlineConfirmationController.cs" />
+    <Compile Include="Areas\Scheduling\Controllers\OnlineAppointmentController.cs" />
+    <Compile Include="Areas\Scheduling\Controllers\OnlineCustomerController.cs" />
+    <Compile Include="Areas\Scheduling\Controllers\OnlineEventController.cs" />
+    <Compile Include="Areas\Marketing\Controllers\OnlinePackageController.cs" />
+    <Compile Include="Areas\Scheduling\Controllers\OnSiteRegistrationController.cs" />
+    <Compile Include="Areas\Scheduling\Controllers\OrderController.cs" />
+    <Compile Include="Areas\Scheduling\IEventCustomerBriefListService.cs" />
+    <Compile Include="Areas\Scheduling\Impl\CustomerOrderBuilderService.cs" />
+    <Compile Include="Areas\Scheduling\ICustomerOrderBuilderService.cs" />
+    <Compile Include="Areas\Scheduling\Impl\EventCustomerBriefListService.cs" />
+    <Compile Include="Areas\Scheduling\Impl\OnSiteRegistrationService.cs" />
+    <Compile Include="Areas\Scheduling\Impl\PatientShippingDetailFactory.cs" />
+    <Compile Include="Areas\Scheduling\Impl\UpdateCustomerPackageService.cs" />
+    <Compile Include="Areas\Scheduling\IOnSiteRegistrationService.cs" />
+    <Compile Include="Areas\Scheduling\IPatientShippingDetailFactory.cs" />
+    <Compile Include="Areas\Scheduling\IUpdateCustomerPackageService.cs" />
+    <Compile Include="Areas\Scheduling\Models\ConsentUpdateModel.cs" />
+    <Compile Include="Areas\Scheduling\Models\CustomerCheckInCheckOutTimeModel.cs" />
+    <Compile Include="Areas\Scheduling\Models\CustomerOrderDetail.cs" />
+    <Compile Include="Areas\Scheduling\Models\EventCustomerConsents.cs" />
+    <Compile Include="Areas\Scheduling\Models\EventCustomerConsentsListModel.cs" />
+    <Compile Include="Areas\Scheduling\Models\ExitUrlEditModel.cs" />
+    <Compile Include="Areas\Scheduling\Models\OnlineSummaryModel.cs" />
+    <Compile Include="Areas\Scheduling\Models\OnlineThankyouModel.cs" />
+    <Compile Include="Areas\Scheduling\Models\OnsiteCustomerRegistrationResponse.cs" />
+    <Compile Include="Areas\Scheduling\Models\PackageModel.cs" />
+    <Compile Include="Areas\Scheduling\Models\TestModel.cs" />
+    <Compile Include="Areas\Scheduling\SchedulingAreaRegistration.cs" />
+    <Compile Include="Areas\Users\Controllers\LoginController.cs" />
+    <Compile Include="Areas\Users\Controllers\OnlineLoginController.cs" />
+    <Compile Include="Areas\Users\Controllers\PatientController.cs" />
+    <Compile Include="Areas\Users\Controllers\ProfileController.cs" />
+    <Compile Include="Areas\Users\Impl\PatientProfileUpdateService.cs" />
+    <Compile Include="Areas\Users\IPatientProfileUpdateService.cs" />
+    <Compile Include="Areas\Users\Models\AuthenticationModel.cs" />
+    <Compile Include="Areas\Users\Models\PinUpdateResponseModel.cs" />
+    <Compile Include="Areas\Users\Models\UserLoginModel.cs" />
+    <Compile Include="Areas\Users\UsersAreaRegistration.cs" />
+    <Compile Include="Areas\Medical\Controllers\HealthAssesmentController.cs" />
+    <Compile Include="Attribute\BasicAuthenticationAttribute.cs" />
+    <Compile Include="Attribute\BasicExceptionFilterAtribute.cs" />
+    <Compile Include="Attribute\CustomDataBinderAttribute.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Enum\HttpMethodType.cs" />
+    <Compile Include="Filters\AuditLogActionFilter.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\Users\Models\Patient.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Areas\Scheduling\Models\EventCustomerListFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attribute\AppAuthenticationAttribute.cs" />
+    <Compile Include="Impl\CustomMultipartFormDataStreamProvider.cs" />
+    <Compile Include="Impl\ValidationFailureException.cs" />
+    <Compile Include="OutputFilterStream.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestDecryptionModule.cs" />
+    <Compile Include="ResponseBaseModel.cs" />
+    <Compile Include="SessionContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Global.asax" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Areas\Application\Impl\" />
+    <Folder Include="Areas\Application\Models\" />
+    <Folder Include="Areas\Application\Views\Shared\" />
+    <Folder Include="Areas\Finance\Views\Shared\" />
+    <Folder Include="Areas\Marketing\Impl\" />
+    <Folder Include="Areas\Marketing\Models\" />
+    <Folder Include="Areas\Medical\Views\Shared\" />
+    <Folder Include="Areas\Scheduling\Views\OnlinePackage\" />
+    <Folder Include="Areas\Scheduling\Views\Shared\" />
+    <Folder Include="Areas\Users\Views\Shared\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{a170c6ca-fc12-4074-a822-027dee8218a1}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DependencyResolution\DependencyResolution.csproj">
+      <Project>{1fd7d18d-ee02-4ab8-91e7-c4f40fb4c591}</Project>
+      <Name>DependencyResolution</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Entity\Falcon.Entity.csproj">
+      <Project>{d5dbb9d2-2e4d-4972-b90f-1ae1f5ca3d4b}</Project>
+      <Name>Falcon.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
+      <Project>{674848db-9fe6-4c62-ba79-f77a69e1ffc0}</Project>
+      <Name>Infrastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Users\Views\Web.config" />
+    <Content Include="Areas\Scheduling\Views\Web.config" />
+    <Content Include="Areas\Medical\Views\Web.config" />
+    <Content Include="Areas\Finance\Views\Web.config" />
+    <Content Include="Areas\Application\Views\Web.config" />
+    <Content Include="Areas\Marketing\Views\Web.config" />
+    <None Include="Properties\PublishProfiles\Debug.pubxml" />
+    <None Include="Properties\PublishProfiles\dev-hip.pubxml" />
+    <None Include="Properties\PublishProfiles\Dr-Server.pubxml" />
+    <None Include="Properties\PublishProfiles\FalconAPI.pubxml" />
+    <None Include="Properties\PublishProfiles\hip1-Live.pubxml" />
+    <None Include="Properties\PublishProfiles\hip3-Live-Node2.pubxml" />
+    <None Include="Properties\PublishProfiles\hip3-Live.pubxml" />
+    <None Include="Properties\PublishProfiles\NewServer-Live.pubxml" />
+    <None Include="Properties\PublishProfiles\NewServer-QA.pubxml" />
+    <None Include="Properties\PublishProfiles\Published_Flamingo.pubxml" />
+    <None Include="Properties\PublishProfiles\v300.pubxml" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v100|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip1-hf|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip3-hf|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev-hf|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>51394</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:51267/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

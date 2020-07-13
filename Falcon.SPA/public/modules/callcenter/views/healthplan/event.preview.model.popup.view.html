@@ -1,0 +1,12 @@
+﻿<div class="content modal-popup" style="background: #fff">
+    <div class="col-md-12" style="background: #fff;">
+        <div class="clearfix small-section-inner" us-spinner spinner-key="preview-spinner">
+            <div style="padding-top: 10px;">
+                <div class="ajax-event-loader" ng-show="showspiner"><a href="javascript:void(0)" class="event-spinner"><i class="spin"></i></a></div> 
+                <event-list></event-list>
+            </div>
+        </div>
+        <paging-model model="PagingModel" url="GetEventPage(number)"></paging-model>
+    </div>
+    <div class="col-md-12" style="background: #fff;padding-bottom: 20px;padding-right: 25px;"> <button type="button" class="pull-right" ng-click="Cancel();">Close</button></div>
+</div>

@@ -1,0 +1,288 @@
+﻿<div data-ng-controller="ContactController" class="container no-padding bg-default " us-spinner spinner-key="online-spinner">
+    <h4>Contact</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="small-section">
+                <h2>Patient Info</h2>
+                <div class="clearfix small-section-inner">
+                    <div ng-hide="updateCustomer">
+                        <patient-info></patient-info>
+                    </div>
+                    <form>
+                        <div class="contact-customer-detail" ng-show="updateCustomer">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label>Customer ID:</label>
+                                    <span ng-show="patientInfo.CustomerId == null || patientInfo.CustomerId <= 0">N/A</span>
+                                    <b ng-show="patientInfo.CustomerId != null && patientInfo.CustomerId > 0" ng-bind="patientInfo.CustomerId"></b>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-sm-6 ">
+                                    <div class="form-group">
+                                        <label>First Name</label>
+                                        <input type="text" class="form-control" placeholder="First Name" ng-model="patientInfo.FirstName" validationfor="FirstName" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" class="form-control" placeholder="Last Name" ng-model="patientInfo.LastName" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Gender</label>
+                                        <select class="form-control" name="gender" required ng-model="patientInfo.Gender" ng-options="gender.value as gender.text for gender in genderDropDown"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 ">
+                                    <div class="form-group">
+                                        <label>DOB</label>
+                                        <input class="form-control" type="text" placeholder="Date of Birth" startdate="01/01/1950" date-picker-simple="" ng-model="patientInfo.DateOfBirth" validationfor="DateOfBirth">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-if="patientInfo.CustomerId == null">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" placeholder="Email" ng-model="patientInfo.Email" validationfor="Email" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Alternate Email</label>
+                                        <input type="text" class="form-control" placeholder="Alternate Email" ng-model="patientInfo.AlternateEmail" validationfor="AlternateEmail" />
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="row" ng-if="patientInfo.CustomerId == null">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Call Back Number</label>
+                                        <input type="text" class="form-control" placeholder="Call Back Number" ng-model="patientInfo.CallBackPhoneNumber.FormatPhoneNumber" mask-format="phone" />
+                                    </div>
+                                </div>                                                            
+                            </div>
+                            <div class="row" ng-if="patientInfo.CustomerId !=null && patientInfo.CustomerId > 0">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" placeholder="Email" ng-model="patientInfo.Email" validationfor="Email" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Alternate Email</label>
+                                        <input type="text" class="form-control" placeholder="Alternate Email" ng-model="patientInfo.AlternateEmail" validationfor="AlternateEmail" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-if="patientInfo.CustomerId !=null && patientInfo.CustomerId > 0">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Home</label>
+                                        <input type="text" class="form-control" placeholder="Home" ng-model="patientInfo.CallBackPhoneNumber.FormatPhoneNumber" mask-format="phone" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Office</label>
+                                        <input type="text" class="form-control" placeholder="Office" ng-model="patientInfo.OfficePhoneNumber.FormatPhoneNumber" mask-format="phone" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Mobile</label>
+                                        <input type="text" class="form-control" placeholder="Mobile" ng-model="patientInfo.MobilePhoneNumber.FormatPhoneNumber" mask-format="phone" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row ">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" class="form-control" placeholder="Address Line 1" ng-model="patientInfo.AddressViewModel.StreetAddressLine1" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <input type="text" class="form-control" placeholder="Address Line2" ng-model="patientInfo.AddressViewModel.StreetAddressLine2" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <div class="auto-comp">
+                                            <input type="text" placeholder="City" name="city" online-autocomplete="Scheduling/OnlineEvent/GetCityByPrefixText" autocomplete-position="top" ng-model="patientInfo.AddressViewModel.City" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <select class="form-control" name="billingState" ng-model="patientState" ng-options="item.FirstValue as item.SecondValue for item in States">
+                                            <option value="">State</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Zip</label>
+                                        <input type="text" class="form-control" placeholder="Zip" ng-model="patientInfo.AddressViewModel.ZipCode" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-sm-12" ng-show="updateCustomer">
+                        <button type="button" class="pull-right" ng-disabled="isPostBack" ng-click="SavePatientInfo()">Save <i class="spin spin-right" ng-show="loader_saveCustomer"></i></button>
+                        <a href="javascript:void(0)" class="pull-right align-bottom right-buffer-10" ng-disabled="isPostBack" ng-click="CancelPatientInfo()">Cancel</a>
+                    </div>
+                    <div class="clearfix" ng-hide="updateCustomer">
+                        <button type="button" class="pull-right" ng-disabled="isPostBack" ng-click="ShowUpdatePanel()">Update <i class="spin spin-right" ng-show="loader_updateCustomer"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="small-section">
+                <h2>Screening Info</h2>
+                <div class="clearfix small-section-inner">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <b>Last Screening Date: </b>
+                            <span ng-if="medicalHistory == null">N/A</span>
+                            <span ng-if="medicalHistory != null"> {{medicalHistory.LastScreeningDate | date : 'MM/dd/yyyy'}}</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <b>Screened At: </b>
+                            <span ng-if="medicalHistory == null">N/A</span>
+                            <span ng-if="medicalHistory != null">
+                                <span ng-bind="medicalHistory.HostName"></span>,
+                                <span ng-bind="medicalHistory.EventLocation.StreetAddressLine1"></span>,
+                                <span ng-if="medicalHistory.EventLocation.StreetAddressLine2 != null && medicalHistory.EventLocation.StreetAddressLine2 != ''">{{medicalHistory.EventLocation.StreetAddressLine2}},</span>
+                                <span ng-bind="medicalHistory.EventLocation.City"></span>
+                                <span ng-bind="medicalHistory.EventLocation.State"></span>
+                                <span ng-bind="medicalHistory.EventLocation.Country"></span> -
+                                <span ng-bind="medicalHistory.EventLocation.ZipCode"></span>
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <b>Result Summary: </b>
+                            <span ng-if="medicalHistory == null">N/A</span>
+                            <span ng-if="medicalHistory != null"> <span ng-bind="medicalHistory.Result"></span></span>
+                        </div>
+
+                    </div>
+                    <div class="row bottom-buffer-20">
+                        <div class="col-sm-12"><b>Abnormal Tests: </b><span ng-if="medicalHistory == null || medicalHistory.ResultSummary == null || medicalHistory.ResultSummary.length === 0">N/A</span></div>
+                    </div>
+                    <div class="col-sm-12">
+                        <ul ng-if="medicalHistory != null && medicalHistory.ResultSummary!=null">
+                            <li ng-repeat="summary in medicalHistory.ResultSummary">
+                                <b ng-bind="summary.FirstValue"></b>: <span ng-bind="summary.SecondValue"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="small-section">
+                <h2>Call History</h2>
+                <div class="clearfix small-section-inner">
+                    <div class="row">
+                        <div class="col-sm-12 call-backdate" ng-hide="callHistory==null || callHistory.length <=0 || ToDisplayCallBackDateTime ==''"> Requested Call back Date: {{ToDisplayCallBackDateTime | date : 'MM/dd/yyyy'}} at {{ToDisplayCallBackDateTime | date : 'shortTime'}}</div>
+                        <div class="row-border callcenter-call-history" ng-hide="callHistory==null || callHistory.length <=0">
+                            <div class="col-sm-12 " ng-repeat="history in (callHistory | orderBy:'-DateCreated')" style="padding-bottom: 10px;">
+                                <div class="notes-block">
+                                    <div class="row">
+                                        <div class="col-sm-6">Date of Call: {{history.DateCreated | date : 'MM/dd/yyyy'}}</div>
+                                        <div class="col-sm-6">Agent Name: {{history.CreatedBy != null ? history.CreatedBy : '' }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">Call Outcome: {{history.CallOutcome}}</div>
+                                    </div>
+                                    <div class="row" ng-repeat="item in history.Notes">
+                                        <div class="col-sm-12">Notes: {{item.Note != null ? item.Note : '' }}</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center contact-screen-no-event" ng-show="callHistory==null || callHistory.length <=0"> No previous calls</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="small-section">
+                <h2>Event List</h2>
+                <div class="clearfix small-section-inner">
+                    <event-list></event-list>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="small-section">
+                <h2>Call Outcome</h2>
+                <div class="row small-section-inner">
+                    <div class="col-md-6">
+                        <div class="clearfix">
+                            <div class="pull-left">
+                                <ul class="no-bullets outcome">
+                                    <li ng-repeat="status in CallStatusRadioList">
+                                        <input type="radio" name="callStatus" value="{{status.value}}" ng-model="selectedCallStatusId" ng-click="setStatus(status)" /> {{status.text}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="pull-left">
+                                <ul class="no-bullets outcome">
+                                    <li> <input type="checkbox" ng-model="RemoveFromQueue" ng-disabled="CallbackRequestedChk" /> Remove from queue</li>
+                                    <li><input type="checkbox" ng-model="DoNotCall" ng-disabled="CallbackRequestedChk" /> Do Not Call</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="clearfix" ng-show="showRequestedCallBackDiv">
+                            <input type="checkbox" ng-model="CallbackRequestedChk" ng-disabled="RemoveFromQueue || DoNotCall" ng-change="onCallbackRequestedChkClicked()" /> Requested Call back
+                        </div>
+                        <div class="clearfix" ng-show="showRequestedCallBackDiv">
+                            <div class="col-sm-12 callback-date-time">
+                                <input type="text" class="requested-callback-date" date-picker-simple="" ng-disabled="!CallbackRequestedChk" ng-model="CallBackDateTime.date" placeholder="MM/dd/yyyy">
+                                &nbsp; at &nbsp;
+                                <input type="text" class="requested-callback-time" mask-format="time12" ng-model="CallBackDateTime.time" ng-disabled="!CallbackRequestedChk" placeholder="hh:mm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 top-buffer-12">
+                        <label>Notes</label>
+                        <div>
+                            <textarea cols="50" rows="4" ng-model="CallNotes" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button class="pull-right top-buffer-12" ng-disabled="isPostBack" ng-click="saveCallOutCome()">Save<i class="spin spin-right" ng-show="loader_saveOutCome"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-right: 2px;margin-top: 14px">
+        <div class="pull-right"><button type="button" ng-disabled="isPostBack" ng-click="EndActiveCall()">End Call<i class="spin spin-right" ng-show="loader_EndActvieCall"></i></button></div>
+    </div>
+    
+
+</div>

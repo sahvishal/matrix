@@ -1,0 +1,134 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.EventNotesListModel
+@{
+    ViewBag.Title = "Manage Event Notes";
+}
+
+<h2>
+    Manage Event Notes
+    <span style="float: right;font-size:12px;">
+        <a href="/Scheduling/Event/AddEventNotes">Add Event Notes</a>
+    </span>
+</h2>
+<style type="text/css">
+    #notes:focus {
+        outline: 0;
+        border: none;
+    }
+</style>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+
+    <div id="list-filter">
+        @{Html.BeginForm("ManageEventNotes", "Event", FormMethod.Get);}
+        @Html.Partial("EventNotesModelFilter", new ViewDataDictionary(Model.Filter))
+        @{Html.EndForm();}
+    </div>
+}
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th width="35%">Event Notes</th>
+            <th width="35%">Events</th>
+            <th width="20%">Created/Modified</th>
+            <th width="10%">Action</th>
+        </tr>
+        @foreach (var item in Model.Collection)
+        {
+            <tr>
+                <td>
+                    <div style="width: 280px; height: 20px; white-space: nowrap;" class="event-notes-conainer">
+                        <div style="float:left; width:225px; height: 20px; overflow-x: hidden; overflow-y: hidden;" class="event-notes">
+                            @(!string.IsNullOrEmpty(item.Note) ? item.Note.Trim() : string.Empty)
+                        </div>
+                        @if (item.Note.Length > 42)
+                        {
+                            <div style="float:left; width:40px; height: 20px;">&nbsp;... <a href="javascript:void(0);" class="event-note-view">view</a></div>
+                        }
+                        <span class="event-note-hidden" style="display: none;">@(!string.IsNullOrEmpty(item.Note) ? item.Note.Trim() : string.Empty)</span>
+                    </div>
+                </td>
+                <td>
+                    <div style="word-wrap: break-word;">
+                        @item.SelectedEventIds
+                    </div>
+                </td>
+                <td>
+                    <b>Created On</b>: @item.CreatedDate.ToShortDateString()<br />
+                    <b>By</b>: @item.CreatedBy<br />
+                    @if (item.ModifiedDate.HasValue)
+                    {
+                        <b>Modified On</b><span>: @item.ModifiedDate.Value.ToShortDateString()</span><br />
+                        <b>By</b><span>: @item.ModifiedBy</span>
+                    }
+                </td>
+                <td>
+                    @if (!item.IsPublished)
+                    {
+                        <a href="/Scheduling/Event/AddEventNotes?eventNoteId=@item.Id">Edit</a>
+                    }
+                    else
+                    {
+                        <span>NA</span>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+<div id="view-note-dialog">
+    <div>
+        <fieldset style="background-color: white;">
+            <legend><b>Notes</b></legend>
+            <textarea id="notes" style="width: 100%; height: 300px;overflow-x: auto;border: none;" readonly="readonly"></textarea>
+        </fieldset>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+                function () {
+                    $(this).removeClass('row-hover');
+                });
+        });
+
+        $(".event-note-view").click(function () {
+            var notes = $(this).closest(".event-notes-conainer").find(".event-note-hidden").html();
+
+            $("#view-note-dialog #notes").val(notes);
+            $('#view-note-dialog').dialog('open');
+        });
+
+
+
+        $(document).ready(function () {
+            $('#view-note-dialog').dialog({ width: '500px', autoOpen: false, modal: true, title: 'Event Notes', resizable: true, draggable: true });
+
+            $("#view-note-dialog").bind('dialogclose', function () {
+                $("#view-note-dialog #notes").html('');
+            });
+        });
+    </script>
+}

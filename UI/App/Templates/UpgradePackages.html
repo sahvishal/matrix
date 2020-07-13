@@ -1,0 +1,19 @@
+﻿<h3 class="orngbold14_default">
+	Have you considered these great savings?</h3>
+<table class="gridselectpackage" cellspacing="0" border="0" cellpadding="5">
+	{#foreach $T as Package}
+	<tr class="row2 package-row">
+		<td>
+			{$T.Package.Name}
+			<span style="padding-left: 10px;"><a id="PackageDetailsAnchor" href="javascript:void(0);"
+				onclick='javascript:ShowPackageDetails("{$T.Package.Name}","{$T.Package.Id}");'><b>(details)</b></a></span>
+			<br />
+			<span class="gridselectpackage_testname package-description">{$T.Package.Description}</span>
+		</td>
+		<td align="center" style="color: #E78839" valign="center">
+			<input type="button" id="UpgradePackageButton" value='{$T.Package.ButtonName}'
+				onclick="javascript:UpgradePackageButtonClick('{$T.Package.Id}');" class="ui-state-default ui-corner-all" style="width:140px;" />
+		</td>
+	</tr>
+	{#/for}
+</table>

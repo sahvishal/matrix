@@ -1,0 +1,41 @@
+@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+
+@model Falcon.App.Core.CallQueues.ViewModels.HealthPlanCallQueueListModelFilter
+<h2>
+    Search Records
+</h2>
+@{    
+    string actionName =  ViewContext.RouteData.GetRequiredString("action");
+}
+<style type="text/css">
+    .required-filter {
+        color: red;
+    }
+</style>
+
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 40%">
+        <div class="small-text">
+            HealthPlan:<span class="required-filter">*</span>
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width: 85%" })
+        @if (Model.HealthPlanId <= 0)
+        {
+            <br/><span class="small-text">(Please select Health Plan)</span>
+        }
+    </div>
+    <div class="editor-column" style="width: 40%">
+        <div class="small-text">
+            Call Queue:
+        </div>
+        @{
+            var userSession = IoC.Resolve<ISessionContext>().UserSession;
+        }
+        @Html.DropDownListFor(m => m.CallQueueId, DropDownHelper.GetActiveHealthPlanCallQueues(), new { @style = "width: 85%" })
+    </div>
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", actionName) | @Html.SubmitButton("Search")
+    </div>
+</div>

@@ -1,0 +1,113 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.EventVolumeListModel
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th style="width:170px;">
+                Event Info
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Pod)
+            </th>
+            <th style="text-align: right">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().TotalSlots)
+            </th>
+            <th style="text-align: right">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().AppointmentsBooked)
+            </th>
+            <th style="text-align: right">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().AvailableSlots)
+            </th>
+            <th style="text-align: right">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().ScreenedCustomers)
+            </th>
+            <th>
+                Assigned Physician(s)
+            </th>
+            <th style="width:130px;">
+                Assigned Technician(s)
+            </th>
+            <th>@Html.LabelFor(m => m.Collection.FirstOrDefault().HospitalPartner)</th>
+            @if (Model.Collection.First().IsCorporateEvent)
+            {
+                <th>
+                    Corporate Sponsor
+                </th>
+            }
+        </tr>
+        @foreach (var selectedEvent in Model.Collection)
+        {
+            <tr>
+                <td style="width:170px;">
+                    <b>Id:</b> @selectedEvent.EventCode <br/>
+                    <b>Date:</b> @selectedEvent.EventDate.ToShortDateString() <br/>
+                    <b>Location:</b> @selectedEvent.Location <br/>
+                    <b>Address:</b> @selectedEvent.Address.ToString()<br />
+                    <b>Status:</b> @selectedEvent.Status
+                </td>
+                <td>@selectedEvent.Pod
+                </td>
+                <td style="text-align: right">@selectedEvent.TotalSlots
+                </td>
+                <td style="text-align: right">@selectedEvent.AppointmentsBooked
+                </td>
+                <td style="text-align: right">@selectedEvent.AvailableSlots
+                </td>
+                <td style="text-align: right">@selectedEvent.ScreenedCustomers
+                </td>
+                <td>
+                    @Html.Raw(!string.IsNullOrEmpty(selectedEvent.PrimaryPhysician)?selectedEvent.PrimaryPhysician:"<i>Not Assigned</i>")
+                    @(!string.IsNullOrEmpty(selectedEvent.OverReadPhysician)? ", " + selectedEvent.OverReadPhysician:"")
+                </td>
+                <td style="width:130px;">
+                    @if (selectedEvent.Technicians != null && selectedEvent.Technicians.Any())
+                    {
+                        foreach (var technician in selectedEvent.Technicians)
+                        {
+                            <span>@technician</span><br/>
+                        }
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+                <td>@(!string.IsNullOrEmpty(selectedEvent.HospitalPartner)?selectedEvent.HospitalPartner:"")</td>
+                @if (selectedEvent.IsCorporateEvent)
+                {
+                    <td>
+                        @selectedEvent.CorporateAccount
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {           
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {           
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

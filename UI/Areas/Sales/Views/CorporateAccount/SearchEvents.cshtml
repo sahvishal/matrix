@@ -1,0 +1,99 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Sales.ViewModels
+@model CorporateAccountEventListModel
+@{
+    ViewBag.Title = "Search Events";
+}
+<h1>
+    Events
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("SearchEvents", "CorporateAccount", FormMethod.Get);}
+    @Html.Partial("CorporateAccountEventListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model.Collection != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Event ID
+            </th>
+            <th style="text-align: center">
+                Event Location
+            </th>
+            <th style="text-align: center">
+                Date
+            </th>
+            <th style="text-align: right">
+                Screened Customers
+            </th>
+            <th style="text-align: right">
+                Normals
+            </th>
+            <th style="text-align: right">
+                Abnormals
+            </th>
+            <th style="text-align: right">
+                Criticals
+            </th>
+            <th style="text-align: center">
+                Action
+            </th>
+        </tr>
+        @foreach (var theEvent in Model.Collection)
+        {
+            var userSession = Falcon.App.DependencyResolution.IoC.Resolve<ISessionContext>().UserSession;
+            <tr>
+                <td>@theEvent.EventId</td>
+                <td>@theEvent.HostAddress</td>
+                <td style="text-align: right;">
+                    @theEvent.EventDate.ToShortDateString()
+            </td>
+            <td style="text-align: right;">
+                @theEvent.ScreenedCustomers
+        </td>
+        <td style="text-align: right;">
+            @theEvent.NormalCustomers
+    </td>
+    <td style="text-align: right;">
+        @theEvent.AbnormalCustomers
+</td>
+<td style="text-align: right;">
+    @theEvent.CriticalCustomers
+</td>
+<td style="text-align: center;">
+    <a target="_blank" href="/Sales/CorporateAccount/MemberResultSummary?EventId=@theEvent.EventId">View Customers</a>
+</td>
+</tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found!
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,11 @@
+.grid-header th
+{
+    background-color: #63c15f;
+    text-align: left;
+}
+.grid {
+    background-color: #63C15F;
+    border: 1px solid #E5E5E5;
+    border-collapse: collapse;
+    width: 100%;
+}

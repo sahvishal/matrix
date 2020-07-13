@@ -1,0 +1,43 @@
+﻿@model Falcon.App.Core.Users.ViewModels.RoleEditModel
+@{
+    var title = Model.Id > 0 ? "Edit " + Model.Name + " Role" : "Create New Role";
+    ViewBag.Title = title;
+    Layout = null;//"~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+    <h1>@title</h1>
+
+    <br />
+    <br />
+    <div id="list-filter" style="width:400px;height: auto; padding: 5px; margin-left: 2px; margin-top: -30px">
+        @using (Ajax.BeginForm("EditModel", "Roles", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "rolemodel-container", OnSuccess = "onSuc" }, new { id = "createRoleForm" }))
+        {
+
+            <div class="row-fluid" id="rolemodel-container">
+                @Html.Partial("EditModel", Model)
+            </div>
+            <div class="row-fluid" style="text-align: right;">
+                <button type="submit" class="btn btn-info toggle-save" id="saveBtn">Save</button>
+                <img src="/App/Images/indicator.gif" class="toggle-save" style="display: none"/>
+            </div>
+
+        }
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function onSuc() {
+        $("#isSaved").val(1);
+        $('#saveBtn').removeAttr('disabled');
+        $(".toggle-save").toggle();
+    }
+
+    $('#saveBtn').click(function (e) {
+        e.preventDefault();
+        $('#createRoleForm').submit();
+        $('#saveBtn').attr('disabled', true);
+        $(".toggle-save").toggle();
+    });
+</script>

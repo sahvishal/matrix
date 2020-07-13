@@ -1,0 +1,4 @@
+USE [$(dbName)]
+Go
+
+Alter Table TblHealthPlanCallQueueCriteria Drop Constraint FK_TblHealthPlanCallQueueCriteria_OrganizationRoleUser_AssignedTo, Column AssignedToOrgRoleUserId

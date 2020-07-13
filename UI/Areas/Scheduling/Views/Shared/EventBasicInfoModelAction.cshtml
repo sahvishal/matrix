@@ -1,0 +1,393 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Roles = Falcon.App.Core.Enum.Roles
+@model Falcon.App.Core.Scheduling.ViewModels.EventBasicInfoViewModel
+@if (Model != null)
+{
+    var mediaRepository = IoC.Resolve<IMediaRepository>();
+    var repository = IoC.Resolve<Falcon.App.Core.Scheduling.Interfaces.IEventRepository>();
+    var userSession = IoC.Resolve<ISessionContext>().UserSession;
+    bool isFormGenerated = false;
+    var location = mediaRepository.GetMedicalHistoryMediaLocation(Model.Id, false);
+
+    var configurationSettingRepository = IoC.Resolve<IConfigurationSettingRepository>();
+    var enableBarCode = Convert.ToBoolean(configurationSettingRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.EnableBarCode));
+
+    switch ((Roles)userSession.CurrentOrganizationRole.GetSystemRoleId)
+    {
+        case Falcon.App.Core.Enum.Roles.Technician:
+        case Falcon.App.Core.Enum.Roles.NursePractitioner:
+            if (Model.Status != Falcon.App.Core.Scheduling.Enum.EventStatus.Canceled)
+            {
+                <div>
+                    <a href="/Scheduling/EventCustomerList/Index?id=@Model.Id">View</a>
+                </div>
+
+            }
+            if (Model.FilledAppintmentSlots > 0)
+            {
+                <div>
+                    <a href="javascript:window.open('/Scheduling/Event/GenerateRoster?EventId=@Model.Id', 'Event_Routine', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=700,height=500'); void(0);">Roster PDF</a>
+                </div>
+
+            }
+
+            if (enableBarCode)
+            {
+                <div>
+                    <a href="javascript:window.open('/Scheduling/Event/GenerateSchedule?EventId=@Model.Id', 'Event_Routine', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=700,height=500'); void(0);">Schedule PDF [Without Barcode]</a>
+                </div>
+                <div>
+                    <a href="javascript:window.open('/Scheduling/Event/GenerateScheduleWithBarCode?EventId=@Model.Id&barCodeVersion=True', 'Event_Routine', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=700,height=500'); void(0);">Schedule PDF [With Barcode]</a>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <a href="javascript:window.open('/Scheduling/Event/GenerateSchedule?EventId=@Model.Id', 'Event_Routine', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=700,height=500'); void(0);">Schedule PDF</a>
+                </div>
+            }
+
+            if (Model.EventDate <= DateTime.Now.Date)
+            {
+
+                <div>
+                    <a href="/Medical/Results/ResultStatusList?EventId=@Model.Id">Results </a>
+                </div>
+            }
+
+
+            isFormGenerated = !Model.GenerateHealthAssesmentForm;
+            //Model.CaptureHealthAssessmentForm &&
+            if ( (Model.FilledAppintmentSlots > 0 || Model.BookedSlots > 0))
+            {
+                if (isFormGenerated && File.Exists(location.PhysicalPath + "Event_" + Model.Id + ".pdf"))
+                {
+                    <div class="generatehaf-@Model.Id">
+                        <a href="javascript: void(0);"><b>Health Assesment Form </b></a>
+                        <br />
+                        <a href="javascript:generateHealthAssessmentForm(@Model.Id); void(0);">
+                            (Generate)
+                        </a>&nbsp; &nbsp; <a href="@(location.Url + "Event_" + Model.Id + ".pdf")" target="_blank">(Download) </a>
+                    </div>
+                }
+                else if (isFormGenerated)
+                {
+                    <div class="generatehaf-@Model.Id">
+                        <a href="javascript: void(0);"><b>Health Assesment Form </b></a>
+                        <br />
+                        <a href="javascript:generateHealthAssessmentForm(@Model.Id); void(0);">
+                            (Generate)
+                        </a>
+                    </div>
+                }
+
+                <div class="generatehaf-@Model.Id" style="display:none;">
+                    <img src="/App/Images/loading_bar_wb.gif" alt="" />
+                </div>
+            }
+
+
+            break;
+
+        case Falcon.App.Core.Enum.Roles.CallCenterManager:
+        case Falcon.App.Core.Enum.Roles.CallCenterRep:
+            if (Model.FilledAppintmentSlots > 0)
+            {
+                <div>
+                    <a href="/Scheduling/Event/CustomerList?id=@Model.Id">Event Detail </a>
+                </div>
+
+                <div>
+                    <a href="javascript:window.open('/Scheduling/Event/GenerateRoster?EventId=@Model.Id', 'Event_Routine', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=700,height=500'); void(0);">Roster PDF</a>
+                </div>
+
+            }
+            <div>
+                <a href="javascript:window.open('/Scheduling/Event/GenerateSchedule?EventId=@Model.Id', 'Event_Routine', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=700,height=500'); void(0);">Schedule PDF</a>
+            </div>
+            break;
+
+        case Falcon.App.Core.Enum.Roles.SalesRep:
+        <div>
+            <a href="/App/Common/EventDetails.aspx?EventId=@Model.Id">Event Detail </a>
+        </div>
+
+        <div>
+            <a href="/App/Common/CreateEventWizard/Step1.aspx?EventId=@Model.Id">Edit Event</a>
+        </div>
+        <div>
+            <a href="javascript:window.open('/Scheduling/AppointmentSlot/AddAppointmentSlot?eventId=@Model.Id', 'Appointment_Slot', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=450,height=750'); void(0);">Edit Appointments</a>
+        </div>
+            if (Model.FilledAppintmentSlots == 0)
+            {
+                <div>
+                    <a href="javascript:void(0);" onclick="deleteEvent(@Model.Id);">Delete</a>
+                </div>
+            }
+            break;
+
+        case Falcon.App.Core.Enum.Roles.FranchiseeAdmin:
+        <div>
+            <a href="/App/Common/EventDetails.aspx?EventId=@Model.Id">Event Detail </a>
+        </div>
+
+        <div>
+            <a href="/App/Common/CreateEventWizard/Step1.aspx?EventId=@Model.Id">Edit Event</a>
+        </div>
+        <div>
+            <a href="javascript:window.open('/Scheduling/AppointmentSlot/AddAppointmentSlot?eventId=@Model.Id', 'Appointment_Slot', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=450,height=750'); void(0);">Edit Appointments</a>
+        </div>
+            if (Model.FilledAppintmentSlots == 0)
+            {
+                <div>
+                    <div>
+                        <a href="javascript:void(0);" onclick="deleteEvent(@Model.Id)">Delete</a>
+                    </div>
+                </div>
+            }
+            break;
+
+        case Falcon.App.Core.Enum.Roles.FranchisorAdmin:
+        <div>
+            <a href="/App/Common/EventDetails.aspx?EventId=@Model.Id">Event Detail </a>
+        </div>
+        <div>
+            <a href="/App/Common/CreateEventWizard/Step1.aspx?EventId=@Model.Id">Edit Event</a>
+        </div>
+            if (Model.FilledAppintmentSlots > 0)
+            {
+                <div>
+                    <a href="javascript:window.open('/Scheduling/Event/GenerateRoster?EventId=@Model.Id', 'Event_Routine', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=700,height=500'); void(0);">Roster PDF</a>
+                </div>
+            }
+            <div>
+                <a href="javascript:window.open('/Scheduling/AppointmentSlot/AddAppointmentSlot?eventId=@Model.Id', 'Appointment_Slot', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=450,height=750'); void(0);">Edit Appointments</a>
+            </div>
+
+            if (Model.FilledAppintmentSlots == 0)
+            {
+                <div>
+                    <a href="javascript:void(0);" onclick="deleteEvent(@Model.Id)">Delete</a>
+                </div>
+            }
+            if (Model.Status == Falcon.App.Core.Scheduling.Enum.EventStatus.Active)
+            {
+                <div>
+                    <a href="javascript:window.open('/Operations/PhysicianAssignment/AssignPhysicianToEvent?eventId=@Model.Id','AssignPhysician_Event','toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=no,menubar=no,width=850,height=650');void(0);" id="assignPhysician_@(Model.Id)">Assign Physicians</a>
+                </div>
+            }
+            if (Model.Status != Falcon.App.Core.Scheduling.Enum.EventStatus.Canceled && Model.IsCdContentGenerated)
+            {
+                var mediaLocation = mediaRepository.GetResultPacketMediaLocation(Model.Id, false);
+                var cryptographyService = new Falcon.App.Core.Application.Impl.DigitalDeliveryCryptographyService();
+                var downloadUrl = "/DigitalDelivery.aspx?key=" + cryptographyService.GetKey(Model.Id, Falcon.App.Core.Deprecated.Enum.EPDFType.CdContent);
+                var filePath = mediaLocation.PhysicalPath + Model.Id + ".zip";
+                if (File.Exists(filePath))
+                {
+                    <div>
+                        <a href="javascript:void(0);" class="download-cdcontent@(Model.Id)-toggle" onclick="validateDownloadResultPacket(@Model.Id, '@downloadUrl', true);" style="float:left;">Download Cd Content</a>
+                        <a href="javascript:void(0);" class="download-cdcontent@(Model.Id)-toggle" id='CdContent_@(Model.Id)' style="float:left; padding-top:1px; padding-left:2px;">
+                            <img src="/App/Images/info-icon.gif" />
+                        </a>
+                        <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="download-cdcontent@(Model.Id)-toggle" />
+                        <div id="QtipCdContentStatusDiv" style="display: none;">
+                        </div>
+                        <script language="javascript" type="text/javascript">
+                            $(document).ready(function () {
+                                var eventId = '@Model.Id';
+                                loadCdContentStatus(eventId);
+
+                                $("#CdContent_" + eventId).qtip({
+                                    position: {
+                                        my: 'right top'
+                                    },
+                                    content: {
+                                        title: "Cd Content status",
+                                        text: function (api) {
+                                            return $(this).parent().find("#QtipCdContentStatusDiv").html();
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+                }
+            }
+            <div>
+                <a href="/Operations/CdContentTracking/CustomerCdContentTracking?eventId=@Model.Id">Cd Content Detail</a>
+            </div>
+            if (Model.IsResultPacketGenetated)
+            {
+                <div>
+                    <a href="javascript:regenratePacket('@Model.Id'); void(0);">(Re)Generate Result Packet</a>
+                </div>
+            }
+
+
+            isFormGenerated = !Model.GenerateHealthAssesmentForm;
+            if (Model.FilledAppintmentSlots > 0 || Model.BookedSlots > 0)
+            {
+                if (isFormGenerated && File.Exists(location.PhysicalPath + "Event_" + Model.Id + ".pdf"))
+            {
+                    <div class="generatehaf-@Model.Id">
+                        <a href="javascript: void(0);"><b>Health Assesment Form </b></a>
+                        <br />
+                        <a href="javascript:generateHealthAssessmentForm(@Model.Id); void(0);">
+                            (Generate)
+                        </a>&nbsp; &nbsp; <a href="@(location.Url + "Event_" + Model.Id + ".pdf")" target="_blank">(Download) </a>
+                    </div>
+            }
+                else if (isFormGenerated)
+                {
+                    <div class="generatehaf-@Model.Id">
+                        <a href="javascript: void(0);"><b>Health Assesment Form </b></a>
+                        <br />
+                        <a href="javascript:generateHealthAssessmentForm(@Model.Id); void(0);">
+                            (Generate)
+                        </a>
+                    </div>
+                }
+
+                <div class="generatehaf-@Model.Id" style="display:none;">
+                    <img src="/App/Images/loading_bar_wb.gif" alt="" />
+                </div>
+            }
+
+            break;
+
+        case Falcon.App.Core.Enum.Roles.OperationManager:
+            if (Model.Status == Falcon.App.Core.Scheduling.Enum.EventStatus.Active)
+            {
+
+                <div>
+                    <a href="javascript:window.open('/Operations/PhysicianAssignment/AssignPhysicianToEvent?eventId=@Model.Id','AssignPhysician_Event','toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=no,menubar=no,width=550,height=450');void(0);">Assign Physicians</a>
+                </div>
+            }
+            break;
+    }
+    if (IoC.Resolve<ISettings>().EnableMassRegistration && Model.Status != Falcon.App.Core.Scheduling.Enum.EventStatus.Canceled && !Model.IsDynamicScheduling && userSession.CurrentOrganizationRole.GetSystemRoleId != (long)Roles.NursePractitioner)
+    {
+        var userRole = (Roles)userSession.CurrentOrganizationRole.GetSystemRoleId;
+        if (userRole == Roles.FranchisorAdmin || userRole == Roles.Technician || userRole == Roles.NursePractitioner || userRole == Roles.SalesRep)
+        {
+            <div>
+                <a href="/Scheduling/MassRegistration/Create?eventId=@Model.Id">Mass Registration</a>
+            </div>
+        }
+    }
+    if (Model.GenerateBatchLabel)
+    {
+        <div>
+            <a href="javascript:void(0);" onclick="generateBatchLables(@Model.Id); return false;">Generate Batch Label</a>
+        </div>
+    }
+    if (Model.IsSmsEnabled && userSession.CurrentOrganizationRole.CheckRole((long)Roles.FranchisorAdmin))
+    {
+        <div>
+            <a href="javascript:void(0);" onclick="showCustomMessagePopup(@Model.Id);">Send SMS to Registrants</a>
+        </div>
+    }
+
+    <div id="assignedPhysicianDiv_@(Model.Id)" class="abcd" style="display:none;">
+    </div>
+
+    <div id="custom-message-dialog" style="display:none;">
+        <div>
+            <div class="small-text">
+                Type your message here...
+            </div>
+            <textarea cols="48" rows="5" id="customMessage"></textarea>
+            <input id="eventId" type="hidden" />
+        </div>
+        <div class="custom-message-buttons" style="padding-top:20px;float:right;">
+            <button id="save-custom-message" style="width: 70px; height: 25px;" onclick="sendCustomMessage()">
+                Save
+            </button>
+            <button id="close-custom-message" style="width: 70px; height: 25px;" onclick="closeCustomMessagePopup();">
+                Close
+            </button>
+        </div>
+        <div class="custom-message-buttons" style="display: none; padding-top:20px; text-align: right;">
+            <img src="/App/Images/loading.gif" alt="" />
+            Sending
+        </div>
+    </div>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            var eventId = '@Model.Id';
+            loadAssinedPhysicians(eventId);
+
+            $('#custom-message-dialog').dialog({ width: 400, autoOpen: false, modal: true, title: 'Send SMS to Registrants', resizable: false, draggable: true });
+
+            $("#assignPhysician_" + eventId).qtip({
+                position: {
+                    my: 'right top'
+                },
+                content: {
+                    title: "Assigned Physician(s)",
+                    text: function (api) {
+                        return $("#assignedPhysicianDiv_" + eventId).html();
+                    }
+                }
+            });
+        });
+
+        function updateDownloadInfo(eventId) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json", url: "/Operations/CdContentTracking/UpdateEventCdContentDownloadInfo", data: "{'eventId':'" + eventId + "'}",
+                success: function (result) { }, error: function (a, b, c) { }
+            });
+        }
+
+        function generateBatchLables(eventId) {
+            $.ajax({
+                type: "Post",
+                url: "/Operations/Reports/GenerateBatchLabelPdf?eventId=" + eventId,
+                success: function (data) {
+                    window.open(data, "PDF", "");
+                }
+            });
+        }
+
+        function showCustomMessagePopup(eventId) {
+            $("#custom-message-dialog #customMessage").val("");
+            $("#custom-message-dialog #eventId").val(eventId);
+            $('#custom-message-dialog').dialog('open');
+        }
+
+        function sendCustomMessage() {
+            var eventId = $("#custom-message-dialog #eventId").val();
+            var message = $("#custom-message-dialog #customMessage").val();
+            if (message == null || message.length < 0) {
+                alert("Please enter a message.");
+                return;
+            }
+            var model = { EventId: eventId, Message: message };
+            $(".custom-message-buttons").toggle();
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/Communication/Notification/SendCustomEventSms",
+                data: model,
+                success: function (result) {
+                    $(".custom-message-buttons").toggle();
+                    alert(result.message);
+                    if (result.Success == 1) {
+                        $('#custom-message-dialog').dialog('close');
+                    }
+                }, error: function(arg) {
+                    alert("Error occured while saving custom message");
+                    $(".custom-message-buttons").toggle();
+                }
+            });
+        }
+
+        function closeCustomMessagePopup() {
+            $("#custom-message-dialog #eventId").val("");
+            $('#custom-message-dialog').dialog('close');
+        }
+    </script>
+}

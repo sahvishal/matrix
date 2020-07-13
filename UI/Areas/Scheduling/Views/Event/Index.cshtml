@@ -1,0 +1,352 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.Core.Scheduling.Enum
+@model EventBasicInfoListModel
+@{
+    ViewBag.Title = "Index";
+    var userSession = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISessionContext>().UserSession;
+}
+<h2>
+    Events</h2>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<link href="/App/jquery/css/JQuery-Selectable/Selectable.css" rel="stylesheet" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<div id="list-filter">
+    @{Html.BeginForm("Index", "Event", FormMethod.Get);}
+    @Html.Partial("EventBasicInfoViewModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Events != null && Model.Events.Count() > 0)
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Info
+            </th>
+            <th>
+                Address
+            </th>
+            <th>
+                Date
+            </th>
+            <th>
+                Pod
+            </th>
+            <th>
+                Booked/Total Slots
+            </th>
+            <th>
+                Assigned To
+            </th>
+            @if (userSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.Technician) || userSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.NursePractitioner) || userSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin) || userSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.SalesRep))
+            {
+                <th>
+                    Sponsor
+                </th>
+            }
+            <th style="width: 160px;">
+                Action
+            </th>
+        </tr>
+        @foreach (var theEvent in Model.Events)
+        {
+            <tr>
+                <td>
+                    @theEvent.Id
+                </td>
+                <td>
+                    @{
+            
+
+            switch ((Falcon.App.Core.Enum.Roles)userSession.CurrentOrganizationRole.GetSystemRoleId)
+            {
+                case Falcon.App.Core.Enum.Roles.Technician:
+                case Falcon.App.Core.Enum.Roles.NursePractitioner:
+                case Falcon.App.Core.Enum.Roles.CallCenterManager:
+                case Falcon.App.Core.Enum.Roles.CallCenterRep:
+                        <span>@theEvent.HostName </span> 
+                         break;
+
+                case Falcon.App.Core.Enum.Roles.FranchisorAdmin:
+                        <a href="/App/Franchisor/ProspectDetails.aspx?Type=Host&From=ManageEvents&ProspectID=@theEvent.HostId">
+                            @theEvent.HostName </a>
+                       break;
+                case Falcon.App.Core.Enum.Roles.FranchiseeAdmin:
+                        <a href="/App/Franchisee/FranchiseeProspectDetails.aspx?Type=Host&From=ManageEvents&ProspectID=@theEvent.HostId">
+                            @theEvent.HostName </a>
+                       break;
+                case Falcon.App.Core.Enum.Roles.SalesRep:
+                        <a href="/App/Franchisee/SalesRep/SalesRepProspectDetails.aspx?Type=Host&From=ManageEvents&ProspectID=@theEvent.HostId">
+                            @theEvent.HostName </a>
+                       break;
+            }        
+                    }
+                    <br />
+                    @if (theEvent.RegistrationMode != RegistrationMode.Private)
+                    {
+                        <img src="/App/Images/public-icon.gif" alt="Public" />
+                    }
+                    else
+                    {
+                        <img src="/App/Images/private-icon.gif" alt="Private" />
+                    }
+                    @if (theEvent.EventType == EventType.Corporate)
+                    {
+                        <span>|
+                            <img src="/App/Images/corporate_icon_buy.jpg" alt="Corporate" style="height: 16px;
+                                width: 16px;" /></span>
+                    }
+                    @if (!string.IsNullOrEmpty(theEvent.InvitationCode))
+                    {
+                        <text> Code: </text> @theEvent.InvitationCode
+                    }
+                    @if (theEvent.Status != EventStatus.Active)
+                    {
+                        <br /> <!-- Had to do this, As Status Canceled has wrong spell and is used at many places incorrectly. -->
+                        if (theEvent.Status == EventStatus.Canceled)
+                        { <span style="font-weight: bold; color: Red;">Cancelled</span>}
+                        else
+                        {<span>@theEvent.Status.ToString()</span>}
+                    }
+                </td>
+                <td>
+                    @theEvent.HostAddress.ToString()
+                </td>
+                <td>
+                    @theEvent.EventDate.ToShortDateString()
+                </td>
+                <td>
+                    @theEvent.PodNames()
+                </td>
+                <td>
+                    <a id='Id_@(theEvent.Id)' href="javascript:void(0)">
+                        @if(theEvent.IsDynamicScheduling)
+                        {
+                            <span>Dynamic Scheduling</span>   
+                        }
+                        else
+                        {
+                            <span>@theEvent.FilledAppintmentSlots/@theEvent.TotalAppointmentSlots</span>
+                        }
+                    </a>
+                    <div id="QtipTitleDiv" style="display: none;">
+                        <div style="float: left">
+                            Slots
+                        </div>
+                        <div class="slotlegends" style='@(theEvent.IsDynamicScheduling ? "display:none" : "display:block")'>
+                            <span class="Free legendblocks"></span><span>&nbsp;Free</span> <span class="TemporarilyBooked legendblocks">
+                            </span><span>&nbsp;In-Progress</span> <span class="Booked legendblocks"></span><span>
+                                &nbsp;Booked</span> <span class="exhausted legendblocks"></span><span>&nbsp;Exhausted</span>
+                        </div>
+                    </div>
+                    <div class="appointment-slots dgselecttime_pw" style="display: none;">
+                        <div id="selectable" style="width: 335px; min-height: 120px;">
+                            <span style="width: 200px; margin-bottom: auto; margin-top: auto;">
+                                <img src="/App/Images/loading.gif" alt="Loading" />
+                                Loading </span>
+                        </div>
+                    </div>
+                    <script language="javascript" type="text/javascript">
+                        $(document).ready(function () {
+                            var eventId = '@theEvent.Id';
+                            loadSlots(eventId);
+
+                            $("#Id_" + eventId).qtip({
+                                position: {
+                                    viewport: $(window),
+                                    adjust: {
+                                        method: 'shift'
+                                    }
+                                },
+                                content: {
+                                    title: function (api) { return $(this).parent().find("#QtipTitleDiv").html(); },
+                                    text: function (api) {
+                                        return $(this).parent().find(".appointment-slots").html();
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                </td>
+                <td>
+                    @theEvent.AssignedtoFullName
+                </td>
+                @if (userSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.Technician) || userSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.NursePractitioner) || userSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin) || userSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.SalesRep))
+                {
+                    <td>
+                        @theEvent.Sponsor
+                    </td>
+                }
+                <td class="action-field" style="width: 160px;">
+                    @Html.Partial("EventBasicInfoModelAction", new ViewDataDictionary(theEvent))
+                </td>
+            </tr>
+        }
+    </table>
+    
+    
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}
+<script language="javascript" type="text/javascript">
+
+    function regenratePacket(eventId) {
+        $.ajax({ type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json", url: "/scheduling/event/RegeneratePacket?eventId=" + eventId, data: '{}',
+            success: function (result) {
+                alert("Record queued up for regeneration! Please wait till the batch is processed.");
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                alert("Some error occured while issuing command for Regeneration! \nPlease contact the support team!");
+                window.location.reload();
+            }
+        });
+    }
+
+    function loadSlots(eventId) {
+        $.ajax({ type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html", url: "/scheduling/appointmentslot/EventAppointmentSlotSummary?id=" + eventId, data: '{}',
+            success: function (result) { setAppointmentData(eventId, result); }, error: function (a, b, c) { }
+        });
+    }
+
+
+    function generateHealthAssessmentForm(eventId) {
+        $(".generatehaf-" + eventId).toggle();
+        $.ajax({ type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json", url: "/scheduling/Event/GenerateHealthAssesmentForm?eventId=" + eventId, data: '{}',
+            success: function (result) { $(".generatehaf-" + eventId).toggle(); window.location.reload(); },
+            error: function(a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission to Generate HAF");
+                }
+                $(".generatehaf-" + eventId).toggle();
+            }
+        });
+    }
+
+    function setAppointmentData(eventId, appointments) {
+        $("#Id_" + eventId).parent().find(".appointment-slots").html(appointments);
+    }
+
+
+    function deleteEvent(eventId) {
+        $.ajax({ url: '/Scheduling/Event/Delete?eventId=' + eventId, type: 'POST', data: '{}',
+            success: function (returnResult) {
+                if (returnResult.d == '-3' || returnResult.d == '-2') {
+                    alert('Event has customers registered with it. So it can not be deleted.');
+                }
+                else if (returnResult.d == '-1') {
+                    alert('Event can not be deleted.');
+                }
+                else {
+                    alert('Event deleted succesfully.');
+                    window.location.reload();
+                }
+
+            }, error: function (a) {
+                if (a.status == 401) {
+                    alert('You do not have the permission to delete Event.');
+                }
+                else
+                    alert('Event can not be deleted.');
+            }
+        });
+    }
+
+    function loadAssinedPhysicians(eventId) {
+
+        $.ajax({ type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html", url: "/Operations/PhysicianAssignment/GetAssignedPhysiciansForEvent?id=" + eventId, data: '{}',
+            success: function (result) { setPhysicianAssignmentData(eventId, result); }, error: function (a, b, c) { }
+        });
+    }
+
+    function setPhysicianAssignmentData(eventId, assignments) {
+
+        $("#assignedPhysicianDiv_" + eventId).html(assignments);
+
+        if ($(assignments).find('input').val() == "0") {
+            $("#assignPhysician_" + eventId).html("Assign Physicians");
+        }
+        else {
+            $("#assignPhysician_" + eventId).html("Edit Assignments");
+        }
+    }
+
+
+    function validateDownloadResultPacket(eventId, fileUrl) {
+        $(".download-cdcontent" + eventId + "-toggle").toggle();
+
+        $.ajax({ type: "GET",
+            dataType: "json", url: "/Scheduling/Event/IsResultPacketDownloadable?eventId=" + eventId, data: "{}",
+            success: function (result) {
+                if (result) {
+                    window.open(fileUrl, "DownloadResultPacket", "width=200, height=200");
+                    updateDownloadInfo(eventId);
+                    $(".download-cdcontent" + eventId + "-toggle").toggle();
+                }
+                else {
+                    alert("This event is in queue for result packet generation. Please wait for few minutes");
+                    window.location.reload();
+                }
+            }, error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert('You do not have permission to download CD Content!');
+                }
+                else{
+                    alert("Some error occured while processing your request. Please try again!");
+                }
+                
+                $(".download-cdcontent" + eventId + "-toggle").toggle();
+            }
+        });
+    }
+
+    function loadCdContentStatus(eventId) {
+        $.ajax({ type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html", url: "/scheduling/Event/GetCdContentStatus", data: '{id:' + eventId + '}',
+            success: function (result) {
+                $("#CdContent_" + eventId).parent().find("#QtipCdContentStatusDiv").html(result);
+            }, 
+            error: function(a, b, c) {
+                if (a.status == 401) {
+                    $("#CdContent_" + eventId).parent().find("#QtipCdContentStatusDiv").html('You do not have permission !');
+                }
+            }
+        });
+    }
+        
+</script>

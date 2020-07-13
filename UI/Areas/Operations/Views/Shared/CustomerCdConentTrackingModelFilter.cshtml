@@ -1,0 +1,22 @@
+﻿@using Falcon.App.Core.Operations.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model CustomerCdConentTrackingModelFilter
+<h2>
+    Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">Event Id </div>
+        @Html.TextBoxFor(m => m.EventId)
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">Customer Id </div>
+        @Html.TextBoxFor(m => m.CustomerId)
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">Customer Name </div>
+        @Html.TextBoxFor(m => m.CustomerName)
+    </div>
+    <div class="editor-column" style="float: right; padding-top:12px; text-align: right;">
+        @Html.ActionLink("Clear", "CustomerCdContentTracking", "CdContentTracking") | @Html.SubmitButton("Search")
+    </div>
+</div>

@@ -1,0 +1,123 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.CallQueues.ViewModels.PreAssessmentReportListModel
+
+@{
+    ViewBag.Title = "Pre-Assessment Report";
+}
+
+<h2>Pre-Assessment Report</h2>
+<style>
+    #list-view td {
+        width: 100px !important;
+    }
+</style>
+<script src="/Scripts/reportexportqueue.js"></script>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("PreAssessmentReport", "Reports", FormMethod.Get);}
+    @Html.Partial("PreAssessmentReportFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink" >
+        @if (Model.PagingModel.NumberOfItems > 1000)
+{
+    <a href="javascript:void(0);" onclick='return requestReport("/CallCenter/ReportsQueue/PreAssessmentReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+        Export CSV
+    </a>
+}
+        else
+        {
+            <a target="_blank" href="/CallCenter/ExportableReports/PreAssessmentReport?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="margin-bottom: 10px; overflow: auto;">
+        <table id="list-view">
+            <tr>
+                <th nowrap>Patient ID</th>
+                <th nowrap>Patient Name</th>
+                <th nowrap>Event ID</th>
+                <th nowrap>Event Date</th>
+                <th nowrap>Event Address</th>
+                <th nowrap>Appointment Time</th>
+                <th nowrap>Booking Date</th>
+                <th nowrap>Called By</th>
+                <th nowrap>Last Called On</th>
+                <th nowrap>Outcome</th>
+                <th nowrap>Disposition</th>
+                <th nowrap>No. of Calls</th>
+                <th nowrap>Plan Restricted?</th>
+                <th nowrap>Restricted To</th>
+            </tr>
+            @foreach (var item in Model.Collection)
+            {
+                <tr>
+                    <td> @item.PatientId </td>
+                    <td> @item.Name</td>
+                    <td> @item.EventID</td>
+                    <td> @item.EventDate.ToString("MM/dd/yyyy")</td>
+                    <td> @item.EventAddress.ToString()</td>
+                    <td> @(item.AppointmentTime.HasValue ? item.AppointmentTime.Value.ToString("hh:mm tt") : "")</td>
+                    <td> @(item.BookingDate.HasValue ? item.BookingDate.Value.ToString("MM/dd/yyyy") : "")</td>
+                    <td>@item.CalledBy</td>
+                    <td> @(item.LastContactedDate.HasValue ? item.LastContactedDate.Value.ToString("MM/dd/yyyy hh:mm:ss tt") : "")</td>
+                    <td>@item.Outcome</td>
+                    <td>@item.Disposition</td>
+                    <td> @item.CallCount</td>
+                    <td> @item.IsRestricted</td>
+                    <td> @item.RestrictedTo</td>
+                </tr>
+            }
+        </table>
+
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+
+@section scripts {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+        $('.notes-detail').qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: "Notes",
+                text: function (api) {
+                    return $(this).parent().find('.notes-div').html();
+                }
+            },
+            style: {
+                width: '400px'
+            }
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

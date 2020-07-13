@@ -1,0 +1,15 @@
+﻿<table style="float: left;">
+    {#foreach $T as EPaymentDetail}
+    <tr>
+        <td>
+           {$T.EPaymentDetail.UnpaidAmount}
+        </td>
+        <td>
+           {$T.EPaymentDetail.PayDate}
+        </td>
+        <td>
+           {$T.EPaymentDetail.TotalPayment}
+        </td>
+    </tr>
+    {#/for}
+</table>

@@ -1,0 +1,91 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.CustomerWithNoEventsInAreaReportModelFilter
+<h2>
+    Search Records
+</h2>
+
+<style type="text/css">
+    .required-filter {
+        color: red;
+    }
+</style>
+<div style="padding-left: 5px; overflow: hidden;">
+
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Health Plan:<span class="required-filter">*</span>
+        </div>
+        @Html.DropDownListFor(m => m.AccountId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:90%;" })
+        @if (Model.AccountId <= 0)
+        {
+            <br /><span class="small-text">(Please select Health Plan)</span>
+        }
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Customer Id
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.CustomerId)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Member Id
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.MemberId)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Zip Code
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.ZipCode)
+        </div>
+    </div>
+
+</div>
+<div style="padding-left: 5px; padding-top:10px; overflow: hidden;" class="filter">
+    <div class="editor-column" style="width: 35%">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllCustomTags(), new { @multiple = "multiple", @style = "width: 300px" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 20%">
+    </div>
+    <div class="editor-column" style="margin-top: 10px; width: 20%;">
+
+    </div>
+    <div class="editor-column">
+
+    </div>
+    <div class="editor-column">
+    </div>
+    <div class="editor-column">
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div id="divNote" style="padding-top:10px;">
+        <div style="float: left; width: 35px; color: #287AA8; font-weight: bold;">
+            Note:
+        </div>
+        <div style="float: left; width: 520px; color: #287AA8; padding-right: 15px;">
+            <div style="width: 10px;float:left;">&#8224;&nbsp;</div>
+            <div style="width: 500;float:left;">
+                If customer id or member id is entered, no other mandatory fields are required.<br />
+                Showing list of customers with no events in @Model.ZipRangeInMiles miles.<br />
+            </div>
+        </div>
+    </div>
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "CustomerWithNoEventsInAreaReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+<script type="text/javascript">
+
+</script>

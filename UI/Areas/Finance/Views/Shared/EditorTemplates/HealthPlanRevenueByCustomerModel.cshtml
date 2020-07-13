@@ -1,0 +1,9 @@
+﻿@using Falcon.App.Core.Finance.ViewModels;
+@model HealthPlanRevenueByCustomerModel
+
+<div class='mini-container'  style="border: 1px solid gray !important;">
+    <div style="float: left; margin-right: 20px; white-space:nowrap">
+        Price &nbsp;  @Html.TextBoxFor(m => m.Price, new { @class = "packageclass", @onkeydown = "return KeyPress_DecimalAllowedOnly(event);", @maxlength = "10" }) $
+        @Html.ValidationMessageFor(m => m.Price)
+    </div>
+</div>

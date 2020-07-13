@@ -1,0 +1,106 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Finance.ViewModels
+@model CustomerOpenOrderListModel
+@{
+    ViewBag.Title = "Customer Open Order";
+}
+
+<h1>
+    Customer Open Order
+    <span style="float: right; font-size: 12px;">
+        <a href="/Finance/Reports/DetailOpenOrder">Detail OpenOrder</a>
+    </span>   
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("CustomerOpenOrder", "Reports", FormMethod.Get);}
+    @Html.Partial("CustomerOpenOrderListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/ExportableCustomerOpenOrder?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>        
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>        
+            <th style="width:200px;">
+                Customer Info 
+            </th>
+            <th style="width:300px;">
+                Event Info
+            </th>            
+            <th>
+                Pod
+            </th>
+            
+            <th style="text-align:right;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().OpenOrderTotal) 
+            </th>
+            <th style="text-align:right;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().OutstandingRevenue) 
+            </th>
+            <th style="text-align:right;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().UnPaid) 
+            </th>
+            <th></th>            
+        </tr>
+        @foreach (var customer in Model.Collection)
+        {
+            <tr>
+                <td style="width:200px;">
+                    <b>@(customer.CustomerName.FullName)</b> [ID: @customer.CustomerId]
+                    <br />
+                    <b>Status</b> - @customer.Status
+                </td>
+                <td style="width:300px;">
+                    <div>
+                        <b>Date</b> - @customer.EventDate.ToShortDateString() [ID: @customer.EventId]
+                        <br />
+                        <b>Location</b> - @customer.Location
+                    </div>                    
+                </td>
+                <td>
+                    @customer.Pod
+                </td>
+                <td style="text-align:right;">$@customer.OpenOrderTotal.ToString("0.00")</td>
+                <td style="text-align:right;">$@customer.OutstandingRevenue.ToString("0.00")</td>
+                <td style="text-align:right;">$@customer.UnPaid.ToString("0.00")</td>
+                <td style="width:90px; text-align:center;">
+                    <a href="javascript:void(0);" onclick='return ShowOrderDetails("@customer.OrderId","@customer.CustomerId","@customer.CustomerName.FullName")'>View Order</a>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function ShowOrderDetails(orderId, customerId, customerName) {
+            window.open("/App/Common/OrderSummary.aspx?OrderId=" + orderId + "&CustomerName=" + customerName + "&CustomerId=" + customerId, "OrderSummary", "width=750, height=400, menubar=0, toolbar=0, status=0, location=0, resizable=0, dependent=1, scrollbars=1");
+            return false;
+        }
+    </script>
+}
+

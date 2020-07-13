@@ -1,0 +1,29 @@
+﻿/* style needed for Event time slots */
+#selectable .ui-selecting { background: #FECA40; }
+#selectable .ui-selected { background: #F39814; color: white; }
+#selectable { list-style-type: none; margin: 0; padding: 0; width:100%; }
+#selectable ul { list-style-type: none; margin: 0; padding: 0; }
+#selectable li { margin:1px; padding:2px 2px 0 2px;font-size:11px; float:left; height:32px;text-align:center;width:75px;vertical-align:top; list-style-image:none;}
+
+.blueslot{ background:#B9E3F7; border:solid 1px #b0c9d5;}
+.lightblueslot{ background:#dff0f8; border:solid 1px #b0c9d5;}
+.orangeslot{ background:#FFDEAA; border:solid 1px #F2A32A;cursor:pointer}
+.redslot{ background:#FF5223; border:solid 1px #F2A32A;cursor:pointer}
+.grayslot{ background:#eee; border:solid 1px #F2A32A;}
+.whiteslot{background:#fff; border:solid 1px #F2A32A;cursor:pointer}
+.idtxt_bslot{font-size:10px;color:#2E7E9C;}
+
+/* Used for Search Event Screen input CCRep */
+.Free{ background:#4FD782; border:solid 1px #F2A32A;cursor:pointer}
+.TemporarilyBooked{ background:#F0ED00; border:solid 1px #F2A32A;cursor:pointer}
+.Booked{ background:#FF5223; border:solid 1px #F2A32A;cursor:pointer}
+.exhausted{ background:#eee; border:solid 1px #F2A32A;cursor:pointer}
+
+.slotlegends { float: right; }
+.slotlegends span { float: left;}
+.slotlegends span.legendblocks{width:10px;padding-top: 2px; height:10px; display:block;margin-left: 10px;}
+
+.appointment-area { margin:1px; padding:2px 2px 0 2px;font-size:11px; float:left; height:32px;text-align:center;width:75px;vertical-align:top;}
+.delete-area { margin:1px; padding:2px 2px 0 2px;font-size:11px; float:left; height:10px;text-align:center;width:20px;vertical-align:top;}
+
+

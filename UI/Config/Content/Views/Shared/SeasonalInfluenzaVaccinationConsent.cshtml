@@ -1,0 +1,407 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical.ViewModels
+@model FluVaccinationConsentViewModel
+@{
+    Layout = null;
+    var settings = IoC.Resolve<ISettings>();
+
+}
+<style type="text/css">
+    .seasonalInfluenzaVaccination .row-div {
+        float: left;
+        width: 95%;
+        margin-bottom: 5px;
+    }
+
+    .seasonalInfluenzaVaccination input[type="text"] {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .left-float {
+        float: left;
+    }
+</style>
+<div class="seasonalInfluenzaVaccination">
+    <div class="row-div" style="height: 100px;">
+        <div style="margin-left: 40px; margin-top: 20px; float: left">
+            <img src="@settings.MediumLogoLocation"/>
+        </div>
+        <div style="margin-right: 40px; float: right; margin-top: 80px;">
+            <b><u>Seasonal Influenza Vaccination Consent</u></b>
+        </div>
+    </div>
+
+    <div class="row-div">
+        <div class="row-div readonly-input">
+            <div style="float: left; width: 40%;">
+                <b>Customer Id:</b>
+                <input type="text" style="width: 100px;" readonly="readonly" value="@Model.CustomerId" />
+            </div>
+        </div>
+        <div class="left-float">
+            <div class="left-float" style="width: 77px">Last Name:</div>
+            <div class="left-float" style="width: 200px">
+                <input type="text" style="width: 95%" readonly="readonly" value="@Model.CustomerName.LastName"/>
+            </div>
+        </div>
+        <div class="left-float">
+            <div class="left-float" style="width: 77px">First Name:</div>
+            <div class="left-float" style="width: 200px">
+                <input type="text" style="width: 95%" readonly="readonly" value="@Model.CustomerName.FirstName"/>
+            </div>
+        </div>
+        <div class="left-float">
+            <div class="left-float" style="width: 90px">Middle Name:</div>
+            <div class="left-float" style="width: 150px">
+                <input type="text" style="width: 95%" readonly="readonly" value="@Model.CustomerName.MiddleName"/>
+            </div>
+        </div>
+    </div>
+    <div class="row-div">
+        <div class="left-float">
+            <div class="left-float" style="width: 65px">Address:</div>
+            <div class="left-float" style="width: 250px">
+                <input type="text" style="width: 95%" readonly="readonly" value="@Model.Address.StreetAddressLine1 @(string.IsNullOrWhiteSpace(Model.Address.StreetAddressLine2) ? "" : Model.Address.StreetAddressLine2)"/>
+            </div>
+        </div>
+        <div class="left-float" style="width: 175px">
+            <div class="left-float" style="width: 35px">City:</div>
+            <div class="left-float" style="width: 140px">
+                <input type="text" style="width: 95%" readonly="readonly" value="@Model.Address.City"  />
+            </div>
+        </div>
+        <div class="left-float" style="width: 180px;">
+            <div class="left-float" style="width: 45px">State:</div>
+            <div class="left-float" style="width: 135px">
+                <input type="text" style="width: 95%" readonly="readonly" value="@Model.Address.State" />
+            </div>
+        </div>
+        <div class="left-float" style="width: 130px">
+            <div class="left-float" style="width: 26px">Zip:</div>
+            <div class="left-float" style="width: 100px">
+                <input type="text" style="width: 95%" readonly="readonly" value="@Model.Address.ZipCode"  />
+            </div>
+        </div>
+    </div>
+    <div class="row-div">
+        <div class="left-float" style="width: 200px;">
+            <div class="left-float" style="width: 85px">Date of Birth:</div>
+            <div class="left-float" style="width: 115px">@Html.TextBoxFor(m => m.DateofBirth, new { @class = "datePicker-dob", @style = "width:98%", @readonly = "readonly" })</div>
+        </div>
+        <div class="left-float" style="width: 190px;">
+            <div class="left-float" style="width: 41px">Temp</div>
+            <div class="left-float" style="width: 100px">
+                <input type="text" readonly="readonly" width="90%" />
+            </div>
+        </div>
+        <div class="left-float" style="width: 190px;">
+            <div class="left-float" style="width: 45px">MRN#:</div>
+            <div class="left-float" style="width: 100px">
+                <input type="text" readonly="readonly" width="90%" />
+            </div>
+        </div>
+        <div class="left-float" style="width: 200px;">
+            <div class="left-float" style="width: 50px">Gender:</div>
+            @{
+                var gender = ((Gender)Model.Gender).ToString();
+            }
+            <div class="left-float" style="width: 100px">
+                <input type="text" readonly="readonly" width="90%" value="@gender"/>
+            </div>
+        </div>
+    </div>
+    <div class="row-div" style="padding-top: 20px; padding-bottom: 20px;">
+        It has been recommended by ___________________________ MD/PA/DO/APN at ____________________________________ that I receive the seasonal influenza vaccination for the 2014-2015 influenza season. I have read, or have had read to me, the vaccine information sheet (VIS) concerning the 2014-2015 seasonal influenza vaccine and I have had an opportunity to ask any questions I have about it.
+    </div>
+    <div class="row-div">
+        <b>Please answer the following question:</b>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            1. Do you have a known sensitivity to any component of the influenza vaccine?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            2. Do you have sensitivity to latex?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            3. Are you sick today or do you have a fever?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            4. Have you been sick in the past two weeks?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            5. Are you allergic to chicken eggs, or egg products?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            6. Have you ever had an allergic reaction to a flu shot?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            7. Are you allergic to Themerosal (found in some cleaning product/contact solution)?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            8. Do you have a history of Guillian-Barre Syndrome or active neurological disorder?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            9. Are you pregnant, or do you think you may be pregnant?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 540px; padding-left: 40px;">
+            10. Do you have a blood clotting disorder, or are you taking blood thinning meds?
+        </div>
+        <div style="width: 100px; float: left;">____No</div>
+        <div style="width: 100px; float: left;">____Yes</div>
+    </div>
+
+    <div class="row-div" >
+        <b>** If “Yes” answered to any of the above, contact your healthcare provider prior to receiving this vaccine. ** </b>
+    </div>
+
+    <div class="section-withborder">
+        <div style="float: left; width: 5%;">
+            <div style="width: 20px; height: 20px; border: 2px solid #368BC1; float: left;">&nbsp;</div>
+        </div>
+        <div style="float: left; width: 85%;">I understand the risks and benefits of the seasonal influenza vaccinations as described and at this time I REQUEST to receive the vaccination. </div>
+    </div>
+
+    <div class="row-div" style="text-align: center;">
+        <b>** OR ** </b>
+    </div>
+    <div class="section-withborder">
+        <div class="row-div">
+            <div style="float: left; width: 5%;">
+                <div style="width: 30px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+            </div>
+            <div style="float: left; width: 85%;">I understand the risks and benefits of the seasonal influenza vaccinations as described and at this time I DECLINE to receive the vaccination.  </div>
+        </div>
+        <div class="row-div">
+            <div style="float: left; width: 5%;">
+                <div style="width: 30px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+            </div>
+            <div style="float: left; width: 85%;">I also understand that I may at any time change my mind and if the vaccine is available I may elect to receive it at that time.  </div>
+        </div>
+        <div class="row-div">
+            <b>
+                <u>I am declining for the following reasons:</u>
+            </b>
+        </div>
+        <div class="row-div">
+            <div style="float: left; width: 5%;">
+                <div style="width: 30px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+            </div>
+            <div style="float: left; width: 85%;">I have already been vaccinated for this season. (2014-2015) </div>
+            <div style="float: left; width: 650px; padding-left: 60px;">Clinic/Location where vaccinated ___________________________ Phone Number __________ </div>
+            <div style="float: left; width: 650px; padding-left: 100px;">Date vaccinated (estimate ok) ______________________ Left/Right Arm __________if known. </div>
+        </div>
+        <div class="row-div">
+            <div style="float: left; width: 5%;">
+                <div style="width: 20px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+            </div>
+            <div style="float: left; width: 85%;">I have Guillian-Barre or another medical condition that prevents me from receiving the vaccine.</div>
+        </div>
+        <div class="row-div">
+            <div style="float: left; width: 50%;">
+                <div style="float: left; width: 10%;">
+                    <div style="width: 20px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+                </div>
+                <div style="float: left;">I have an allergy to eggs.</div>
+            </div>
+            <div style="float: left; width: 49%">
+                <div style="float: left; width: 10%;">
+                    <div style="width: 20px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+                </div>
+                <div style="float: left; width: 80%">I am allergic to a component of the vaccine.</div>
+            </div>
+        </div>
+        <div class="row-div">
+            <div style="float: left; width: 50%;">
+                <div style="float: left; width: 10%;">
+                    <div style="width: 20px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+                </div>
+                <div style="float: left;">I do not wish to receive due to the side effects.</div>
+            </div>
+            <div style="float: left; width: 49%">
+                <div style="float: left; width: 10%;">
+                    <div style="width: 20px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+                </div>
+                <div style="float: left; width: 80%">I don’t believe in receiving vaccinations.</div>
+            </div>
+        </div>
+        <div class="row-div">
+            <div style="float: left; width: 50%;">
+                <div style="float: left; width: 10%;">
+                    <div style="width: 20px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+                </div>
+                <div style="float: left;">I decline to answer.</div>
+            </div>
+            <div style="float: left; width: 49%">
+                <div style="float: left; width: 10%;">
+                    <div style="width: 20px; height: 20px; border: 2px solid #F88017; float: left;">&nbsp;</div>
+                </div>
+                <div style="float: left; width: 80%">Other (specify) _______________________</div>
+            </div>
+        </div>
+    </div>
+    <div class="row-div">
+        <div style="width: 410px; float: left">
+            <div style="padding: 5px 0 5px 0px;">
+                Date: ________________ 
+            </div>
+            <div style="padding: 5px 0 5px 0px;">
+              Patient PRINTED Name: @Html.TextBoxFor(m=>m.CustomerName, new {@style="width:175px;"})
+            </div>
+            <div style="padding: 5px 0 5px 0px;">
+                Patient or Guardian Signature: _______________________                         
+            </div>
+            <div style="padding: 5px 0 5px 0px;">
+                Witness: __________________________________________                         
+            </div>
+        </div>
+        <div style="width: 371px; border: 1px solid black; float: right; padding: 10px;">
+            <div>FOR OFFICE USE ONLY</div>
+            <div>
+                Date: _________  Time: _______ 
+            </div>
+            <div>
+                Manufacturer: _______  Lot: ____   Exp: _____ 
+            </div>
+            <div>
+                Site: _______________________________ 
+            </div>
+            <div>
+                Printed Name: @Html.TextBoxFor(m=>m.CustomerName, new {@style="width:275px;"})
+            </div>
+            <div>
+                Signature: ____________________________ 
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section seasonalInfluenzaVaccination" style="page-break-before: always">
+    <div style='float: left; width: 97%; font-size: 12px;'>
+        <div class='row-div1 header-footer' style='font-size: 11px; display: none;'>
+            <div style='float: left; width: 200px;'>
+                <b>Customer Id:</b>@Model.CustomerId
+            </div>
+            <div style='float: left; width: 300px;'>
+                <b>Customer Name:</b>@Model.CustomerName.ToString()
+            </div>
+            <div style='float: right; width: 150px; text-align: right;'>
+                <b>Event Date:</b>@Model.EventDate.ToShortDateString()
+            </div>
+        </div>
+    </div>
+    <div class="section-withborder" style="margin-top: 40px">
+        <div class="row-div" style="text-align: center"><b>INFLUENZA VACCINE ADVERSE REACTIONS</b></div>
+        <div class="row-div">
+            Because influenza vaccine contains only non-infectious purified viral proteins, it cannot cause influenza. An occasional case of respiratory disease following immunization represents coincidental illnesses unrelated to influenza immunization. 
+        </div>
+        <div class="row-div">
+            <b>Local Symptoms:</b> Slight tenderness, redness or hardness at the site of injection lasting for 1 to 2 days may occur in less than one third of recipients. 
+        </div>
+        <div class="row-div">
+            <b>Systemic Symptoms: </b>Fever, malaise, myalgia, and other systemic symptoms occur infrequently and most often affect persons who have had no exposure to the influenza virus antigens in the vaccine (e.g., young children). These reactions generally begin 6 to 12 hours after immunization and can persist for 1 to 2 days. Immediate, presumable allergic reactions such as hives, angloedema, allergic asthma, or systemic anaphylaxis occur rarely after influenza immunization.  These reactions probably result from hypersensitivity reactions in people with severe egg allergy and such people should not be given influenza vaccine.  This includes people who develop hives, have swelling of the lips or tongue, or experience acute respiratory distress or collapse after eating eggs.  Peole with documented immunoglobulin E (IgE) mediated hypersensitivity to eggs, including those who have experienced occupational asthma or other allergic responses from occupational exposure to egg protein, may also be at increased risk of reactions from influenza vaccine.  Unlike the 1976-1977 swine influenza vaccine, subsequent vaccine prepared from other virus strains has not been clearly associated with an increased frequency of Guillian-Barre Syndrome (GBS). Even if GBS were a true side effect, the very low estimated risk of GBS is less than that of sever influenza, which could be prevented by vaccination.  Other neurological disorders, including encephalopathies, have been temporarily associated with influenza immunizations, but cause and effect has not been clearly established.
+        </div>
+        <div class="row-div">
+            THE VACCINE SHOULD NOT BE ADMINISTERED TO PEOPLE WITH ACUTE FEBRILE ILLNESSES UNTIL THEIR TEMPORARY SYMPTOMS HAVE ABATED.  HOWEVER, MINOR ILLNESSES WITH OR WITHUT FEVER SHOULD NOT CONTRAINDICATE THE USE OF INFLUENZA VACCINE, PARTICULARLY AMONG CHILDREN WITH A MILD UPPER RESPIRATORY TRACT INFECTION OR ALLERGIC RHINITIS.<b><u>CONTRAINDICATIONS: </u></b>INFLUENZA VIRUS IS PROPAGATED IN EGGS FOR THE PREPARATION OF INFLUENZA VIRUS VACCINE; THUS, THIS VACCINE SHOULD NOT BE ADMINISTERED TO ANYONE WITH A HISTORY OF HYPERSENSITIVITY TO ANY COMPONENT OF THE VACCINE INCLUDDING THIMEROSAL. 
+        </div>
+    </div>
+
+    <div class="section-withborder" style="margin-top: 40px">
+        <div class="row-div" style="text-align: center"><b>CONSENT FOR SERVICES, MEDICAL RECORDS AND HIPAA PRIVACY INFORMATION</b></div>
+        <div class="row-div">
+            I have read the adverse reactions associated with the influenza. A copy of the vaccine manufacturer’s drug information sheet is available on request.  Furthermore, I have also had an opportunity to ask questions about these immunizations. I believe the benefits outweigh the risks and I voluntarily assume full responsibility for any reactions that may result. I am requesting that the immunization(s) be given to me or the person named below for whom I am the legal guardian. I, for myself, my heirs, executors, personal representative and assigns, hereby release Matrix Medical Network Plus PC & Matrix Medical Network Plus PA, any corporation, Insurance Plan, physician and/or medical director and their respective affiliates, subsidiaries, divisions, directors, contractors, agents and employees, from any and all claims arising out of, in connection with or in any way related to my receipt of this or these immunization(s). Matrix Medical Network Plus PC & Matrix Medical Network Plus PA and the other aforementioned parties shall not at any time or to any extent whatsoever be liable, responsible, or in ay way accountable for any loss, injury, death or damage suffered or sustained by any person at any time in connections with or as a result of this vaccine program or the administration of the vaccines described above. 
+        </div>
+    </div>
+    <div class="row-div">
+        <div style="width: 350px; float: left;">
+            <div>
+                X<input type="text" style="width: 95%"    />
+            </div>
+            <div style="text-align: center">
+                Signature  / Legal Guardian 
+            </div>
+        </div>
+        <div style="width: 350px; float: right;">
+            <div>
+                <input type="text" style="width: 95%" />
+            </div>
+            <div style="text-align: center">
+                Date
+            </div>
+        </div>
+    </div>
+    <div class="row-div">
+        <div style="width: 350px; float: left;">
+            <div>
+                <input type="text" style="width: 95%" value="@Model.CustomerName"/>
+            </div>
+            <div style="text-align: center">
+                Print Name 
+            </div>
+        </div>
+        <div style="width: 350px; float: right;">
+            <div>
+                <input type="text" style="width: 95%" />
+            </div>
+            <div style="text-align: center">
+                Staff’s Signature 
+            </div>
+        </div>
+    </div>
+    <div style='float: left; width: 97%; font-size: 12px;margin-top: 10px;'>
+        <div class='row-div1 header-footer' style='font-size: 11px; display: none;'>
+            <div style='float: left; width: 200px;'>
+                <b>Customer Id:</b>@Model.CustomerId
+            </div>
+            <div style='float: left; width: 300px;'>
+                <b>Customer Name:</b>@Model.CustomerName.ToString()
+            </div>
+            <div style='float: right; width: 150px; text-align: right;'>
+                <b>Event Date:</b>@Model.EventDate.ToShortDateString()
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

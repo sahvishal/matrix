@@ -1,0 +1,315 @@
+﻿@using Falcon.App.DependencyResolution;
+@using Falcon.App.Core.Application;
+@model Falcon.App.Core.Operations.ViewModels.EventStaffAssignmentListModel
+@{
+    ViewBag.Title = "Staff Schedule and Assignments";
+    var currentOrgRole = IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole;
+}
+<link href="/Content/Styles/fullcalendar.css" rel="stylesheet" type="text/css" />
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<div style="float: left; width: 45%;">
+    <h1>
+        Staff Schedule and Assignments
+    </h1>
+</div>
+<div style="float: right; width: 45%; text-align: right;display: inline">
+    <a style="float: right;" href="javascript:openForPrint(); void(0);">
+        <h4 style="padding-top: 10px;">
+            Print
+        </h4>
+    </a>
+    @if (!currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.Technician))
+    {
+        <a style="float: right; padding-top: 10px; padding-right: 10px;" target="_blank" href="/Operations/ExportableReports/StaffEventSchedule?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV</a>
+    }
+</div>
+@if (!currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.Technician) ||
+    IoC.Resolve<Falcon.App.Core.Users.ITechnicianRepository>().IsTeamLead(currentOrgRole.OrganizationRoleUserId))
+{
+    <div id="list-filter" style="margin-bottom: 20px; clear: both;">
+        @{Html.BeginForm("Index", "Schedule", FormMethod.Get);}
+        <h2>
+            Search <span style="float: right">
+                Switch View: <a href="#" onclick="reRenderView('Staff'); return false;">
+                    Staff
+                </a>| <a href="#" onclick="reRenderView('Event'); return false;">Event </a>
+            </span>
+        </h2>
+        @Html.Partial("EventStaffAssignmentEditModelFilter", new ViewDataDictionary(Model.Filter))
+        @{Html.EndForm();}
+    </div>
+}
+<div id="calendar" style="clear:both;">
+</div>
+<div id="edit-dialog" style="display: none;">
+</div>
+<script type="text/javascript" src="/Scripts/fullcalendar.min.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="/Scripts/json2.min.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript">
+
+    var viewType = '@(Model.Filter.DefaultView)';
+    function reRenderView(view){
+        viewType = view;
+        $('#calendar').fullCalendar('rerenderEvents');
+    }
+
+    $(document).ready(function () {
+        $('#calendar').fullCalendar({
+            theme: true,
+            defaultView: '@(Model.Filter.DefaultCalendarView)',
+            month: @(Model.Filter.Month - 1),
+            year: @(Model.Filter.Year),
+            date: 1,
+
+            header: {
+                left: 'month,basicWeek,basicDay',
+                center: 'title',
+                right: 'today prev,next'
+            },
+
+            lazyFetching: true,
+            eventSources: [
+            {
+                events: function (start, end, callback) {
+                    $.ajax({
+                        url: '/Operations/Schedule/GetStaffScheduleFor?Date=' + getDate() + '&Month=' + getMonth() + '&Year=' + getYear() + '&PodId=@(Model.Filter.PodId)&StaffId=@(Model.Filter.StaffId)&DefaultView=' + viewType + '&DefaultCalendarView=@(Model.Filter.DefaultCalendarView)',
+                        dataType: 'json',
+                        data: '{}',
+                        type: 'POST',
+                        success: function (events) {
+                            //debugger;
+                            callback(events);
+                        },
+                        error: function(xmlHttpRequest) {
+                            if (xmlHttpRequest.status == 401) {
+                                alert("You do not have the permission to edit.");
+                            }
+                        }
+                    });
+
+                    changeFilterValues();
+                },
+                backgroundColor: '#6eadc5',
+                textColor: 'white'
+            }],
+
+            eventRender: function (event, element) {
+                if(viewType == 'Event'){
+                    RenderforEventView(event, element);
+                }
+                else if(viewType == 'Staff'){
+                    RenderforStaffView(event, element);
+                }
+
+            },
+            eventClick: function (calEvent, jsEvent, view) {
+
+                //highlight event selected
+                $(this).css('border-color', 'red');
+                @if (!currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.Technician) ||
+                        IoC.Resolve<Falcon.App.Core.Users.ITechnicianRepository>().IsTeamLead(IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.OrganizationRoleUserId))
+                {
+                <text>
+                openStaffAssignmentEditDialog(calEvent);
+                </text>
+                }
+            }
+        }); //fullcalendar
+    });
+
+    function RenderforEventView(event, element){
+        var htmlEvent = $("#eventInfo").tmpl(event);
+        element.html(htmlEvent);
+
+        element.qtip({
+
+            content: {
+                title: "[" + event.Id + "] - " + event.title,
+                text: $("#podInfo").tmpl(event).html()
+            }
+        });
+    }
+
+    function RenderforStaffView(event, element){
+        var htmlEvent = $("#staffInfo").tmpl(event);
+        element.html(htmlEvent);
+
+        element.qtip({
+
+            content: {
+                title: "[" + event.Id + "] - " + event.title,
+                text: $("#eventInfo").tmpl(event)
+            }
+        });
+    }
+
+</script>
+<script type="text/javascript" language="javascript">
+    function openForPrint() {
+        window.open('/Operations/Schedule/GenerateCalendarPdf?Date=' + getDate() + '&Month=' + getMonth() + '&Year=' + getYear() + '&PodId=@(Model.Filter.PodId)&StaffId=@(Model.Filter.StaffId)&DefaultView=' + viewType + '&DefaultCalendarView=' + getViewName() +'&RoleId=@(IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.GetSystemRoleId)', "Print_Calendar", "toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=900,height=700");
+    }
+
+    function getViewName() {
+        var view = $('#calendar').fullCalendar('getView');
+        return view.name;
+    }
+
+    function getDisplayDate() {
+
+        var date = $('#calendar').fullCalendar('getDate');
+        if (typeof date.getDate != 'function')
+            date = new Date();
+        return date;
+    }
+
+    function getMonth() {
+        var date = getDisplayDate();
+        return Number(date.getMonth()) + 1;
+    }
+
+    function getDate() {
+        var date = getDisplayDate();
+        return date.getDate();
+    }
+
+    function getYear() {
+        var date = getDisplayDate();
+        return date.getFullYear();
+    }
+
+    function changeFilterValues() {
+        $("#DefaultView").val(viewType);
+        $("#DefaultCalendarView").val(getViewName());
+        $("#Month option[value=" + (getMonth()) + "]").attr("selected", true);
+        $("#Year").val(getYear());
+        $("#Date").val(getDate());
+    }
+
+    $('form').submit(function () {
+        $("#DefaultView").val(viewType);
+        $("#DefaultCalendarView").val(getViewName());
+        $("#Date").val(getDate());
+    });
+
+
+</script>
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $("#edit-dialog").dialog({
+            autoOpen: false,
+            height: 550,
+            width: 425,
+            modal: true,
+            title: "Edit Staff Assignements",
+            buttons: {
+                "Close": function () {
+                    $(this).dialog("close");
+                },
+                "Save Assignments": function () {
+                    saveAssignment();
+
+                }
+            }
+        });
+
+    }); //ready
+
+    function openStaffAssignmentEditDialog(calEvent) {
+        $.ajax({
+            type: "GET",
+            url: "/Operations/Schedule/Edit?id=" + calEvent.Id,
+            cache: false,
+            dataType: 'html',
+            error: function (xmlHttpRequest) {
+                if (xmlHttpRequest.status == 401) {
+                    alert("You do not have the permission to edit.");
+                }
+                else
+                    $("#edit-dialog").html(xmlHttpRequest.responseText);
+            },
+            success: function (data) {
+                $("#edit-dialog").html(data);
+                $("#edit-dialog").dialog("open");
+            }
+        });
+    }
+
+
+
+    function saveAssignment() {
+
+        assignedStaffParams = new Array();
+        $.each(window.assignedStaff, function (key, staff) {
+            assignedStaffParams.push(staff);
+        });
+
+        var jsonColleciton = JSON.stringify(assignedStaffParams);
+
+        var form = $("form"),
+                    eventId = form.find("[name=eventId]").val(),
+                    podId = form.find("[name=podId]").val(),
+                    jsonData = JSON.stringify({
+                        eventId: eventId,
+                        podId: podId,
+                        assigneStaff: assignedStaffParams
+                    });
+
+        //alert(jsonData);
+        $.ajax({
+            type: "POST",
+            url: "/Operations/Schedule/SaveEventStaffAssignments",
+            contentType: "application/json; charset=utf-8",
+            data: jsonData,
+            dataType: "json",
+            error: function (xmlHttpRequest) {
+                if (xmlHttpRequest.status == 401) {
+                    alert("You do not have the permission to edit.");
+                }
+                else
+                    $("#edit-dialog").html(xmlHttpRequest.responseText);
+            },
+            success: function (data) {
+
+                $("#edit-dialog").dialog("close");
+                window.location.reload();
+            }
+        });
+    }
+</script>
+<script id="podInfo" type="text/x-jquery-tmpl">
+    <div>
+        <div>
+            Pod: {{each Pods}} ${$value} {{/each}}
+        </div>
+        <div>
+            Team: {{if IsDefaultStaffAssignment}} (Default Assignment) {{/if}}
+            <ul>
+                {{each AssignedStaff}}
+                <li> ${FirstValue} (${SecondValue})  </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</script>
+<script id="staffInfo" type="text/x-jquery-tmpl">
+    <div>
+        <div>
+            Pod: {{each Pods}} ${$value} {{/each}}
+        </div>
+        <div>
+            Team: {{if IsDefaultStaffAssignment}} (Default Assignment) {{/if}}
+            <ul style="padding-left:14px;">
+                {{each AssignedStaff}}
+                <li style="padding-top: 2px;"> ${FirstValue} (${SecondValue})</li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</script>
+<script id="eventInfo" type="text/x-jquery-tmpl">
+    <span style="width:45%; display:block; float:left; padding-left:2px;"> [${Id}] </span>
+    <span style="width:45%; display:block; float:left; text-align: right;"> ${FilledAppintmentSlots} / ${TotalAppointmentSlots} </span>
+    <span style="width:95%; clear:both; padding-top:5px; padding-left:2px; display:block;">  ${title}  </span>
+</script>

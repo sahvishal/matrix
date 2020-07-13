@@ -1,0 +1,201 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.CallQueueExcludedCustomerReportModelFilter
+<h2>
+    Search Records
+</h2>
+
+<style type="text/css">
+    .required-filter {
+        color: red;
+    }
+</style>
+<div style="padding-left: 5px; overflow: hidden;">
+
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Health Plan:<span class="required-filter">*</span>
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:90%;", @onchange = "setCampaignFilter(this);" })
+        @if (Model.HealthPlanId <= 0)
+        {
+            <br /><span class="small-text">(Please select Health Plan)</span>
+        }
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Customer Id
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.CustomerId)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Member Id
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.MemberId)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Zip Code
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.ZipCode)
+        </div>
+    </div>
+
+</div>
+<div style="padding-left: 5px; padding-top:10px; overflow: hidden;" class="filter">
+    <div class="editor-column" style="width: 35%">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllCustomTags(), new { @multiple = "multiple", @style = "width: 300px" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div>
+            <div class="small-text">
+                Campaign:
+            </div>
+            <div>
+                @Html.DropDownListFor(m => m.CampaignId, DropDownHelper.GetCampaignsForHealthPlan(Model.HealthPlanId), new { @id = "campaignFilter", @style = "width: 180px", @disabled = "disabled" })
+            </div>    
+        </div>
+        <div>
+            <div class="small-text">
+                Direct Mail:
+            </div>
+            <div>
+                @if (Model.CampaignId > 0)
+                {
+                    @Html.DropDownListFor(m => m.DirectMailDate, DropDownHelper.GetDirectMailDate(Model.CampaignId), new { @id = "mailDateFilter", @style = "width: 180px" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.DirectMailDate, DropDownHelper.GetDirectMailDate(Model.CampaignId), new { @id = "mailDateFilter", @style = "width: 180px", @disabled = "disabled" })  
+                } 
+            </div>
+        </div>
+    </div>
+    <div class="editor-column" style="margin-top: 10px; width: 20%;">
+        <div style="float: left;">
+            @Html.CheckBoxFor(m => m.BookedAppointment) Booked Appointment
+        </div>
+        <div style="float: left;">
+            @Html.CheckBoxFor(m => m.IsEligible) Not Eligible
+        </div>
+        <div style="float: left;">
+            @Html.CheckBoxFor(m => m.DoNotContact) Do Not Contact
+        </div>
+        <div style="float: left;">
+            @Html.CheckBoxFor(m => m.InCorrectPhoneNumber) InCorrect Phone Number
+        </div>
+    </div>
+    <div class="editor-column">
+
+    </div>
+    <div class="editor-column">
+    </div>
+    <div class="editor-column">
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div id="divNote" style="padding-top:10px;">
+        <div style="float: left; width: 35px; color: #287AA8; font-weight: bold;">
+            Note:
+        </div>
+        <div style="float: left; width: 520px; color: #287AA8; padding-right: 15px;">
+            <span style="width: 10px;">&#8224;&nbsp;</span> <span style="width: 350px;">
+                If customer id or member id is entered, no other mandatory fields are required.<br />
+            </span>
+        </div>
+    </div>
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "CallQueueExcludedCustomerReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+<script type="text/javascript">
+    function setCampaignFilter(element) {
+        if ($(element).val() !== "-1") {
+            $("#campaignFilter").attr("disabled", true);
+            $.ajax({
+                url: "/CallCenter/Campaign/GetCampaignsForHealthPlan",
+                type: "POST",
+                data: {
+                    healthPlanId: $(element).val()
+                },
+                success: function (results) {
+                    $("#campaignFilter").html("");
+                    if (results != null && results.length > 0) {
+                        var options = '';
+                        for (var index = 0; index < results.length; index++) {
+                            options += '<option value="' + results[index].Value + '">' + results[index].Text + '</option>';
+                        }
+                        $("#campaignFilter").html(options);
+                        $("#campaignFilter").removeAttr("disabled");
+                    }
+                },
+                error: function () {
+
+                }
+            });
+        } else {
+            $("#campaignFilter").html('<option value="-1">-- Select --</option>');
+            $("#campaignFilter").attr("disabled", true);
+            $("#mailDateFilter").html('<option value="-1">-- Select --</option>');
+            $("#mailDateFilter").attr("disabled", true);
+        }
+    }
+
+    $("#campaignFilter").change(function () {
+
+        if ($(this).val() == "-1") {
+            $("#mailDateFilter").html('<option value="-1">-- Select --</option>');
+            $("#mailDateFilter").attr("disabled", true);
+        } else {
+
+            $.ajax({
+                url: "/CallCenter/Campaign/GetDirectMailDateForCampaign",
+                type: "POST",
+                data: {
+                    campaignId: $(this).val()
+                },
+                success: function (results) {
+                    $("#mailDateFilter").html("");
+                    if (results != null && results.length > 0) {
+                        var options = '';
+                        for (var index = 0; index < results.length; index++) {
+                            options += '<option value="' + results[index].Value + '">' + results[index].Text + '</option>';
+                        }
+                        $("#mailDateFilter").html(options);
+                        $("#mailDateFilter").removeAttr("disabled");
+                    }
+
+                },
+                error: function () {
+                    $("#mailDateFilter").html('<option value="-1">-- Select --</option>');
+                    $("#mailDateFilter").attr("disabled", true);
+                }
+            });
+
+        }
+    });
+
+    $(document).ready(function () {
+
+        if ($("#HealthPlanId").val() !== "-1") {
+            $("#campaignFilter").removeAttr("disabled");
+        } else {
+            $("#campaignFilter").attr("disabled", true);
+        }
+
+        @if (Model.DirectMailDate.HasValue)
+        {
+           <text>$("#mailDateFilter").val('@Model.DirectMailDate.Value.ToString("MM/dd/yyyy")')</text>
+        }
+    });
+</script>

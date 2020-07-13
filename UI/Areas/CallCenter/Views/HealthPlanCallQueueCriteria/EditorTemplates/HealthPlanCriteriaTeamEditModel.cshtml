@@ -1,0 +1,51 @@
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.CallCenter.ViewModels.HealthPlanCriteriaTeamEditModel
+
+<tr>
+    <td>
+        @Model.Name
+        @Html.HiddenFor(m => m.Name)
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.IsFillEventCallQueue)
+        @Html.HiddenFor(m => m.CriteriaId)
+        @Html.HiddenFor(m => m.CallQueueId)
+        @Html.HiddenFor(m => m.HealthPlanId)
+        @Html.HiddenFor(m => m.IsStartDateEditable)
+        @Html.HiddenFor(m => m.IsEdited)
+    </td>
+    <td>
+        @if (Model.IsStartDateEditable)
+        {
+            @Html.TextBoxFor(m => m.StartDate, new { @class = "datePicker teamstartDate", @style = "width:100px;" })
+            @Html.ValidationMessageFor(m => m.StartDate)
+        }
+        else
+        {
+            @Model.StartDate.ToString("MM/dd/yyyy");
+            @Html.HiddenFor(m => m.StartDate)
+        }
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.EndDate, new { @class = "datePicker teamEndDate", @style = "width:100px;" })
+        @Html.ValidationMessageFor(m => m.EndDate)
+    </td>
+    <td>
+        @if (!Model.Agents.IsNullOrEmpty())
+        {
+            <a class="assignedAgentInfo">View</a>
+            <div class="assignedAgentInfoText" style="width: 320px; display: none;">
+                @foreach (var agent in Model.Agents)
+                {
+                    <div style="width: 150px; float: left;">
+                        @agent
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <a class="assignedAgentInfo">View</a>
+            <div class="assignedAgentInfoText" style="display: none;">No Agents</div>
+        }
+    </td>
+</tr>

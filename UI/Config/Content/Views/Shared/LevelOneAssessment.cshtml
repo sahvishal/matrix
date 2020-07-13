@@ -1,0 +1,1372 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentEditModel
+@{
+   
+
+    long[] HMSeniorVisitQuestions = { 488, 489, 490 };
+    long[] MedicationHospitalizationQuestions = { 491, 492, 493, 551, 494, 495, 496 };
+    long[] CognitiveQuestions = { 497, 498, 499, 500, };
+    long[] ContinenceQuestions = { 501, 502, 503, 504, 505, 506, };
+    long[] HearingVisionQuestions = { 507, 508, 509, 510, 511, 512, 513, 514, 515 };
+    long[] MobilityVisionQuestions = { 516, 517, 518, 519, 520, 521, 522, 523, 524 };
+    long[] QualityVersionQuestions = { 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 552 };
+    long[] AnnualExamsQuestions = { 547, 548, 549, 550 };
+
+    
+    var isAnyHMSeniorVisitQuestions = Model.QuestionEditModels.Any(x => HMSeniorVisitQuestions.Contains(x.QuestionId));
+    var isAnyMedicationHospitalizationQuestions = Model.QuestionEditModels.Any(x => MedicationHospitalizationQuestions.Contains(x.QuestionId));
+    var isAnyCognitiveQuestions = Model.QuestionEditModels.Any(x => CognitiveQuestions.Contains(x.QuestionId));
+    var isAnyContinenceQuestions = Model.QuestionEditModels.Any(x => ContinenceQuestions.Contains(x.QuestionId));
+    var isHearingVisionQuestions = Model.QuestionEditModels.Any(x => HearingVisionQuestions.Contains(x.QuestionId));
+    var isMobilityVisionQuestions = Model.QuestionEditModels.Any(x => MobilityVisionQuestions.Contains(x.QuestionId));
+    var isQualityVersionQuestions = Model.QuestionEditModels.Any(x => QualityVersionQuestions.Contains(x.QuestionId));
+    var isAnnualExamsQuestions = Model.QuestionEditModels.Any(x => AnnualExamsQuestions.Contains(x.QuestionId));
+
+    var breakAtMobility = isAnyHMSeniorVisitQuestions && isAnyMedicationHospitalizationQuestions && isAnyContinenceQuestions && isHearingVisionQuestions && isMobilityVisionQuestions;
+    var breakAtQualityLife = isAnyMedicationHospitalizationQuestions && isHearingVisionQuestions && isMobilityVisionQuestions && isQualityVersionQuestions && !breakAtMobility;
+    var breakAtAnnualExam = false;
+    
+    if (!breakAtQualityLife && !breakAtMobility)
+    {
+        breakAtQualityLife = (isAnyCognitiveQuestions || isAnyMedicationHospitalizationQuestions || isAnyContinenceQuestions) && (isHearingVisionQuestions || isMobilityVisionQuestions) && isQualityVersionQuestions;
+    }    
+
+    if (breakAtMobility)
+    {
+        breakAtAnnualExam = isQualityVersionQuestions && isAnnualExamsQuestions;
+    }
+
+    bool htmlPageBreakBox = ViewData["IsPrintable"] != null && Convert.ToBoolean(ViewData["IsPrintable"]) == true ? true : false;
+    string customerName = ViewData["CustomerName"] != null ? Convert.ToString(ViewData["CustomerName"]) : string.Empty;
+    string eventDate = ViewData["EventDate"] != null ? Convert.ToString(ViewData["EventDate"]) : string.Empty;
+
+}
+
+
+@{
+
+    <div style="float: left; width: 99%; margin-top: 10px; margin-bottom: 10px;">
+        <b>Level 1 Assessment</b>
+    </div>
+    if (isAnyHMSeniorVisitQuestions)
+    {
+        <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+                <u><b>HPI: HM &#8211; Senior Visit</b></u>
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-488" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-488" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Will a caregiver accompany to your visit?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="488" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-489" onclick="SetEnableDisableSingleQuetionsRadiobtn(490,false)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-489" onclick="SetEnableDisableSingleQuetionsRadiobtn(490,true)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Are you the primary historian?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="489" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    Who is the primary historian for the patient?
+                </div>
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Patient" name="question-490" />
+                        Patient
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Family member" name="question-490" />
+                        Family member
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Caregiver" name="question-490" />
+                        Caregiver
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="490" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+        </div>
+    }
+    if (isAnyMedicationHospitalizationQuestions)
+    {
+        <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+                <u><b>Medication and Hospitalization</b></u>
+            </div>
+            <div class="sequence-block alternate-color" style="padding-bottom:0px">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-491" onclick="SetEnableDisableSingleQuetionsRadiobtn(492, true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-491" onclick="SetEnableDisableSingleQuetionsRadiobtn(492, false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have any concerns regarding your medication?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="491" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio" style="padding: 0px; margin-bottom: 10px;">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Dose" name="question-492" />
+                        Dose
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Allergy" name="question-492" />
+                        Allergy
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Use" name="question-492" />
+                        Use
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="492" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-493" onclick="SetEnableDisableHospitalizedOvernight(true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-493" onclick="SetEnableDisableHospitalizedOvernight(false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you been hospitalized overnight in the last 90 days?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="493" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>For How many days(0, 1, 2 etc)?</span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="551" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>What was the date(s) of the hospitalization?</span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="494" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-495" onclick="SetEnableDisableSingleQuetionsText(496,true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-495" onclick="SetEnableDisableSingleQuetionsText(496,false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you been to the Emergency Department or an Urgent Care Clinic in the 90 days?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="495" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>For What?</span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="496" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+        </div>
+    }
+    if (isAnyCognitiveQuestions)
+    {
+        <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+                <u><b>Cognitive</b></u>
+            </div>
+            <div class="sequence-block alternate-color" style="padding-bottom:0px">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-497" onclick="SetEnableDisableSingleQuetionsRadiobtn(498,true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-497" onclick="SetEnableDisableSingleQuetionsRadiobtn(498,false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have any memory problems?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="497" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" name="question-498" ctrl_answer="Short term" />Short term
+                    </span>
+                    <span>
+                        <input type="radio" name="question-498" ctrl_answer="Long term" />Long term
+                    </span>
+                    <span>
+                        <input type="radio" name="question-498" ctrl_answer="Dementia" />Dementia
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="498" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-499" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-499" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Are the memory problems worsening over the past year?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="499" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-500" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-500" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you been depressed or lost interest in normal activities in the past 2 weeks?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="500" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+        </div>
+    }
+
+    if (isAnyContinenceQuestions)
+    {
+        <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+                <u><b>Continence</b></u>
+            </div>
+            <div class="sequence-block alternate-color" style="padding-bottom:0px">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-501" onclick="SetEnableDisableDifficultyHoldingUrineQuestions(true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-501" onclick="SetEnableDisableDifficultyHoldingUrineQuestions(false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have difficulty holding your urine?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="501" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Mild" name="question-502" />
+                        Mild
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Moderate" name="question-502" />
+                        Moderate
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Urinate while asleep" name="question-502" />
+                        Urinate while asleep
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="502" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>If you have difficulty holding you urine, how many times in a 24 hour hour period due you lose your urine(0-10)?</span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="503" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-504" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-504" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    If you have difficulty holding you urine, do you wear pads?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="504" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio" style="padding-bottom:0px">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-505" onclick="SetEnableDisableSingleQuetionsRadiobtn(506, false)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-505" onclick="SetEnableDisableSingleQuetionsRadiobtn(506, true)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Are your daily bowel habits normal?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="505" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span style="float:left;width:420px;">
+                        <input type="radio" ctrl_answer="Constipated/hard and difficult passing stool" name="question-506" />
+                        Constipated/hard and difficult passing stool
+                    </span>
+                    <span style="float: left; width:220px;">
+                        <input type="radio" ctrl_answer="Loose/not firm" name="question-506" />
+                        Loose/not firm
+                    </span>
+                    <span style="float: left; width:592px;">
+                        <input type="radio" ctrl_answer="Incontinent/unable to control when you have a bowel movement" name="question-506" />
+                        Incontinent/unable to control when you have a bowel movement
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="506" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+        </div>
+    }
+
+    if (isHearingVisionQuestions)
+    {
+        <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+                <u><b>Hearing and vision</b></u>
+            </div>
+            <div class="sequence-block alternate-color" style="padding-bottom:0px">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>When was your last eye exam (month-day-year)?</span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+
+                <input type="text" style="display: none" class="questionid" value="507" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-508" onclick="SetEnableDisableSingleQuetionsRadiobtn(509, true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-508" onclick="SetEnableDisableSingleQuetionsRadiobtn(509, false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you wear glasses or contacts?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="508" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Contacts" name="question-509" />
+                        Contacts
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Glasses" name="question-509" />
+                        Glasses
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="509" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color" style="padding-bottom:0px">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-510" onclick="SetEnableDisableSingleQuetionsRadiobtn(511, true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-510" onclick="SetEnableDisableSingleQuetionsRadiobtn(511, false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    <span>Do you have any new vision problems?</span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="510" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Near vision" name="question-511" />
+                        Near vision
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Far vision" name="question-511" />
+                        Far vision
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="511" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color" style="padding-bottom:0px">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-512" onclick="SetEnableDisableSingleQuetionsRadiobtn(513, true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-512" onclick="SetEnableDisableSingleQuetionsRadiobtn(513, false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have any new hearing problems?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="512" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio" style="padding-bottom:0px">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Normal" name="question-513" />
+                        Normal
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Mild hearing loss" name="question-513" />
+                        Mild hearing loss
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="513" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-514" onclick="SetEnableDisableSingleQuetionsRadiobtn(515, true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-514" onclick="SetEnableDisableSingleQuetionsRadiobtn(515, false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you noticed any loss of hearing?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="514" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-515" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-515" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    If yes, do you use any hearing aids?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="515" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+        </div>
+    }
+    if (isMobilityVisionQuestions)
+    {
+        if (htmlPageBreakBox && breakAtMobility)
+        {
+            <div class='row-div1 header-footer' style='font-size: 11px; display: none;'>
+                <div style='float: left; width: 200px;'>
+                    <b>Customer Id:</b>@Model.CustomerId
+                </div>
+                <div style='float: left; width: 300px;'>
+                    <b>Customer Name:</b>@customerName
+                </div>
+                <div style='float: right; width: 150px; text-align: right;'>
+                    <b>Event Date:</b>@eventDate
+                </div>
+            </div>
+            <div class='row-div1 header-footer' style='font-size: 11px; display: none; page-break-before: always;'>
+                <div style='float: left; width: 200px;'>
+                    <b>Customer Id:</b>@Model.CustomerId
+                </div>
+                <div style='float: left; width: 300px;'>
+                    <b>Customer Name:</b>@customerName
+                </div>
+                <div style='float: right; width: 150px; text-align: right;'>
+                    <b>Event Date:</b>@eventDate
+                </div>
+            </div>
+        }
+        <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+                <u><b>Mobility</b></u>
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-516" onclick="SetEnableDisableSingleQuetionsRadiobtn(517, true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-516" onclick="SetEnableDisableSingleQuetionsRadiobtn(517, false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you had a fall in the last 6 months?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="516" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Due to tripping on an object" name="question-517" />
+                        Due to tripping on an object
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Loss of balance" name="question-517" />
+                        Loss of balance
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="517" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-518" onclick="SetEnableDisableSingleQuetionsRadiobtn(519, true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-518" onclick="SetEnableDisableSingleQuetionsRadiobtn(519, false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    When you walk do you use an assistive device?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="518" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span style="float:left;width:175px;">
+                        <input type="radio" ctrl_answer="Single point cane" name="question-519" />
+                        Single point cane
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="4 point cane" name="question-519" />
+                        4 point cane
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Front wheel walker" name="question-519" />
+                        Front wheel walker
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="4 wheel walker" name="question-519" />
+                        4 wheel walker
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Rollator/walker wi wheels" name="question-519" />
+                        Rollator/walker with wheels
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Wheelchair" name="question-519" />
+                        Wheelchair
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="519" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio" style="padding-bottom: 10px;">
+                <div class="question-label-block" style="padding-left: 1%">
+                    What type of home do you live in?
+                </div>
+                <div class="front-radio-block-not-required" style="width: 89% !important;">
+                    <span>
+                        <input type="radio" ctrl_answer="Single-level Home" name="question-520" />
+                        Single-level Home
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Multi-level Home" name="question-520" />
+                        Multi-level Home
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Retirement center" name="question-520" />
+                        Retirement center
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer=" Assisted living" name="question-520" />
+                        Assisted living
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Nursing home" name="question-520" />
+                        Nursing home
+                    </span>
+                </div>
+
+                <input type="text" style="display: none" class="questionid" value="520" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-521" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-521" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have stairs in your home?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="521" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-522" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-522" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Can you go up and down several stairs?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="522" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-523" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-523" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you live alone?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="523" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-524" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-524" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Are you able to drive?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="524" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+        </div>
+    }
+    if (isQualityVersionQuestions)
+    {
+        if (htmlPageBreakBox && breakAtQualityLife)
+        {
+            <div class='row-div1 header-footer' style='font-size: 11px;'>
+                <div style='float: left; width: 200px;'>
+                    <b>Customer Id:</b>@Model.CustomerId
+                </div>
+                <div style='float: left; width: 300px;'>
+                    <b>Customer Name:</b>@customerName
+                </div>
+                <div style='float: right; width: 150px; text-align: right;'>
+                    <b>Event Date:</b>@eventDate
+                </div>
+            </div>
+            <div class='row-div1 header-footer' style='font-size: 11px; display: none; page-break-before: always;'>
+                <div style='float: left; width: 200px;'>
+                    <b>Customer Id:</b>@Model.CustomerId
+                </div>
+                <div style='float: left; width: 300px;'>
+                    <b>Customer Name:</b>@customerName
+                </div>
+                <div style='float: right; width: 150px; text-align: right;'>
+                    <b>Event Date:</b>@eventDate
+                </div>
+            </div>
+        }
+        <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+                <u><b>Quality of life</b></u>
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-525" onclick="SetEnableDisableSingleQuetionsRadiobtn(526,true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-525" onclick="SetEnableDisableSingleQuetionsRadiobtn(526,false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have any sleep problems?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="525" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Early awakening" name="question-526" />
+                        Early awakening
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Frequent awakening" name="question-526" />
+                        Frequent awakening
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer=" Unable to fall asleep" name="question-526" />
+                        Unable to fall asleep
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Sleeping too much" name="question-526" />
+                        Sleeping too much
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer=" Day/night reversal" name="question-526" />
+                        Day/night reversal
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="526" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-radio" style="padding-bottom: 10px;">
+                <div class="question-label-block" style="padding-left: 1%">
+                    How is your appetite?
+                </div>
+                <div class="front-radio-block-not-required" style="width: 81%;">
+                    <span>
+                        <input type="radio" ctrl_answer="Good" name="question-527" />
+                        Good
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Fair" name="question-527" />
+                        Fair
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="Poor" name="question-527" />
+                        Poor
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="527" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-528" onclick="SetEnableDisableQualityOfLifeWeightLoss(true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-528" onclick="SetEnableDisableQualityOfLifeWeightLoss(false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you lost any weight in the past year?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="528" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        How Many Pounds?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="529" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        When?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="530" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-531" onclick="SetEnableDisableQualityOfLifeConsistentPain(true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-531" onclick="SetEnableDisableQualityOfLifeConsistentPain(false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have any consistent pain or discomfort in any part of your body?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="531" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        If you do have pain, where is it at(arms, legs, joints, spine etc)?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="532" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        What would you rate your average daily pain scale out of 10?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="533" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-534" onclick="SetEnableDisableQualityOfLifeMedicationMotrin(true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-534" onclick="SetEnableDisableQualityOfLifeMedicationMotrin(false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you currently use any prescription pain medication other than Motrin/anti-inflammatory?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="534" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        No of Time?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="535" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        In how many week?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="536" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-537" onclick="SetEnableDisableQualityOfLifeMedicationAnxiety(true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-537" onclick="SetEnableDisableQualityOfLifeMedicationAnxiety(false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you currently use any prescription medication to treat anxiety, depression, or panic attacks?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="537" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        No of Time?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="538" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        In how many days/week?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="539" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="alternate-color validate-child-chkbox">
+                <div class="sequence-block" style="width: 60%;">
+                    <div class="front-radio-block" style="width: 26%">
+                        <span>
+                            <input type="radio" ctrl_answer="Yes" name="question-540" onclick="SetEnableDisableQualityOfLifeAnySwelling(true)" />
+                            Yes
+                        </span>
+                        <span>
+                            <input type="radio" ctrl_answer="No" name="question-540" onclick="SetEnableDisableQualityOfLifeAnySwelling(false)" />
+                            No
+                        </span>
+                    </div>
+                    <div class="question-label-block" style="width: 70%;">
+                        Do you have any swelling in your hands or feet?
+                    </div>
+                    <input type="text" style="display: none" class="questionid" value="540" />
+                    <input type="text" style="display: none" class="default-answer" />
+                    <input type="text" style="display: none" class="control-type" value="" />
+                </div>
+                <div class="sequence-block" style="width: 10%;">
+                    <input type="checkbox" ctrl_answer="Hands" />Hands
+                    <input type="text" style="display: none" class="questionid" value="541" />
+                    <input type="text" style="display: none" class="default-answer" />
+                    <input type="text" style="display: none" class="control-type" value="" />
+                </div>
+                <div class="sequence-block" style="width: 10%;">
+                    <input type="checkbox" ctrl_answer="Feet" />Feet
+                    <input type="text" style="display: none" class="questionid" value="552" />
+                    <input type="text" style="display: none" class="default-answer" />
+                    <input type="text" style="display: none" class="control-type" value="" />
+                </div>
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-542" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-542" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have any open wounds on your feet?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="542" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-543" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-543" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you have any numbness in your hands or feet?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="543" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-544" onclick="SetEnableDisableSingleQuetionsText(545, true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-544" onclick="SetEnableDisableSingleQuetionsText(545, false)" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you smoke?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="544" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color validate-child-text">
+                <div class="front-radio-block">
+                    &nbsp;
+                </div>
+                <div class="question-label-block">
+                    <span>
+                        How many cigs per day?
+                    </span>
+                    <span>
+                        <input type="text" style="width: 150px;" class="text-question" />
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="questionid" value="545" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-546" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-546" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Do you drink alcohol?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="546" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+
+        </div>
+
+    }
+    if (isAnnualExamsQuestions)
+    {
+         if (htmlPageBreakBox && breakAtAnnualExam)
+        {
+            <div class='row-div1 header-footer' style='font-size: 11px;'>
+                <div style='float: left; width: 200px;'>
+                    <b>Customer Id:</b>@Model.CustomerId
+                </div>
+                <div style='float: left; width: 300px;'>
+                    <b>Customer Name:</b>@customerName
+                </div>
+                <div style='float: right; width: 150px; text-align: right;'>
+                    <b>Event Date:</b>@eventDate
+                </div>
+            </div>
+            <div class='row-div1 header-footer' style='font-size: 11px; display: none; page-break-before: always;'>
+                <div style='float: left; width: 200px;'>
+                    <b>Customer Id:</b>@Model.CustomerId
+                </div>
+                <div style='float: left; width: 300px;'>
+                    <b>Customer Name:</b>@customerName
+                </div>
+                <div style='float: right; width: 150px; text-align: right;'>
+                    <b>Event Date:</b>@eventDate
+                </div>
+            </div>
+        }
+        <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+                <u><b>Annual exams</b></u>
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-547" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-547" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you had a stool sample test in the past year?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="547" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-548" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-548" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you had a Mammo test in the past year?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="548" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-549" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-549" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you had a PAP test in the past year?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="549" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+            <div class="sequence-block alternate-color">
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-550" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-550" />
+                        No
+                    </span>
+                </div>
+                <div class="question-label-block">
+                    Have you had a Upper of lower scope of the bowels/intestines test in the past year?
+                </div>
+                <input type="text" style="display: none" class="questionid" value="550" />
+                <input type="text" style="display: none" class="default-answer" />
+                <input type="text" style="display: none" class="control-type" value="" />
+            </div>
+        </div>
+    }
+}

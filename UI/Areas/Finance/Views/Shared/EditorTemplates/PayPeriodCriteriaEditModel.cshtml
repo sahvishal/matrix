@@ -1,0 +1,58 @@
+﻿@using Falcon.App.Core.Finance.Enum
+@using Falcon.App.Core.Finance.ViewModels;
+@model PayPeriodCriteriaEditModel
+
+<div class='mini-container criteriadiv' style="border: 1px solid gray !important;">
+    @if (Model.TypeId == (long)PayPeriodCriteriaType.LessThanEqualTo)
+    {
+        <div style="float: left; margin-right: 20px; white-space:nowrap; width: 50%;" class="editor-row less_than">
+            <div class="editor-column" style="width: 27%">Less than equal to &nbsp;</div>
+            <div class="editor-column" style="width: 50%">
+                @Html.TextBoxFor(m => Model.MaxCustomer, new { @style = "width: 175px;", @maxlength = 10, @class = "criteriaclass maxCustomer", data_key = Model.Index })<br />
+                @Html.ValidationMessageFor(m => Model.MaxCustomer)
+            </div>
+        </div>
+    }
+
+    @if (Model.TypeId == (long)PayPeriodCriteriaType.GreaterThanEqualTo)
+    {
+        <div style="float: left; margin-right: 20px; white-space:nowrap; width: 50%;" class="greater_than">
+            <div class="editor-column" style="width: 31%">Greater than equal to &nbsp;</div>
+            <div class="editor-column" style="width: 50%">
+                @Html.TextBoxFor(m => Model.MinCustomer, new { @style = "width: 156px;", @maxlength = 10, @class = "criteriaclass minCustomer", data_key = Model.Index })<br />
+                @Html.ValidationMessageFor(m => Model.MinCustomer)
+            </div>
+        </div>
+    }
+
+    @if (Model.TypeId == (long)PayPeriodCriteriaType.Between)
+    {
+        <div style="float: left; margin-right: 20px; white-space:nowrap; width: 50%;" class="between">
+            <div class="editor-column" style="width: 14%">Between &nbsp;</div>
+            <div class="editor-column" style="width: 24%">
+                @Html.TextBoxFor(m => Model.MinCustomer, new { @style = "width: 100px;", @maxlength = 10, @class = "criteriaclass minCustomer", data_key = Model.Index })<br />
+                @Html.ValidationMessageFor(m => Model.MinCustomer)
+            </div>
+            <div class="editor-column" style="width: 4%">&nbsp; - &nbsp; </div>
+            <div class="editor-column" style="width: 24%">
+                @Html.TextBoxFor(m => Model.MaxCustomer, new { @style = "width: 100px;", @maxlength = 10, @class = "criteriaclass maxCustomer", data_key = Model.Index })<br />
+                @Html.ValidationMessageFor(m => Model.MaxCustomer)
+            </div>
+        </div>
+    }
+    <div style="float: left; margin-right: 20px; white-space:nowrap;">
+        <div class="editor-column" style="width: 30%">Amount &nbsp; $</div>
+        <div class="editor-column" style="width: 60%">
+            @Html.TextBoxFor(m => Model.Amount, new { @maxlength = 10, @class = "criteriaclass amount", data_key = Model.Index, @style = "width:100%" })<br />
+            @Html.ValidationMessageFor(m => Model.Amount)
+        </div>
+    </div>
+    &nbsp; [<a href="javascript:void(0);" data-key="@Model.Index" class="unAssignCriteria criteriaclass">Remove</a>]
+
+    <div style="display: none;">
+        @Html.HiddenFor(m => Model.Index)
+        @Html.HiddenFor(m => Model.PayPeriodCriteriaId)
+        @Html.HiddenFor(m => Model.PayPeriodId)
+        @Html.HiddenFor(m => Model.TypeId)
+    </div>
+</div>

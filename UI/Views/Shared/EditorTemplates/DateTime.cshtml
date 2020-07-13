@@ -1,0 +1,12 @@
+﻿@model System.DateTime?
+
+
+<div class="editor-label">
+       @Html.LabelFor(m => m)  @Html.ValidationMessageFor(m => m)    
+</div>
+<div class="editor-field">
+    @Html.TextBoxFor(m => m, new { @class = "datePicker", @value=String.Format("{0:yyyy-MM-dd}", Model.HasValue ? Model : null) })    
+</div>
+
+
+

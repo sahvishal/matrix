@@ -1,0 +1,4 @@
+﻿<div class="pad-y-27 clearfix additional-que open" ng-if="childquestion.ControlType == displayControlTypes.TextBox">
+    <p class="top-buffer-2 bottom-buffer-0 pull-left" ng-bind="childquestion.Question"></p>
+    <input type="text" ng-blur="SaveSelectedObject(childquestion,'')" ng-model="childquestion.Answer" ng-disabled="childquestion.disable" class="pull-left left-buffer-10 form-control" />
+</div>

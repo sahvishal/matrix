@@ -1,0 +1,62 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Sales.ViewModels.CustomTagListModelFilter
+
+@{Html.BeginForm("ManageCustomTag", "CorporateAccount", FormMethod.Get);}
+<h2>
+    Search CustomTag
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 180px">
+        <div class="small-text">
+            Custom Tag
+        </div>
+        @Html.TextBoxFor(m => m.CustomTag, new { @style = "width:160px" })
+    </div>
+    <div class="editor-column" style="width:250px">
+        <div class="small-text">
+            Corporate Name
+        </div>
+        @Html.DropDownListFor(m => m.CorporateId, DropDownHelper.GetCorporateAccounts(), new { @style = "width:240px" })
+    </div>
+    <div class="editor-column" style="width:380px">
+        <div class="small-text">
+            &nbsp;
+        </div>
+        <div style="float: left; width: 25%">
+            <input type="radio" name="corporateType" @(!Model.EnabledTag && !Model.DisabledTag ? "checked" : "") onclick="setTagStatus(this, '');" />Show All
+        </div>
+        <div style="float: left; width: 22%">
+            <input type="radio" name="corporateType" @((Model.EnabledTag) ? "checked" : "") onclick="setTagStatus(this, 'EnabledTag');" />Active
+        </div>
+        <div style="float: left; width: 22%">
+            <input type="radio" name="corporateType" @((Model.DisabledTag) ? "checked" : "") onclick="setTagStatus(this, 'DisabledTag');" />Deactive
+        </div>
+        @Html.HiddenFor(m => m.EnabledTag)
+        @Html.HiddenFor(m => m.DisabledTag)
+    </div>
+    <div class="editor-column" style="padding-top: 10px; float: right; text-align: right">
+        @Html.ActionLink("Clear", "ManageCustomTag", "CorporateAccount") | @Html.SubmitButton("Search")
+    </div>
+</div>
+
+<script type="text/javascript">
+    function setTagStatus(radioBtn, hiddenBox) {
+
+        var enabledTag = $("#EnabledTag");
+        var disabledTag = $("#DisabledTag");
+
+        $(enabledTag).val(false);
+        $(disabledTag).val(false);
+
+        if ($(radioBtn).is(":checked")) {
+            if (hiddenBox == 'EnabledTag') {
+                $(enabledTag).val(true);
+            }
+            if (hiddenBox == 'DisabledTag') {
+                $(disabledTag).val(true);
+            }
+        }
+    }
+</script>
+
+@{Html.EndForm();}

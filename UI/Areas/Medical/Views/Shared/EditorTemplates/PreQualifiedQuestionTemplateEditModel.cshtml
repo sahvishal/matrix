@@ -1,0 +1,178 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Medical.ViewModels
+@model PreQualifiedQuestionTemplateEditModel
+
+<style type="text/css">
+    .grouptable-haf {
+        width: 95%;
+        margin: 10px 0px;
+        table-layout: fixed;
+    }
+
+        .grouptable-haf th, .grouptable-haf td {
+            text-align: left;
+        }
+
+            .grouptable-haf th.cbox {
+                width: 40px;
+            }
+</style>
+
+<div class="content-main-column" style="padding-left: 10px; width: 95%;">
+    @Html.HiddenFor(m => m.Id)
+    <div class="editor-row">
+        <div class="editor-column" style="width: 42%">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Name) @Html.ValidationMessageFor(m => m.Name)
+            </div>
+            @Html.TextBoxFor(m => m.Name, new { @style = "width:95%" })
+        </div>
+        <div class="editor-column">
+            <div class="editor-label">
+                Test @Html.ValidationMessageFor(m => m.TestId)
+            </div>
+            @Html.DropDownListFor(m => m.TestId, DropDownHelper.GetAllTest(), new { @onchange = "getQuestions(); getDependentTests();" })
+        </div>
+    </div>
+    <div class="editor-row" style="margin-top: 10px;">
+        <div class="editor-column" style="width: 42%">
+            <div class="editor-label">
+                Dependent Tests
+            </div>
+            @Html.ListBoxFor(m => m.DependentTestIds, DropDownHelper.GetDependentTests(Model.TestId), new { @multiple = "multiple", @style = "width: 340px" })
+        </div>        
+    </div>
+    <div class="editor-row" style="margin-top: 10px;">
+        <div class="editor-column">
+            @Html.CheckBoxFor(m => m.IsPublished) Is Published
+        </div>
+    </div>
+
+    <div id="checklist-Question-Container" style="clear: both;">
+        @Html.ValidationMessageFor(m => m.Questions)
+        <fieldset>
+            <legend>
+                <h2>
+                    Questions
+                </h2>
+            </legend>
+            <table id="templateQuestions">
+                @if (Model.Questions == null || !Model.Questions.Any())
+                {
+                    <tr>
+                        <td>Please select a test to display questions.</td>
+                    </tr>
+                }
+            </table>
+        </fieldset>
+    </div>
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script id="selectedQuestionsTemplate" type="text/x-jquery-tmpl">
+    <tr>
+        <td>
+            <input type="hidden" name="Questions.Index" value="${Key}" />
+            <input type="hidden" name="Questions[${Key}].Id" value="${Id}" />
+            <input type="hidden" name="Questions[${Key}].Question" value="${Question}" />
+            {{if IsSelected == 'True'}}
+                <input type="checkbox" name="Questions[${Key}].IsSelected" onchange="setQuestionChecked(this)" value="true" checked="checked" />
+            {{else}}
+                <input type="checkbox" name="Questions[${Key}].IsSelected" onchange="setQuestionChecked(this)" value="true" />
+            {{/if}}
+        </td>
+        <td>
+            <span>${Question}</span>
+        </td>
+    </tr>
+</script>
+<script type="text/javascript" language="javascript">
+    var questionList = new Array();
+    @if (Model.Questions != null && Model.Questions.Any())
+    {
+        int counter = 0;
+        foreach (var item in Model.Questions)
+        {
+            <text>
+            {
+                var question = new Object();
+                question.Id = '@item.Id';
+                question.Question = '@item.Question';
+                question.Key = '@counter';
+                question.IsSelected = '@item.IsSelected';
+                questionList.push(question);
+            }
+            </text>
+            counter++;
+        }
+        <text>renderTestQuestion();</text>
+    }
+    
+    $(document).ready(function () {
+
+    });
+
+    function SubmitQuestions() {
+        $("#Submit").click();
+    }
+
+    function getQuestions() {
+        var testId = $("#TestId").val();
+        questionList = new Array();
+        $.ajax({
+            url: "/Medical/PreQualifiedQuestion/GetQuestionByTestId?testId=" + testId,
+            type: "GET",
+            success: function (results) {
+                if (results != null && results.length > 0) {
+                    $.each(results, function (key, item) {
+                        var question = new Object();
+                        question.Id = item.Id;
+                        question.Question = item.Question;
+                        question.Key = item.Id;
+                        question.IsSelected = item.IsSelected;
+                        questionList.push(question);
+                    });
+                }
+                renderTestQuestion();
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function renderTestQuestion()
+    {
+        $("#templateQuestions tr").remove();
+        $.each(questionList, function (key, questionObj) {
+            $("#selectedQuestionsTemplate").tmpl(questionObj).appendTo("#templateQuestions");
+        });
+    }
+
+    function setQuestionChecked(checkbox) {
+        var isChecked = $(checkbox).is(':checked');
+        if(isChecked)
+            $(this).attr("checked",true);
+    }
+
+    function getDependentTests() {
+        var testId = $("#TestId").val();
+        questionList = new Array();
+        $.ajax({
+            url: "/Medical/PreQualifiedQuestion/GetDependentTests?testId=" + testId,
+            type: "GET",
+            success: function (results) {
+              
+                var options = "";
+                if (results != null && results.length > 0) {
+                    $.each(results, function (key, item) {
+                        options += '<option value="' + item.FirstValue + '">' + item.SecondValue + '</option>';
+                    });
+                }
+                $("#DependentTestIds").html(options);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+</script>

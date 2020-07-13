@@ -1,0 +1,203 @@
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.MemberStatusListModel
+@{
+    ViewBag.Title = "Health Plan Member Status Report";
+}
+<h1>Health Plan Member Status Report</h1>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script src="/Scripts/reportexportqueue.js"></script>
+<style>
+    #list-view th {
+        white-space: nowrap;
+    }
+</style>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("MemberStatusReport", "Reports", FormMethod.Get);}
+    @Html.Partial("MemberStatusListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 1000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/Scheduling/ReportsQueue/MemberStatusReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                Export CSV
+            </a>
+        }
+        else
+        {
+            <a target="_blank" href="/Scheduling/ExportableReports/MemberStatusReport?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <div style="float: left;clear: both;width: 950px;overflow-x: auto;padding-right: 10px;">
+        <table id="list-view" style="width: 200%;">
+            <tr>
+                <th>CustomerId</th>
+                <th>Customer Info</th>
+                <th>Additional Info</th>
+                <th>PCP Info</th>
+                <th>Event Info</th>
+                <th>Status</th>
+                <th>Call Details</th>
+                <th>Shipped Date</th>
+                <th>Total Mail/Call Count</th>
+                <th>Mail/Call Dates</th>
+
+            </tr>
+            @foreach (var customer in Model.Collection)
+            {
+                <tr style="width: 100%;">
+                    <td>
+                        @customer.CustomerId
+                    </td>
+                    <td>
+                        <b>Name: </b>@(customer.FirstName + (!string.IsNullOrEmpty(customer.MiddleName) ? " " + customer.MiddleName + " " : " ") + customer.LastName)<br />
+                        <b>Email: </b>@(string.IsNullOrEmpty(customer.Email) ? "N/A" : customer.Email)<br />
+                        <b>Phone: </b>@customer.PhoneHome<br />
+                        <b>Gender: </b>@customer.Gender<br />
+                        <b>DOB: </b> @(customer.DateofBirth.HasValue ? customer.DateofBirth.Value.ToString("MM/dd/yyyy") : "N/A")<br />
+                        <div>
+                            <b>Address: </b>@(customer.Address1 + (!string.IsNullOrEmpty(@customer.Address2) ? ", " + customer.Address2 : ""))<br />
+                            @customer.City, @customer.State - @customer.Zip
+                        </div>
+                        <b>Email: </b>@(string.IsNullOrEmpty(customer.Email) ? "N/A" : customer.Email)<br />
+                        <b>Tag: </b>@(string.IsNullOrEmpty(customer.Tag) ? "N/A" : customer.Tag)<br />
+                    </td>
+                    <td>
+                        <b>Member Id: </b>@(string.IsNullOrEmpty(customer.MemberId) ? "N/A" : customer.MemberId)<br />
+                        <b>Is Eligible: </b>@(string.IsNullOrEmpty(customer.IsEligible) ? "N/A" : customer.IsEligible)<br />
+                        <b>Is Targeted Member: </b>@customer.IsTargetedMember<br />
+                        <b>Activity: </b>@customer.Activity <br />
+                        <b>Custom Tag(s): </b>@(string.IsNullOrEmpty(customer.CustomTag) ? "N/A" : customer.CustomTag)<br />
+                        <b>Medicare Plan Name: </b>@(string.IsNullOrEmpty(customer.MedicarePlanName) ? "N/A" : customer.MedicarePlanName)<br />
+                        <b>HICN: </b>@(string.IsNullOrEmpty(customer.Hicn) ? "N/A" : customer.Hicn)<br />
+                        <b>MBI: </b>@(string.IsNullOrEmpty(customer.Mbi) ? "N/A" : customer.Mbi)<br />
+                        <b>Market: </b>@(string.IsNullOrEmpty(customer.Market) ? "N/A" : customer.Market)<br />
+                        <b>Group Name: </b>@(string.IsNullOrEmpty(customer.GroupName) ? "N/A" : customer.GroupName)<br />
+                        <b>ACES Id: </b>@(string.IsNullOrEmpty(customer.AcesId) ? "N/A" : customer.AcesId)<br />
+                        <b>Pre-Approved Test(s): </b>@(string.IsNullOrEmpty(customer.PreApprovedTest) ? "N/A" : customer.PreApprovedTest)<br />
+                        <b>Pre-Approved Package: </b>@(string.IsNullOrEmpty(customer.PreApprovedPackage) ? "N/A" : customer.PreApprovedPackage)<br />
+                        @if (customer.AdditionalFields != null && customer.AdditionalFields.Any())
+                        {
+                            foreach (var additionalField in customer.AdditionalFields)
+                            {
+                                <b>@additionalField.FirstValue: </b><span>@additionalField.SecondValue</span><br />
+                            }
+                        }
+                        <b>Predicted Zip</b>: @(string.IsNullOrEmpty(customer.PredictedZip) ? "N/A" : customer.PredictedZip)<br />
+                        <b>Product: </b>@customer.Product
+                    </td>
+                    <td>
+                        <div><b>Name: </b> @((string.IsNullOrEmpty(customer.PcpFirstName) && string.IsNullOrEmpty(customer.PcpLastName)) ? "N/A" : customer.PcpFirstName + " " + customer.PcpLastName)</div>
+                        <div><b>Address: </b>@(string.IsNullOrEmpty(customer.PcpAddress1) ? "N/A" : customer.PcpAddress1 + (string.IsNullOrEmpty(customer.PcpAddress2) ? ", " : ", " + customer.PcpAddress2 + ", ") + customer.PcpCity + ", " + customer.PcpState + ", " + customer.PcpZip)</div>
+                        <div><b>Fax: </b> @(string.IsNullOrEmpty(customer.PcpFax) ? "N/A" : customer.PcpFax)</div>
+                        <div><b>Phone: </b> @(string.IsNullOrEmpty(customer.PcpPhone) ? "N/A" : customer.PcpPhone)</div>
+                        <div><b>NPI: </b> @(string.IsNullOrEmpty(customer.PcpNpi) ? "N/A" : customer.PcpNpi)</div>
+                    </td>
+                    <td>
+                        @if (customer.EventDate.HasValue)
+                        {
+                            <span>
+                                <b>Event ID: </b>@customer.EventId<br />
+                                <b>Event Name :</b> @customer.EventName <br />
+                                <b>Address: </b>@(customer.EventAddress1 + (string.IsNullOrEmpty(customer.EventAddress2) ? ", " : ", " + customer.EventAddress2 + ", ") + customer.EventCity + ", " + customer.EventState + ", " + customer.EventZip)<br />
+                                <b>Event Date: </b>@customer.EventDate.Value.ToString("MM/dd/yyyy")<br />
+                                <b>Package :</b> @customer.Package<br />
+                                <b>Pod: </b>@(string.IsNullOrEmpty(customer.Pod) ? "N/A" : customer.Pod)<br />
+                                <b>Registration Date: </b>@(customer.RegistrationDate.HasValue ? customer.RegistrationDate.Value.ToString("MM/dd/yyyy") : "N/A")
+                            </span>
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </td>
+                    <td>
+                        <b>Scheduled Status: </b>@(string.IsNullOrEmpty(customer.ScheduledStatus) ? "N/A" : customer.ScheduledStatus)<br />
+                        <b>Completion Status: </b>@(string.IsNullOrEmpty(customer.CompletionStatus) ? "N/A" : customer.CompletionStatus)<br />
+                        <b>Current Status: </b>@(string.IsNullOrEmpty(customer.CurrentStatus) ? "N/A" : customer.CurrentStatus)<br />
+                        <b>Restriction Status: </b>@(string.IsNullOrEmpty(customer.RestrictionStatus) ? "N/A" : customer.RestrictionStatus)
+                    </td>
+                    <td>
+                        <b>Current Outbound Call Category: </b> @(string.IsNullOrEmpty(customer.CurrentOutboundCallCategory) ? "N/A" : customer.CurrentOutboundCallCategory)<br />
+                        <b>Current Outbound Call Outcome: </b>@(string.IsNullOrEmpty(customer.CurrentOutboundCallOutcome) ? "N/A" : customer.CurrentOutboundCallOutcome)<br />
+                        <b>Current Outbound Call Disposition: </b>@(string.IsNullOrEmpty(customer.CurrentOutboundCallDisposition) ? "N/A" : customer.CurrentOutboundCallDisposition)<br />
+                        <b>Do Not Contact Reason: </b>@(string.IsNullOrEmpty(customer.DoNotContactReason) ? "N/A" : customer.DoNotContactReason)<br />
+                        <b>Do Not Contact Reason Notes: </b>@(string.IsNullOrEmpty(customer.DoNotContactReasonNote) ? "N/A" : customer.DoNotContactReasonNote)
+                    </td>
+                    <td>
+                        <b>Customer Result Shipped Date: </b>@(customer.CustomerResultShipedDate.HasValue ? @customer.CustomerResultShipedDate.Value.ToString("MM/dd/yyyy") : "N/A")<br />
+                        <b>PCP Result Shipped Date: </b>@(customer.PCPResultShipedDate.HasValue ? @customer.PCPResultShipedDate.Value.ToString("MM/dd/yyyy") : "N/A")
+                    </td>
+                    <td>
+                        <b>Total Direct Mail Count: </b> @(customer.TotalDirectMailCount == 0 ? "N/A" : customer.TotalDirectMailCount.ToString())<br />
+                        <b>Total Inbound Call Count: </b>@(customer.TotalInboundCallCount == 0 ? "N/A" : customer.TotalInboundCallCount.ToString())<br />
+                        <b>Total Outbound Call Count: </b>@(customer.TotalOutboundCallCount == 0 ? "N/A" : customer.TotalOutboundCallCount.ToString())
+                    </td>
+                    <td>
+                        <span><b>Mail Date 1</b>: @(customer.DirectMailDate1.HasValue ? @customer.DirectMailDate1.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+                        <span><b>Mail Date 2</b>: @(customer.DirectMailDate2.HasValue ? @customer.DirectMailDate2.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+                        <span><b>Mail Date 3</b>: @(customer.DirectMailDate3.HasValue ? @customer.DirectMailDate3.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+                        <span><b>Mail Date 4</b>: @(customer.DirectMailDate4.HasValue ? @customer.DirectMailDate4.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+                        <span><b>Mail Date 5</b>: @(customer.DirectMailDate5.HasValue ? @customer.DirectMailDate5.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+
+                        <span><b>Call Date 1</b>: @(customer.OutreachCallDate1.HasValue ? @customer.OutreachCallDate1.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+                        <span><b>Call Date 2</b>: @(customer.OutreachCallDate2.HasValue ? @customer.OutreachCallDate2.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+                        <span><b>Call Date 3</b>: @(customer.OutreachCallDate3.HasValue ? @customer.OutreachCallDate3.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+                        <span><b>Call Date 4</b>: @(customer.OutreachCallDate4.HasValue ? @customer.OutreachCallDate4.Value.ToString("MM/dd/yyyy") : "N/A")</span><br />
+                        <span><b>Call Date 5</b>: @(customer.OutreachCallDate5.HasValue ? @customer.OutreachCallDate5.Value.ToString("MM/dd/yyyy") : "N/A")</span>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+                function () {
+                    $(this).removeClass('row-hover');
+                });
+        });
+        $('.donotcontact-infoimage').qtip({
+            position: {
+                my: 'left top'
+            },
+            content: {
+                title: function (api) {
+                    return $(this).parent().find('.notes-div-title').html();
+                },
+                text: function (api) {
+                    return $(this).parent().find('.notes-div-text').html();
+                }
+            },
+            style: {
+                width: '200px'
+            }
+        });
+    </script>
+
+}

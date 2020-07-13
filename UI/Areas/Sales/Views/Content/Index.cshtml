@@ -1,0 +1,190 @@
+﻿@model Falcon.App.Core.Sales.ViewModels.ContentListModel
+@{
+    ViewBag.Title = "Marketing Contents";
+}
+<h1>
+    Marketing Contents <span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New", "Create")
+    </span>
+</h1>
+@{Html.BeginForm("Index", "Content", FormMethod.Get);}
+<div id="list-filter">
+    @Html.Partial("ContentListModelFilter", Model.Filter)
+</div>
+@{Html.EndForm();}
+@if (Model.Collection == null || !Model.Collection.Any())
+{<br />
+    <br />
+    <h2>
+        No Records Found
+    </h2>
+}
+else
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Title
+            </th>
+            <th style="width: 50%;">
+                Summary
+            </th>
+            <th>
+                Content
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var item in Model.Collection)
+        {
+            <tr>
+                <td>@item.Title
+                </td>
+                <td style="width: 50%;">
+                    @if (item.Summary.Length > 130)
+                    {
+                        
+                        @(item.Summary.Substring(0, 127))
+                        <text>(<a class="summary-tip" href="javascript:void(0);">Mouse Over to View</a>)
+                        </text>
+                        <span style="display: none">
+                            <textarea rows="15" cols="40">@item.Summary</textarea>
+                        </span>
+                    }
+                    else
+                    {
+                        @item.Summary
+                    }
+                </td>
+                <td>
+                    <a onclick="preview(@item.Id);" class="preview-toggle" href="javascript:void(0);">Click
+                        to View </a>
+                    <img src="/App/Images/loading.gif" style="display: none;" class="preview-toggle" />
+                </td>
+                <td>
+                    <a href="/Sales/Content/Edit?id=@item.Id">Edit </a>
+                    <br />
+                    @if (item.IsActive)
+                    {
+                        <a href="javascript:void(0);" class="activate-deactivate-toggle" onclick="deactivate(@item.Id);">
+                            Deactivate </a>
+                    }
+                    else
+                    {
+                        <a href="javascript:void(0);" class="activate-deactivate-toggle" onclick="activate(@item.Id);">
+                            Activate </a>
+                    }
+                    <img src="/App/Images/loading.gif" style="display: none;" class="activate-deactivate-toggle" />
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <div id="preview-dialog-div">
+    </div>
+    
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+
+        $(document).ready(function () {
+            $("#preview-dialog-div").dialog({ autoOpen: false, modal: true, title: 'Preview', width: 500, height: 500 });
+            $("#preview-dialog-div").bind("dialogclose", function () { $("#preview-dialog-div").html(""); });
+        });
+
+        $('.summary-tip').qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: "Summary",
+                text: function (api) {
+                    return $(this).parent().find('span').html();
+                }
+            },
+            style: {
+                width: '400px'
+            }
+        });
+
+        function activate(id) {
+            $(".activate-deactivate-toggle").toggle();
+
+            $.ajax({ type: 'Post',
+                url: '/Sales/Content/Activate?id=' + id,
+                dataType: 'json', data: '{}',
+                success: function (result) {
+                    $(".activate-deactivate-toggle").toggle();
+                    alert(result.Message);
+
+                    if (result.RefreshWindow) {
+                        window.location.reload();
+                    }
+                },
+                error: function (arg1, arg2) {
+                    $(".activate-deactivate-toggle").toggle();
+                    if (arg1.status == 401) {
+                        alert('You do not have permission to perform the action!');
+                    }
+                    else
+                    alert("Some error occured while processing your request.");
+                }
+            });
+        }
+
+        function deactivate(id) {
+            var result = confirm("Are you sure about deactivating the content?");
+            if (!result) return;
+
+            $(".activate-deactivate-toggle").toggle();
+
+            $.ajax({ type: 'Post',
+                url: '/Sales/Content/Deactivate?id=' + id,
+                dataType: 'json', data: '{}',
+                success: function (result) {
+                    $(".activate-deactivate-toggle").toggle();
+                    alert(result.Message);
+
+                    if (result.RefreshWindow) {
+                        window.location.reload();
+                    }
+                },
+                error: function (arg1, arg2) {
+                    $(".activate-deactivate-toggle").toggle();
+                    if (arg1.status == 401) {
+                        alert('You do not have permission to perform the action!');
+                    }
+                    else
+                    alert("Some error occured while processing your request.");
+                }
+            });
+        }
+
+        function preview(id) {
+            $(".preview-toggle").toggle();
+
+            $.ajax({ type: 'Get',
+                url: '/Sales/Content/Preview?id=' + id,
+                dataType: 'json', data: '{}',
+                success: function (result) {
+                    $(".preview-toggle").toggle();
+                    $("#preview-dialog-div").html(result);
+                    $("#preview-dialog-div").dialog("open");
+                },
+                error: function (arg1, arg2) {
+                    $(".preview-toggle").toggle();
+                    if (arg1.status == 401) {
+                        alert('You do not have permission to perform the action!');
+                    }
+                    else
+                    alert("Some error occured while processing your request.");
+                }
+            });
+        }
+
+    </script>
+}

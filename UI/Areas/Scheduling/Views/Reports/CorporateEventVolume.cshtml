@@ -1,0 +1,25 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.EventVolumeListModel
+@{
+    ViewBag.Title = "Event Volume (Corporate Events)";
+}
+<h1>
+    Event Volume (Corporate Events)</h1>
+<div id="list-filter">
+    @{Html.BeginForm("CorporateEventVolume", "Reports", FormMethod.Get);}
+    @Html.Partial("EventVoulmeListModelFilter", new ViewDataDictionary(Model.Filter))
+    <div style="padding-left: 5px; overflow: hidden;">
+        <div class="editor-column" style="padding-top: 10px; float: right; text-align: right;">
+            @Html.ActionLink("Clear", "CorporateEventVolume", "Reports", new { showThisYear = true }, null) | @Html.SubmitButton("Search")
+        </div>
+    </div>
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Collection != null)
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Scheduling/ExportableReports/CorporateEventVolume?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>        
+    </div>
+}
+@Html.Partial("EventVolume", new ViewDataDictionary(Model))

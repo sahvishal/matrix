@@ -1,0 +1,42 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Finance.ViewModels.RefundRequestEditModel 
+<div class="float:left;" id="RefundRequestInputContainerDiv">
+    <div style="clear: both; padding-left: 40px;" class="editor-row">
+        <div class="editor-column" style="width: 55%;">
+            <div class="small-text">
+                @Html.LabelFor(m => m.RefundType)
+            </div>
+            @Html.DropDownListFor(m => m.RefundType, DropDownHelper.RefundTypes(Model.RefundType), new { disabled = "disabled" })
+        </div>
+        <div class="editor-column" style="width: 41%;">
+            <div class="small-text">
+            </div>
+            <b>@Html.LabelFor(m => m.RequestedRefundAmount): <span id="requested-refund-amount"
+                style="font-size: 12px">$@Model.RequestedRefundAmount
+            </span></b>
+        </div>
+    </div>
+    <div style="padding-left: 40px;" class="editor-row">
+        <div class="small-text">
+            @Html.LabelFor(m => m.Reason)
+        </div>
+        @Html.TextAreaFor(m => m.Reason, 6, 10, new { style = " width:340px;" })
+    </div>
+    @Html.HiddenFor(m => m.OrderId)
+    @Html.HiddenFor(m => m.RequestId)
+    @Html.HiddenFor(m => m.RequestedRefundAmount)
+</div>
+<script language="javascript" type="text/javascript">
+
+    function clearRefundRequestSection() {
+        $("textarea[id*='Reason']").val('');
+    }
+
+    function setRequestAmount(amount) {
+        $("input:hidden[id*='RequestedRefundAmount']").val(amount);
+        $("#requested-refund-amount").text("$" + amount);
+    }
+
+    $('form').submit(function () { $("select[id*='RefundType']").attr("disabled", ""); });
+
+</script>

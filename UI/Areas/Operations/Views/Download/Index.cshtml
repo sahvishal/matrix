@@ -1,0 +1,77 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Operations.ViewModels
+@model ExportableReportsQueueListModel
+@{
+    ViewBag.Title = "Download Reports";
+}
+
+<h1>Download Reports</h1>
+<div id="list-filter">
+    @{Html.BeginForm("Index", "Download", FormMethod.Get);}
+    @Html.Partial("ExportableReportsQueueFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Report
+            </th>
+            <th>
+                Requested On
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var reportQueue in Model.Collection)
+        {
+            <tr>
+                <td>@reportQueue.Name
+                </td>
+                <td>@reportQueue.RequestedDate.ToShortDateString()
+                </td>                
+                <td>@reportQueue.Status
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(reportQueue.DownloadUrl))
+                    {
+                        <a href="@reportQueue.DownloadUrl" target="_blank">Download</a>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div><h2>No Records found!</h2></div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}
+

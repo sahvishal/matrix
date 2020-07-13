@@ -1,0 +1,64 @@
+﻿{#param name=CurrentPackageId}
+<h3 class="orngbold14_default">
+    (1) Value Priced PreventionPAKS</h3>
+<table class="gridselectpackage" cellspacing="0" border="0">
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+        <td>
+            <span class="blkbold12_default">Package</span>
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td align="center">
+            <span class="blkbold12_default">Price</span>
+        </td>
+    </tr>
+    {#foreach $T as Package}
+    <tr class="row2 package-row">
+        <td class="package-select" valign="top">
+            {#if $T.Package.IsDisabled == true}
+                {#if $P.CurrentPackageId == $T.Package.Id}
+                <input type="radio" id="SelectPackageRadio" checked="checked" name="SelectPackageRadio" disabled="disabled" />
+                {#else}
+                <input type="radio" id="SelectPackageRadio" name="SelectPackageRadio" disabled="disabled" />
+                {#/if}
+            {#else}
+                {#if $P.CurrentPackageId == $T.Package.Id}
+                <input type="radio" id="SelectPackageRadio" checked="checked" name="SelectPackageRadio" onclick="javascript:SelectPackageRadioClick(this);" />
+                {#else}
+                <input type="radio" id="SelectPackageRadio" name="SelectPackageRadio" onclick="javascript:SelectPackageRadioClick(this);" />
+                {#/if}
+            {#/if}
+            <!--{#if $P.CurrentPackageId == $T.Package.Id}
+            <input type="radio" id="SelectPackageRadio" checked="checked" name="SelectPackageRadio" onclick="javascript:SelectPackageRadioClick(this);" />
+            {#else}
+            <input type="radio" id="SelectPackageRadio" name="SelectPackageRadio" onclick="javascript:SelectPackageRadioClick(this);" />
+            {#/if}-->
+            <input type="hidden" id="PackageId" value='{$T.Package.Id}' />
+        </td>
+        <td valign="top" style="width:350px;">
+            {$T.Package.Name}
+            <br />
+            <span class="gridselectpackage_testname package-description">{$T.Package.Description}</span><span
+                style="padding-left: 10px;"><a id="PackageDetailsAnchor" href="javascript:void(0);"
+					onclick='javascript:ShowPackageDetails("{$T.Package.Name.replace(/&quot;/, "\\\"");}","{$T.Package.Id}");'> <b>(more
+                        info)</b></a></span>
+        </td>
+        <td style="color: #CAD2C3" valign="top">
+            <span>......&nbsp;&nbsp;</span>
+        </td>
+        <td style="color: #E78839" valign="top">
+            <span></span>
+        </td>
+        <td align="center" style="color: #E78839" valign="top">
+            <span id="PackagePriceSpan">{FormatCurrency($T.Package.Price)}</span>
+        </td>
+    </tr>
+    {#/for}
+</table>

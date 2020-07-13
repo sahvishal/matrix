@@ -1,0 +1,543 @@
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.CallCenter.Enum
+@using Falcon.App.DependencyResolution
+@model Falcon.App.Core.CallCenter.ViewModels.PreAssessmentCustomerContactViewModel
+@{
+    ViewBag.Title = "Pre-Assessment Call " + Model.PatientInfomation.FirstName + " " + Model.PatientInfomation.LastName;
+    var version = IoC.Resolve<ISystemInformationRepository>().GetBuildNumber();
+}
+
+<style>
+    body {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+    }
+
+    #list-view .tag, #list-view .history {
+        width: 125px;
+    }
+
+    .small-section {
+        border: 1px solid #cdcdcd;
+        border-radius: 5px;
+        overflow: hidden;
+        padding: 0 0 5px;
+        margin-bottom: 15px;
+        margin-left: 5px;
+    }
+
+    .small-section-inner {
+        padding: 10px;
+        /*min-height: 210px;*/
+    }
+
+        .small-section-inner b {
+            margin-right: 4px;
+        }
+
+        .small-section-inner label, .small-section-inner .table > thead > tr > th {
+            font-weight: 500;
+        }
+
+        .small-section-inner .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+
+        .small-section-inner div.pager .page-nav {
+            float: none;
+            width: auto;
+        }
+
+        .small-section-inner .outcome {
+            margin-right: 50px !important;
+            padding: 10px 0 !important;
+        }
+
+        .small-section-inner p, .small-section-inner span {
+            font-weight: 300;
+        }
+
+        .small-section-inner textarea {
+            width: 100%;
+        }
+
+    .small-section h2 {
+        background: none repeat scroll 0 0 #efefef;
+        border-bottom: 1px solid #cdcdcd;
+        color: #4292b0;
+        font-size: 10pt;
+        margin: 0 0 5px;
+        padding: 4px 10px;
+    }
+
+    .small-section .contact-screen-no-event {
+        font-size: 17px;
+        padding: 5px;
+    }
+
+    .middivrow_regcust a.glyphicon {
+        font-family: "Glyphicons Halflings";
+        text-decoration: none;
+        margin-top: 7px;
+        font-size: 16px;
+    }
+
+    .info-row {
+        display: block;
+        width: 100%;
+        margin: 5px 0 12px 0;
+        overflow: overlay;
+        float: left;
+    }
+
+    .info-text-col-25 {
+        width: 24%;
+        float: left;
+    }
+
+    .info-text-col-33 {
+        width: 33%;
+        float: left;
+    }
+
+    .info-text-col-50 {
+        width: 50%;
+        float: left;
+    }
+
+    .info-text-col-100 {
+        width: 98%;
+        float: left;
+    }
+
+    b {
+        font-weight: 700;
+    }
+
+    .info-heading {
+        color: #616161;
+        font-size: 15px;
+    }
+
+    fieldset {
+        margin-left: 5px;
+        border-radius: 5px;
+        border-color: #fefefe;
+        margin-bottom: 10px;
+    }
+    /* tab content css start*/
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 16px;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+    /* tab content css end*/
+    #dvCallHistoryDetails table {
+        border-collapse: collapse;
+    }
+
+        #dvCallHistoryDetails table tr {
+            padding: 3px;
+            border-bottom: 1px solid goldenrod;
+            margin-bottom: 2px;
+        }
+
+        #dvCallHistoryDetails table th, td {
+            text-align: left;
+            padding: 10px 5px;
+        }
+
+    .row-border {
+        overflow-y: auto;
+        height: 230px;
+    }
+
+    .draw-line {
+        border: solid 0.5px burlywood;
+        width: 100%;
+        margin: 5px 0 15px 0;
+        clear: both;
+    }
+
+    textarea {
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    label {
+        display: block;
+        padding-bottom: 5px;
+    }
+
+    input[type='text'], select, textarea {
+        padding: 8px;
+        border-radius: 3px;
+        border: solid 1px #9f9f9f;
+        width: 94%;
+    }
+
+        input[disabled], select[disabled] {
+            background-color: #eee;
+        }
+
+    .pull-right {
+        float: right;
+        margin-left: 10px;
+    }
+
+    input[type='button'], input[type='submit'], button {
+        padding: 5px 15px;
+    }
+
+    .ui-datepicker-month, .ui-datepicker-year {
+        padding: 0px;
+    }
+
+    #ui-datepicker-div {
+        font-size: 13px;
+    }
+
+    .reqiredmark, .required-span {
+        color: red;
+    }
+
+    .required-field {
+        border: 1px solid red;
+    }
+</style>
+
+<link href="/App/jquery/css/JQuery-Selectable/Selectable.css" rel="stylesheet" />
+<link href="/App/jquery/css/AutoComplete/auto-search.css" rel="stylesheet" />
+<link href="/Content/colorbox/colorbox.css" rel="stylesheet" />
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+
+<h1>
+    Pre-Assessment Call <span>@Model.PatientInfomation.FirstName</span> <span>@Model.PatientInfomation.LastName</span>
+    @if(!string.IsNullOrEmpty(Model.PatientInfomation.HealthPlan))
+     { <span> | @Model.PatientInfomation.HealthPlan</span> }
+    @if (Model.IsCalledForVici && !string.IsNullOrEmpty(Model.PatientInfomation.CallCenterScriptUrl))
+    {
+        <div class="clearfix row" style="text-align: right; float: right;">
+            <div class="col-sm-12">
+                <button style="font-size: 15px;" href="javascript:void(0);" onclick="openScriptWindow('@Model.PatientInfomation.CallCenterScriptUrl');">View Script</button>
+            </div>
+        </div>
+    }
+</h1>
+
+<div id="dvPatientInfo">
+    @Html.Partial("GetPatientInfoPreAssessment", Model)
+</div>
+
+<div id="dvEventRegOn">
+    @Html.Partial("GetEventRegisteredOn", Model.EventInformation)
+</div>
+
+<div id="dvCallOutCome">
+
+</div>
+
+<div id="dvCallHistoryDetails" style="margin-left: 5px; margin-bottom: 15px;">
+
+</div>
+
+
+<div class="row" style="margin-right: 2px;margin-top: 14px">
+    <div class="pull-right">
+        <button type="button" onclick="endActiveCall(false)">End Call</button>
+    </div>
+</div>
+@section scripts {
+    <!--FOR HRA QUESTIONNAIRE-->
+    <script type="text/javascript" src="/App/JavascriptFiles/HttpRequest.js"></script>
+    <script type="text/javascript" src="/App/JavascriptFiles/HraQuestionnaire.js?q=@version"></script>
+    <script type="text/javascript" src="/Content/colorbox/jquery.colorbox.js"></script>
+
+
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/App/jquery/js/jQuery.autoCompleteExtender.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script language="javascript" type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+    <script language="javascript" type="text/javascript" src="/Scripts/date.js"></script>
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+    var dispositionList = null;
+    var customerId = '@Model.PatientInfomation.CustomerId';
+    var callQueueCustomerId = '@Model.PatientInfomation.CallQueueCustomerId';
+    var prospectCustomerId = '@(Model.PatientInfomation.ProspectCustomerId ?? 0)';
+    var callId = '@Model.CallId';
+    var healthPlanId = '@Model.HealthPlanId';
+    var attemptId = '@Model.CallQueueCustomerAttempt.PreAssessmentCallAttemptID';
+    var pageNumber = 1;
+    var isCallOutComeSaved = false;
+    var selectedCallStatusId = 0;
+    var selectedDisposition = '';
+    var hasMammo = '@Model.PatientInfomation.HasMammo';
+
+    var isScriptOpen = false;
+    var scriptPopup = null;
+
+    function ShowTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    $(function() {
+        getCallOutCome(callId, callQueueCustomerId, prospectCustomerId, customerId);
+        getCallHistoryDetails(callId, callQueueCustomerId);
+        $("#dvCallBackLater").attr('disabled', 'disabled');
+        showHidePCPMailingAddress();
+
+        if (window.localStorage.isScriptOpen === "true" && window.localStorage.scriptUrl != '') {
+            openScriptWindow('@Model.PatientInfomation.CallCenterScriptUrl');
+        }
+
+        pageNumber = 1;
+        setHraValues();
+    });
+
+    function getCallHistoryDetails(callId, callQueueCustomerId) {
+        $.ajax({
+            url: '@Url.Action("GetCallHistoryDetailsPreAssessment")',
+            type: 'GET',
+            cache: false,
+            data: { callId: callId, callQueueCustomerId: callQueueCustomerId }
+        }).done(function(result) {
+            $('#dvCallHistoryDetails').html(result);
+            document.getElementById("notesTab").style.display = "block";
+        });
+    }
+
+    function getCallOutCome(callId, callQueueCustomerId, prospectCustomerId, customerId) {
+        $.ajax({
+            url: '@Url.Action("GetCallOutComePreAssessment")',
+            type: 'GET',
+            cache: false,
+            data: { callId: callId, callQueueCustomerId: callQueueCustomerId, prospectCustomerId: prospectCustomerId, customerId: customerId }
+        }).done(function(result) {
+            $('#dvCallOutCome').html(result);
+            setDatePicker();
+        });
+    }
+
+    function showHidePCPMailingAddress() {
+        @if (Model.PatientInfoEditModel.PrimaryCarePhysician != null)
+            {
+                <text>
+        var chkHasSameAddress = $("#chkHasSameAddress");
+        $("#dvPCPMailingAddress").show();
+        if (chkHasSameAddress[0].checked) {
+            $("#dvPCPMailingAddress").hide();
+        }
+        </text>
+            }
+    }
+
+    function UpdatePatientInfo(update) {
+        if (update) {
+            $("#dvPatientInfoUpdate").show();
+            $("#dvPatientInfoView").hide();
+
+            //SetConsentPhoneNumber();
+
+        } else {
+            $("#dvPatientInfoUpdate").hide();
+            $("#dvPatientInfoView").show();
+        }
+        showHidePCPMailingAddress();
+    }
+
+    function SetConsentPhoneNumber() {
+        $("#txtHome").val($("#divHomePhoneNumber").find("span").html());
+        $("#txtOffice").val($("#divOfficePhoneNumber").find("span").html());
+        $("#txtMobile").val($("#divMobilePhoneNumber").find("span").html());
+    }
+
+    function endActiveCall() {
+
+        if (isCallOutComeSaved) {
+            closeScriptWindow();
+
+            var model = {
+                CallQueueCustomerId: callQueueCustomerId,
+                CallId: callId,
+                SelectedDisposition: selectedDisposition,
+                CallOutcomeId: selectedCallStatusId,
+                AttemptId: attemptId
+            };
+
+            $.ajax({
+                url: '@Url.Action("EndHealthPlanActiveCall")',
+                type: 'POST',
+                data: model,
+                success: function() {
+                    window.location.href = "/CallCenter/CallCenterRepDashboard/Index";
+                }
+            });
+        } else {
+            alert('Please save Call Outcome before ending call.');
+        }
+    }
+
+    function viewOnMap() {
+        var patientAddress = '@Model.PatientInfomation.AddressViewModel.StreetAddressLine1';
+        if ('@string.IsNullOrEmpty(Model.PatientInfomation.AddressViewModel.StreetAddressLine2)' === 'False')
+            patientAddress += ", " + '@Model.PatientInfomation.AddressViewModel.StreetAddressLine2';
+
+        if ('@string.IsNullOrEmpty(Model.PatientInfomation.AddressViewModel.City)' === 'False')
+            patientAddress += ", " + '@Model.PatientInfomation.AddressViewModel.City';
+
+        if ('@string.IsNullOrEmpty(Model.PatientInfomation.AddressViewModel.State)' === 'False')
+            patientAddress += ", " + '@Model.PatientInfomation.AddressViewModel.State';
+
+        if ('@string.IsNullOrEmpty(Model.PatientInfomation.AddressViewModel.ZipCode)' === 'False')
+            patientAddress += ", " + '@Model.PatientInfomation.AddressViewModel.ZipCode';
+
+        var url = "https://maps.google.com?saddr=" + patientAddress.replace('#', '') + "&daddr=" + '@Model.EventInformation.HostAddress'.replace('#', '');
+        window.open(url, "_blank");
+    }
+
+    function setHraValues() {
+        var url = '@Model.EventInformation.HraQuestionerAppUrl';
+        var name = '@Model.EventInformation.OrganizationNameForHraQuestioner';
+        var corporateTag = '@Model.EventInformation.CorporateAccountTag';
+        var token = '@HttpUtility.UrlEncode(Model.EventInformation.Token)';
+        var evtId = @Model.EventInformation.EventId;
+
+        //included File HraQuestionnaire.js to _layout.cshtml to open hra popup
+        //this function is included in HraQuestionnaire.js
+        initiateHraQuestionare(url, name, corporateTag, token, evtId, true, true);
+
+        $(document).bind('cbox_open', function() {
+            $('body').css({ overflow: 'hidden' });
+        }).bind('cbox_closed', function() {
+            $('body').css({ overflow: '' });
+        });
+    }
+
+    function openHra() {
+        checkSession().then(function() {
+            var eventCustId = @Model.EventInformation.EventCustomerId;
+            var custId = @Model.PatientInfomation.CustomerId;
+            var visitId = @Model.EventInformation.MedicareVisitId;
+            //this function is included in HraQuestionnaire.js
+            addColorBox(eventCustId, custId, visitId);
+            $('#hraLink_' + eventCustId).click();
+        },function(data) {
+            alert(data);
+            window.location.replace("/login");
+        });
+    };
+
+
+    function openHaf() {
+        var properties = "toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,resizable=yes,width=1100,height=500";
+        var eventId = @Model.EventInformation.EventId;
+        var customerId = parseInt($('#patientInfoCustomerId').text());
+        if (eventId > 0 && customerId > 0) {
+            var url = "/App/Franchisor/MedicalHistory.aspx?CustomerID=" + customerId + "&EventId=" + eventId + "&Edit=true";
+            window.open(url, "Health Assessment Form", properties);
+        }
+    };
+
+    function cancelAppointment() {
+        var result = confirm("Are you sure you want to cancel this appointment?");
+        if (result) {
+            window.location.href = '/App/CallCenter/CallCenterRep/CallCenterRepCancelAppointment.aspx?Call=No&EventCustomerID=' + @Model.EventInformation.EventCustomerId
+                + '&callQueueCustomerId=' + @Model.CallQueueCustomerAttempt.CustomerId + '&attemptId=' + @Model.CallQueueCustomerAttempt.PreAssessmentCallAttemptID
+                + '&dialerType=' + @((long) DialerType.Vici)+'&CallID='+@Model.CallId + '&CallQueueId='+@Request.QueryString["callQueueId"] +
+                    "&CustomerID=" + @Model.PatientInfomation.CustomerId+ "&EventID=" + @Model.EventInformation.EventId ;
+        }
+    }
+
+    function rescheduleAppointment() {
+        var result = confirm("Are you sure you want to reschedule appointment for this patient?");
+        if (result) {
+            window.location.href = '/App/CallCenter/CallCenterRep/CallCenterRepRescheduleCustomerAppointment.aspx?Call=No&EventCustomerID=' + @Model.EventInformation.EventCustomerId
+    + "&EventID=" + @Model.EventInformation.EventId + "&CustomerID=" + @Model.PatientInfomation.CustomerId
+    + '&callQueueCustomerId=' + @Model.CallQueueCustomerAttempt.CustomerId + '&attemptId=' + @Model.CallQueueCustomerAttempt.PreAssessmentCallAttemptID
+    + '&dialerType=' + @((long) DialerType.Vici) +'&CallID='+@Model.CallId + '&CallQueueId='+@Request.QueryString["callQueueId"];
+            }
+        };
+
+        function openScriptWindow(scriptUrl) {
+            var properties = "width=" + Number($(window).width() / 2) + ", height=" + Number($(window).height()) + ", resizable=1, scrollbars=1";
+            isScriptOpen = true;
+            if (scriptUrl != null && scriptUrl != '') {
+                scriptPopup = window.open(scriptUrl, "Call Center Script", properties);
+
+                window.localStorage.setItem("isScriptOpen", true);
+                window.localStorage.setItem('scriptUrl', scriptUrl);
+                checkScriptPopupOpen();
+            }
+        }
+
+        function checkScriptPopupOpen() {
+            if (scriptPopup && scriptPopup.closed) {
+                window.localStorage.setItem("isScriptOpen", false);
+                window.localStorage.removeItem("scriptUrl");
+            } else {
+                window.setTimeout(checkScriptPopupOpen, 500);
+            }
+        }
+
+        function closeScriptWindow() {
+            if (isScriptOpen && scriptPopup != null) {
+                scriptPopup.close();
+            }
+        }
+
+        function startOutboundCall(url, patientPhoneNumber) {
+            $.ajax({
+                url: '@Url.Action("UpdateCallersPhoneNumber")' + '?callId=' + callId + '&patientPhoneNumber=' + patientPhoneNumber,
+                type: 'GET',
+                success: function (result) {
+                    if (result == '@Boolean.TrueString') {
+                        window.open(url, '_blank');
+                    } else {
+                        alert(result);
+                    }
+                }
+            });
+        }
+
+    </script>
+}

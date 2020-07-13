@@ -1,0 +1,114 @@
+﻿@model Falcon.App.Core.Operations.ViewModels.EventStaffAssignmentListModel
+@{
+    Layout = null;
+}
+<link href="/Content/Styles/Style.css" rel="stylesheet" type="text/css" />
+<link type="text/css" href="/Content/Styles/jquery-ui-1.8.12.custom.css" rel="Stylesheet" />
+<script type="text/javascript" src="/Scripts/jquery-1.5.2.min.js"></script>
+<script type="text/javascript" src="/Scripts/jquery-ui-1.8.12.custom.min.js"></script>
+<link href="/Content/Styles/fullcalendar.css" rel="stylesheet" type="text/css" />
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<div id="container">
+    <h1>
+        Staff Schedule and Assignments
+    </h1>
+    <div id="calendar">
+    </div>
+    <div id="edit-dialog" style="display: none;">
+    </div>
+    <script type="text/javascript" src="/Scripts/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.qtip.min.js"></script>
+    <script type="text/javascript" src="/Scripts/json2.min.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+    <script type="text/javascript">
+            
+    var viewType = '@(Model.Filter.DefaultView)';
+
+    $(document).ready(function () {
+        $('#calendar').fullCalendar({
+            theme: true,
+            defaultView: '@(Model.Filter.DefaultCalendarView)',
+            month: @(Model.Filter.Month - 1),
+            year: @(Model.Filter.Year),
+            date: @(Model.Filter.Date),
+
+            header: {
+                left: '',
+                center: 'title',
+                right: ''
+            },
+
+            lazyFetching: true,
+            eventSources: [
+            {
+                events: function (start, end, callback) {
+                    $.ajax({
+                        url: '/Operations/Schedule/GetStaffScheduleFor?Date=@(Model.Filter.Date)&Month=@(Model.Filter.Month)&Year=@(Model.Filter.Year)&PodId=@(Model.Filter.PodId)&StaffId=@(Model.Filter.StaffId)&DefaultView=' + viewType + '&DefaultCalendarView=@(Model.Filter.DefaultCalendarView)',
+                        dataType: 'json',
+                        data: '{}',
+                        type: 'POST',
+                        success: function (events) {
+                            callback(events);
+                        }
+                    });
+
+                },
+                backgroundColor: '#6eadc5',
+                textColor: 'white'
+            }],
+
+            eventRender: function (event, element) {
+                if(viewType == 'Event'){
+                    RenderforEventView(event, element);
+                }
+                else if(viewType == 'Staff'){
+                    RenderforStaffView(event, element);
+                }
+                
+            },
+            eventClick: function (calEvent, jsEvent, view) {
+
+                //highlight event selected                                    
+                $(this).css('border-color', 'red');
+                openStaffAssignmentEditDialog(calEvent);
+
+            }
+        }); //fullcalendar
+
+    });
+
+    function RenderforEventView(event, element){
+        var htmlEvent = $("#eventInfo").tmpl(event);
+        element.html(htmlEvent);
+
+    }
+
+    function RenderforStaffView(event, element){
+        var htmlEvent = $("#staffInfo").tmpl(event);
+        element.html(htmlEvent);
+
+    }             
+                   
+            
+    </script>
+    <script id="staffInfo" type="text/x-jquery-tmpl">
+        <div>            
+            <div>
+                Pod: {{each Pods}} ${$value} {{/each}} 
+            </div>
+            <div>
+            Team: {{if IsDefaultStaffAssignment}} (Default Assignment) {{/if}}  
+                <ul style="padding-left:14px;">
+                    {{each AssignedStaff}}
+                       <li  style="padding-top: 2px;"> ${FirstValue} (${SecondValue})</li>
+                    {{/each}}
+                </ul>
+            </div>    
+        </div>                      
+    </script>
+    <script id="eventInfo" type="text/x-jquery-tmpl">
+        <span style="width:45%; display:block; float:left; padding-left:2px;"> [${Id}] </span>
+        <span style="width:45%; display:block; float:left; text-align: right;"> ${FilledAppintmentSlots} / ${TotalAppointmentSlots} </span>
+        <span style="width:95%; clear:both; padding-top:5px; padding-left:2px; display:block;">  ${title}  </span>
+    </script>
+</div>

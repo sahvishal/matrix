@@ -1,0 +1,171 @@
+﻿@using System.Configuration
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript">
+            var _gaq = _gaq || []; 
+            (function () {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title ng-bind="$root.title">Checkout</title>
+        <link rel="shortcut icon" href="Images/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="Images/favicon.ico" type="image/x-icon">
+
+        <link href="~/Content/typography.css" rel="stylesheet" />
+        <link href="~/Content/slider.css" rel="stylesheet" />
+        <link href="~/Content/custom.css" rel="stylesheet" />
+        <link href="~/Content/toastr.css" rel="stylesheet" />
+        <link href="~/Content/alertify/alertify.core.css" rel="stylesheet" />
+        <link href="~/Content/alertify/alertify.default.css" rel="stylesheet" />
+        <link href="~/Content/auto-complete.css" rel="stylesheet" />
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/angular")
+        @Scripts.Render("~/bundles/thirdparty")
+        @Scripts.Render("~/bundles/lib")
+        @Scripts.Render("~/bundles/public")
+        @Scripts.Render("~/bundles/public/core")
+        @Scripts.Render("~/bundles/public/shared")
+        @Scripts.Render("~/bundles/public/online")
+
+       
+        <style type="text/css">
+            fieldset {
+                border: 1px solid #e5e5e5;
+                margin: 0;
+                padding: 0;
+                width: 126%;
+            }
+
+            legend {
+                margin: 0;
+                padding: 0;
+                color: #F37C00 !important;
+                font: bold 16px arial;
+            }
+
+            .graybdrbox950_blankblock {
+                float: left;
+                width: 720px;
+                text-align: center;
+                background-color: #DFF1F8;
+                border: solid 1px #B8D7E6;
+                padding: 70px 0px 90px 5px;
+            }
+
+            .phonerecordbox_ccrep {
+                float: left;
+                width: 570px;
+                margin-top: 5px;
+                background: #f3f3f3;
+                border: solid 1px #ebebeb;
+            }
+
+            .phonerecordboxrownew_ccrep {
+                float: left;
+                width: 555px;
+                padding: 12px 10px;
+            }
+
+            .phonerecordboxrow_ccrep {
+                float: left;
+                width: 555px;
+                padding-left: 15px;
+            }
+
+            .inputf_pbox_ccrep {
+                border: 1px solid #333;
+                background: #fff;
+                z-index: -5;
+                font: normal 12px arial;
+                color: #333;
+                padding: 3px;
+            }
+            /* CCREP DASHBOARD */
+            .titletextwidth_ccrep {
+                float: left;
+                width: 136px;
+                margin-right: 4px;
+                padding-top: 3px;
+                color: #000;
+            }
+
+            body, html {
+                font: normal 12px arial, helvetica, tahoma;
+                background: #e5ecf3;
+                margin: 0;
+                color: #000;
+                line-height: 1.5em;
+                height: 101%;
+            }
+
+            .startbtn_ccrep_dboard {
+                width: 152px;
+            }
+        </style>
+    </head>
+<body class="bg-info">
+    <div class="wrapper">
+        <nav class="navbar navbar-default">
+            <div class="container no-padding">
+                <a class="navbar-brand pull-left hidden-xs" href="@(ConfigurationManager.AppSettings["SiteUrl"])"><img src="Images/logo.png" alt="Health Fair" /></a>
+                <a class="navbar-brand pull-left hidden-lg hidden-md hidden-sm" href="#"><img src="Images/logo-small.png" alt="Health Fair" /></a>
+                <div class="pull-right hotline top-buffer-20">
+                    <p class="no-margin text-uppercase hotline-tag text-center hide">our superior hotline</p>
+                    <p class="top-buffer-10 bottom-buffer-10 right-buffer-10 text-uppercase text-center" ng-bind="$root.CheckoutPhoneNumber"></p>
+                </div>
+            </div>
+        </nav>
+        <main class="main" us-spinner spinner-key="online-spinner">
+            @*<div data-ui-view></div>*@
+            <ui-view></ui-view>
+        </main>
+
+        <footer class="footer bg-info">
+            <div class="container no-padding relative">
+                <span class="secure secure-comodo">&nbsp;</span>
+                <span class="secure secure-bbb">&nbsp;</span>
+                <p class="top-buffer-10 bottom-buffer-0 text-center">
+                    &copy; 2007 - @DateTime.Today.Year @(ConfigurationManager.AppSettings["BusinessName"]) All rights reserved.
+                    <a target="_blank" href="@(ConfigurationManager.AppSettings["PrivacyStatement"])">Privacy Policy</a>
+                    @*<a href="javascript:void(0)">Terms and Conditions</a>*@
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>*@
+    <script type="text/javascript">
+        ApplicationConfiguration.remoteServiceUrl = '@(ConfigurationManager.AppSettings["AppUrl"]+"/api/")';
+        ApplicationConfiguration.applicationIdentity = '@(ConfigurationManager.AppSettings["ApplicationIdentity"])';
+        ApplicationConfiguration.domainUrl = '@(ConfigurationManager.AppSettings["ApplicatoinDomainUrl"])';
+        ApplicationConfiguration.phoneTollFree = '@(ConfigurationManager.AppSettings["PhoneTollFree"])';
+        ApplicationConfiguration.siteUrl = '@(ConfigurationManager.AppSettings["SiteUrl"])';
+    </script>
+    <script type="text/javascript">
+
+        var _mfq = _mfq || [];
+
+        (function () {
+
+            var mf = document.createElement("script"); mf.type = "text/javascript"; mf.async = true;
+
+            mf.src = "//cdn.mouseflow.com/projects/20602bcd-abc7-4f3f-bca9-68d2cdf167ac.js";
+
+            document.getElementsByTagName("head")[0].appendChild(mf);
+
+        })();
+
+    </script>
+</body>
+</html>

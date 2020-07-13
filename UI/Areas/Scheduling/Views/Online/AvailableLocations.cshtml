@@ -1,0 +1,145 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@model Falcon.App.Core.Scheduling.ViewModels.OnlineSchedulingEventListModel
+@if (Model != null)
+{
+
+    var settings = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>();
+    long selectedEvent = Model.Filter != null ? Model.Filter.EventId : 0;
+
+    if (Model.Events != null && Model.Events.Count() > 0)
+    {
+        <div class="location_listing_box">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="location_list">
+                <tr>
+                    <th>Location</th>
+                    <th width="15%">Date</th>
+                    <th width="15%">Distance</th>
+                    <th width="15%">Sponsor</th>
+                    <th width="15%">Action</th>
+                </tr>
+                @foreach (var item in Model.Events)
+                {
+                    <tr>
+                        <td valign="top">
+                            <h3>
+                                @item.HostName
+                                @if (item.IsFemaleOnly)
+                                {
+                                    <img src="/Content/Images/female-sign.png" width="20px" height="20px" alt="Female Only" />
+                                }
+                            </h3>
+                            <h4 class="txt-grey mt5">
+                                @item.EventLocation
+                            </h4>
+                        </td>
+                        <td valign="top">
+                            <h3>@item.EventDate.DayOfWeek.ToString()</h3>
+                            <h4 class="txt-grey mt5">@item.EventDate.ToString("MMMM dd, yyyy")</h4>
+                        </td>
+                        <td valign="top">
+                            <h4>@Html.Raw(item.DistanceFromZip >= 0 ? Math.Round(item.DistanceFromZip).ToString() + " miles " : " - ")</h4>
+                            <h5 class="mt5">
+                                <a id="aMapToLoc" href="http://maps.google.com/maps?f=q&hl=en&geocode=&q=@(item.EventLocation.MaptoLocation())&ie=UTF8&z=16" class="location_icon" target="_blank">Map to Location</a>
+                            </h5>
+                        </td>
+                        <td valign="top">
+                            <div class="sponsor_logo">
+                                @if (!string.IsNullOrEmpty(item.SponsorImage))
+                                {
+                                    <img src="@item.SponsorImage" style="width:120px; height:50px;" alt="" />
+                                }
+                                else
+                                {
+                                    <img src="@settings.SmallLogo" style="width:120px;" alt="" />
+                                }
+                            </div>
+                        </td>
+                        <td class="action-column" valign="top">
+                            @if (item.AvailableSlots < 1 || item.IsMarkedOffforSelection)
+                            {
+                                if (File.Exists(Server.MapPath("/Config/Content/Images/signup_closed.png")) && item.EventType == Falcon.App.Core.Scheduling.Enum.EventType.Corporate)
+                                {
+                                    <img src="/Config/Content/Images/signup_closed.png" alt="Sign Up Closed" style="width:120px;" />
+                                }
+                                else if (item.EventType == Falcon.App.Core.Scheduling.Enum.EventType.Corporate && item.RegistrationMode == RegistrationMode.Private)
+                                {
+                                    <i>Event Full</i>
+                                }
+                                else
+                                {
+                                    <i>
+                                        Call for Availability
+                                        <br />
+                                        @settings.PhoneTollFree
+                                    </i>
+                                }
+                            }
+                            else
+                            {
+                                <input type="button" class="selected_btn select-button-selected" @(item.EventId != selectedEvent ? "style=display:none" : "") />
+                                <input type="button" class="select_btn" @(item.EventId == selectedEvent ? "style=display:none" : "") onclick="selectEventMethod($(this), '@item.EventId');" />
+                            }
+                        </td>
+                    </tr>
+
+                }
+            </table>
+        </div>
+
+        if (Model.PagingModel.PageCount > 1)
+        {
+            <div class="p15">
+                <center>
+                    @if (Model.PagingModel.CurrentPage > 1)
+                    {
+                        <input type="button" class="button_green previous-page-event" value="<< Back" onclick="$('.previous-page-event').toggle(); _methodRefEvents('@Model.PagingModel.PageUrl(Model.PagingModel.CurrentPage - 1)')" />
+                        <img src="/App/Images/loading.gif" alt="Loading ..." class="previous-page-event" style="display: none;" />
+                    }
+                    @if (Model.PagingModel.CurrentPage < Model.PagingModel.PageCount)
+                    {
+                        <input type="button" class="button_green show-more-events" value="Show More Locations" onclick="$('.show-more-events').toggle(); _methodRefEvents('@Model.PagingModel.PageUrl(Model.PagingModel.CurrentPage + 1)')" />
+                        <img src="/App/Images/loading.gif" alt="Loading ..." class="show-more-events" style="display: none;" />
+                    }
+                </center>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="div-with-roundborder" style="padding-top: 50px; text-align: center; padding-bottom: 60px; margin: 20px 0px;
+        background-color: #ffffff;">
+            <h1>
+                Sorry! No Screening Records found.
+            </h1>
+        </div>
+    }
+}
+<script language="javascript" type="text/javascript">
+
+    var _methodRefEvents = null;
+    var _methodRefEventSelect = null;
+
+    function setMethodRef(methodRef, methodRefSelectEvent) {
+        _methodRefEvents = methodRef;
+        _methodRefEventSelect = methodRefSelectEvent;
+    }
+
+    function selectEventMethod(currentBtnRef, eventId) {
+        $("#current-selection").empty();
+        $("td.action-column .select-button-selected:visible").parent().find("input[type='button']").toggle();
+        currentBtnRef.parent().find("input[type='button']").toggle();
+        _methodRefEventSelect(eventId);
+    }
+
+    function isEventListEmpty() {
+        @if (Model.Events == null || Model.Events.Count() < 1)
+        {
+            <text> return true;</text>
+        }
+        else
+        {
+            <text> return false;</text>
+        }
+    }
+
+</script>

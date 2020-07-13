@@ -1,0 +1,37 @@
+﻿@using System
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model DisqualifiedTestReportFilter
+
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 19%">
+        <div class="small-text">
+            Customer Id
+        </div>
+        @Html.TextBoxFor(m => m.CustomerId)
+    </div>
+    <div class="editor-column" style="width: 19%">
+        <div class="small-text">
+            Event Id
+        </div>
+        @Html.TextBoxFor(m => m.EventId)
+    </div>
+    <div class="editor-column" style="width: 21%">
+        <div class="small-text">
+            HealthPlan:
+        </div>
+        @Html.DropDownListFor(m => m.AccountId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:95%;" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Test
+        </div>
+        @Html.DropDownListFor(m => m.TestId, DropDownHelper.GetAllTest(), new { @style = "width:100%;" })
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="padding-top: 10px; width: 20%; float: right; text-align: right;">
+        @Html.ActionLink("Clear", "DisqualifiedTestReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+

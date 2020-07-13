@@ -1,0 +1,130 @@
+﻿<h3>
+    Order History for {{CustomerName}} ({{CustomerId}})
+</h3>
+<table id="OrderDetailTemplateTable" class="divgrid_cl">
+    <thead>
+        <tr class="row1" style="font-size: 11px">
+            <th>
+                Ordered On
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Status
+            </th>
+            <th class="executed-by-role">
+                Executed By/Role
+            </th>
+            <th>
+                Description
+            </th>
+            <th class="amt" style="text-align: right">
+                Price
+            </th>
+            <th style="text-align: right">
+                Quantity
+            </th>
+            <th class="amt" style="text-align: right">
+                Total
+            </th>
+        </tr>
+    </thead>
+    <tbody ng-repeat="od in OrderDetails">
+        <tr class="smalltxt11">
+            <td>
+                <span ng-bind="od.OrderDetailDateCreated != null? od.OrderDetailDateCreated:'N/A'"></span>
+            </td>
+            <td>
+                {{od.OrderDetailType}}
+            </td>
+            <td>
+                {{od.OrderDetailStatus}}
+            </td>
+            <td class="executed-by-role">
+                <span ng-bind="od.CreatorRole == 'Customer'? 'Self':od.CreatorName + ' / ' + od.CreationMode"></span>
+            </td>
+            <td>
+                <span ng-bind="od.OrderDetailType == 'Refund' && RoleId == '9' ? 'Customer Service':od.Description"></span>
+            </td>
+            <td class="amt" style="text-align: right">
+                <span> {{od.Price > 0 ? od.Price :((-1)*od.Price) | currency}}</span>
+            </td>
+            <td style="text-align: right">
+                {{od.Quantity}}
+            </td>
+            <td style="text-align: right; width: 60px">
+                <span ng-if="od.OrderDetailStatus == 'Cancelled' || (od.OrderDetailType == 'Refund' && od.OrderDetailStatus == 'Applied')">
+                    (<span>{{od.TotalCost > 0 ? od.TotalCost :((-1)*od.TotalCost) | currency}}</span>)
+                </span>
+                <span ng-if="!(od.OrderDetailStatus == 'Cancelled' || (od.OrderDetailType == 'Refund' && od.OrderDetailStatus == 'Applied'))">
+                    <span>{{od.TotalCost > 0 ? od.TotalCost :((-1)*od.TotalCost) | currency}}</span>
+                </span>
+
+            </td>
+        </tr>
+        <tr class="smalltxt12" ng-if="od.SourceCode != null">
+            <td>
+                {{od.SourceCode.AppliedDate}}
+            </td>
+            <td>
+                Source Code
+            </td>
+            <td>
+                Applied
+            </td>
+            <td class="executed-by-role">
+                <span ng-bind="od.AppliedByRole == 'Customer'? 'Self':od.SourceCode.AppliedByName + ' / ' + od.SourceCode.AppliedByRole"></span>
+            </td>
+            <td class="coupon-code">
+                <span ng-bind="RoleId == '9'? 'Applied Source Code':od.SourceCode.SourceCode "></span>
+
+            </td>
+            <td class="amt" style="text-align: right">
+                {{od.SourceCode.Amount | currency}}
+            </td>
+            <td style="text-align: right">
+                1
+            </td>
+            <td class="amt" style="text-align: right; width: 60px">
+                ({{od.SourceCode.Amount | currency}})
+            </td>
+        </tr>
+
+        <tr class="smalltxt11" ng-repeat="sd in od.ShippingDetails">
+            <td>
+                {{sd.AppliedDate}}
+            </td>
+            <td>
+                Shipping
+            </td>
+            <td>
+                {{sd.Status}}
+            </td>
+            <td class="executed-by-role">
+                <span ng-bind="sd.AppliedByRole == 'Customer'? 'Self':sd.AppliedByName + ' / ' + sd.AppliedByRole"></span>
+            </td>
+            <td>
+                {{sd.ShippingOptionName}}
+            </td>
+            <td class="amt" style="text-align: right">
+                {{sd.Price | currency}}
+            </td>
+            <td style="text-align: right">
+                1
+            </td>
+            <td class="amt" style="text-align: right; width: 60px">
+                <span ng-if="sd.Status == 'Cancelled'">({{sd.Price | currency}})</span>
+                <span ng-if="!(sd.Status == 'Cancelled')">{{sd.Price | currency}}</span>
+            </td>
+        </tr>
+        
+    </tbody>
+    <tbody>
+        <tr>
+            <td colspan="8" style="text-align: right">
+                <strong>Order Total: {{OrderTotal | currency}} </strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,128 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+
+@model TestNotPerformedListModel
+
+@{
+    ViewBag.Title = "Test Not Performed";
+}
+
+<h1>Test Not Performed</h1>
+<script src="/Scripts/reportexportqueue.js"></script>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("TestNotPerformed", "Reports", FormMethod.Get);}
+    @Html.Partial("TestNotPerformedListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 1000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/Medical/ReportsQueue/TestNotPerformed?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>Export CSV </a>
+        }
+        else
+        {
+            <a target="_blank" href="/Medical/ExportableReports/TestNotPerformed?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th style="width:120px;">
+                Technician Name
+            </th>
+            <th style="width:250px;">
+                Event Info
+            </th>
+            <th style="width:200px;">
+                Customer Info
+            </th>
+            <th>
+                Test Not Performed Info
+            </th>
+            <th>
+                Pre-Approved Test
+            </th>
+            <th>
+                Is Override
+            </th>
+        </tr>
+        @foreach (var testNotPerformed in Model.Collection)
+        {
+            <tr>
+                <td style="width:120px;">
+                    @testNotPerformed.TechnicianName
+                </td>
+                <td style="width:250px;">
+                    <b>Id: </b> @testNotPerformed.EventId
+                    <br />
+                    <b>Name: </b>@testNotPerformed.EventName
+                    <br />
+                    <b>Date: </b>@testNotPerformed.EventDate.ToShortDateString()
+                    <br />
+                    <b>Pod: </b>@testNotPerformed.PodName
+                    <br />
+                    <b>Provider Name: </b>@(string.IsNullOrEmpty(testNotPerformed.ProviderName) ? "N/A" : testNotPerformed.ProviderName)
+                    <br />
+                    <b>State: </b>@testNotPerformed.State
+                </td>
+                <td style="width:200px;">
+                    <b>Id: </b> @testNotPerformed.CustomerId
+                    <br />
+                    <b>Name: </b>@testNotPerformed.CustomerName
+                    <br />
+                    <b>Member Id: </b>@(string.IsNullOrEmpty(testNotPerformed.MemberId) ? "N/A" : testNotPerformed.MemberId)
+                    <br />
+                    <b>Health Plan: </b>@(string.IsNullOrEmpty(testNotPerformed.HealthPlan) ? "N/A" : testNotPerformed.HealthPlan)
+                </td>
+                <td>
+                    <b>Test: </b> @testNotPerformed.TestName
+                    <br />
+                    <b>Reason: </b> @testNotPerformed.Reason
+                    <br />
+                    <b>Notes: </b> @testNotPerformed.Notes
+                    <br />
+                </td>
+                <td>
+                    @testNotPerformed.IsPreApprovedTest
+                </td>
+                <td>
+                    @testNotPerformed.IsOverride
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+    </script>
+}

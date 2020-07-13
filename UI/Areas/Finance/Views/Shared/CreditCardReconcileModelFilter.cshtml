@@ -1,0 +1,67 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Finance.ViewModels.CreditCardReconcileModelFilter
+<h2>
+    Search <span style="float: right">
+        Preset Searches: <a href="#" onclick="clickToday(); return false;">
+            Today
+        </a>| <a href="#" onclick="clickThisWeek(); return false;">This Week </a>
+    </span>
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 16%">
+        <div class="small-text">
+            <b>Transaction</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 16%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 16%">
+        <div class="small-text">
+            Event Type
+        </div>
+            <div class="small-text">
+                @Html.CheckBoxFor(m => m.IsCorporateEvent) Corporate Events
+            </div>
+            <div class="small-text">
+                @Html.CheckBoxFor(m => m.IsRetailEvent)   Retail Event
+            </div>
+        </div>
+    <div class="editor-column" style="width: 24%">
+        <div class="small-text">
+            Corporate Sponsors
+        </div>
+        @Html.DropDownListFor(m => m.AccountId, DropDownHelper.GetCorporateAccounts(Model.AccountId), new { @style = "width:100%;" })
+        
+    </div>
+    <div class="editor-column" style="padding-top: 10px; text-align: right; float: right;">
+        @Html.ActionLink("Clear", "CreditCardReconcilation", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+    function clickToday() {
+        clearAll();
+        $("input#FromDate").val('@DateTime.Now.ToShortDateString()');
+        $("input#ToDate").val('@DateTime.Now.ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clickThisWeek() {
+        clearAll();
+        $("input#FromDate").val('@DateTime.Now.AddDays(-1 * (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("input#ToDate").val('@DateTime.Now.AddDays(6 - (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clearAll() {
+        $("input[type=text], input[type=checkbox]").val("");
+    }
+
+</script>

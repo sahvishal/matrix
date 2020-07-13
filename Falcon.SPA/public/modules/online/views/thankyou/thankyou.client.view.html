@@ -1,0 +1,226 @@
+﻿<div data-ng-controller="ThankYouController" class="container no-padding bg-default" us-spinner spinner-key="online-spinner">
+    <!-- Start Quantcast Tag -->
+    <script type="text/javascript">
+        _qoptions = { qacct: "p-3pwzayXT4enRY", labels: "_fp.event.Thank You" };
+    </script>
+    <script type="text/javascript" src="//secure.quantserve.com/quant.js"></script>
+    <noscript>
+        <img src="//secure.quantserve.com/pixel/p-3pwzayXT4enRY.gif?labels=_fp.event.Thank+You" style="display: none;" border="0" height="1" width="1" alt="Quantcast" />
+        <img src='https://vdrn.redplum.com/smp/v=5;m=1;t=7179;ts={{quantcastDate}}' width='0' height='1' border='0' /><img height="1" width="1" src="https://view.atdmt.com/action/pvmhai_ConfirmationPixel_1" />
+    </noscript>
+    <!-- End Quantcast tag -->
+    <img src='https://vdrn.redplum.com/smp/v=5;m=1;t=7179;ts={{quantcastDate}}' width='0' height='1' border='0' /><img height="1" width="1" src="https://view.atdmt.com/action/pvmhai_ConfirmationPixel_1" />
+
+    <script>
+        (function (w, d, t, r, u) { var f, n, i; w[u] = w[u] || [], f = function () { var o = { ti: "4047539" }; o.q = w[u], w[u] = new UET(o), w[u].push("pageLoad") }, n = d.createElement(t), n.src = r, n.async = 1, n.onload = n.onreadystatechange = function () { var s = this.readyState; s && s !== "loaded" && s !== "complete" || (f(), n.onload = n.onreadystatechange = null) }, i = d.getElementsByTagName(t)[0], i.parentNode.insertBefore(n, i) })(window, document, "script", "//bat.bing.com/bat.js", "uetq");
+    </script>
+    <noscript>
+        <img src="//bat.bing.com/action/0?ti=4047539&Ver=2" height="0" width="0" style="display:none; visibility: hidden;" />
+    </noscript>
+
+    <div class="sub-header bg-success relative">
+        <div class="header-left">
+            <h2 class="no-margin">Thank you for the payment. Your screening appointment is confirmed.</h2>
+        </div>
+    </div>
+
+    <div class="main-container border-default">
+        <div class="clearfix top-buffer-10">
+            <div class="col-xs-12">
+                <a href="javascript:void(0)" ng-click="printConfirmation()" class="host-name-transfrom pull-right top-buffer-10" ng-disabled="isPosted"><em class="print-button-Icon"></em> Print Confirmation Receipt</a>
+            </div>
+        </div>
+       
+        <div class="clearfix">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="clearfix top-buffer-20">
+                    <div class="table-look">
+                        <div class="table-row">
+                            <div class="table-cell col-md-6">
+                                <div class="well border-default header-min-height">
+                                    <h4 class="cards-heading semibold">Screening date and time</h4>
+                                    <div class="col-xs-12 ">
+                                        <div class="col-xs-2 no-padding">
+                                            <p class="no-margin semibold">Date :</p>
+                                        </div>
+                                        <div class="col-xs-8 no-padding-right">
+                                            <span ng-if="OrderSummary.EventCustomerOrderSummaryModel==null || OrderSummary.EventCustomerOrderSummaryModel.EventDate ==null">NA</span>
+                                            <span ng-if="OrderSummary.EventCustomerOrderSummaryModel!=null && OrderSummary.EventCustomerOrderSummaryModel.EventDate !=null">
+                                                {{OrderSummary.EventCustomerOrderSummaryModel.EventDate | date:'MMMM dd' }}<sup>{{dateSuffix}}</sup> {{OrderSummary.EventCustomerOrderSummaryModel.EventDate | date:'yyyy' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <div class="col-xs-2 no-padding">
+                                            <p class="no-margin semibold">Time :</p>
+                                        </div>
+                                        <div class="col-xs-8 no-padding-right">
+                                            <span class="clearfix" ng-if="OrderSummary.EventCustomerOrderSummaryModel!=null && OrderSummary.EventCustomerOrderSummaryModel.EventDate !=null">
+                                                <span ng-if="OrderSummary.EventCustomerOrderSummaryModel!=null && OrderSummary.EventCustomerOrderSummaryModel.AppointmentTime !=null" ng-bind="OrderSummary.EventCustomerOrderSummaryModel.AppointmentTime | date:'hh:mm a'"></span>
+                                                <span ng-if="OrderSummary.EventCustomerOrderSummaryModel==null || OrderSummary.EventCustomerOrderSummaryModel.AppointmentTime ==null">NA</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="table-cell col-md-6">
+                                <div class="well border-default header-min-height no-padding-bottom">
+                                    <div class="clearfix">
+                                        <h4 class="cards-heading semibold">Location Details:</h4>
+                                        <div class="col-xs-12 no-padding-left thankyou-address-container" >
+                                            <div class="col-xs-12 no-padding-right">
+                                                <p class="location-name no-margin" ng-if="OrderSummary.EventCustomerOrderSummaryModel==null || OrderSummary.EventCustomerOrderSummaryModel.Host==null">NA</p>
+                                                <p class="location-name no-margin" ng-if="OrderSummary.EventCustomerOrderSummaryModel!=null && OrderSummary.EventCustomerOrderSummaryModel.Host != null" ng-bind="OrderSummary.EventCustomerOrderSummaryModel.Host"></p>
+                                                <div ng-if="OrderSummary.EventCustomerOrderSummaryModel != null && OrderSummary.EventCustomerOrderSummaryModel.Address != null">
+                                                    <p class="location-address no-margin">
+                                                        <div>
+                                                            <span ng-bind="OrderSummary.EventCustomerOrderSummaryModel.Address.StreetAddressLine1"></span>,
+                                                            <span ng-if="OrderSummary.EventCustomerOrderSummaryModel.Address.StreetAddressLine2 != null && OrderSummary.EventCustomerOrderSummaryModel.Address.StreetAddressLine2 !=''"><span ng-bind="OrderSummary.EventCustomerOrderSummaryModel.Address.StreetAddressLine2"></span>,</span>
+                                                            <span ng-bind="OrderSummary.EventCustomerOrderSummaryModel.Address.City"></span>,
+                                                        </div>
+                                                        <div>
+                                                            <span ng-bind="OrderSummary.EventCustomerOrderSummaryModel.Address.State"></span>,
+                                                            <span ng-bind="OrderSummary.EventCustomerOrderSummaryModel.Address.Country"></span>-
+                                                            <span ng-bind="OrderSummary.EventCustomerOrderSummaryModel.Address.ZipCode"></span>
+                                                            <event-location class="text-danger text-underline" address="OrderSummary.EventCustomerOrderSummaryModel.Address" text="'View On Map'">View On Map</event-location>
+                                                        </div>
+                                                    </p>
+                                                </div>
+                                                <div ng-if="OrderSummary.EventCustomerOrderSummaryModel==null || OrderSummary.EventCustomerOrderSummaryModel.Address==null">
+                                                    <p class="location-address no-margin">NA</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix top-buffer-10">
+                    <div class="table-look">
+                        <div class="table-row">
+                            <div class="table-cell col-md-12">
+                                <div class="col-md-12  well pull-left border-default " style="padding-bottom: 20px;">
+                                    <div class="row">
+                                        <div class="col-sm-6 no-padding-left">
+                                            <div class="clearfix">
+                                                <div class="order-box-height-lg">
+                                                    <h4 class="cards-heading semibold">Order Details</h4>
+                                                    <div class="col-lg-12">
+                                                        <p class="top-buffer-6 bottom-buffer-0" ng-if="OrderSummary.EventCustomerOrderSummaryModel==null || (OrderSummary.EventCustomerOrderSummaryModel.Package ===null && OrderSummary.EventCustomerOrderSummaryModel.AdditionalTests ==null)">NA</p>
+                                                        <div ng-if="OrderSummary.EventCustomerOrderSummaryModel!=null && (OrderSummary.EventCustomerOrderSummaryModel.Package !=null || OrderSummary.EventCustomerOrderSummaryModel.AdditionalTests !=null)">
+                                                            <p ng-if="OrderSummary.EventCustomerOrderSummaryModel.Package !=null" class="top-buffer-6 bottom-buffer-0">
+                                                                <span class="text-primary">{{ OrderSummary.EventCustomerOrderSummaryModel.Package.FirstValue}}</span>
+                                                                <span><b>{{ OrderSummary.EventCustomerOrderSummaryModel.Package.SecondValue | currency}}</b></span>
+                                                            </p>
+                                                            <ul class="summary-list" ng-if="OrderSummary.EventCustomerOrderSummaryModel.PackageTest !=null">
+                                                                <li ng-repeat="packageTest in OrderSummary.EventCustomerOrderSummaryModel.PackageTest" ng-bind="packageTest"></li>
+                                                            </ul>
+
+                                                            <p ng-if="OrderSummary.EventCustomerOrderSummaryModel.AdditionalTests !=null" class="top-buffer-6 bottom-buffer-0" ng-repeat="test in OrderSummary.EventCustomerOrderSummaryModel.AdditionalTests">
+                                                                <span class="text-primary">{{test.FirstValue}}</span>
+                                                                <b>{{test.SecondValue | currency}}</b>
+                                                            </p>
+                                                        </div>
+                                                        <div ng-if="OrderSummary.EventCustomerOrderSummaryModel !=null && OrderSummary.EventCustomerOrderSummaryModel.Product !=null">
+                                                            <p class="top-buffer-6 bottom-buffer-0" ng-repeat="product in OrderSummary.EventCustomerOrderSummaryModel.Product">
+                                                                <span class="text-primary">{{product.FirstValue}} - Yes</span>
+                                                                <b>{{product.SecondValue | currency}}</b>
+                                                            </p>
+                                                        </div>
+                                                        <div ng-if="OrderSummary.EventCustomerOrderSummaryModel.ShippingOptionId !=null">
+                                                            <p class="top-buffer-6 bottom-buffer-0" ng-if="OrderSummary.EventCustomerOrderSummaryModel.ShippingOptionId > 0">
+                                                                <span class="text-primary">{{OrderSummary.EventCustomerOrderSummaryModel.ShippingOption.FirstValue}}</span>
+                                                                <b>{{OrderSummary.EventCustomerOrderSummaryModel.ShippingOption.SecondValue | currency}}</b>
+                                                            </p>
+                                                            <p class="top-buffer-6 bottom-buffer-0" ng-if="OrderSummary.EventCustomerOrderSummaryModel.ShippingOptionId <= 0"><span class="text-primary">Result - Online </span><b>{{0.00 | currency}}</b></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h4 class="cards-heading semibold">Payment Summary</h4>
+                                            <div class="clearfix">
+                                                <div class="col-xs-12">
+                                                    <div class="top-buffer-20 clearfix" ng-if="OrderSummary.EventCustomerOrderSummaryModel !== null">
+                                                        <table class="table-look">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Total Price</td>
+                                                                    <td class="text-left"><b ng-bind="OrderSummary.EventCustomerOrderSummaryModel.TotalPrice | currency"></b></td>
+                                                                </tr>
+                                                                <tr ng-hide="hidePaymentDetail">
+                                                                    <td>Discount</td>
+                                                                    <td class="text-left">(&nbsp;<b ng-bind="OrderSummary.EventCustomerOrderSummaryModel.DiscountAmount | currency"></b>&nbsp;)</td>
+                                                                </tr>
+                                                                <tr ng-hide="hidePaymentDetail">
+                                                                    <td>Amount Due</td>
+                                                                    <td class="text-left"><b ng-bind="OrderSummary.EventCustomerOrderSummaryModel.AmountDue | currency"></b></td>
+                                                                </tr>
+                                                                <tr ng-hide="hidePaymentDetail">
+                                                                    <td>Is Paid?</td>
+                                                                    <td class="text-left"><b ng-bind="tempCart.IsPaymentSuccessful==true ? 'Yes' : 'No'"></b></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="well summary-total clearfix" ng-if="OrderSummary.EventCustomerOrderSummaryModel === null">
+                                                        <table class="table-look">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Total Price</td>
+                                                                    <td class="text-right"><b ng-bind="0 | currency"></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Discount</td>
+                                                                    <td class="text-right">(&nbsp;<b ng-bind="0 | currency"></b>&nbsp;)</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Amount Due</td>
+                                                                    <td class="text-right"><b ng-bind="0 | currency"></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Amount Paid:</td>
+                                                                    <td class="text-right"><b ng-bind="0 | currency"></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Is Paid?:</td>
+                                                                    <td class="text-right"><b ng-bind="'No'"></b></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix top-buffer-20">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="col-xs-12">
+                    <div class="well bg-warning2 no-margin radial-border">
+                        <p class="no-margin text-center">Click on Continue to complete your Health Assessment form to save time on the day of screening.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix lower-btns">
+            <div class="col-sm-12">
+                <button class="btn btn-primary btn-solid pull-right" ng-click="goToNextStep()" ng-disabled="isPosted">Continue to fill Health Assessment Form <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_next"></i></button>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instancce">
+  <soap:Body>
+    <bio:RecordsType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bio="http://www.biosignia.com/schemas/Records">
+      <record recordId="1" participantPrimaryKey="" uniqueId="" physicianName="" lastName="" firstName="" groupName="" conductedBy="" eventDate="" sex="">
+        <biomarker value="" name="AGE" />
+        <biomarker value="" name="BLOOD_PRESSURE_DIASTOLIC" />
+        <biomarker value="" name="BLOOD_PRESSURE_SYSTOLIC" />
+        <biomarker value="" name="BODY_MASS_INDEX" />
+        <biomarker value="" name="CARDIOVASCULAR_OTHER" />
+        <biomarker value="" name="CHOLESTEROL_HDL" />
+        <biomarker value="" name="CHOLESTEROL_TOTAL" />
+        <biomarker value="" name="DIABETES_MEMBER" />
+        <biomarker value="" name="EKG_ATRIAL_FIBRILLATION" />
+        <biomarker value="" name="EKG_LEFT_VENTRICULAR" />
+        <biomarker value="" name="FASTING_GLUCOSE" />
+        <biomarker value="" name="HEART_DISEASE_MEMBER" />
+        <biomarker value="" name="HEIGHT" />
+        <biomarker value="" name="HYPERTENSION_MEDICATION" />
+        <biomarker value="" name="MEMBER_CIGARETTES" />
+        <biomarker value="" name="RACE" />
+        <biomarker value="" name="STROKE_MEMBER" />
+        <biomarker value="" name="TRIGLYCERIDES" />
+        <biomarker value="" name="WAIST" />
+        <biomarker value="" name="WEIGHT" />
+        <biomarker value="" name="SEX" />
+        <biomarker value="" name="ASPIRIN_HALF_DAILY" />
+        <biomarker value="" name="EXERCISE_FREQUENCY" />
+        <biomarker value="" name="EXERCISE_INTENSITY" />
+        <biomarker value="" name="LIPID" />
+        <biomarker value="" name="HEART_FAILURE" />
+        <biomarker value="" name="PULSE_RATE" />
+        <biomarker value="" name="VALVE_DISEASE" />
+        <biomarker value="" name="FASTING_STATUS" />
+        <biomarker value="" name="MEMBER_CIGARETTES_FORMERLY_KYN" />
+        <biomarker value="" name="BIRTH_YEAR" />
+        <biomarker value="" name="BIRTH_MONTH" />
+        <biomarker value="" name="CHOLESTEROL_LDL" />
+        <biomarker value="" name="BIRTH_DAY" />
+        <biomarker value="" name="MENOPAUSE_BEGUN" />
+        <biomarker value="" name="HRT_CURRENT" />
+        <biomarker value="" name="GESTATIONAL_DIABETES" />
+        <biomarker value="" name="YEARS_GESTATIONAL_DIABETES" />
+        <biomarker value="" name="BIRTH_NUMBER" />
+        <biomarker value="" name="PREGNANT_CURRENTLY" />
+		 <biomarker value="" name="MEMBER_CIGARETTES_AVG" />
+        <biomarker value="" name="MEMBER_CIGARETTES_YEARS" />
+        <biomarker value="" name="ASTHMA_MEMBER" />
+        <biomarker value="" name="ASTHMA_MEMBER_FORMERLY" />
+        <biomarker value="" name="EMPHYSEMA_MEMBER" />
+        <biomarker value="" name="LUNG_COPD_MEMBER" />
+		<biomarker value="" name="A1C" />
+      </record>
+    </bio:RecordsType>
+  </soap:Body>
+</soap:Envelope>

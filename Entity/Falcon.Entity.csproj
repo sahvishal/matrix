@@ -1,0 +1,360 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D5DBB9D2-2E4D-4972-B90F-1AE1F5CA3D4B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Falcon.Entity</RootNamespace>
+    <AssemblyName>Falcon.Entity</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Testing\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\Falcon.Entity.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;d:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;d:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'qa-hf|AnyCPU'">
+    <OutputPath>bin\qa-hf\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'prod-hf|AnyCPU'">
+    <OutputPath>bin\prod-hf\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v100|AnyCPU'">
+    <OutputPath>bin\v100\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip1-hf|AnyCPU'">
+    <OutputPath>bin\hip1-hf\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip3-hf|AnyCPU'">
+    <OutputPath>bin\hip3-hf\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev-hf|AnyCPU'">
+    <OutputPath>bin\dev-hf\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CallCenter\ECall.cs" />
+    <Compile Include="CallCenter\ECallCenter.cs" />
+    <Compile Include="CallCenter\ECallCenterCallCenterUser.cs" />
+    <Compile Include="CallCenter\ECallCenterNotes.cs" />
+    <Compile Include="CallCenter\EScript.cs" />
+    <Compile Include="CallCenter\EScriptType.cs" />
+    <Compile Include="Franchisor\ENotificationSubscriber.cs" />
+    <Compile Include="Franchisee\ESalesRepMyActivity.cs" />
+    <Compile Include="Franchisor\ENotificationOther.cs" />
+    <Compile Include="Franchisor\ENotificationMedium.cs" />
+    <Compile Include="Franchisor\ENotificationType.cs" />
+    <Compile Include="MarketingPartner\ECampaignReport.cs" />
+    <Compile Include="MarketingPartner\EMarketingMaterial.cs" />
+    <Compile Include="MarketingPartner\EMarketingMaterialType.cs" />
+    <Compile Include="MedicalVendor\EHospitalFacility.cs" />
+    <Compile Include="MedicalVendor\EHospitalPartner.cs" />
+    <Compile Include="MedicalVendor\EMVMVLicense.cs" />
+    <Compile Include="MedicalVendor\EMVPaymentInfo.cs" />
+    <Compile Include="Other\ColorectalTestResult.cs" />
+    <Compile Include="Other\ECampaignDetailToolTip.cs" />
+    <Compile Include="Other\PhoneFormat.cs" />
+    <Compile Include="Other\ECustomerAccessLog.cs" />
+    <Compile Include="Other\EEndOfDayInfo.cs" />
+    <Compile Include="Other\EEkgTestResult.cs" />
+    <Compile Include="Other\EFraminghamRiskTestResult.cs" />
+    <Compile Include="Other\ELipidTestResult.cs" />
+    <Compile Include="Other\ELiverTestResult.cs" />
+    <Compile Include="Other\ELocationMaster.cs" />
+    <Compile Include="Other\EMarketingOfferRole.cs" />
+    <Compile Include="Other\EMarketingOfferType.cs" />
+    <Compile Include="Other\EEventMarketingOffer.cs" />
+    <Compile Include="Other\EPackageMarketingOfferMapping.cs" />
+    <Compile Include="Other\EMarketingOffer.cs" />
+    <Compile Include="Other\EProspectAll.cs" />
+    <Compile Include="Other\EProspectListType.cs" />
+    <Compile Include="Other\EEventActivityTemplate.cs" />
+    <Compile Include="Other\EEventActivityTemplateActivity.cs" />
+    <Compile Include="Other\EMarketingOrderShippingInfo.cs" />
+    <Compile Include="Other\EMarketingPrintOrderItem.cs" />
+    <Compile Include="Other\EProspectContactRole.cs" />
+    <Compile Include="Other\ECarrier.cs" />
+    <Compile Include="Other\EDepositeSlip.cs" />
+    <Compile Include="Other\EECheckPaymentDetails.cs" />
+    <Compile Include="Other\EKeyValuepair.cs" />
+    <Compile Include="Other\ENotesDetails.cs" />
+    <Compile Include="Other\EOrder.cs" />
+    <Compile Include="Other\EOrderShippingInformation.cs" />
+    <Compile Include="Other\EOrderType.cs" />
+    <Compile Include="Other\EPackageCouponMapping.cs" />
+    <Compile Include="Other\EProspectCustomer.cs" />
+    <Compile Include="MedicalVendor\EMVCustomerPayRate.cs" />
+    <Compile Include="MedicalVendor\EMVEvaluationMode.cs" />
+    <Compile Include="MedicalVendor\EMVMVUserCustomerPayRate.cs" />
+    <Compile Include="MedicalVendor\EMVMVUserNotes.cs" />
+    <Compile Include="MedicalVendor\EMVMVUserPackage.cs" />
+    <Compile Include="MedicalVendor\EMVMVUserTest.cs" />
+    <Compile Include="MedicalVendor\EMVPackage.cs" />
+    <Compile Include="MedicalVendor\EMVPermittedTest.cs" />
+    <Compile Include="MedicalVendor\EMVTest.cs" />
+    <Compile Include="MedicalVendor\EMVUserEventTestLock.cs" />
+    <Compile Include="Other\ECarotidArteryLocationWiseData.cs" />
+    <Compile Include="Other\EAAALocationWiseData.cs" />
+    <Compile Include="Other\EAAATestFindings.cs" />
+    <Compile Include="Other\EAAATestIncidentalFindings.cs" />
+    <Compile Include="Other\EASITestFindings.cs" />
+    <Compile Include="Other\EASITestIncidentalFindings.cs" />
+    <Compile Include="Other\EBlockedDay.cs" />
+    <Compile Include="Other\EBlockedDayFranchisee.cs" />
+    <Compile Include="Other\ECarotidArteryTestFindings.cs" />
+    <Compile Include="Other\ECarotidArteryTestIncidentalFindings.cs" />
+    <Compile Include="Other\EContactCall.cs" />
+    <Compile Include="Other\ECallStatus.cs" />
+    <Compile Include="Other\ECashPaymentDetail.cs" />
+    <Compile Include="Other\EChequePaymentDetail.cs" />
+    <Compile Include="Other\EContactMeeting.cs" />
+    <Compile Include="Other\EContact.cs" />
+    <Compile Include="Other\EContactNotes.cs" />
+    <Compile Include="Other\ECoupon.cs" />
+    <Compile Include="Other\ECouponType.cs" />
+    <Compile Include="Other\ECustomerRegistrationNotes.cs" />
+    <Compile Include="Other\ECustomerReport.cs" />
+    <Compile Include="Other\ECustomerSurvey.cs" />
+    <Compile Include="Other\ECustomerSurveyQuestion.cs" />
+    <Compile Include="Other\ECustomerSurveyQuestionAnswer.cs" />
+    <Compile Include="Other\EEventCoupon.cs" />
+    <Compile Include="Other\EEventHostPromotion.cs" />
+    <Compile Include="Other\EEventLocalPublications.cs" />
+    <Compile Include="Other\EEventRole.cs" />
+    <Compile Include="Other\EIncidentalFindings.cs" />
+    <Compile Include="Other\ELoginLog.cs" />
+    <Compile Include="Other\EMarketingSource.cs" />
+    <Compile Include="Other\EOsteoporisisTestFindings.cs" />
+    <Compile Include="Other\EOsteoporisisTestIncidentalFindings.cs" />
+    <Compile Include="Other\EOsteoporosisTestResult.cs" />
+    <Compile Include="Franchisee\EFranchisee.cs" />
+    <Compile Include="Franchisee\EFranchiseeApplication.cs" />
+    <Compile Include="Franchisee\EFranchiseeFranchiseeUser.cs" />
+    <Compile Include="Franchisee\EFranchiseeUser.cs" />
+    <Compile Include="Franchisor\EFranchisor.cs" />
+    <Compile Include="Franchisor\EFranchisorFranchisorUser.cs" />
+    <Compile Include="Franchisor\EFranchisorUser.cs" />
+    <Compile Include="Franchisor\EGlobalAttributes.cs" />
+    <Compile Include="MedicalVendor\EMedicalVendor.cs" />
+    <Compile Include="MedicalVendor\EMedicalVendorApplication.cs" />
+    <Compile Include="MedicalVendor\EMedicalVendorType.cs" />
+    <Compile Include="MedicalVendor\EMVMVUser.cs" />
+    <Compile Include="MedicalVendor\EMVTestPayRate.cs" />
+    <Compile Include="MedicalVendor\EMVUser.cs" />
+    <Compile Include="MedicalVendor\EMVUserClassification.cs" />
+    <Compile Include="MedicalVendor\EMVUserSpecialization.cs" />
+    <Compile Include="Other\EAAATestResult.cs" />
+    <Compile Include="Other\EASITestResult.cs" />
+    <Compile Include="Other\ECarotidArteryTestResult.cs" />
+    <Compile Include="Other\EContract.cs" />
+    <Compile Include="Other\EAddress.cs" />
+    <Compile Include="Other\EApplication.cs" />
+    <Compile Include="Other\ECity.cs" />
+    <Compile Include="Other\ECollateralType.cs" />
+    <Compile Include="Other\ECommunicationMode.cs" />
+    <Compile Include="Other\ECountry.cs" />
+    <Compile Include="Other\ECreditCardPaymentDetail.cs" />
+    <Compile Include="Other\ECreditCardType.cs" />
+    <Compile Include="Other\ECustomers.cs" />
+    <Compile Include="Other\EEventAppointment.cs" />
+    <Compile Include="Other\EEventCustomer.cs" />
+    <Compile Include="Other\EEvent.cs" />
+    <Compile Include="Other\EEventPackage.cs" />
+    <Compile Include="Other\EEventPaymentDetail.cs" />
+    <Compile Include="Other\EEventPod.cs" />
+    <Compile Include="Other\EEventReferral.cs" />
+    <Compile Include="Other\EEventScheduleMethod.cs" />
+    <Compile Include="Other\EEventType.cs" />
+    <Compile Include="Other\EHost.cs" />
+    <Compile Include="Other\EHostContacts.cs" />
+    <Compile Include="Other\EHostType.cs" />
+    <Compile Include="Other\EInventoryItem.cs" />
+    <Compile Include="Other\EInventoryItemTest.cs" />
+    <Compile Include="Other\EIP.cs" />
+    <Compile Include="Other\EItem.cs" />
+    <Compile Include="Other\EItemType.cs" />
+    <Compile Include="Other\ELocation.cs" />
+    <Compile Include="Other\EMarketingMaterialType.cs" />
+    <Compile Include="Other\EMessageSendType.cs" />
+    <Compile Include="Other\EModule.cs" />
+    <Compile Include="Franchisor\EPackage.cs" />
+    <Compile Include="Other\ENote.cs" />
+    <Compile Include="Other\ENoteCommon.cs" />
+    <Compile Include="Other\EPADTestFindings.cs" />
+    <Compile Include="Other\EPADTestIncidentalFindings.cs" />
+    <Compile Include="Other\EPADTestResult.cs" />
+    <Compile Include="Other\EPaymentDetail.cs" />
+    <Compile Include="Other\EPaymentFrequency.cs" />
+    <Compile Include="Other\EPaymentType.cs" />
+    <Compile Include="Other\EPod.cs" />
+    <Compile Include="Other\EPodInventory.cs" />
+    <Compile Include="Other\EPrimaryCarePhysician.cs" />
+    <Compile Include="Other\EProspect.cs" />
+    <Compile Include="Other\EProspectDetails.cs" />
+    <Compile Include="Other\EProspectList.cs" />
+    <Compile Include="Other\EProspectType.cs" />
+    <Compile Include="Other\EReferences.cs" />
+    <Compile Include="Other\EResourceType.cs" />
+    <Compile Include="Other\EResultOrderCatalog.cs" />
+    <Compile Include="Other\ERole.cs" />
+    <Compile Include="Other\EScheduleMethod.cs" />
+    <Compile Include="Other\EScheduleTemplate.cs" />
+    <Compile Include="Other\EScheduleTemplateFranchiseeAccess.cs" />
+    <Compile Include="Other\EScheduleTemplateTime.cs" />
+    <Compile Include="Other\ESecurityQuestion.cs" />
+    <Compile Include="Other\EMarketingOfferSignUpMode.cs" />
+    <Compile Include="Other\ETask.cs" />
+    <Compile Include="Other\ETaskPriorityType.cs" />
+    <Compile Include="Other\ETaskStatusType.cs" />
+    <Compile Include="Other\ETaskType.cs" />
+    <Compile Include="Franchisor\ETest.cs" />
+    <Compile Include="Other\ETerritory.cs" />
+    <Compile Include="Other\ETestParameter.cs" />
+    <Compile Include="Other\ETestRecommendation.cs" />
+    <Compile Include="Other\ETrackingMarketing.cs" />
+    <Compile Include="Other\EUnableScreenReason.cs" />
+    <Compile Include="Other\EUploadTestInfo.cs" />
+    <Compile Include="Other\EUploadZipInfo.cs" />
+    <Compile Include="Other\EUser.cs" />
+    <Compile Include="Other\ELogin.cs" />
+    <Compile Include="Other\EVan.cs" />
+    <Compile Include="Other\EEventWizard.cs" />
+    <Compile Include="Other\EWFStage.cs" />
+    <Compile Include="Other\EWFStageTrigger.cs" />
+    <Compile Include="Other\EZip.cs" />
+    <Compile Include="Other\ETerritoryZipMap.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Other\EState.cs" />
+    <Compile Include="User\EUserShellModuleRole.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{A170C6CA-FC12-4074-A822-027DEE8218A1}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

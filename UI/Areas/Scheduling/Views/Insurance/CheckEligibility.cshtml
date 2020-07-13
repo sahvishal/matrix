@@ -1,0 +1,178 @@
+﻿@using Falcon.App.Core.Finance.Enum
+@using Falcon.App.Core.Insurance.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Insurance.ViewModels.EligibilityEditModel
+
+@Html.HiddenFor(m => m.EligibilityId)
+
+<div style="float: left; width: 583px;">
+    <div class="header-title" style="float: left; width: 564px;">
+        <strong>Please provide following information to check eligibility for insurance:</strong>
+    </div>
+    <div style="float: left; margin: 10px; width: 564px;">
+        <div class="editor-row">
+            <div class="editor-column" style="width: 48%;">
+                <div class="small-text">
+                    @Html.LabelFor(m => m.Request.FirstName) @Html.ValidationMessageFor(m => m.Request.FirstName)
+                </div>
+                @Html.TextBoxFor(m => m.Request.FirstName)
+            </div>
+            <div class="editor-column" style="width: 48%;">
+                <div class="small-text">
+                    @Html.LabelFor(m => m.Request.LastName) @Html.ValidationMessageFor(m => m.Request.LastName)
+                </div>
+                @Html.TextBoxFor(m => m.Request.LastName)
+            </div>
+        </div>
+        <div class="editor-row">
+            <div class="editor-column" style="width: 48%;">
+                <div class="small-text">
+                    @Html.LabelFor(m => m.Request.MemberId) @Html.ValidationMessageFor(m => m.Request.MemberId)
+                </div>
+                @Html.TextBoxFor(m => m.Request.MemberId)
+            </div>
+            <div class="editor-column" style="width: 48%;">
+                <div class="small-text">
+                    @Html.LabelFor(m => m.Request.Dob) @Html.ValidationMessageFor(m => m.Request.Dob)
+                </div>
+                @Html.TextBoxFor(m => m.Request.Dob, new { @class = "datePicker-dob" })
+            </div>
+        </div>
+        <div class="editor-row">
+            <div class="editor-column" style="width: 90%;">
+                <div class="small-text">
+                    @Html.LabelFor(m => m.Request.InsuranceCompanyId) @Html.ValidationMessageFor(m => m.Request.InsuranceCompanyId)
+                </div>
+                @Html.DropDownListFor(m => m.Request.InsuranceCompanyId, DropDownHelper.GetAllInsuranceCompany(Model.Request.InsuranceCompanyId))
+            </div>
+        </div>
+    </div>
+    <br/>
+    @Html.HiddenFor(m=>m.HideCardDetails)
+    <div class="header-title" style='float: left; width: 564px; border-bottom: solid 1px #000000; @(Model.HideCardDetails ? "display:none;" : "")'>
+        <strong>Please provide credit card detail:</strong><br/>
+        <i>Credit Card details we will keep on file and will not get charged unless the claim is disregarded.</i>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.ChargeCardResponse))
+    {
+        <div class="error-message" style="clear: both; display: inline-block;">
+            @Model.ChargeCardResponse
+        </div>
+    }
+    <div style='float: left; margin: 10px; width: 564px; @(Model.HideCardDetails ? "display:none;" : "")' id="card-detail">
+        @Html.HiddenFor(m => m.CardDetail.Id)
+        <div class="editor-row">
+            <div class="editor-column" style="width: 48%;">
+                <div class="small-text">
+                    <label>Name on Card</label>@Html.ValidationMessageFor(m => m.CardDetail.NameOnCard)
+                </div>
+                @Html.TextBoxFor(m => m.CardDetail.NameOnCard)
+            </div>
+            <div class="editor-column" style="width: 48%;">
+                <div class="small-text">
+                    <label>Card Number</label>@Html.ValidationMessageFor(m => m.CardDetail.Number)
+                </div>
+                @Html.TextBoxFor(m => m.CardDetail.Number, new { maxlength = 16})
+            </div>
+        </div>
+        <div class="editor-row">
+            <div class="editor-column" style="width: 48%;">
+                @Html.HiddenFor(m => m.CardDetail.ExpirationDate)
+                <div class="small-text">
+                    <label>Expiration Date <span class="txt-grey"><em>(mm/yyyy)</em></span></label>@Html.ValidationMessageFor(m => m.CardDetail.ExpirationDate)
+                </div>
+                <select id="expiryDate-month" style="min-width: 70px; width: 70px;">
+                    <option value="0">- mm - </option>
+                    <option value="1">01 </option>
+                    <option value="2">02 </option>
+                    <option value="3">03 </option>
+                    <option value="4">04 </option>
+                    <option value="5">05 </option>
+                    <option value="6">06 </option>
+                    <option value="7">07 </option>
+                    <option value="8">08 </option>
+                    <option value="9">09 </option>
+                    <option value="10">10 </option>
+                    <option value="11">11 </option>
+                    <option value="12">12 </option>
+                </select>
+                <select id="expiryDate-year" style="min-width: 80px; width: 80px;">
+                    <option value="0">- yyyy - </option>
+                </select>
+            </div>
+            <div class="editor-column" style="width: 48%;">
+                <div class="small-text">
+                    <label>CVV</label>@Html.ValidationMessageFor(m => m.CardDetail.CVV)
+                </div>
+                @Html.TextBoxFor(m => m.CardDetail.CVV, new { maxlength = 4 })
+            </div>
+            <div class="mini_half left-float mr5" style="width:150px; display: none;">
+                @Html.DropDownListFor(m => m.CardDetail.TypeId, DropDownHelper.CardTypes((long)Model.CardDetail.TypeId), new { @class = "select", @style = "width:145px;" })
+            </div>
+        </div>
+    </div>
+    @if (Model.Response != null && string.IsNullOrEmpty(Model.ChargeCardResponse))
+    {
+        <br/>
+        <div class="header-title" style="float: left; width: 564px; border-bottom: solid 1px #000000;">
+            <strong>Eligibility Detail:</strong>
+        </div>
+        <div style="float: left; width: 564px;">
+            @if (Model.Response.Error != null)
+            {
+                <div class="editor-row">
+                    <div style="float: left; width:25%;"><b>Eligibility Status:</b></div>
+                    <div style="float: left; width:70%;">@Model.Response.Error.ResponseDescription</div>
+                </div>
+                <div class="editor-row">
+                    <div style="float: left; width:25%;"><b>Rejection Reason:</b></div>
+                    <div style="float: left; width:70%;">@Model.Response.Error.RejectionReasonDescription</div>
+                </div>
+                <div class="editor-row">
+                    <div style="float: left; width:25%;"><b>Follow up Action:</b></div>
+                    <div style="float: left; width:70%;">@Model.Response.Error.FollowUpActionDescription</div>
+                </div>
+            }
+            else 
+            {
+                if (Model.Response.Plan != null)
+                {
+                    <div class="editor-row">
+                        <div style="float: left; width:25%;"><b>Eligibility Status:</b></div>
+                        <div style="float: left; width:70%;">
+                            @if (Model.Response.Plan.CoverageStatus == EligibleCoverageStatus.ActiveCoverage || Model.Response.Plan.CoverageStatus == EligibleCoverageStatus.ActiveFullRiskCapitation
+                                 || Model.Response.Plan.CoverageStatus == EligibleCoverageStatus.ActiveServicesCapitated || Model.Response.Plan.CoverageStatus == EligibleCoverageStatus.ActiveServicesCapitatedToPrimaryCarePhysician)
+                            {
+                                <span>Yes (@Model.Response.Plan.CoverageStatusLabel)</span>
+                            }
+                            else
+                            {
+                                <span>No (@Model.Response.Plan.CoverageStatusLabel)</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="editor-row">
+                        <div style="float: left; width:25%;"><b>Plan Name:</b></div>
+                        <div style="float: left; width:70%;">@Model.Response.Plan.PlanName</div>
+                    </div>
+                    <div class="editor-row">
+                        <div style="float: left; width:25%;"><b>Plan Id:</b></div>
+                        <div style="float: left; width:70%;">@(string.IsNullOrEmpty(Model.Response.Plan.PlanNumber) ? "N/A" : Model.Response.Plan.PlanNumber)</div>
+                    </div>
+                    <div class="editor-row">
+                        <div style="float: left; width:25%;"><b>Group Name:</b></div>
+                        <div style="float: left; width:70%;">@(string.IsNullOrEmpty(Model.Response.Plan.GroupName) ? "N/A" : Model.Response.Plan.GroupName)</div>
+                    </div>
+                }
+                if (Model.Response.Demographics != null && Model.Response.Demographics.Subscriber != null)
+                {
+                    <div class="editor-row">
+                        <div style="float: left; width:25%;"><b>Group Id:</b></div>
+                        <div style="float: left; width:70%;">@(string.IsNullOrEmpty(Model.Response.Demographics.Subscriber.GroupId) ? "N/A" : Model.Response.Demographics.Subscriber.GroupId)</div>
+                    </div>
+                }
+            }
+        </div>
+    }
+</div>
+

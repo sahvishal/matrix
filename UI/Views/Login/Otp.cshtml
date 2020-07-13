@@ -1,0 +1,109 @@
+﻿@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.UI.HtmlHelpers 
+
+@model OtpModel
+
+@{
+    ViewBag.Title = "Veryfy OTP";
+}
+
+ 
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{Html.BeginForm();}
+ 
+<div class="login" id="leftPane">
+    <h2>Verify OTP</h2>
+    <div class="input-wrapper">
+        @Html.ValidationMessageFor(x => x.Otp)
+        @Html.TextBoxFor(x => x.Otp, new { @class = "text-box numericOnly", autocomplete = "off", maxlength = "6", autofocus = "autofocus" })
+    </div>
+
+    @if (Model.IsAllowSafeComputerEnabled)
+    {
+        <div style="padding-top: 5px;padding-left:5px;">
+            @Html.EditorFor(m => m.MarkAsSafe)
+        </div>
+    }
+    <div class="submit-button-row">
+        <span id="resendspan"> Click here to <a href="javascript:void();" id="resend">Resend</a> OTP.  </span>
+        <span id="sendingspan" style="display: none;"> Sending OTP... &nbsp; &nbsp; &nbsp; </span>
+        @Html.SubmitButton("Verify")
+
+
+    </div>
+</div>
+ <div class="login" id="rightPane">
+    <h2>Please enter the OTP sent to your registered mail id or mobile number</h2>
+    <p style="color:red;">
+        Note: The OTP is Valid for @ViewBag.ExpirationMinutes minute(s). More than @ViewBag.AttemptCount wrong attempts will lock your Account.
+    </p>
+
+</div>
+<script language="javascript" type="text/javascript">
+    $('.numericOnly').bind('keypress', function(evt) {
+        var key = (evt.which ? evt.which : ((evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : 0)));
+
+        if (evt.shiftKey == false) {
+            if ((key >= 48 && key <= 57) || (evt.charCode == 0 && (key == 8 || key == 46))) {
+                return true;
+            }
+        } else if (evt.shiftKey == true) {
+            if (key == 45 || key == 189 || key == 95) {
+
+                return true;
+            }
+        }
+        if (key === 13) {
+            $("#Submit").click();
+        }
+        
+        evt.preventDefault();
+        return false;
+    });
+    
+    $('#resend').click(function() {
+        $('#sendingspan').show();
+        $('#resendspan').hide();
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: "/Login/ResendOtp?" + "userId=" + "@Model.UserId",
+            success: function (result) {
+                if (result == "true") {
+                    alert("Otp has been sent again.");
+                    
+                }  
+                else
+                {alert(result);}
+                $('#sendingspan').hide();
+                $('#resendspan').show();
+            },
+            error: function () { alert('Some error');
+                $('#sendingspan').hide();
+                $('#resendspan').show();}
+        });
+        
+    });
+    
+    if ("@Model.IsAccountLocked" == "True") {
+        $('#resendspan').hide();
+        $('#Submit').val('Exit To Login');
+
+        $('#Submit').click(function(e) {
+            e.preventDefault();
+            window.location = '/Login';
+
+        });
+    }
+    $(document).ready(function () {
+        $('#rightPane').css("height", $('#leftPane').innerHeight() - 20); 
+    });
+    
+</script>
+
+
+
+@{ Html.EndForm(); }

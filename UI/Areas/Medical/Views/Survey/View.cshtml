@@ -1,0 +1,40 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model SurveyFormEditModel
+@{
+    ViewBag.Title = "Survey Template Questions";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml"; ;
+}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/SurveyTemplateForm.cshtml")))
+{
+    using (Html.BeginForm())
+    {
+        @Html.Partial("/Config/Content/Views/Shared/SurveyTemplateForm.cshtml", Model)
+    }
+}
+
+
+<script type="text/javascript" language="javascript">
+    $.ajaxSetup({
+        cache: false
+    });
+
+    function makeFormReadonly() {
+        $('#surveyForm-container').find('input[type="radio"]').attr('disabled', 'disabled');
+        $('#surveyForm-container').find('input[type="checkbox"]').attr('disabled', 'disabled');
+        $('#surveyForm-container').find('input[type="text"]:visible').attr('disabled', 'disabled');
+        $('#surveyForm-container').find('textarea').attr('disabled', 'disabled');
+    }
+
+    function BlankAllQuestions() {
+        $('#surveyForm-container').find('input[type="radio"]').attr('checked', false);
+        $('#surveyForm-container').find('input[type="checkbox"]').attr('checked', false);
+        $('#surveyForm-container').find('input[type="text"]').val('');
+        $('#surveyForm-container').find('textarea').val('');
+    }
+
+    $(document).ready(function () {
+        makeFormReadonly();
+        BlankAllQuestions();
+    });
+</script>

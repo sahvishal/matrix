@@ -1,0 +1,11 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentHeaderEditModel
+@{
+    Layout = "LayoutPrintableHealthAssessment.cshtml";
+}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/HealthplanParticipationConsentFrom.cshtml")))
+{
+    <div style="width: 900px">
+        @Html.Partial("/Config/Content/Views/Shared/HealthplanParticipationConsentFrom.cshtml", Model)
+    </div>
+}

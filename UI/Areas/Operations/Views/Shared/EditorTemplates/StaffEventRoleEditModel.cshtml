@@ -1,0 +1,100 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Operations.ViewModels.StaffEventRoleEditModel
+<style type="text/css">
+    textarea
+    {
+        width: 75%;
+    }
+</style>
+<div class="content-main-column full-width">
+    @Html.EditorFor(m => m.Id)
+    <div class="editor-row">
+        @Html.EditorFor(m => m.Name)
+        <div class="editor-field">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Description)
+            </div>
+            @Html.EditorFor(m => m.Description)
+        </div>
+    </div>
+    @if (Model.Tests != null && Model.Tests.Count() > 0)
+    {
+        <fieldset>
+            <legend>
+                <h4>
+                    Tests</h4>
+            </legend>
+            @foreach (var test in Model.Tests)
+            {
+                <div class="editor-column">
+                    @if (Model.AllowedTestIds != null && Model.AllowedTestIds.Contains(test.Id))
+                    {
+                        <input type="checkbox" id="@test.Id" checked="checked" onclick="onClickFill(this);" /> @test.Name
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="@test.Id" onclick="onClickFill(this);" /> @test.Name
+                    }
+                    <input type="hidden" value="@test.Id" />
+                </div>
+            }
+            @if (Model.AllowedTestIds != null && Model.AllowedTestIds.Count() > 0)
+            {
+                <script type="text/javascript" language="javascript">                    $(document).ready(function () { renderAllowedTests(); });        </script>
+            }
+        </fieldset>
+    }
+    <div id="allowedTestsContainer" style="display: none;">
+    </div>
+    <script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+    <script language="javascript" type="text/javascript">
+    var allowedTests = new Object();
+    @if ((Model.AllowedTestIds != null) && (Model.AllowedTestIds.Count() > 0))
+    {
+        <text>
+            var test = new Object();
+        </text>
+        foreach (var allowedTest in Model.AllowedTestIds)
+        {  
+                <text>
+                {
+                    test = new Object();
+                    test.Id = @allowedTest;
+                    allowedTests[test.Id] = test;
+                }
+                </text>
+        }
+    }
+        
+        function onClickFill(sourceCheckbox){
+            var checkedBox = $(sourceCheckbox);
+            var val = checkedBox.parent().find("input:hidden").val();
+            if(sourceCheckbox.checked){
+                test = new Object();
+                test.Id = val;
+                allowedTests[val] = test;   
+            }
+            else{
+                if(allowedTests[val]  != null){
+                    delete allowedTests[val];
+                }
+            }
+            renderAllowedTests();
+        }
+
+        function renderAllowedTests() {
+            $("#allowedTestsContainer").empty();
+            $.each(allowedTests, function (key, terr) {
+                $("#allowedTestTemplate").tmpl(terr).appendTo("#allowedTestsContainer");
+            });
+        }
+
+    </script>
+    <script id="allowedTestTemplate" type="text/x-jquery-tmpl">
+        <div style="display:none;">
+            <input type="hidden" name="AllowedTestIds.Index" value="${Id}" />
+            <input type="text" name="AllowedTestIds[${Id}]" value="${Id}" />
+        </div>                  
+    </script>
+</div>

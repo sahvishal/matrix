@@ -1,0 +1,131 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@{
+    ViewBag.Title = "Organization Edit Model";
+}
+@model Falcon.App.Core.Users.ViewModels.OrganizationEditModel
+<div style="">
+    <div class="editor-row">
+        <div style="width: 310px;float: left">
+            @Html.EditorFor(m => m.Id)
+            <div class="editor-row">
+                <div class="editor-label">
+                    @Html.LabelFor(m => m.Name) <span class="reqiredmark"><sup>*</sup></span>
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(m => m.Name)
+                </div>
+            </div>
+            <div class="editor-row">
+                <div class="editor-label">
+                    @Html.LabelFor(m => m.Email)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(m => m.Email)
+                </div>
+            </div>
+            <div class="editor-row">
+                <div class="editor-field">
+                    @Html.EditorFor(m => m.PhoneNumber)
+                </div>
+            </div>
+            <div class="editor-row">
+                <div class="editor-field">
+                    @Html.EditorFor(m => m.FaxNumber)
+                </div>
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(m => m.OrganizationType)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownList("OrganizationType", DropDownHelper.OrganizationTypes())
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Description)<span class="reqiredmark"><sup>*</sup></span>
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(m => m.Description, new { @rows = "3", @class = "custom-textbox" })
+            </div>
+        </div>
+        <div style="width: 590px;float: right">
+            <span class="editor-label">Business Address <span class="reqiredmark"><sup>*</sup></span></span>  @Html.ValidationMessageFor(m => m.BusinessAddress)
+            <div class="editor-field business-address">
+                @Html.EditorFor(m => m.BusinessAddress)
+            </div>
+            <span class="editor-label">
+                Billing Address <span class="reqiredmark"><sup>*</sup></span>&nbsp;&nbsp;
+                @if (Model.BillingAddress.Id == Model.BusinessAddress.Id)
+                {
+                    <input type="checkbox" id="SameAddressCheckbox" checked="checked" onclick="sameAddressBlockClicked(); " />
+                }
+                else
+                {
+                    <input type="checkbox" id="SameAddressCheckbox" onclick="sameAddressBlockClicked();" />
+                }
+                Is Same as Business Address
+            </span>
+            <div class="editor-field billing-address">
+                @Html.EditorFor(m => m.BillingAddress)
+            </div>
+        </div>
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+
+    function sameAddressBlockClicked() {//debugger;
+        if ($("#SameAddressCheckbox").attr("checked")) {
+            $(".billing-address input").attr("readonly", "readonly");
+            $(".billing-address select").attr("disabled", "disabled");
+            $("[id$='BillingAddress_Id']").val($("[id$='BusinessAddress_Id']").val());
+            copyStreetAddressOne();
+            copyStreetAddressTwo();
+            copyCity();
+            copyCountry();
+            copyState();
+            copyZip();
+        }
+        else {
+            $("[id$='BillingAddress_Id']").val("0");
+            $(".billing-address input").removeAttr("readonly");
+            $(".billing-address select").removeAttr("disabled");
+        }
+    }
+
+    function copyStreetAddressOne() {
+        $(".billing-address .street-address1").val($(".business-address .street-address1").val());
+    }
+
+    function copyStreetAddressTwo() {
+        $(".billing-address .street-address2").val($(".business-address .street-address2").val());
+    }
+
+    function copyCity() {
+        $(".billing-address .address-city").val($(".business-address .address-city").val());
+    }
+
+    function copyCountry() {
+        $(".billing-address .address-country option[value=" + $(".business-address .address-country").val() + "]").attr("selected", true);
+    }
+
+    function copyState() {
+        $(".billing-address .address-state option[value=" + $(".business-address .address-state").val() + "]").attr("selected", true);
+    }
+
+    function copyZip() {
+        $(".billing-address .address-zip").val($(".business-address .address-zip").val());
+    }
+
+    $(document).ready(function () {
+
+        $(".business-address .street-address1").keyup(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyStreetAddressOne(); });
+        $(".business-address .street-address2").keyup(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyStreetAddressTwo(); });
+        $(".business-address .address-city").keyup(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyCity(); });
+        $(".business-address .address-zip").keyup(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyZip(); });
+
+        $(".business-address .address-country").change(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyCountry(); });
+        $(".business-address .address-state").change(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyState(); });
+
+        $("form").submit(function () { $(".billing-address select").removeAttr("disabled"); });
+        $('form').attr("autocomplete", "off");
+    });
+
+</script>

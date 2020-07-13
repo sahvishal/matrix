@@ -1,0 +1,133 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Finance.ViewModels.InsurancePaymentListModel
+@{
+    ViewBag.Title = "Insurance Payment";
+}
+@section css {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+}
+<h1>Insurance Payment</h1>
+<div id="list-filter">
+    @{Html.BeginForm("InsurancePayment", "Reports", FormMethod.Get);}
+    @Html.Partial("InsurancePaymentListModelFilter", Model.Filter)
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/ExportableInsurancePayment?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th style="width: 150px;">Customer Info 
+            </th>
+            <th style="width: 110px;">Event Info
+            </th>
+            <th style="width: 200px;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().CustomerOrder)
+            </th>
+            <th style="width: 150px;">
+                Payment Instruments
+            </th>
+            <th>
+                Insurance Detail
+            </th>
+            <th>
+                Status
+            </th>
+            <th style="width:70px; text-align:right;">Order</th>
+        </tr>
+        @foreach (var customer in Model.Collection)
+        {
+            <tr>
+                <td style="width:150px;">
+                    <b>@(customer.CustomerName)</b> 
+                    <br/>
+                    [ID: @customer.CustomerId]
+                </td>
+                <td style="width:110px;">
+                    <div>
+                        <b>Date</b> - @customer.EventDate.ToShortDateString()
+                        <br />
+                        [ID: @customer.EventId]
+                    </div>                    
+                </td>
+                <td style="width: 200px;">@customer.CustomerOrder</td>
+                <td style="width: 150px;">
+                    @if (customer.PaymentInstruments != null && customer.PaymentInstruments.Any())
+                    {
+                        foreach (var paymentInstrument in customer.PaymentInstruments)
+                        {
+                            <div>
+                                <b>@paymentInstrument.FirstValue</b>: $ @paymentInstrument.SecondValue.ToString("0.00")
+                            </div>
+                        }
+                    }
+                </td>
+                <td>
+                    <div>
+                        <b>Member Id</b> - @customer.InsuranceDetail.MemberId
+                        <br/>
+                        <a href="javascript:void(0);" class="insurance">Detail</a>
+                        <div class="insurance-detail" style="display: none;">
+                            <b>Insurance Comapny:</b> @customer.InsuranceDetail.InsuranceCompany<br/>
+                            <b>Plan Name:</b> @customer.InsuranceDetail.PlanName<br/>
+                            <b>Plan Id:</b> @customer.InsuranceDetail.PlanId<br/>
+                            <b>Group Name:</b> @customer.InsuranceDetail.GroupName<br/>
+                            <b>Group Id:</b> @customer.InsuranceDetail.GroupId<br/>
+                        </div>
+                    </div>
+                    
+                </td>
+                <td>@customer.Status</td>
+                <td style="width:70px; text-align:right;">
+                    $@customer.DiscountedTotal.ToString("0.00")<br/>
+                    <a href="javascript:void(0);" onclick='return ShowOrderDetails("@customer.OrderId","@customer.CustomerId","@customer.CustomerName")'>View Order</a>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>No Records found.</h2>
+    </div>
+}
+@section scripts {
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function ShowOrderDetails(orderId, customerId, customerName) {
+            window.open("/App/Common/OrderSummary.aspx?OrderId=" + orderId + "&CustomerName=" + customerName + "&CustomerId=" + customerId, "OrderSummary", "width=750, height=400, menubar=0, toolbar=0, status=0, location=0, resizable=0, dependent=1, scrollbars=1");
+            return false;
+        }
+        
+        $(".insurance").qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                text: function (api) { return $(this).parent().find(".insurance-detail").html(); }
+            },
+            style: {
+                width: '300px'
+            }
+        });
+    </script>
+}

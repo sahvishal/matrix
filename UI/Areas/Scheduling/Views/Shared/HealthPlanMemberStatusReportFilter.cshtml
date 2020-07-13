@@ -1,0 +1,160 @@
+﻿@using System
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.MemberStatusListModelFilter
+@{
+    var currentOrganizationRole = Falcon.App.DependencyResolution.IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole;
+}
+<h2>
+    Search Records
+</h2>
+
+<div style="padding-left: 5px; overflow: hidden; padding-top: 5px;width: 50%;float: left;">
+    <div style="float: left; clear: both">
+        <div class="editor-column" style="width: 150px">
+            <div class="small-text">
+                Member Id
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.MemberId, new { @style = "width : 135px;" })
+            </div>
+        </div>
+        <div class="editor-column" style="width: 150px">
+            <div class="small-text">
+                Customer Id
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.CustomerId, new { @style = "width:135px;" })
+            </div>
+        </div>
+        <div style="width: 150px;float: left;">
+            <div class="small-text">
+                Event Type:
+            </div>
+            <div style="float: left; width: 70px; ">
+                <input type="checkbox" id="is-public-event" @(Model.IsPublicEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPublicEvent');" />Public
+            </div>
+            <div style="float: left; width: 70px">
+                <input type="checkbox" id="is-private-event" @(Model.IsPrivateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPrivateEvent');" />Private
+            </div>
+            @Html.HiddenFor(m => m.IsPublicEvent)
+            @Html.HiddenFor(m => m.IsPrivateEvent)
+        </div>
+
+    </div>
+    <div style="float: left; clear: both">
+        <div class="editor-column" style="width: 150px">
+            <div class="small-text">
+                <b>Name </b>First
+            </div>
+            @Html.TextBoxFor(m => m.FirstName, new { @style = "width:135px;" })
+        </div>
+        <div class="editor-column" style="width: 150px">
+            <div class="small-text">
+                Last
+            </div>
+            @Html.TextBoxFor(m => m.LastName, new { @style = "width:135px;" })
+        </div>
+        @*<div class="editor-column hideTag" style="width: 150px">
+            <div class="small-text">
+                Tag
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.Tag)
+            </div>
+        </div>*@
+    </div>
+    <div class="editor-column" style="width: 300px; float: left;">
+        <div class="small-text">
+            Appointment Status
+        </div>
+        <div style="float: left;">
+            @Html.CheckBoxFor(m => m.IsAttendedCustomers) With Appointment
+        </div>
+        <div style="float: left;">
+            @Html.CheckBoxFor(m => m.IsNotAttendedCustomers) Without Appointment
+        </div>
+    </div>
+    <div class="editor-column" style="width: 100%; float: left; padding-top: 5px;clear: both;">
+        <div class="small-text" style="clear: both;">
+            Customer Type
+        </div>
+        <div style="float: left; width: 17%">
+            <input type="radio" name="DonNotContactCustomer" @(Model.IncludeDoNotContact ? "checked" : "") onclick="setDoNotContactCustomerFilter(this, 'IncludeDoNotContact');" />Show All
+        </div>
+        <div style="float: left; width: 37%">
+            <input type="radio" name="DonNotContactCustomer" @((!Model.IncludeDoNotContact && !Model.DoNotContactOnly) ? "checked" : "") onclick="setDoNotContactCustomerFilter(this, '');" />Exclude Do Not Contact
+        </div>
+        <div style="float: left; width: 39%">
+            <input type="radio" name="DonNotContactCustomer" @((Model.DoNotContactOnly) ? "checked" : "") onclick="setDoNotContactCustomerFilter(this, 'DoNotContactOnly');" />Show Only Don't Contact
+        </div>
+    </div>
+
+    <div class="editor-column" style="width: 100%; float: left; padding-top: 5px;clear:both;">
+        <div class="small-text" style="clear: both;">
+            Eligiblity Status
+        </div>
+        <div style="float: left; width: 20%">
+            <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.All) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.All)');" />Show All
+        </div>
+        <div style="float: left; width: 22%">
+            <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.OnlyEligible) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.OnlyEligible)');" />Only Eligible
+        </div>
+        <div style="float: left; width: 22%">
+            <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.NotEligible) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.NotEligible)');" />Not Eligible
+        </div>
+        <div style="float: left; width: 35%">
+            <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.NotMentioned) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.NotMentioned)');" />Not Mentioned
+        </div>
+    </div>
+
+    @Html.HiddenFor(m => m.DoNotContactOnly)
+    @Html.HiddenFor(m => m.IncludeDoNotContact)
+    @Html.HiddenFor(m => m.EligibleStatus)
+</div>
+<div style="padding-left: 5px; overflow: hidden; padding-top: 5px; width: 48%;float: left;">
+    <div class="editor-column" style="width: 100%;">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetCustomTagsByAccountId(currentOrganizationRole.OrganizationId, null), new { @class = "tokenizer", @multiple = "multiple", @style = "width: 99%;height:160px;" })
+        </div>
+    </div>
+</div>
+<div class="editor-column" style="padding-top: 10px; float:right; text-align:right;">
+    @Html.ActionLink("Clear", "HealthPlanMemberStatusReport", "Reports") | @Html.SubmitButton("Search")
+</div>
+<script type="text/javascript" language="javascript">
+    function onCheckEventType(checkBox, hiddenBox) {
+        if ($(checkBox).attr("checked")) {
+            $("#" + hiddenBox).val('@Boolean.TrueString');
+        }
+        else {
+            $("#" + hiddenBox).val('@Boolean.FalseString');
+        }
+    }
+
+    function setDoNotContactCustomerFilter(radioBtn, hiddenBox) {
+
+        var includeDontContact = $("#IncludeDoNotContact");
+        var donotContactOnly = $("#DoNotContactOnly");
+        $(donotContactOnly).val(false);
+        $(includeDontContact).val(false);
+
+        if ($(radioBtn).is(":checked")) {
+            if (hiddenBox == 'IncludeDoNotContact') {
+                $(includeDontContact).val(true);
+            }
+            if (hiddenBox == 'DoNotContactOnly') {
+                $(donotContactOnly).val(true);
+            }
+        }
+    }
+
+    function setEligibleStatus(status) {
+        $("#EligibleStatus").val(status);
+    }
+
+</script>

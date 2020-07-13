@@ -1,0 +1,81 @@
+﻿@model Falcon.App.Core.Marketing.ViewModels.OrderPlaceEditModel
+@if (Model.AllEventPackages != null && Model.AllEventPackages.Count() > 0)
+{
+<div id="packageUpsellJDiv" style="display: none;" class="jdbox-package" title="Upgrade">
+    @{
+    var packageInDesc = Model.AllEventPackages.Where(p => !p.NotAvailable).OrderByDescending(p => p.Price).ToArray();
+    foreach (var item in packageInDesc)
+    {                          
+        <div class="upsell-block">
+            <div class="header">
+                @item.Name.ToUpper()
+            </div>
+            <div class="list-test">
+                @if (string.IsNullOrEmpty(item.DescriptiononUpsellSection))
+                {
+                    var tests = item.Tests.OrderBy(t => t.Name).Select(t => t.Name).ToArray();
+                    var testString = string.Join(", ", tests);
+                    <span>@testString </span>
+                }
+                else
+                {
+                    <span>@item.DescriptiononUpsellSection </span>
+                }
+                <br />
+            </div>
+            <div class="select-div">
+                <div class="upsell-price-div" style="float: left;">
+                    <b>Price: $@item.Price.ToString("0.00") </b>
+                </div>
+                <div style="float: right; text-align: right;">
+                    @if (item.NotAvailable)
+                    {
+                    <input type="button" class="select-button" @(item.EventPackageId == Model.SelectedPackageId ? "style=display:none" : "") onclick="PackageNotavailable('@item.NotAvailabilityMessage');" value="Upgrade to this Package" />
+                    }
+                    else
+                    {
+                    <input type="button" class="select-button" style="min-width:240px;" onclick="upgradeToPackage('@item.EventPackageId');" value="Upgrade to this Package" />
+                    }
+                </div>
+            </div>
+            <input type="hidden" value="@item.EventPackageId" />
+            <input type="text" style="display:none;" class="price" value="@item.Price" />
+        </div>
+    }
+        <div class="button-container">
+            <div class="right">
+                <input type="button" class="back-button action-button-selected" style="font-weight: bold;
+                    font-size: 9pt; background-image: none;" value="No Thanks" onclick="$('#packageUpsellJDiv').dialog('close');" />
+            </div>
+        </div>
+    }
+</div>
+}
+<script type="text/javascript" language="javascript">
+    function hideByPackageinPackageUpsell(eventPackageId) {
+        unHideAllinPackageUpsell();
+
+        var selectedPrice = null;
+        $("#packageUpsellJDiv .upsell-block").each(function () {
+            if ($(this).find("input[type=hidden]").val() == eventPackageId) {
+                selectedPrice = $(this).find(".price").val();
+                return false;
+            }
+        });
+
+        packageForUpsell = false;
+        if (selectedPrice != null) {
+            $("#packageUpsellJDiv .upsell-block").each(function () {
+                var price = $(this).find(".price").val();
+                var currentId = $(this).find("input[type=hidden]").val();
+                if (parseFloat(price) <= parseFloat(selectedPrice) || $(this).find("input[type=hidden]").val() == eventPackageId) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).find(".upsell-price-div").html("<b> Just $" + parseFloat(parseFloat(price) - parseFloat(selectedPrice)).toFixed(2) + " more </b>")
+                    packageForUpsell = true;
+                }
+            });
+        }
+    }
+</script>

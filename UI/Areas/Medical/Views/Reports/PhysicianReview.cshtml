@@ -1,0 +1,131 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+@model PhysicianReviewListModel
+@{
+    ViewBag.Title = "Physician Reviews";
+}
+
+<h2>
+    Physician Reviews
+    @if (Model != null && !Model.Collection.IsNullOrEmpty())
+    {
+        <span style="float:right; font-size:11px;"><a target="_blank" href="/Medical/ExportableReports/PhysicianReview?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export To CSV</a></span>
+    }
+</h2>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<div id="list-filter">
+    @{Html.BeginForm("PhysicianReview", "Reports", FormMethod.Get);}
+    @Html.Partial("PhysicianReviewListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th style="width:120px;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().PhysicianName)
+            </th>
+            <th style="width:120px;">
+                Customer Details
+            </th>            
+            <th style="width:100px;">
+                Event Details
+            </th>
+            <th style="text-align:center;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Vehicle)
+            </th> 
+            <th style="text-align:center;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Package)
+            </th> 
+            <th style="width:160px;">
+                Review Details
+            </th>             
+            <th style="text-align:center; width:100px;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().IsCritical)
+            </th> 
+            <th>
+                Study
+            </th>
+            <th style="text-align:center;">
+                Action
+            </th>
+        </tr>
+        @foreach (var review in Model.Collection)
+        {
+            <tr>
+                <td style="width:120px;">@review.PhysicianName</td>
+                <td style="width:120px;">
+                    Id: @review.CustomerId
+                    <br />
+                    Name: @review.CustomerName
+                </td>                
+                <td style="width:100px;">
+                    Id: @review.EventId
+                    <br />
+                    On @review.EventDate.ToShortDateString()
+                </td>
+                <td style="text-align:center;">@review.Vehicle</td>
+                <td style="text-align:center; width:150px;">@review.Package</td>
+                <td style="width:160px;">
+                    Date: @review.ReviewDate.ToShortDateString()
+                    <br />
+                    Time Taken: @review.ReviewDuration
+                </td>
+                <td style="text-align:center;">@(review.IsCritical?"Yes":"No")</td>   
+                <td>
+                    @review.Study
+                </td>             
+                <td style="text-align:center; width:100px;">
+                    <a href="/App/Common/Results.aspx?EventId=@review.EventId&CustomerId=@review.CustomerId" target="_blank">View Results</a>
+
+                    @if (review.IsPdfGenerated)
+                    {
+                        var mediaRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IMediaRepository>();
+                        var customerResultPdf = mediaRepository.GetPremiumVersionResultPdfLocation(review.EventId, review.CustomerId).PhysicalPath + "/" + mediaRepository.GetPdfFileNameForResultReport();
+                        var pcpResultPdf = mediaRepository.GetPremiumVersionResultPdfLocation(review.EventId, review.CustomerId).PhysicalPath + "/" + mediaRepository.GetPdfFileNameForPcpResultReport();
+                        if (File.Exists(customerResultPdf))
+                        {
+                            <br />
+                            <a href="@(mediaRepository.GetPremiumVersionResultPdfLocation(review.EventId, review.CustomerId).Url + "/" + mediaRepository.GetPdfFileNameForResultReport())" target="_blank">Results PDF</a>
+                        }
+                        else if (File.Exists(pcpResultPdf))
+                        {
+                            <br />
+                            <a href="@(mediaRepository.GetPremiumVersionResultPdfLocation(review.EventId, review.CustomerId).Url + "/" + mediaRepository.GetPdfFileNameForPcpResultReport())" target="_blank">PCP Results PDF</a>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div><h2>No Records found!</h2></div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+        
+    </script>
+}
+

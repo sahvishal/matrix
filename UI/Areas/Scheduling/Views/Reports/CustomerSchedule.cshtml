@@ -1,0 +1,196 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.EventCustomerScheduleListModel
+<script src="/Scripts/reportexportqueue.js"></script>
+@{
+    ViewBag.Title = "Customer Schedule";
+}
+<h1>
+    Customer Schedule
+</h1>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("CustomerSchedule", "Reports", FormMethod.Get);}
+    @Html.Partial("CustomerScheduleModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 1000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/Scheduling/ReportsQueue/CustomerSchedule?@Request.QueryString", "ExportToCsvMessage", @Model.PagingModel.NumberOfItems); '>
+                Export CSV
+            </a>
+        }
+        else
+        {
+            <a target="_blank" href="/Scheduling/ExportableReports/CustomerSchedule?id=@Guid.NewGuid().ToString()&@Request.QueryString">
+                Export CSV
+            </a>
+        }
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <table style="width:100%;">
+        @foreach (var eventCustomer in Model.Collection)
+        {
+            <tr>
+                <td style="padding-bottom: 15px;">
+                    <fieldset>
+                        <legend>
+                            <b>
+                                Event Id:
+                            </b>
+                            @eventCustomer.EventId
+                        </legend>
+                        <div>
+                            <div class="eventdetail-row">
+                                <div class="fieldLabelValue">
+                                    <label>
+                                        Doctor:
+                                    </label>
+                                    @eventCustomer.Physician
+                                </div>
+                                <div class="fieldLabelValue" style="float: right;">
+                                    <label>
+                                        Customer Count:
+                                    </label>
+                                    @eventCustomer.CustomerCount
+                                </div>
+                            </div>
+                            <div class="eventdetail-row">
+                                <div class="fieldLabelValue">
+                                    <label>
+                                        Date:
+                                    </label>
+                                    @eventCustomer.EventDate.ToShortDateString()
+                                </div>
+                                <div class="fieldLabelValue" style="width:55%;">
+                                    <label>
+                                        Host:
+                                    </label>
+                                    @eventCustomer.Location, @eventCustomer.Address.ToString()
+                                </div>
+                                <div class="fieldLabelValue" style="float: right;">
+                                    <label>
+                                        Pod:
+                                    </label>
+                                    @eventCustomer.Vehicle
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="clear: both;">
+                            @if (eventCustomer.Customers != null && eventCustomer.Customers.Count() > 0)
+                            {
+                                <table id="list-view">
+                                    <tr>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().AppointmentTime)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().CustomerCode)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().CustomerName)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().Package)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().AdditionalProduct)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().PhoneHome)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().PhoneCell)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().PhoneBusiness)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().TotalAmount)
+                                        </th>
+                                        <th>
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().AmountDue)
+                                        </th>
+                                    </tr>
+                                    @foreach (var customer in eventCustomer.Customers)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @customer.AppointmentTime.ToString("hh:mm tt")
+                                            </td>
+                                            <td>
+                                                @customer.CustomerCode
+                                            </td>
+                                            <td>
+                                                @customer.CustomerName
+                                            </td>
+                                            <td>
+                                                @customer.Package
+                                            </td>
+                                            <td>
+                                                @customer.AdditionalProduct
+                                            </td>
+                                            <td>
+                                                @customer.PhoneHome
+                                            </td>
+                                            <td>
+                                                @customer.PhoneCell
+                                            </td>
+                                            <td>
+                                                @(!string.IsNullOrEmpty(customer.PhoneOfficeExtension) ? customer.PhoneBusiness + "/" + customer.PhoneOfficeExtension : customer.PhoneBusiness)
+                                            </td>
+                                            <td>
+                                                $@customer.TotalAmount.ToString("00.00")
+                                            </td>
+                                            <td>
+                                                $@customer.AmountDue.ToString("00.00")
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <h2>
+                                    No Customers Found
+                                </h2>
+                                <br />
+                            }
+                        </div>
+                    </fieldset>
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,431 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.Medical.Interfaces
+@using Falcon.App.Core.Sales.Enum
+@model Falcon.App.Core.Sales.ViewModels.HospitalPartnerCustomerListModel
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<link href="/App/jquery/css/ThickBox/thickbox.css" rel="Stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/App/jquery/js/thickbox-compressed.js"></script>
+<script type="text/javascript" src="/App/jquery/js/thickbox-iframeEscFix.js"></script>
+<script type="text/javascript" src="/App/JavascriptFiles/JSonHelper.js"></script>
+@{
+    var mediaRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IMediaRepository>();
+}
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    var currentOrgRole = IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole;
+    var tests = IoC.Resolve<ITestRepository>().GetAll() ?? new List<Falcon.App.Core.Medical.Domain.Test>();
+    var cryptographyService = new Falcon.App.Core.Application.Impl.DigitalDeliveryCryptographyService();
+    
+    @Html.DisplayFor(m => m.PagingModel);
+    
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <table id="list-view" style="width: 100%;">
+            <tr>
+                <th>
+                    <a href="javascript:void(0);" onclick="Sorting('@((int)HospitalPartnerCustomerSortingColumn.LastName)');" style="text-decoration:none">Customer</a>
+                </th>
+                <th style="text-align: left; width: 120px;">
+                    <a href="javascript:void(0);" onclick="Sorting('@((int)HospitalPartnerCustomerSortingColumn.EventDate)');" style="text-decoration:none">Event Info</a>
+                </th>
+                <th>
+                    <a href="javascript:void(0);" onclick="Sorting('@((int)HospitalPartnerCustomerSortingColumn.ResultSummaryOrder)');" style="text-decoration:none">Result Summary* </a>
+                </th>
+                <th style="text-align: left; width: 150px;">
+                    <a href="javascript:void(0);" onclick="Sorting('@((int)HospitalPartnerCustomerSortingColumn.ShippingStatus)');" style="text-decoration:none">Result Mailing Status </a>
+                </th>
+                <th>Status
+                    <br />
+                    <a href="javascript:void(0);" onclick="Sorting('@((int)HospitalPartnerCustomerSortingColumn.HospitalPartnerStatusOrder)');" style="text-decoration:none">Sort By Status </a>
+                    <br />
+                    <a href="javascript:void(0);" onclick="Sorting('@((int)HospitalPartnerCustomerSortingColumn.HospitalPartnerLastModifiedDate)');" style="text-decoration:none">Sort By LastModified Date </a>
+                    @if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalPartnerCoordinator) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalFacilityCoordinator))
+                    {
+                        <br />
+                        <a href="javascript:void(0);" onclick="Sorting('@((int)HospitalPartnerCustomerSortingColumn.InitialCallDate)');" style="text-decoration:none">Sort By Initial Call Date </a>
+                    }
+                </th>
+                @if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalPartnerCoordinator) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalFacilityCoordinator))
+                {
+                    <th>Action
+                    </th>
+                }
+            </tr>
+            @foreach (var customer in Model.Collection)
+            {
+                <tr>
+                    <td style="width: 300px;">
+                        <div>
+                            <b>@(customer.CustomerName.FullName)</b> [ID: @customer.CustomerId]
+                        </div>
+                        <div style="margin-top: 3px;">
+                            <b>Address:&nbsp;</b>@customer.Address.ToString()
+                            <br />
+                            Best Number to Call - @(!string.IsNullOrEmpty(customer.Phone) ? customer.Phone : "N/A")
+                            <a href="javascript:void(0);">
+                                <img src="/Content/Images/call.jpg" style="width: 15px;" />
+                            </a>
+                            <br />
+                            Phone(C) - @(!string.IsNullOrEmpty(customer.PhoneCell) ? customer.PhoneCell : "N/A")
+                            <br />
+                            Phone(O) - @(!string.IsNullOrEmpty(customer.PhoneOffice) ? customer.PhoneOffice : "N/A")
+                            &nbsp; Extn. - @(!string.IsNullOrEmpty(customer.PhoneOfficeExtn) ? customer.PhoneOfficeExtn : "N/A")
+                            <br />
+                            Email - @customer.Email
+                            <br />
+                            DOB - @(customer.DateofBirth.HasValue ? customer.DateofBirth.Value.ToShortDateString() : "N/A")
+                            <br />
+                            Preferred Language- @customer.PreferredLanguage
+                            <br />
+                            Best Time to Call- @customer.BestTimeToCall
+                            <br />
+                            SSN - @(string.IsNullOrEmpty(customer.Ssn) ? "N/A" : "XXX-XX-" + customer.Ssn.Substring(customer.Ssn.Length - 4)) <br/>
+                            Member Id - @customer.MemberId
+                        </div>
+                        <div style="margin-top: 3px;">
+                            <b>Physician Name: </b><span id="Pcp_@(customer.CustomerId)">@customer.PrimaryCarePhysicianName</span>
+                        </div>
+                    </td>
+                    <td style="text-align: left; width: 170px;">
+                        <span class="event-info"><b>Date</b> - @customer.EventDate.ToShortDateString() [ID:
+                            @customer.EventId]
+                            <br />
+                        </span>
+                        @if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin))
+                        {
+                            <span><b>Corporate Sponsor </b>- @customer.CorporateSponsor</span>
+                            <br />
+                        }
+                        <b>Pods</b> - @customer.Pod
+                        <br />
+                        <b>Package</b> - @customer.Package
+                        <br />
+                        <b>Images</b> - @customer.CdPurchased
+                        @if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalPartnerCoordinator))
+                        {
+                            <br />
+                            <span><b>Hospital Facility </b>- @customer.HospitalFacility</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="result-status"><b>@customer.Result</b></a>
+                        @if (customer.IsEvaluated)
+                        {
+                            <div style="display: none;" class="test-result-status">
+                                @foreach (var item in customer.TestSummary)
+                                {
+                                    var test = tests.Where(t => t.Id == item.FirstValue).SingleOrDefault();
+                                    if(test !=null )
+									{
+                                    <div style="padding-top: 5px;">
+                                        <b>@test.Name: </b>@item.SecondValue
+                                    </div>
+									}
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="display: none;" class="test-result-status">
+                                Customer is marked as Critical by technician. For more details click on <u>View Results</u>.
+                                <br />
+                                The results of this study are preliminary. They have not yet been read and interpreted
+                                by a @(IoC.Resolve<ISettings>().CompanyName)
+                                physician.
+                            </div>
+                        }
+                        <br />
+                        <br />
+                        <b>Pathway Recommendation</b> - @customer.Recommendation
+                    </td>
+                    <td style="text-align: left; width: 150px;">Shipping Mode - @customer.ShippingMode
+                        <br />
+                        Status - @customer.MailedStatus
+                        @if (customer.MailedOn.HasValue)
+                        {
+                            <br />
+                            <span>Mailed:</span> @customer.MailedOn.Value.ToShortDateString()
+                        }
+                        @if (customer.DeliveredOn.HasValue)
+                        {
+                            <br />
+                            <span>Delivered:</span> @customer.DeliveredOn.Value.ToShortDateString()
+                        }
+                    </td>
+                    <td style="width: 200px;">
+                        <b>Status: </b><span id="Status_@(customer.EventId)_@(customer.CustomerId)">@customer.Status</span><br />
+                        <b>Outcome: </b><span id="Outcome_@(customer.EventId)_@(customer.CustomerId)">@customer.Outcome</span><br />
+                        <b>Coordinator: </b><span id="Coordinator_@(customer.EventId)_@(customer.CustomerId)">@customer.Care</span><br />
+                        <b>Last Modified: </b><span id="LastModified_@(customer.EventId)_@(customer.CustomerId)">@(customer.LastModified.HasValue ? customer.LastModified.Value.ToShortDateString() : "N/A")</span>
+                        @if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin))
+                        {   <br />
+                            <b>Hospital Partner: </b> @customer.HospitalPartnerName
+                        }
+                        @if (customer.InitialCallDate != null && (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalPartnerCoordinator) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalFacilityCoordinator)))
+                        {
+                            <br />
+                            <b>Initial Call Date: </b>@(customer.InitialCallDate.Value.ToString("MM/dd/yyyy"))
+                        }
+                        <br />
+                        @if (customer.Activities != null && customer.Activities.Count() > 0)
+                        {
+                            var hasTypedComments = customer.Activities.Any(a => !string.IsNullOrEmpty(a.Notes));
+                            <a class="notes-qtip" id="Notes_@(customer.EventId)_@(customer.CustomerId)" @(hasTypedComments ? "style=color:#7107C1" : "")><b>Notes</b></a>
+                            <div class="div-notes" style="display: none;">
+                                @foreach (var activity in customer.Activities)
+                                {
+                                    <div style="float: left; width: 500px;">
+                                        <span style="float: left; width: 240px;"><b>Status: </b>@activity.Status</span>
+                                        <span style="float: right; width: 240px;"><b>Outcome: </b>@activity.Outcome</span>
+                                    </div>
+                                    <div style="float: left; width: 500px; margin: 10px 0px; clear: both;">
+                                        <span style="float: left; width: 240px;"><b>Updated On: </b>@activity.UpdateOn.ToShortDateString()</span>
+                                        <span style="float: right; width: 240px;"><b>Updated By: </b>@activity.UpdatedBy</span>
+                                    </div>
+                                    <div style="float: left; width: 500px; border-bottom: solid 1px; margin-bottom: 10px;">
+                                        <b>Notes:</b> @activity.Notes
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="notes-qtip" id="Notes_@(customer.EventId)_@(customer.CustomerId)" style="display: none;"><b>Notes</b></a>
+                            <div class="div-notes" style="display: none;"></div>
+                        }
+                        @if (!string.IsNullOrEmpty(customer.PostScreeningFollowUpNotes))
+                        {
+                            <br />
+                            <a class="followup-notes-qtip" id="Notes_@(customer.EventId)_@(customer.CustomerId)"><b>Post
+                                Screening Follow Up</b></a>                            
+                            <div class="div-followup-notes" style="width: 500px; display: none; padding: 10px;">
+                                @Html.Raw(customer.PostScreeningFollowUpNotes)
+                            </div>
+                        }
+                    </td>
+                    @if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalPartnerCoordinator) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.HospitalFacilityCoordinator))
+                    {
+                        var customerName = customer.FirstName.Replace("\"", "\\\"") + " " + customer.LastName.Replace("\"", "\\\"");
+                        <td style="width: 130px;">
+                            <a href="javascript:void(0);" onclick='OpenPopUpforUpdateInfo("@customer.EventId","@customer.CustomerId","@(customerName)");'>Update Status</a>
+                            <br />
+                            <a href="/App/Common/Results.aspx?EventId=@customer.EventId&CustomerId=@customer.CustomerId" target="_blank">View Results</a>
+                            @if (customer.IsPdfGenerated)
+                            {
+                                var premiummVersionLocation = mediaRepository.GetPremiumVersionResultPdfLocation(customer.EventId, customer.CustomerId);
+                                var pcpResultFilePath = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForPcpResultReport();
+                                var customerReportFilePath = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForResultReport();
+
+                                if (File.Exists(customerReportFilePath))
+                                {<br />
+                                <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(customer.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.ResultPdf))" target="_blank">Result PDF </a>
+                                }
+                                else if (File.Exists(pcpResultFilePath))
+                                {<br />
+                                <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(customer.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.PcpResultReport))" target="_blank">Result PDF</a>
+                                }
+                            }
+                            <br />
+                            <a href="javascript:OpenMedicalHistory(@customer.CustomerId, @customer.EventId); void(0);">Health Assesment Form</a><br />
+                            @if (customer.ShowScannedDocumentUrl && !string.IsNullOrEmpty(customer.ScannedDocumentUrl))
+                            {
+                                <a href='@customer.ScannedDocumentUrl' target='_blank'>View Document </a>
+                                <br/>
+                            }
+                            @if (customer.HasCannedMessage)
+                            {
+                                if (customer.IsCannedMessageSent)
+                                {
+                                <input type="button" value="Message Sent" onclick="javascript:alert('Message sent already');" style="background: #CBCBCB; color: white;" />
+                                }
+                                else
+                                {
+                                <input type="button" value="Send Message" onclick="SendCannedMessage('@customer.EventCustomerId    ', '@customer.CustomerId    ', this);" style="background: #2A890B; color: white;"/>
+                                }
+                            }
+                            
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>No Records found.</h2>
+    </div>
+}
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+
+        $(".notes-qtip").qtip({
+            position: {
+                my: 'right top'
+            },
+            style: {
+                width: '500px'
+            },
+            content: {
+                title: "Notes",
+                text: function (api) {
+                    return $(this).parent().find(".div-notes").html();
+                }
+            }
+        });
+
+        $(".followup-notes-qtip").qtip({
+            position: {
+                my: 'right top'
+            },
+            style: {
+                width: '500px'
+            },
+            content: {
+                title: "Post Screening Follow Up",
+                text: function (api) {
+                    return $(this).parent().find(".div-followup-notes").html();
+                }
+            }
+        });
+
+        $(".result-status").qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: "Test Interpretation",
+                text: function (api) {
+                    return $(this).parent().find(".test-result-status").html();
+                }
+            },
+            style: {
+                width: '440px'
+            }
+        });
+    });
+
+    var scrollTop = 0;
+    function OpenPopUpforUpdateInfo(eventId, customerId, customerName) {
+        scrollTop = $(window).scrollTop();
+
+        var pageUrl = '/Sales/HospitalPartner/EditHospitalPartnerCustomer?eventId=' + eventId + '&customerId=' + customerId + '&keepThis=true&TB_iframe=true&width=500&height=300&modal=true';
+        tb_show(customerName + " - Update Information", pageUrl, false);
+    }
+
+    function ClosePopUp() {
+        parent.top.tb_remove();
+        $(window).scrollTop(scrollTop);
+    }
+
+    function ClosePopUpAndReload(eventId, customerId) {
+        parent.top.tb_remove();
+        GetPrimaryCarePhysician(customerId);
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Sales/HospitalPartner/GetCustomerActivities",
+            data: "{'eventId' : '" + eventId + "','customerId' : '" + customerId + "'}",
+            success: function (result) {
+                var notesString = "";
+                var hasTypedComments = false;
+                if (result.length > 0) {
+                    for (var i = 0; i < result.length; i++) {
+                        notesString += '<div style="float: left; width: 500px;">';
+                        notesString += '<span style="float: left; width: 240px;"><b>Status: </b>' + result[i].Status + '</span>';
+                        notesString += '<span style="float: right; width: 240px;"><b>Outcome: </b>' + result[i].Outcome + '</span>';
+                        notesString += '</div>';
+                        notesString += '<div style="float: left; width: 500px; margin: 10px 0px; clear: both;">';
+                        notesString += '<span style="float: left; width: 240px;"><b>Updated On: </b>' + (correctDateExpression(result[i].UpdateOn).getMonth() + 1) + "/" + correctDateExpression(result[i].UpdateOn).getDate() + "/" + correctDateExpression(result[i].UpdateOn).getFullYear() + '</span>';
+                        notesString += '<span style="float: right; width: 240px;"><b>Updated By: </b>' + result[i].UpdatedBy + '</span>';
+                        notesString += '</div>';
+                        notesString += '<div style="float: left; width: 500px; border-bottom: solid 1px; margin-bottom:10px;">';
+                        notesString += '<b>Notes:</b>' + result[i].Notes;
+                        notesString += '</div>';
+                        if (hasTypedComments == false) {
+                            if (result[i].Notes.length > 0)
+                                hasTypedComments = true;
+                        }
+                    }
+
+                    $("#Status_" + eventId + "_" + customerId).html(result[result.length - 1].Status);
+                    $("#Outcome_" + eventId + "_" + customerId).html(result[result.length - 1].Outcome);
+                    $("#Coordinator_" + eventId + "_" + customerId).html(result[result.length - 1].UpdatedBy);
+                    $("#LastModified_" + eventId + "_" + customerId).html((correctDateExpression(result[result.length - 1].UpdateOn).getMonth() + 1) + "/" + correctDateExpression(result[result.length - 1].UpdateOn).getDate() + "/" + correctDateExpression(result[result.length - 1].UpdateOn).getFullYear());
+                }
+                $("#Notes_" + eventId + "_" + customerId).parent().find('.div-notes').html(notesString);
+                if (hasTypedComments)
+                    $("#Notes_" + eventId + "_" + customerId).css("color", "#7107C1");
+                $("#Notes_" + eventId + "_" + customerId).show();
+                $(window).scrollTop(scrollTop);
+                //debugger;
+                $("table#list-view tr").removeAttr("style");
+                $("#Notes_" + eventId + "_" + customerId).parents('tr:first').css('background-color', '#33FF66');
+            },
+            error: function (a, b, c) {
+            }
+        });
+    }
+
+    function OpenMedicalHistory(customerId, eventId) {
+        winmedicalhistory = window.open("/App/MedicalVendor/MedicalHistory.aspx?CustomerID=" + customerId + "&EventId=" + eventId, "MedicalHistory", "toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,resizable=yes,width=820,height=500");
+    }
+
+    function GetPrimaryCarePhysician(customerId) {
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Sales/HospitalPartner/GetPrimaryCarePhysician",
+            data: "{'customerId' : '" + customerId + "'}",
+            success: function (result) {
+                //debugger;
+                if (result != null) {
+                    $("#Pcp_" + customerId).html(result.Name.FullName);
+                }
+                else {
+                    $("#Pcp_" + customerId).html("N/A");
+                }
+            },
+            error: function (a, b, c) {
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    function SendCannedMessage(eventCustomerId, customerId, ctrlRef) {
+        //debugger;
+
+        var confirmation = confirm("Are you sure you want to send canned message?");
+
+        if (!confirmation)
+            return;
+        
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            url: "/Sales/HospitalPartner/SendCannedMessage?eventCustomerId=" + eventCustomerId + "&customerId=" + customerId,
+            //data: "{'eventCustomerId' : '" + eventCustomerId + "', 'customerId' : '" + customerId + "'}",
+            success: function (result) {
+                //debugger;
+                if (result) {
+                    alert("Message Sent Successfully");
+                    $(ctrlRef).val("Message Sent");
+                    $(ctrlRef).removeAttr("onclick");
+                    $(ctrlRef).bind("click", function() { alert("Message already sent."); });
+                    $(ctrlRef).css("background", "#CBCBCB");
+                }
+            },
+            error: function (a, b, c) {
+            }
+        });
+    }
+
+</script>

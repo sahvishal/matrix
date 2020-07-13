@@ -1,0 +1,344 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model CustomerEventCriticalTestDataEditModel
+@{
+    ViewBag.Title = "Preliminary Test Result";
+    Layout = null;
+}
+<script type="text/javascript" src="/App/jquery/js/jquery.sexy-combo-2.0.6.js"></script>
+<link type="text/css" href="/App/jquery/css/sexy-combo.css" rel="Stylesheet" />
+<link type="text/css" href="/App/jquery/css/sexy.css" rel="Stylesheet" />
+<style type="text/css">
+    .critical-print-container a
+    {
+        color: #287AA8;
+        font-family: arial;
+        font-size: 12px;
+    }
+    
+    .critical-print-container a:hover
+    {
+        color: #FF6600;
+        font-family: arial;
+        font-size: 12px;
+    }
+</style>
+<div style="padding-top:5px;">
+    @if (Model.ResultState <= (int)Falcon.App.Core.Medical.Enum.TestResultStateNumber.PreAudit)
+    {        
+        <span style="color:#000000; font-size:10px; font-style:italic;">The results of this study are preliminary. They have not yet been read and interpreted by a @(IoC.Resolve<ISettings>().CompanyName) physician.</span>
+    }
+    
+    @if (Model.CustomerEventScreeningTestId > 0)
+    {
+        if (IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.GetSystemRoleId == (long)Falcon.App.Core.Enum.Roles.HospitalPartnerCoordinator)
+        {
+            <span style="float: right;" class="critical-print-container"> 
+                <a target="_blank" href="/Medical/CustomerEventCriticalData/Print?eventId=@Model.EventId&customerId=@Model.CustomerId&testId=@Model.TestId">Print </a>
+            </span>
+        }
+        else
+        {
+            <span style="float: right;" class="critical-print-container"> 
+                <a href="javascript:ValidateCriticalDataModel(true);"> Print </a>
+            </span>
+        }
+    }
+</div>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+
+}
+<div class="content-main-column critical-edit" style="width: 99%;">
+    @Html.EditorFor(m => m.CustomerEventScreeningTestId)
+    @Html.EditorFor(m => m.CustomerId)
+    @Html.EditorFor(m => m.EventId)
+    @Html.EditorFor(m => m.TestId)
+    @Html.EditorFor(m => m.EventCustomerId)
+    <div style="font-size: 12px; margin-bottom: 10px;">
+        <b>@Model.CustomerName (Customer Id: @Model.CustomerId)</b>
+        <br />
+        @Model.Gender.ToString(), Date of Birth:@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToShortDateString() : "")
+    </div>
+    <div class="editor-row">
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.DateOfSubmission)@Html.ValidationMessageFor(m => m.DateOfSubmission)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.DateOfSubmission, new { @class = "datePicker" })
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.TechnicianId)@Html.ValidationMessageFor(m => m.TechnicianId)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(m => m.TechnicianId, DropDownHelper.AssignedTechnicianStaff(Model.EventId), new { @class = "criticaldata-technicianid" })
+            </div>
+        </div>
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.ValidatingTechnicianId)@Html.ValidationMessageFor(m => m.ValidatingTechnicianId)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(m => m.ValidatingTechnicianId, DropDownHelper.AssignedTechnicianStaff(Model.EventId))
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        @Html.EditorFor(m => m.ContactNumber)
+    </div>
+    <div class="editor-row">
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.PrimaryPhysician)@Html.ValidationMessageFor(m => m.PrimaryPhysician)
+            </div>
+            <div class="editor-field">
+                @*@Html.DropDownListFor(m => m.PrimaryPhysicianId, DropDownHelper.GetPhysicians())*@
+                @Html.TextBoxFor(m=>m.PrimaryPhysician)
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-column-twoinrow">
+            Has PCP? &nbsp; &nbsp;
+            <input type="radio" name="HasPCP" id="HasPCPNo" @(!Model.HasPcp ? "checked=checked" : "") />No
+            &nbsp; &nbsp;
+            <input type="radio" name="HasPCP" id="HasPCPYes" @(Model.HasPcp ? "checked=checked" : "") />Yes
+        </div>
+        <div class="editor-column-twoinrow" style="height: 30px;">
+            @Html.TextBoxFor(m => m.PrimaryCarePhysicianName, new { style = "float:left; width:225px;" })
+        </div>
+    </div>
+    <div class="editor-row">
+        @Html.EditorFor(m => m.PrimaryCarePhysicianPhoneNumber)
+    </div>
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.TechnicianNotes)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(m => m.TechnicianNotes, new { cols = "56" })
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.TechnicianNotesForPhysician)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(m => m.TechnicianNotesForPhysician, new { cols = "56" })
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.Symptoms)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(m => m.Symptoms, new { cols = "56" })
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-label">
+            Follow-up:
+        </div>
+        <div class="editor-field">
+            <input type="radio" name="CriticalFollowup" id="DefaultFollowupYes" @(Model.IsDefaultFollowup ? "checked=checked" : "") />Follow-up with a physician within 72 hours
+            <br/>
+            <input type="radio" name="CriticalFollowup" id="DefaultFollowupNo" @(!Model.IsDefaultFollowup ? "checked=checked" : "") />Go to the nearest hospital emergency room immediately following your screening
+        </div>
+    </div>
+    <div class="editor-row">
+        @Html.CheckBoxFor(m => m.IsPatientReceivedImages) Patient Received Images
+        &nbsp;&nbsp;
+        @Html.CheckBoxFor(m => m.IsCustomerSigned) Acquired Client's Signature
+        &nbsp;&nbsp;
+        @Html.CheckBoxFor(m => m.IsTechnicianSigned) Acquired Technician's Signature
+    </div>
+    <div style="float: right; margin-top: 10px;" class="editor-row critical-button-div">
+        <input type="button" value="Cancel and Close" onclick="closeMethod();" class="save-close-criticaldata" />
+        @*<input type="button" value="Save and Close" class="save-close-criticaldata" onclick="ValidateCriticalDataModel(false);" />*@
+        <input type="button" value="Save and Print" class="save-close-criticaldata" onclick="ValidateCriticalDataModel(true);" />
+        <img src="/App/Images/loading.gif" class="save-close-criticaldata" style="display: none;" />
+    </div>
+</div>
+<input type="text" id="hid-linebreak" value="\n" style="display: none;" />
+<script type="text/javascript" language="javascript">
+    var model = null;
+    
+    var closeMethod = null;
+    var setModel = null;
+
+    var isCriticalFormOpenForEdit = @(Model.CustomerEventScreeningTestId > 0 ? "true" : "false");
+
+    $("#PrimaryCarePhysicianName").sexyCombo({ suffix:'_hiddenText',hiddenSuffix: '_hiddenList', emptyText: 'Type here for quick search', triggerSelected: true });
+
+    @{            
+        if (Model != null)
+        {
+            Model.TechnicianNotes = string.IsNullOrEmpty(Model.TechnicianNotes) ? string.Empty : Model.TechnicianNotes.Replace("\n", "<br@>");
+            Model.TechnicianNotesForPhysician = string.IsNullOrEmpty(Model.TechnicianNotesForPhysician) ? string.Empty : Model.TechnicianNotesForPhysician.Replace("\n", "<br@>");
+            Model.Symptoms = string.IsNullOrEmpty(Model.Symptoms) ? string.Empty : Model.Symptoms.Replace("\n", "<br@>");
+        }
+        var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+        var modelSerialized = serializer.Serialize(Model);
+                    
+        <text>  
+            var modelString = '@Html.Raw(modelSerialized.Replace("\"", "\\\""))';                  
+            modelString = modelString.replace(/<br@@>/gi, $("#hid-linebreak").val());            
+            eval("model = " + modelString);
+            var dateOfBith = '@(Model.DateOfBirth)';
+        </text>
+    }
+
+    model.DateOfSubmission = null;
+    if (model.DateOfBirth != null)
+        model.DateOfBirth = dateOfBith;
+
+    function loadControl(setModelMethodRef, closeMethodRef, mode){
+        
+        setModel = setModelMethodRef;
+        closeMethod = closeMethodRef;
+        
+        $(".datePicker").val(function (index, value) { return value.substr(0, value.indexOf(" ")); }).datepicker({ changeMonth: true,
+            changeYear: true
+        });
+
+        if((mode == '@(Falcon.App.Core.Medical.Enum.TestResultStateNumber.Evaluated)') || (mode == '@(Falcon.App.Core.Medical.Enum.TestResultStateNumber.PostAudit)'))
+        {
+            $(".critical-edit").find("input[type=text]").attr("disabled", "disabled");
+            $(".critical-edit").find("input[type=checkbox]").attr("disabled", "disabled");
+            $(".critical-edit").find("input[type=radio]").attr("disabled", "disabled");
+            $(".critical-edit").find("textarea").attr("disabled", "disabled");
+            $(".critical-edit").find("select").attr("disabled", "disabled");
+            
+            if(mode == '@(Falcon.App.Core.Medical.Enum.TestResultStateNumber.Evaluated)')
+            {
+                $("#TechnicianNotesForPhysician").attr("disabled","");
+            }
+            else
+            {
+                $("#TechnicianNotesForPhysician").attr("disabled","disabled");
+                $(".critical-button-div").hide();
+                $(".critical-print-container a").attr("href","/Medical/CustomerEventCriticalData/Print?eventId=@Model.EventId&customerId=@Model.CustomerId&testId=@Model.TestId");
+                $(".critical-print-container a").attr("target","_blank");
+            }
+        }
+        
+    }
+    
+</script>
+<script type="text/javascript" language="javascript">
+
+    function SaveCriticalDataModel(printAfterSave) {
+        model.DateOfSubmission = $('#DateOfSubmission').val();
+        model.TechnicianId = $('#TechnicianId').val();
+        model.ValidatingTechnicianId = $('#ValidatingTechnicianId').val();
+
+        model.ContactNumber.AreaCode = $('#ContactNumber_AreaCode').val();
+        model.ContactNumber.Number = $('#ContactNumber_Number').val();
+
+        model.PrimaryPhysician = $('#PrimaryPhysician').val();
+
+        if ($('#HasPCPYes').attr('checked')) {
+            model.HasPcp = $('#HasPCPYes').attr('checked');
+            model.PrimaryCarePhysicianName = $("#PrimaryCarePhysicianName").val();
+
+            if (model.PrimaryCarePhysicianPhoneNumber != null) {
+                model.PrimaryCarePhysicianPhoneNumber.AreaCode = $('#PrimaryCarePhysicianPhoneNumber_AreaCode').val();
+                model.PrimaryCarePhysicianPhoneNumber.Number = $('#PrimaryCarePhysicianPhoneNumber_Number').val();
+            }
+            else {
+                model.PrimaryCarePhysicianPhoneNumber = { "AreaCode": $('#PrimaryCarePhysicianPhoneNumber_AreaCode').val(), "Number": $('#PrimaryCarePhysicianPhoneNumber_Number').val() };
+            }
+        }
+        else {
+            model.PrimaryCarePhysicianName = "";
+        }
+
+        model.TechnicianNotes = $('#TechnicianNotes').val();
+        model.TechnicianNotesForPhysician = $('#TechnicianNotesForPhysician').val();
+
+        if ($('#IsCustomerSigned').attr('checked'))
+            model.IsCustomerSigned = true;
+        else
+            model.IsCustomerSigned = false;
+
+        if ($('#IsTechnicianSigned').attr('checked'))
+            model.IsTechnicianSigned = true;
+        else
+            model.IsTechnicianSigned = false;
+
+        model.Symptoms = $('#Symptoms').val();
+        
+        if ($('#DefaultFollowupYes').is(":checked")) {
+            model.IsDefaultFollowup = true;
+        } else {
+            model.IsDefaultFollowup = false;
+        }
+        
+        if ($('#IsPatientReceivedImages').is(":checked")) {
+            model.IsPatientReceivedImages = true;
+        } else {
+            model.IsPatientReceivedImages = false;
+        }
+
+        $(".save-close-criticaldata").toggle();
+        setModel(model, printAfterSave);
+
+    }
+
+    function ValidateCriticalDataModel(printAfterSave) {//debugger;
+        if ($('#DateOfSubmission').val() == "") {
+            alert("Please enter Date of Submission");
+            return false;
+        }
+
+        if (parseInt($('#TechnicianId').val()) <= 0) {
+            alert("Please select Technician");
+            return false;
+        }
+
+        if (parseInt($('#ValidatingTechnicianId').val()) <= 0) {
+            alert("Please select Validating Technician");
+            return false;
+        }
+
+        if ($('#ContactNumber_AreaCode').val() == "") {
+            alert("Please enter Area code of Best Contact Number");
+            return false;
+        }
+
+        if ($('#ContactNumber_Number').val() == "") {
+            alert("Please enter Number of Best Contact Number");
+            return false;
+        }
+
+        if ($.trim($('#PrimaryPhysician').val()) =="") {
+            alert("Please enter Contacting Physician");
+            return false;
+        }
+
+        if ($('#TechnicianNotes').val() == "") {
+            alert("Please enter Critical Care Criteria");
+            return false;
+        }
+
+        if ($('#IsCustomerSigned').attr('checked') == false) {
+            alert("Please acquire Client's Signature");
+            return false;
+        }
+
+        if ($('#IsTechnicianSigned').attr('checked') == false) {
+            alert("Please acquire Technician's Signature");
+            return false;
+        }
+        SaveCriticalDataModel(printAfterSave);
+    }
+
+</script>

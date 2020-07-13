@@ -1,0 +1,94 @@
+﻿@model Falcon.App.Core.Scheduling.ViewModels.EventCustomerSummaryModel
+@{
+    Layout = null;
+}
+
+<div class="div-with-roundborder">
+    <div class="header">
+        <h4>
+            @Model.CustomerName [CustomerID:@Model.CustomerId]
+        </h4>
+    </div>
+    <div class="row">
+        <span class="label"><b>Contact Info:</b> </span><span class="data">@(string.IsNullOrEmpty(Model.HomePhoneNumber) ? "" : Model.HomePhoneNumber + "(R)  ")
+            @(string.IsNullOrEmpty(Model.OfficePhoneNumber) ? "" : Model.OfficePhoneNumber + "(O)  ")
+            @(string.IsNullOrEmpty(Model.CellPhoneNumber) ? "" : Model.CellPhoneNumber + "(C)  ")
+            <a href="mailto:@Model.Email"> @(string.IsNullOrEmpty(Model.Email) ? "" : "   Mail at: " + Model.Email)</a>
+        </span>
+    </div>
+    <div class="row">
+        <span class="label"><b>Event:</b> </span><span class="data">@Model.Host [EventID:@Model.EventId]
+            <i>at</i> @Model.Address.ToString() <i>on</i> @Model.EventDate.ToShortDateString()
+        </span>
+    </div>
+    <div class="row">
+        <span class="label"><b>Appointment:</b> </span><span class="data">@(Model.AppointmentTime.HasValue ? Model.AppointmentTime.Value.ToShortTimeString() : "Cancelled")
+        </span>
+    </div>
+    <div class="row">
+        <span class="label"><b>Order:</b> </span><span class="data">@Model.Package @(string.IsNullOrEmpty(Model.AdditionalProduct) ? "" : " + " + Model.AdditionalProduct)
+            @(Model.ShippingOptions != null && Model.ShippingOptions.Count() > 0 ? " with " + string.Join(", ", Model.ShippingOptions.Select(so => so.FirstValue)) : "")
+            <i>Cost: </i>@Model.Cost.ToString("0.00")
+        </span>
+    </div>
+    <div class="row">
+        <span class="label"><b>Payment:</b> </span><span class="data"><span id="order-payments"
+            style="cursor: pointer;"><a href="javascript:void(0);">$@Model.AmountPaid.ToString("0.00")
+            </a>(Paid) </span>&nbsp; &nbsp; $@Model.AmountDue.ToString("0.00")
+            (UnPaid) &nbsp; &nbsp; @(!string.IsNullOrEmpty(Model.SourceCode) ? Model.SourceCode + "($" + Model.SourceCodeAmount.ToString("0.00") + ")" : "")</span>
+        <span style="float: right"><a href="javascript:void(0)" onclick="return ShowOrderDetails()">
+            More .... </a></span>
+    </div>
+    <script language="javascript" type="text/javascript">
+
+        function ShowOrderDetails() {
+            window.open("/App/Common/OrderSummary.aspx?OrderId=@Model.OrderId&CustomerName=@Model.CustomerName&CustomerId=@Model.CustomerId", "OrderSummary", "width=750, height=400, menubar=0, toolbar=0, status=0, location=0, resizable=0, dependent=1, scrollbars=1");
+            return false;
+        }
+                
+        $("#order-payments").qtip({ content: function (api) { var strpayment = '@((Model.Payments != null && Model.Payments.Count() > 0) ? string.Join(", ", Model.Payments.ToArray().Select(p => "$" + p.SecondValue.ToString("0.00") + "(" + p.FirstValue + ")")) : "")'; return strpayment; } });
+    </script>
+</div>
+
+<div style="display:none;" id="ordersummarydiv"></div>
+
+@{
+    //string pagePath = @"\App\Common\OrderSummary.aspx";
+    //Type type = System.Web.Compilation.BuildManager.GetCompiledType(pagePath);
+
+    //// if type is null, could not determine page type
+    //if (type == null){
+    //    throw new ApplicationException("Page " + pagePath + " not found");}
+
+    //// cast page object (could also cast an interface instance as well)
+    //// in this example, ASP220Page is a custom base page
+    //var pageView = (Page)Activator.CreateInstance(type);
+
+    //// call page title
+    //pageView.Title = "Dynamically loaded page...";
+    ////// call custom property of ASP220Page
+    ////pageView.InternalControls.Add(
+    ////    new LiteralControl("<hr />Served dynamically...</hr />"));
+
+    //// process the request with updated object
+    //((IHttpHandler)pageView).ProcessRequest(HttpContext.Current);
+    
+    
+    
+    
+    //var a = new Falcon.App.UI.App.Common.OrderSummary();
+    
+    //var a = new Page();
+    ////a = (Page)a.LoadTemplate("/App/Common/OrderSummary");
+    //var detail = a.LoadControl("/App/ucCommon/ViewOrderDetails.ascx");
+    //((IHttpHandler)a).ProcessRequest(HttpContext.Current);
+    //a.Form.Controls.Add(detail);
+    ////////var detail = new Falcon.App.UI.App.UCCommon.ViewOrderDetails();
+    ////////var newForm = new System.Web.UI.HtmlControls.HtmlForm();
+    ////////newForm.Controls.Add(detail);
+    //////a.Controls.Add(detail);
+
+    //StringWriter output = new StringWriter();
+    //HttpContext.Current.Server.Execute("/App/Common/OrderSummary.aspx", output);
+    //string htmlView = Server.HtmlDecode(output.ToString());    
+}

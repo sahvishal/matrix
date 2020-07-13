@@ -1,0 +1,58 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Finance.ViewModels.DailyRecapModelFilter
+<h2>
+    Search</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 17%">
+        <div class="small-text">
+            <b>Event From</b>
+        </div>
+        @Html.TextBoxFor(m => m.EventDateFrom, new { @class = "datePicker" })@Html.ValidationMessageFor(m => m.EventDateFrom)
+    </div>
+    <div class="editor-column" style="width: 17%">
+        <div class="small-text">
+            <b>To</b>
+        </div>
+        @Html.TextBoxFor(m => m.EventDateTo, new { @class = "datePicker" })@Html.ValidationMessageFor(m => m.EventDateTo)
+    </div>
+    <div class="editor-column" style="width: 25%">
+        <div class="small-text">
+            Event Type:
+        </div>
+        <div>
+            <input type="checkbox" id="is-retail-event" @(Model.IsRetailEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsRetailEvent');" />Retail
+            <input type="checkbox" id="is-corporate-event" @(Model.IsCorporateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsCorporateEvent');" />Corporate
+            <input type="checkbox" id="is-health-event" @(Model.IsHealthPlan ? "checked" : "") onclick="onCheckEventType(this, 'IsHealthPlan');" />Health Plan
+        </div>
+        <div>
+            <input type="checkbox" id="is-public-event" @(Model.IsPublicEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPublicEvent');" />Public
+            <input type="checkbox" id="is-private-event" @(Model.IsPrivateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPrivateEvent');" />Private
+        </div>
+        @Html.HiddenFor(m => m.IsRetailEvent)
+        @Html.HiddenFor(m => m.IsCorporateEvent)
+        @Html.HiddenFor(m => m.IsPublicEvent)
+        @Html.HiddenFor(m => m.IsPrivateEvent)
+        @Html.HiddenFor(m => m.IsHealthPlan)
+    </div>
+    <div class="editor-column" style="width: 25%">
+        <div class="small-text">
+            Pod
+        </div>
+        @Html.TextBoxFor(m=>m.Pod)
+    </div>
+    <div class="editor-column" style="padding-top: 10px; text-align: right; float: right;">
+        @Html.ActionLink("Clear", "DailyRecap", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+
+    function onCheckEventType(checkBox, hiddenBox) {
+        if ($(checkBox).attr("checked")) {
+            $("#" + hiddenBox).val('@Boolean.TrueString');
+        }
+        else {
+            $("#" + hiddenBox).val('@Boolean.FalseString');
+        }
+    }
+
+</script>

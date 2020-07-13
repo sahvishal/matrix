@@ -1,0 +1,2271 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@using Roles = Falcon.App.Core.Enum.Roles
+@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.Core.Extensions;
+@using Falcon.App.UI.HtmlHelpers
+
+@model EventCustomerListModel
+@{
+    ViewBag.Title = "EVENT at " + Model.HostName + " [ID: " + Model.EventId + "] on " + Model.EventDate.ToShortDateString();
+
+    var enableQuickRegistration = Convert.ToBoolean(Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IConfigurationSettingRepository>().GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.EnableQuickOnsiteRegistration));
+
+    var settings = IoC.Resolve<ISettings>();
+    var currentRole = IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole;
+    var isTechnician = currentRole != null && currentRole.GetSystemRoleId == (long)Roles.Technician;
+    var isNursePractitioner = currentRole != null && currentRole.GetSystemRoleId == (long)Roles.NursePractitioner;
+    var toolTipRepository = IoC.Resolve<IToolTipRepository>();
+    var insuranceIdLabel = toolTipRepository.GetToolTipContentByTag(Falcon.App.Core.Enum.ToolTipType.InsuranceIdLabel);
+    insuranceIdLabel = string.IsNullOrEmpty(insuranceIdLabel) ? "Insurance Id" : insuranceIdLabel;
+    var clientNoticeFileExists = File.Exists(Server.MapPath("/Config/Content/Views/Shared/MammoConsentForm.cshtml"));
+    var abnFileExists = File.Exists(Server.MapPath("/Config/Content/Views/Shared/AbnConsentForm.cshtml"));
+    var pcpConsentFormExists = File.Exists(Server.MapPath("/Config/Content/Views/Shared/AwvPcpConsentForm.cshtml"));
+    var fluVacinationFormExists = File.Exists(Server.MapPath("/Config/Content/Views/Shared/FluPneumoniaConsent.cshtml"));
+    var participationFormExists = File.Exists(Server.MapPath("/Config/Content/Views/Shared/AwvParticipationConsentFrom.cshtml"));
+    var giftCardFormExists = File.Exists(Server.MapPath("/Config/Content/Views/Shared/GiftCertificateForAccount.cshtml"));
+
+    var version = IoC.Resolve<ISystemInformationRepository>().GetBuildNumber();
+}
+<link href="/Content/Styles/RollOverMenu.css" type="text/css" rel="Stylesheet" />
+@*for the medicare penguin*@
+<link href="/Content/colorbox/colorbox.css" rel="stylesheet" />
+
+<script language="javascript" type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+<script language="javascript" type="text/javascript" src="/Scripts/date.js"></script>
+<style type="text/css">
+    .jdbox {
+        float: left;
+        width: 450px;
+        margin-top: 5px;
+    }
+
+        .jdbox div {
+            float: left;
+            width: 450px;
+            margin-top: 3px;
+        }
+
+        .jdbox textarea {
+            width: 445px;
+        }
+
+    h3 {
+        color: #F47E1C;
+        font: bold 15px arial;
+    }
+
+    #list-view td {
+        padding: 10px 5px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+        a:hover {
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+    .ui-widget-content a {
+        color: #287AA8;
+    }
+
+    .highlight-customer {
+        background-color: #33FF66 !important;
+    }
+  
+</style>
+
+<style>
+    .rollover-menu {
+        float: right;
+        width: 80px;
+        z-index: 1;
+        text-align: left;
+        margin-top: 5px;
+    }
+
+        .rollover-menu li {
+            list-style: none;
+            font-weight: bold;
+            overflow: visible;
+        }
+
+            .rollover-menu li a {
+                display: block;
+                padding: 3px 15px 3px 3px;
+                white-space: nowrap;
+                background: url('/Content/Images/Icons/navlist_arrow_down.png') no-repeat 52px 6px;
+            }
+
+            .rollover-sub-menu {
+                margin: 0;
+                padding: 0;
+                position: absolute;
+                visibility: hidden;
+                border: 1px solid #ababab;
+            }
+
+                .rollover-sub-menu li {
+                    float: none;
+                    margin: 0px;
+                    padding: 0px;
+                    overflow: visible;
+                    border-bottom: 1px solid #ababab;
+                }
+
+                    .rollover-sub-menu li a {
+                        display: block;
+                        padding: 8px 10px 8px 25px;
+                        background: #ffffff url('/Content/Images/arrow-bulletbig.gif') no-repeat 5px 7px;
+                        color: #000;
+                        text-decoration: none;
+                        font-weight: bold;
+                    }
+
+        .rollover-menu:hover ul {
+            visibility: visible;
+        }
+
+</style>
+
+
+
+
+<style type="text/css">
+    .dropup-menu {
+        float: right;
+        width: 80px;
+        z-index: 1;
+        text-align: left;
+        margin-top: 5px;
+        position: relative;
+    }
+
+        .dropup-menu li {
+            list-style: none;
+            font-weight: bold;
+            overflow: visible;
+        }
+
+            .dropup-menu li a {
+                display: block;
+                padding: 3px 15px 3px 3px;
+                white-space: nowrap;
+                background: url('/Content/Images/Icons/navlist_arrow_down.png') no-repeat 52px 6px;
+            }
+
+
+    .dropup-sub-menu {
+        margin: 0 !important;
+        padding: 0 !important;
+        position: absolute !important;
+        visibility: hidden;
+        border: 1px solid #ababab;
+        bottom: 1px;
+        z-index: 1;
+    }
+
+                .dropup-sub-menu li {
+                    float: none;
+                    margin: 0px;
+                    padding: 0px;
+                    overflow: visible;
+                    border-bottom: 1px solid #ababab;
+                }
+
+                    .dropup-sub-menu li a {
+                        display: block;
+                        padding: 8px 10px 8px 25px;
+                        background: #ffffff url('/Content/Images/arrow-bulletbig.gif') no-repeat 5px 7px;
+                        color: #000;
+                        text-decoration: none;
+                        font-weight: bold;
+                    }
+
+        .dropup-menu:hover ul {
+            visibility: visible;
+        }
+</style>
+
+
+<div class="editor-row">
+    <input type="hidden" id="medicareVisitId" value="0" />
+    <div class="editor-column" style="width:29%">
+        <h1>
+            Event Customer List
+        </h1>
+    </div>
+    <div class="editor-column" style="width: 88px;">
+        &nbsp;
+        @if (Model.EventDate.Date <= DateTime.Now.Date && IoC.Resolve<ISettings>().ShowPartnerRelease)
+        {
+            <a href="javascript:void(0);" onclick="openPopupforEventEndofDay();">
+                End of Day
+            </a>
+        }
+    </div>
+    <div class="editor-column" style="width: 570px; text-align: right;">
+        <a href="javascript:void(0);" onclick="openTrackingNumberPopup();">Update Tracking Number</a>&nbsp;|
+        <a href="javascript:void(0);" onclick="openLinkforHostRanking();">Update Host Ranking</a>&nbsp;|
+        @if (Model.EventDate.Date <= DateTime.Now.Date)
+        {
+            <span>
+                <a href="/Medical/Results/ResultStatusList?EventId=@Model.EventId">
+                    Customer Result
+                    Status
+                </a>&nbsp;|
+            </span>
+        }
+
+        <a href="javascript:void(0);" onclick="openDepositSlip();">Deposit Slip</a>
+        @if (!isNursePractitioner && enableQuickRegistration && !Model.IsDynamicScheduling)
+        {
+            <br />
+            <br />
+            <span>
+                <a href="/Scheduling/OnSiteRegistration/Create?EventId=@Model.EventId">Quick Registration</a>&nbsp;|
+                <a href="/App/Common/SearchCustomer.aspx?EventId=@Model.EventId">Detailed Registration</a>
+            </span>
+        }
+        else if (!isNursePractitioner)
+        {
+            <br />
+            <br />
+            <span><a href="/App/Common/SearchCustomer.aspx?EventId=@Model.EventId">Register Walk-In</a></span>
+        }
+        @if (!isNursePractitioner && !Model.IsDynamicScheduling)
+        {
+            <span>&nbsp;|&nbsp;<a href="/Scheduling/MassRegistration/Create?eventId=@Model.EventId">Mass Registration</a></span>
+        }
+    </div>
+</div>
+<fieldset>
+    <legend><strong>Event ID: @Model.EventId</strong> </legend>
+    <div class="displayrow">
+        <span class="label">
+            @Model.HostName on @Model.EventDate.ToShortDateString()
+        </span>
+    </div>
+    @{
+        var googleMapAddress = Falcon.App.Lib.CommonCode.GetGoogleMapAddress(Model.HostAddress.StreetAddressLine1, Model.HostAddress.City, Model.HostAddress.State, Model.HostAddress.ZipCode.Zip, Model.HostAddress.Latitude + "," + Model.HostAddress.Longitude, Model.HostAddress.LatLogUseForAddressMaping);
+
+    }
+    <div class="displayrow">
+        <span class="label">Address: </span><span class="text">
+            @Model.HostAddress.ToString()&nbsp;|&nbsp;<a target="_blank"
+                                                         href="@(googleMapAddress)">Map to Location</a>&nbsp;|&nbsp;Verified by:
+            @Model.AddressVerifiedBy
+        </span><span class="label">Host Contact: @Model.HostContact</span>
+    </div>
+    <div class="displayrow">
+        <span class="label">Pods: </span>
+        @foreach (var item in Model.Pods)
+        {
+            <span class="text">
+                <a href="javascript:void(0);" class="anchor-pod">@item.Name</a> <span class="poddetail-span" style="display: none;">
+                    <b>Processing Capacity: </b>@item.ProcessingCapacity
+                    @if (Model.EventStaff != null)
+                    {
+                        <br />
+                        <br />
+                        <b>Staff:</b>
+                        <br />
+                        <ul>
+                            @foreach (var staffItem in Model.EventStaff.Where(es => es.PodId == item.Id).ToArray())
+                            {
+                                <li>@staffItem.FullName (@staffItem.EventRole) </li>
+                            }
+                        </ul>
+                    }
+                </span>
+            </span>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Sponsor))
+        {
+            <span class="label">Sponsor:</span>
+            <span class="text">@Model.Sponsor</span>
+        }
+    </div>
+    @{
+        var bloodPackageTrackingNumber = string.IsNullOrEmpty(Model.BloodPackageTracking) ? "N/A" : Model.BloodPackageTracking;
+        var recordsPackageTrackingNumber = string.IsNullOrEmpty(Model.RecordsPackageTracking) ? "N/A" : Model.RecordsPackageTracking;
+    }
+    <div class="displayrow">
+        <span class="label">Blood Package Tracking:</span>
+        <span class="text" id="BloodPackageTrackingSpan">@bloodPackageTrackingNumber</span>
+        <input type="hidden" id="BloodPackageTrackingHiddenField" value="@(Model.BloodPackageTracking)" />
+    </div>
+    <div class="displayrow">
+        <span class="label">Records Package Tracking:</span>
+        <span class="text" id="RecordsPackageTrackingSpan">@recordsPackageTrackingNumber</span>
+        <input type="hidden" id="RecordsPackageTrackingHiddenField" value="@(Model.RecordsPackageTracking)" />
+    </div>
+    @if (Model.HostFacility != null)
+    {
+        <div class="displayrow">
+            <span class="label">Facility Details </span><span class="text">
+                Plug Points: @(Model.HostFacility.NumberOfPlugPoints != null ? Model.HostFacility.NumberOfPlugPoints.Value.ToString() : "")
+                &nbsp;|&nbsp; Room Size: @Model.HostFacility.RoomSize &nbsp;|&nbsp; Host Ranking:
+                @(Model.HostFacility.Ranking != null ? Model.HostFacility.Ranking.Name : "")
+                InternetAccess: @(Model.HostFacility.InternetAccess != null ? Model.HostFacility.InternetAccess.Name : "")
+                Need Room Cleaning: @Model.HostFacility.RoomNeedsCleared
+            </span>
+        </div>
+    }
+</fieldset>
+<div class="div-with-roundborder summary-box" style="width: 99%; margin: 10px 0px;">
+    <div class="header">
+        <div class="editor-column-twoinrow">
+            <h4>
+                Summary
+            </h4>
+        </div>
+        <div class="editor-column-twoinrow" style="text-align: right; width: 52%;">
+            <a href="javascript:void(0);" onclick="$('#emr-notes-dialog').dialog('open');">
+                EMR Notes
+            </a>&nbsp;&nbsp;<a href="javascript:$('#coordinator-notes-div').dialog('open'); void(0);">
+                View
+                Coordinator Notes
+            </a>
+        </div>
+    </div>
+    <div id="metrics-div">
+    </div>
+</div>
+<div class="div-rightalign">
+    <a href="javascript:void(0);" onclick="openAddSlotpopUp();">Add Slot </a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <b>Filter by: </b>@Html.DropDownList("SlotFilterSelect", Falcon.App.UI.HtmlHelpers.DropDownHelper.SlotFilter(), new { onchange = "refreshListWithFilter();" })
+</div>
+<div id="tabs-div" style="background: transparent;">
+    <ul>
+        <li><a href="#appointment-div">Appointments</a> </li>
+        <li><a href="#canceled-div">Canceled</a> </li>
+    </ul>
+    <div id="appointment-div">
+        <table id="list-view" style="width: 100%;">
+            <tr>
+                <th style="width: 100px;">
+                    Time
+                </th>
+                <th style="width: 140px;">
+                    Customer
+                </th>
+                <th style="width: 200px;">
+                    Purchased
+                </th>
+                <th>
+                    Source Code
+                </th>
+                <th>
+                    Amount ($)
+                </th>
+                <th style="width: 120px;">
+                    Status
+                </th>
+                <th style="width: 160px;">
+                    Check In/Out
+                </th>
+                <th></th>
+            </tr>
+            @if (Model.EventAppointmentSlotDistributions != null && Model.EventAppointmentSlotDistributions.Any())
+            {
+                foreach (var item in Model.EventAppointmentSlotDistributions)
+                {
+                    <tr style="border-bottom: 0px;">
+                        <td style="width: 100px;">
+                            @Html.DisplayFor(m => item.Appointment.AppointmentTime)
+                            @if (item.Appointment.RoomSlots != null && item.Appointment.RoomSlots.Any())
+                            {
+                                <hr />
+                                foreach (var roomSlot in item.Appointment.RoomSlots)
+                                {
+                                    <span>@roomSlot.FirstValue - @roomSlot.SecondValue.ToShortTimeString()</span><br />
+                                }
+                            }
+                        </td>
+                        @if (item.Customer != null)
+                        {
+                            var customerItem = item.Customer;
+                            <td style="width: 140px;" class="custId_@(customerItem.CustomerId)">
+                                <a href="#" class="customer-name"><b>@customerItem.CustomerName</b></a>
+                                <br />
+                                [ID: @customerItem.CustomerId] @*Notes, Edit Customer, Details*@
+                                <br />
+
+                                @if (settings.CaptureEmployeeId)
+                                {
+                                    <span>[Emp Id: @(string.IsNullOrEmpty(customerItem.EmployeeId) ? "" : customerItem.EmployeeId)]</span>
+                                    <br />
+                                }
+                                @if (settings.CaptureInsuranceId && Model.CaptureInsuranceId)
+                                {
+                                    <span>[@insuranceIdLabel: @(string.IsNullOrEmpty(customerItem.InsuranceId) ? "Not Available" : customerItem.InsuranceId)]</span>
+                                    <br />
+                                }
+                                <span>[ACES Id: @(string.IsNullOrWhiteSpace(customerItem.AcesId) ? "Not Available" : customerItem.AcesId)]</span>
+                                <br />
+
+
+                                <div class="customer-info" style="display: none; font-size: 12px; padding: 10px 5px;">
+                                    <b>Address: </b>@customerItem.Address.ToString()
+                                    <br />
+                                    <div style="float: left; width: 500px; margin: 10px 0px; clear: both;">
+                                        <span style="float: left; width: 280px;"><b>Email:</b> @customerItem.Email</span>
+                                        <span style="float: right; width: 200px;"><b>Phone:</b> @customerItem.Phone</span>
+                                    </div>
+                                    @if (customerItem.AssignedPhysicians != null)
+                                    {
+                                        <div style="float: left; width: 500px; padding: 5px 0px;">
+                                            <b>Assigned Physicians @(customerItem.AssignedPhysicians.IsDefaultAssignment ? "(Default)" : ""):</b>
+                                            @(customerItem.AssignedPhysicians.Primary != null ? customerItem.AssignedPhysicians.Primary.Name : "")
+                                            @(customerItem.AssignedPhysicians.Overread != null ? ", " + customerItem.AssignedPhysicians.Overread.Name : "")
+                                        </div>
+                                    }
+                                </div>
+                                @if (customerItem.CustomerNotes != null && customerItem.CustomerNotes.Any())
+                                {
+                                    <a href="#" class="anchor-notes">View Notes </a>
+                                    <div style="display: none;" class="customer-notes">
+                                        @Html.Partial("/Areas/Communication/Views/Shared/CustomerCallNotes.cshtml", customerItem.CustomerNotes)
+                                    </div>
+                                }
+
+
+                                <!-- place GC div here-->
+
+                            </td>
+                            <td style="width: 200px;" class="dummy">
+                                @customerItem.OrderPurchased
+                                <br />
+                                (<a href="javascript:void(0)" onclick="ShowOrderDetails(@customerItem.OrderId, @customerItem.CustomerId, '@customerItem.CustomerName.Replace("'", "\\\'")');">
+                                    View
+                                    Order
+                                </a>)
+                                <br />
+                                <div class="dummy">
+                                    @if (customerItem.PreApprovedTests.Any())
+                                    {
+                                        @:(<a href="#" class="pre-approve-test">Preapproved Test </a>)
+                                        <div style="display: none;" class="pre-approve-tests">
+                                            <ul>
+
+                                                @foreach (var preApprovedTest in customerItem.PreApprovedTests)
+                                                {
+                                                    <li>@preApprovedTest</li>
+                                                }
+
+                                            </ul>
+
+                                        </div>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                @customerItem.SourceCode
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => customerItem.TotalAmount)
+                            </td>
+                            if (customerItem.TotalAmount <= customerItem.AmountPaid)
+                            {
+                                <td style="width: 120px;">
+                                    <b>Paid </b>
+                                    <br />
+                                    <a href="javascript:void(0);" onclick="ShowConfirmationPopup(@customerItem.CustomerId)">
+                                        Confirmation
+                                    </a>
+                                    <br />
+                                    <a href="javascript:void(0);" onclick="ShowRecieptPopup(@customerItem.CustomerId)">Receipt</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td style="width: 120px;">
+                                    <b>Not Paid </b>
+                                    @if (Model.EventDate.Date <= DateTime.Now.Date)
+                                    {
+                                        <br />
+                                        <span>
+                                            (<a href="javascript:void(0);" onclick="openPopupforAcceptPayment(@customerItem.EventCustomerId, @customerItem.CustomerId);">
+                                                Accept
+                                                Payment
+                                            </a>)
+                                        </span>
+                                        if (Model.CustomerIdforAcceptPayment > 0 && Model.CustomerIdforAcceptPayment == customerItem.CustomerId)
+                                        {
+                                            <script type="text/javascript" language="javascript">
+                                                $(document).ready(function () {
+                                                    openPopupforAcceptPayment(@customerItem.EventCustomerId, @customerItem.CustomerId);
+                                                });
+                                            </script>
+                                        }
+                                    }
+                                </td>
+                            }
+                            <td style="width: 160px;">
+                                @if (Model.EventDate.Date <= DateTime.Now.Date)
+                                {
+                                    var displayEditField = true;
+                                    var displayNoShow = true;
+                                    var displayLeftWithoutScreening = true;
+
+                                    if (customerItem.IsNoShow)
+                                    {
+                                        displayEditField = false;
+                                        displayLeftWithoutScreening = false;
+                                    }
+                                    else if (item.Appointment.CheckInTime != null && item.Appointment.CheckOutTime != null)
+                                    {
+                                        displayEditField = false;
+                                        displayNoShow = false;
+                                    }
+                                    else if (customerItem.LeftWithoutScreeningReasonId.HasValue)
+                                    {
+                                        displayNoShow = false;
+                                    }
+                                    <div style="@(displayEditField ? "display: block;" : "display: none;")" class="edit-customerattended-info">
+                                        <span style="width: 40px; text-align: right; float: left; font-weight: bold;">
+                                            <a href="javascript:void(0);" onclick="setCurrentTime($(this).parents('.edit-customerattended-info:first').find('.checkin-time'));">
+                                                In
+                                            </a>
+                                        </span>@Html.TextBox("Appointment.CheckInTime", item.Appointment.CheckInTime.HasValue ? item.Appointment.CheckInTime.Value.ToString("hh:mm tt") : "", new { @class = "checkin-time", @style = "width: 80px;", onchange = "updateCheckinCheckout($(this), " + customerItem.EventCustomerId + ", " + item.Appointment.AppointmentId + ");" })
+                                        <br />
+                                        <br />
+                                        <span style="width: 40px; text-align: right; float: left; font-weight: bold;">
+                                            <a href="javascript:void(0);" onclick="setCurrentTime($(this).parents('.edit-customerattended-info:first').find('.checkout-time'));">
+                                                Out
+                                            </a>
+                                        </span>@Html.TextBox("Appointment.CheckOutTime", item.Appointment.CheckOutTime.HasValue ? item.Appointment.CheckOutTime.Value.ToString("hh:mm tt") : "", new { @class = "checkout-time", @style = "width: 80px;", onchange = "updateCheckinCheckout($(this), " + customerItem.EventCustomerId + ", " + item.Appointment.AppointmentId + ");" })
+                                    </div>
+                                    <div style="padding-top: 10px; padding-left: 40px; @(displayNoShow ? "display: block;" : "display: none;")" class="customer-noshow">
+                                        @if (isTechnician || isNursePractitioner)
+                                        {
+                                            @Html.CheckBoxFor(m => customerItem.IsNoShow, new { onclick = "checkCustomerScreeningTestResultExist($(this), " + customerItem.EventCustomerId + ");" })
+                                        }
+                                        else
+                                        {
+                                            @Html.CheckBoxFor(m => customerItem.IsNoShow, new { onclick = "updateNoShow($(this), " + customerItem.EventCustomerId + ");" })
+                                        }
+
+                                        No Show
+                                    </div>
+                                    <div style="@(!displayEditField && !displayNoShow ? "display: block;" : "display: none;")" class="display-customerattended-info">
+                                        <b>Check-In:</b> @Html.DisplayFor(m => item.Appointment.CheckInTime)
+                                        <br />
+                                        <br />
+                                        <b>Check-Out:</b> @Html.DisplayFor(m => item.Appointment.CheckOutTime)
+                                        <br />
+                                        <br />
+                                        <a href="javascript:void(0);" onclick="clearCheckinCheckoutTime($(this),@customerItem.EventCustomerId,@item.Appointment.AppointmentId);">Clear</a>
+                                    </div>
+                                    <div style="padding-top: 10px;padding-left: 40px;@(displayLeftWithoutScreening ? "display: block;" : "display: none;")" class="left-without-screening-container">
+                                        <div class="left-without-screening">
+                                            <input type="hidden" id="leftPatientreasonId_@customerItem.EventCustomerId" value="@customerItem.LeftWithoutScreeningReasonId" />
+                                            <input type="hidden" id="leftPatientNote_@customerItem.EventCustomerId" value="@customerItem.LeftWithoutScreeningNotes" />
+                                            @Html.CheckBoxFor(m => (customerItem.LeftWithoutScreeningReasonId.HasValue), new { onclick = "ShowPatientLeftPopup($(this), " + customerItem.EventCustomerId + ");", @id = "leftPatientchk_" + customerItem.EventCustomerId })
+                                            <span href="javascript:void(0);" class="@(customerItem.LeftWithoutScreeningReasonId.HasValue ?"patient-left" : "not-selected" )">Patient Left</span>
+                                        </div>
+                                        <div id="patientLeftReasondiv_@customerItem.EventCustomerId" style="@(customerItem.LeftWithoutScreeningReasonId.HasValue? "display:block;":"display:none;")">
+                                            @if (customerItem.LeftWithoutScreeningReasonId.HasValue)
+                                            {
+                                                var Reason = ((LeftWithoutScreeningReason)customerItem.LeftWithoutScreeningReasonId.Value).GetDescription();
+                                                <span><b>Reason:</b> @Reason</span><br />
+                                                if (!customerItem.LeftWithoutScreeningNotes.IsNullOrEmpty())
+                                                {
+                                                    <a class="patient-left-note" href="javascript:void(0);" style="margin-left:30px;">(Notes)</a>
+                                                    <span class="patient-left-notes" style="display: none;">@(!customerItem.LeftWithoutScreeningNotes.IsNullOrEmpty() ? customerItem.LeftWithoutScreeningNotes : "")</span>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <ul class="rollover-menu">
+                                    <li>
+                                        <a href="javascript:void(0);">Action</a>
+                                        <ul style="width: 220px;" class="rollover-sub-menu">
+                                            @{
+                                var vd = new ViewDataDictionary();
+                                vd.Add("EventId", Model.EventId);
+                                vd.Add("EventDate", Model.EventDate);
+                                vd.Add("Customer", customerItem);
+                                vd.Add("Appointment", item.Appointment);
+                                vd.Add("AvailableProductCount", Model.AvailableProductsCount);
+                                vd.Add("ClientNoticeFileExists", clientNoticeFileExists);
+                                vd.Add("IsKynIntegrationEnabled", Model.IsKynIntegrationEnabled);
+                                vd.Add("AbnFileExists", abnFileExists);
+                                vd.Add("PcpConsentFormExists", pcpConsentFormExists);
+                                vd.Add("CaptureAbnStatus", Model.CaptureAbnStatus);
+                                vd.Add("IsBloodworkFormAttached", Model.IsBloodworkFormAttached);
+                                vd.Add("CaptureHaf", Model.CaptureHaf);
+                                vd.Add("FluVacinationFormExists", fluVacinationFormExists);
+                                vd.Add("BookPcpAppointment", Model.BookPcpAppointment);
+                                vd.Add("PrintScreeningInfo", Model.PrintScreeningInfo);
+                                vd.Add("PrintPatientWorkSheet", Model.PrintPatientWorkSheet);
+                                vd.Add("IsHealthPlanEvent", Model.IsHealthPlanEvent);
+                                vd.Add("ShowHraQuestionnaire", Model.ShowHraQuestionnaire);
+                                vd.Add("ShowBarrier", Model.ShowBarrier);
+                                vd.Add("ShowCheckListForm", Model.ShowCheckListForm);
+                                vd.Add("ShowMicroalbuminForm", Model.ShowMicroalbuminForm);
+                                vd.Add("ShowIFOBTForm", Model.ShowIFOBTForm);
+                                vd.Add("IsEawvPurchased", customerItem.IsEawvPurchased);
+                                vd.Add("IsEawvMarkedAsTestNotPerformed", customerItem.IsEawvMarkedAsTestNotPerformed);
+                                vd.Add("ShowChatQuestionnaire", Model.ShowChatQuestionnaire);
+                                vd.Add("ChatQuestionerAppUrl", Model.ChatQuestionerAppUrl);
+                                vd.Add("IsNoShow", customerItem.IsNoShow);
+                                vd.Add("ParticipationFormExists", participationFormExists);
+                                vd.Add("GiftCardFormExists", giftCardFormExists);
+                                vd.Add("ShowChaperonForm", Model.ShowChaperonForm);
+                                            }
+                                            @Html.Partial("ViewActionColumn", vd)
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                
+
+                            </td>
+                        }
+                        else
+                        {
+                            <td colspan="4">
+                                <b>@item.Appointment.Reason</b>
+                            </td>
+                            <td>
+
+                                @if (item.Appointment.AppointmentStatus == Falcon.App.Core.Scheduling.Enum.AppointmentStatus.Free)
+                                {
+                                    <b>Open </b>
+                                }
+                            </td>
+                            <td></td>
+                            <td>
+                                @if (item.Appointment.AppointmentStatus != Falcon.App.Core.Scheduling.Enum.AppointmentStatus.Blocked && !isTechnician && !isNursePractitioner)
+                                {
+                                    <a href="javascript:void(0);" onclick="openBlockAppointmentDiv(@item.Appointment.AppointmentId);">
+                                        Block
+                                    </a>
+                                    <br />
+                                }
+                                @if (!isTechnician && !isNursePractitioner)
+                                {
+                                    <a href="javascript:void(0);" onclick="deleteAppointmentSlot(@item.Appointment.AppointmentId);">
+                                        Delete
+                                    </a>
+                                }
+
+                            </td>
+                        }
+                    </tr>
+                    if (item.Customer != null)
+                    {
+                        var customerItem = item.Customer;
+                        @*<tr>
+                                <td colspan="8" class="custId_@(customerItem.CustomerId)">
+                                    <div>
+                                        <div>
+                                            <input type="hidden" id="isGiftCertificateDelivered_@customerItem.EventCustomerId" value="@customerItem.IsGiftCertificateDelivered" />
+                                            <input type="hidden" id="giftCode_@customerItem.EventCustomerId" value="@customerItem.GiftCode" />
+                                            @Html.CheckBoxFor(m => customerItem.IsGiftCertificateDelivered, new { onclick = "showGiftCertificatePopup($(this), " + customerItem.EventCustomerId + ")", @id = "giftCertificateChk_" + customerItem.EventCustomerId })
+                                            <span><b>Gift Certificate</b></span>
+                                        </div>
+                                        <div id="giftCodeDiv_@customerItem.EventCustomerId" style="@(customerItem.IsGiftCertificateDelivered?"display:block":"display:none")">
+                                            <b>Gift Code: </b><span id="spanGiftCode_@customerItem.EventCustomerId">@customerItem.GiftCode</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>*@
+                        if ((giftCardFormExists && customerItem.ShowGiftCard) || (Model.IsHealthPlanEvent==false))
+                { 
+                        <tr>
+                            <td colspan="1"></td>
+                            <td colspan="7" class="custId_@(customerItem.CustomerId)" style="padding: 0px 0px 5px 0px;">
+                                <div>
+                                    <input type="hidden" id="isGiftCertificateDelivered_@customerItem.EventCustomerId" value="@customerItem.IsGiftCertificateDelivered" />
+                                    <input type="hidden" id="giftCode_@customerItem.EventCustomerId" value="@customerItem.GiftCode" />
+                                    <input type="hidden" id="giftCodeNotGivenReason_@customerItem.EventCustomerId" value="@customerItem.GiftCodeNotGivenReasonId">
+                                    <br>
+                                    <div style="width: 100%;">
+                                        <b>GC Received</b>
+                                        @Html.RadioButton("yes_" + customerItem.EventCustomerId, "Yes", new { onclick = "showGiftCertificatePopup($(this), " + customerItem.EventCustomerId + ")", @id = "giftCertificateChk_" + customerItem.EventCustomerId }) Yes
+                                        @Html.RadioButton("no" + customerItem.EventCustomerId, "No", new { onclick = "showGiftCertificateNotGivenPopup($(this), " + customerItem.EventCustomerId + ")", @id = "giftCertificateNotGivenChk_" + customerItem.EventCustomerId }) No
+                                    </div>
+                                </div>
+                                <br />
+                                <div id="giftCodeDiv_@customerItem.EventCustomerId" style="width: 90%; word-wrap: break-word; @((customerItem.IsGiftCertificateDelivered.HasValue && customerItem.IsGiftCertificateDelivered.Value == true) ? "display:block" : "display:none")">
+                                    <b>Gift Code: </b><span id="spanGiftCode_@customerItem.EventCustomerId">@customerItem.GiftCode</span>
+                                </div>
+                                <div id="giftCodeNotGiven_@customerItem.EventCustomerId" style="width: 90%; word-wrap: break-word; @((customerItem.IsGiftCertificateDelivered.HasValue && customerItem.IsGiftCertificateDelivered.Value == false) ? "display:block" : "display:none")">
+                                    <b>GC not given Reason: </b> <span id="spanGiftCodeNotGiven_@customerItem.EventCustomerId">@(customerItem.GiftCodeNotGivenReasonId.HasValue ? ((GcNotGivenReason)customerItem.GiftCodeNotGivenReasonId.Value).GetDescription() : "")</span>
+                                </div>
+                            </td>
+                        </tr>
+                }
+                        <tr>
+                            <td colspan="8" style="border-bottom:solid 1px #000000;" class="custId_@(customerItem.CustomerId)">
+                                <div style="float: left; width: 33%;">
+                                    <div class="hipaa_@(customerItem.CustomerId)">
+                                        <b>HIPAA: </b>
+                                        <br />
+                                        <input type="radio" id="@(customerItem.CustomerId)_hippa_@(RegulatoryState.Not_Signed)" name="hipaa_group_@(customerItem.CustomerId)" @((customerItem.HipaaStatus == RegulatoryState.Not_Signed) ? "checked=checked" : "")
+                                               onclick="setHipaa('@Model.EventId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Not_Signed)    ');" />
+                                        @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                        <input type="radio" id="@(customerItem.CustomerId)_hippa_@(RegulatoryState.Signed)" name="hipaa_group_@(customerItem.CustomerId)" @((customerItem.HipaaStatus == RegulatoryState.Signed) ? "checked=checked" : "")
+                                               onclick="setHipaa('@Model.EventId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Signed)    ');" />
+                                        @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                        <input type="radio" id="@(customerItem.CustomerId)_hippa_@(RegulatoryState.Unknown)" name="hipaa_group_@(customerItem.CustomerId)" @((customerItem.HipaaStatus == RegulatoryState.Unknown) ? "checked=checked" : "")
+                                               onclick="setHipaa('@Model.EventId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Unknown)    ');" />
+                                        @RegulatoryState.Unknown.ToString()
+                                    </div>
+                                    <div class="hipaa_@(customerItem.CustomerId)" style="display:none;">
+                                        <img src="/App/Images/loading.gif" alt="" />
+                                        Updating HIPAA State
+                                    </div>
+                                </div>
+                                @if (Model.IsHospitalPartnerEvent)
+                                {
+                                    <div style="float: left; width: 33%;">
+                                        <div class="partnerrelease_@(customerItem.CustomerId)">
+                                            <b>Partner Release: </b>
+                                            <br />
+                                            <input type="radio" name="partner_release_@(customerItem.CustomerId)" @(customerItem.PartnerRelease == RegulatoryState.Not_Signed ? "checked=checked" : "")
+                                                   onclick="setPartnerRelease('@Model.EventId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Not_Signed)    ');" />
+                                            @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                            <input type="radio" name="partner_release_@(customerItem.CustomerId)" @(customerItem.PartnerRelease == RegulatoryState.Signed ? "checked=checked" : "")
+                                                   onclick="setPartnerRelease('@Model.EventId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Signed)    ');" />
+                                            @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                            <input type="radio" name="partner_release_@(customerItem.CustomerId)" @(customerItem.PartnerRelease == RegulatoryState.Unknown ? "checked=checked" : "")
+                                                   onclick="setPartnerRelease('@Model.EventId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Unknown)    ');" />
+                                            @RegulatoryState.Unknown.ToString()
+                                        </div>
+                                        <div class="partnerrelease_@(customerItem.CustomerId)" style="display:none;">
+                                            <img src="/App/Images/loading.gif" alt="" />
+                                            Updating Partner Release
+                                        </div>
+                                    </div>
+
+                                    if (Model.HospitalFacilities != null && Model.HospitalFacilities.Any())
+                                    {
+                                        <div style="float: left; width: 33%;">
+                                            <b>Release Results To:</b><br />
+                                            <select id="HospitalFacility_@(customerItem.CustomerId)" onchange="setHospitalFacility('@customerItem.EventCustomerId', this);" style="width: 99%; font-size: 13px;">
+                                                <option value="-1">-- Select Hospital Facility --</option>
+                                                @foreach (var hospitalFacility in Model.HospitalFacilities)
+                                                {
+                                                    if (customerItem.HospitalFacilityId.HasValue && customerItem.HospitalFacilityId.Value == hospitalFacility.FirstValue)
+                                                    {
+                                                        <option value="@hospitalFacility.FirstValue" selected="selected">@hospitalFacility.SecondValue </option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@hospitalFacility.FirstValue">@hospitalFacility.SecondValue </option>
+                                                    }
+
+                                                }
+                                            </select>
+                                        </div>
+                                    }
+                                }
+                                @if (Model.IsHospitalPartnerEvent && (Model.CaptureAbnStatus || customerItem.ShowAwvPcpForm))
+                                {
+                                    <hr style="float: left; width: 99%; border-top: solid 0.5px #cdcdcd;" />
+                                }
+                                @if (Model.CaptureAbnStatus)
+                                {
+                                    <div @Html.Raw(!(Model.IsHospitalPartnerEvent) ? "style=\"float: left; width: 33%;\"" : "style=\"float: left; width: 33%; clear:left;\"")>
+                                        <div class="abn_@(customerItem.CustomerId)">
+                                            <b>ABN Status: </b>
+                                            <br />
+                                            <input type="radio" name="abn_group_@(customerItem.CustomerId)" @((customerItem.AbnStatus == RegulatoryState.Not_Signed) ? "checked=checked" : "")
+                                                   onclick="setAbnStatus('@customerItem.EventCustomerId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Not_Signed)    ');" />
+                                            @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                            <input type="radio" name="abn_group_@(customerItem.CustomerId)" @((customerItem.AbnStatus == RegulatoryState.Signed) ? "checked=checked" : "")
+                                                   onclick="setAbnStatus('@customerItem.EventCustomerId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Signed)    ');" />
+                                            @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                            <input type="radio" name="abn_group_@(customerItem.CustomerId)" @((customerItem.AbnStatus == RegulatoryState.Unknown) ? "checked=checked" : "")
+                                                   onclick="setAbnStatus('@customerItem.EventCustomerId    ', '@customerItem.CustomerId    ', '@((short)RegulatoryState.Unknown)    ');" />
+                                            @RegulatoryState.Unknown.ToString()
+                                        </div>
+                                        <div class="abn_@(customerItem.CustomerId)" style="display:none;">
+                                            <img src="/App/Images/loading.gif" alt="" />
+                                            Updating ABN Status
+                                        </div>
+                                    </div>
+                                }
+                                @if (customerItem.ShowAwvPcpForm)
+                                {
+                                    <div style="float: left; width: 33%;">
+                                        <div class="pcpconsent_@(customerItem.CustomerId)">
+                                            <b>PCP Consent Status</b><br />
+                                            <input type="radio" name="pcpConsent_@(customerItem.CustomerId)" @((customerItem.PcpConsentStatus == RegulatoryState.Not_Signed) ? "checked=checked" : "")
+                                                   onclick="setPcpConsentStatus('@customerItem.EventCustomerId    ','@customerItem.CustomerId    ','@((short)RegulatoryState.Not_Signed)    ');" />
+                                            @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                            <input type="radio" name="pcpConsent_@(customerItem.CustomerId)" @((customerItem.PcpConsentStatus == RegulatoryState.Signed) ? "checked=checked" : "")
+                                                   onclick="setPcpConsentStatus('@customerItem.EventCustomerId    ','@customerItem.CustomerId    ','@((short)RegulatoryState.Signed)    ');" />
+                                            @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                            <input type="radio" name="pcpConsent_@(customerItem.CustomerId)" @((customerItem.PcpConsentStatus == RegulatoryState.Unknown) ? "checked=checked" : "")
+                                                   onclick="setPcpConsentStatus('@customerItem.EventCustomerId    ','@customerItem.CustomerId    ','@((short)RegulatoryState.Unknown)    ');" />
+                                            @RegulatoryState.Unknown.ToString() &nbsp; &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="pcpConsent_@(customerItem.CustomerId)" style="display:none;">
+                                        <img src="/App/Images/loading.gif" alt="" />
+                                        Updating PCP Consent Status
+                                    </div>
+                                }
+
+                                @if (customerItem.ShowMedicareForm)
+                                {
+                                    if (!Model.IsHospitalPartnerEvent && (Model.CaptureAbnStatus && customerItem.ShowAwvPcpForm))
+                                    {
+                                        <hr style="float: left; width: 99%; border-top: solid 0.5px #cdcdcd;" />
+                                    }
+                                    <div style="float: left; width: 33%;">
+                                        <div class="insurancerelease_@(customerItem.CustomerId)">
+                                            <b>Insurance Release Status</b><br />
+                                            <input type="radio" name="insurancerelease_@(customerItem.CustomerId)" @((customerItem.InsuranceReleaseStatus == RegulatoryState.Not_Signed) ? "checked=checked" : "")
+                                                   onclick="setInsuranceReleaseStatus('@customerItem.EventCustomerId    ','@customerItem.CustomerId    ','@((short)RegulatoryState.Not_Signed)    ');" />
+                                            @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                            <input type="radio" name="insurancerelease_@(customerItem.CustomerId)" @((customerItem.InsuranceReleaseStatus == RegulatoryState.Signed) ? "checked=checked" : "")
+                                                   onclick="setInsuranceReleaseStatus('@customerItem.EventCustomerId    ','@customerItem.CustomerId    ','@((short)RegulatoryState.Signed)    ');" />
+                                            @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                            <input type="radio" name="insurancerelease_@(customerItem.CustomerId)" @((customerItem.InsuranceReleaseStatus == RegulatoryState.Unknown) ? "checked=checked" : "")
+                                                   onclick="setInsuranceReleaseStatus('@customerItem.EventCustomerId    ','@customerItem.CustomerId    ','@((short)RegulatoryState.Unknown)    ');" />
+                                            @RegulatoryState.Unknown.ToString() &nbsp; &nbsp;
+                                        </div>
+                                    </div>
+                                    <div class="insurancerelease_@(customerItem.CustomerId)" style="display:none;">
+                                        <img src="/App/Images/loading.gif" alt="" />
+                                        Updating Insurance Release Status
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8">
+                        No Customers Found!
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div id="canceled-div">
+        <table class="list-view">
+            <tr>
+                <th>
+                    Customer
+                </th>
+                <th></th>
+            </tr>
+            @if (Model.CanceledCustomers != null && Model.CanceledCustomers.Count() > 0)
+            {
+                foreach (var item in Model.CanceledCustomers)
+                {
+                    <tr>
+                        <td>
+                            <b>@item.CustomerName </b>[ID: @item.CustomerId]
+                            <br />
+                            @if (!string.IsNullOrEmpty(item.Email))
+                            {
+                                <span>@item.Email </span>
+                                <br />
+                            }
+                            @if (isTechnician)
+                            {
+                                <span>(<a href="/App/Franchisee/Technician/TechnicianCustomerDetails.aspx?CustomerId=@item.CustomerId">Details</a>)</span>
+                            }
+                            @if (item.CustomerNotes != null && item.CustomerNotes.Count() > 0)
+                            {
+                                <span>(<a href="#" class="anchor-notes">View Notes</a>)</span>
+                                <div style="display: none;" class="customer-notes">
+                                    @Html.Partial("/Areas/Communication/Views/Shared/CustomerCallNotes.cshtml", item.CustomerNotes)
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            (<a href="javascript:void(0)" onclick="ShowOrderDetails(@item.OrderId, @item.CustomerId, '@item.CustomerName.Replace("'", "\\\'")');">
+                                View
+                                Order
+                            </a>)
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2" style="padding: 30px 0px; font-weight: bold; margin: 0 auto;">
+                        No Canceled Customers!
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<div id="coordinator-notes-div">
+    <h4>
+        Assigned To Sales Rep: @Model.AssignedToUserName
+    </h4>
+    <textarea style="width: 95%;" readonly="readonly" rows="20" cols="60">@(string.IsNullOrWhiteSpace(Model.TechnicianNotes) ? "" : @Model.TechnicianNotes.Trim())</textarea>
+</div>
+<div id="emr-notes-dialog" class="jdbox">
+    <div>
+        <textarea id="emr-notes" rows="5" cols="50"> @Model.EmrNotes </textarea>
+    </div>
+    <div class="emr-notes-buttons" style="text-align: right;">
+        <button id="save-emr-notes" style="width: 70px; height: 25px;" onclick="saveEmrNotes(); return false;">
+            Save
+        </button>
+    </div>
+    <div class="emr-notes-buttons" style="display: none; text-align: right;">
+        <img src="/App/Images/loading.gif" alt="" />
+        Updating
+    </div>
+</div>
+<div id="package-tracking-numbers-dialog" class="jdbox">
+    <div>
+        <span style="text-align: right; float: left; width:160px;">
+            Blood Package Tracking:
+        </span>
+        <span style="float: left; width: 250px;">
+            <input type="text" id="BloodPackageTrackingTextbox" style="width: 100%" />
+            <br />
+            <i>(minimum 18 characters)</i>
+        </span>
+    </div>
+    <div>
+        <span style="text-align: right; float: left; width: 160px; ">
+            Records Package Tracking:
+        </span>
+        <span style="float: left; width: 250px;">
+            <input type="text" id="RecordsPackageTrackingTextbox" style="width: 100%" />
+            <br />
+            <i>(minimum 18 characters)</i>
+        </span>
+    </div>
+    <div class="package-tracking-numbers-buttons" style="text-align: right;">
+        <button id="save-package-tracking-numbers" style="width: 70px; height: 25px;" onclick="savePackageTrackingNumbers(); return false;">
+            Save
+        </button>
+    </div>
+    <div class="package-tracking-numbers-buttons" style="display: none; text-align: right;">
+        <img src="/App/Images/loading.gif" alt="" />
+        Updating
+    </div>
+</div>
+<div id="authorizationpopup-div">
+</div>
+<div id="blockslot-div">
+    <input type="text" style="display: none;" class="event-appointmentid" />
+    <textarea id="blockslot-reason" rows="5" cols="40" style="width: 98%;"></textarea>
+    <div class="div-rightalign">
+        <input type="button" value="Block Slot" onclick="blockAppointmentSlot();" style="width: 80px;" />
+    </div>
+</div>
+
+<div id="patient-left-reason-dialog">
+    <div>
+        <div class="small-text">
+            Reason
+        </div>
+        @Html.DropDownList("patientLeftReason", Falcon.App.UI.HtmlHelpers.DropDownHelper.PatientLeftReason(), new { @style = "width:270px;" })
+        <input id="eventcustomerid" type="hidden" />
+        <div class="small-text" style="margin-top: 5px;">
+            Notes
+        </div>
+        <textarea cols="35" rows="3" id="patientLeftNote"></textarea>
+    </div>
+    <div class="patient-left-buttons" style="padding-top:20px;float:right;">
+        <button id="save-patient-left-reason" style="width: 70px; height: 25px;" onclick="SavePatientLeftReason()">
+            Save
+        </button>
+        <button id="close-patient-left" style="width: 70px; height: 25px;" onclick="ClosePatientLeftPopup();">
+            Close
+        </button>
+    </div>
+    <div class="patient-left-buttons" style="display: none; padding-top:20px; text-align: right;">
+        <img src="/App/Images/loading.gif" alt="" />
+        Updating
+    </div>
+</div>
+
+<div id="gift-code-dialog">
+    <div>
+        <div class="small-text">
+            Gift Code (Max 100 char)
+        </div>
+        <input type="text" id="giftCode" style="width: 270px;" maxlength="100" />
+        <input id="eventcustomerid" type="hidden" />
+    </div>
+    <div class="gift-code-buttons" style="padding-top: 20px; float: right;">
+        <button id="save-gift-code" style="width: 70px; height: 25px;" onclick=" saveGiftCode() ">
+            Save
+        </button>
+        <button id="close-gift-code" style="width: 70px; height: 25px;" onclick=" closeGiftCodePopup(); ">
+            Close
+        </button>
+    </div>
+    <div class="gift-code-buttons" style="display: none; padding-top: 20px; text-align: right;">
+        <img src="/App/Images/loading.gif" alt="" />
+        Updating
+    </div>
+</div>
+
+<div id="gift-code-notGiven-dialog">
+    <div>
+        <div class="small-text">
+            Select Reason
+        </div><br />
+        @Html.DropDownList("GcNotGivenReasonId", DropDownHelper.GcNotGivenReasons())
+        <input id="eventcustomerid" type="hidden" />
+    </div>
+    <div class="gift-code-notGiven-buttons" style="padding-top:20px;float:right;">
+        <button id="save-gift-code-notGiven-dialog" style="width: 70px; height: 25px;" onclick="saveGiftCodeNotGivenReason()">
+            Save
+        </button>
+        <button id="close-gift-code-notGiven-dialog" style="width: 70px; height: 25px;" onclick="closeGiftCodeNotGivenPopup();">
+            Close
+        </button>
+    </div>
+    <div class="gift-code-notGiven-buttons" style="display: none; padding-top:20px; text-align: right;">
+        <img src="/App/Images/loading.gif" alt="" />
+        Updating
+    </div>
+</div>
+
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" language="javascript" type="text/javascript"></script>
+
+@*for the medicare penguin*@
+<script type="text/javascript" src="/App/JavascriptFiles/HttpRequest.js"></script>
+<script type="text/javascript" src="/App/JavascriptFiles/HraQuestionnaire.js?q=@version"></script>
+<script type="text/javascript" src="/Content/colorbox/jquery.colorbox.js"></script>
+<script language="javascript" type="text/javascript">
+    //for the medicare penguin
+
+    initiateHraQuestionare('@Model.HraQuestionerAppUrl', '@Model.OrganizationNameForHraQuestioner', '@Model.CorporateAccountTag', '@HttpUtility.UrlEncode(@Model.Token)', '@Model.EventId', false);
+
+    function addColorboxWrapper1(eventCustomerId,customerId,visitId) {
+        checkSession().then(function() {
+            addColorBox(eventCustomerId, customerId, visitId);
+            $(document).bind('cbox_open', function() {
+                $('body').css({ overflow: 'hidden' });
+            }).bind('cbox_closed', function() {
+                $('body').css({ overflow: '' });
+            });
+            $('#hraLink_' + eventCustomerId).click();
+        }, function(data) {
+            alert(data);
+            window.location.replace("/login");
+        });
+    }
+
+    
+</script>
+
+<script language="javascript" type="text/javascript">
+    function loadEventMetrics() {
+        $.ajax({
+            'url': '/Scheduling/EventCustomerList/EventMetrics?id=@Model.EventId',
+            'type': 'Get',
+            'data': '{}',
+            success: function (result) {
+                $("#metrics-div").html(result);
+            },
+            error: function () {
+                alert("Error occured while processing the request.");
+            }
+        });
+    }
+    $(document).ready(function () {
+        var myMask = "29:69ghi";
+        $('.checkin-time, .checkout-time').mask(myMask, { message: "Please provide a valid input. The valid format is XX.XX AM/PM." });
+
+        loadEventMetrics();
+
+        //$('.rollover-menu').each(function () {
+        //    if ($(this).find("li:first").length > 0) {
+        //        $(this).find("li:first").bind('mouseover', openDropDown);
+        //        $(this).find("li:first").bind('mouseout', dropDownTimer);
+        //    }
+        //});
+
+        $("#tabs-div").tabs();
+
+        $('#emr-notes-dialog').dialog({ width: 480, autoOpen: false, title: 'EMR Notes', resizable: false, draggable: true });
+
+        $('#package-tracking-numbers-dialog').dialog({ width: 480, autoOpen: false, title: 'Package Tracking Numbers', resizable: false, draggable: true });
+
+        $("#coordinator-notes-div").dialog({ width: 550, autoOpen: false, title: 'Notes From Coordinator', resizable: false, draggable: true });
+
+        @if (Request != null && Request.UrlReferrer != null && (Request.UrlReferrer.AbsoluteUri.Contains("Scheduling/Event/Index") || Request.UrlReferrer.AbsoluteUri.Contains("Scheduling/Event?")) && !string.IsNullOrEmpty(Model.TechnicianNotes))
+        {
+           <text>$("#coordinator-notes-div").dialog("open");</text>
+        }
+
+        $("#authorizationpopup-div").dialog({ width: 480, autoOpen: false, title: 'Authorization Details', resizable: false, draggable: true });
+        $("#authorizationpopup-div").bind('dialogclose', function () { $("#authorizationpopup-div").empty(); });
+
+        $("#blockslot-div").dialog({ width: 400, autoOpen: false, title: 'Block Slot', modal: true, resizable: false, draggable: true });
+
+        $('#patient-left-reason-dialog').dialog({ width: 300, autoOpen: false, modal: true, title: 'Patient Left Reason', resizable: false, draggable: true });
+
+        $('#gift-code-dialog').dialog({ width: 300, autoOpen: false, modal: true, title: 'Gift Code', resizable: false, draggable: true });
+
+        $('#gift-code-notGiven-dialog').dialog({ width: 300, autoOpen: false, modal: true, title: 'Gift code not given reason', resizable: false, draggable: true });
+    });
+
+    $(function () {
+        var rowCount = 0;
+        $("table#list-view tr:not(:has(th))").each(function () {
+            rowCount = rowCount + 1;
+            if ((rowCount % 3) != 0) return;
+            else if (((rowCount / 2) % 3) != 0) return;
+
+            $(this).addClass("alt-row");
+            $(this).prev().addClass("alt-row");
+            $(this).prev().prev().addClass("alt-row");
+        });
+
+    });
+
+
+    $('.customer-name').qtip({
+        position: {
+            my: 'left top'
+        },
+        content: {
+            title: 'Customer Info',
+            text: function (api) {
+                return $(this).parent().find('.customer-info').html();
+            }
+        },
+        style: {
+            width: '500px'
+        }
+    });
+
+
+    $('.anchor-notes').qtip({
+        position: {
+            my: 'left top'
+        },
+        content: {
+            title: 'Customer Notes',
+            text: function (api) {
+                return $(this).parent().find('.customer-notes').html();
+            }
+        },
+        style: {
+            width: '400px'
+        }
+    });
+
+    $('.pre-approve-test').qtip({
+        position: {
+            my: 'left top'
+        },
+        content: {
+            title: 'Pre Approved Tests',
+            text: function (api) {
+                return $(this).parent().find('.pre-approve-tests').html();
+            }
+        },
+        style: {
+            width: '400px'
+        }
+    });
+
+    $('.patient-left-note').qtip({
+        position: {
+            my: 'left top'
+        },
+        content: {
+            title: 'Patient Left Notes',
+            text: function (api) {
+                return $(this).parent().find('.patient-left-notes').html();
+            }
+        },
+        style: {
+            width: '400px'
+        }
+    });
+
+    $('.anchor-pod').qtip({
+        position: {
+            my: 'left top'
+        },
+        content: {
+            title: 'Pod Detail',
+            text: function (api) {
+                return $(this).parent().find('.poddetail-span').html();
+            }
+        },
+        style: {
+            width: '300px'
+        }
+    });
+
+
+
+</script>
+<script language="javascript" type="text/javascript">
+
+    function refreshListWithFilter() {
+        var selectedOption = $("#SlotFilterSelect option:selected").val();
+
+        if (!isNaN(selectedOption) && Number(selectedOption) > 0) {
+            window.location.href = "/Scheduling/EventCustomerList/index?id=@Model.EventId&CustomerListFilterOption=0&AppointmentSlotViewOption=" + selectedOption;
+        }
+    }
+
+    function refreshListwithMetricsFilter(customerListFilterOption){
+        window.location.href = "/Scheduling/EventCustomerList/index?id=@Model.EventId&AppointmentSlotViewOption=0&CustomerListFilterOption=" + customerListFilterOption;
+    }
+
+    function openDepositSlip(){
+        openParentAttachedPopup("/App/Franchisee/Technician/GenerateDepositeSlip.aspx?EventID=@Model.EventId&PrintDepositSlip=Yes", "Deposit_Slip", "width=520, height=620, scrollbars=1");
+    }
+
+    function openCanceledTab(){
+        $("#tabs-div").tabs('select', 'canceled-div');
+    }
+
+    function openPopupforAcceptPayment(eventCustomerId, customerId){
+        openParentAttachedPopup("/App/Franchisee/Technician/AcceptPayment.aspx?EventId=@Model.EventId&EventCustomerID=" + eventCustomerId + "&customerId=" + customerId, "Accept_Payment", "width=585, height=680, scrollbars=1");
+    }
+
+    function OpenPopUpforProductRemove(customerId) {
+        openParentAttachedPopup('/Finance/Order/RemoveProduct?eventId=@Model.EventId&customerId=' + customerId, 'RemoveProduct_@(Model.EventId)_' + customerId, 'width=600, height=500, scrollbars=1', 'RemoveProduct_@(Model.EventId)_' + customerId);
+    }
+
+    function OpenPopUpforManualRefund(customerId) {
+        openParentAttachedPopup('/Finance/Order/ManualRefund?eventId=@Model.EventId&customerId=' + customerId, 'ManualRefund_@(Model.EventId)_' + customerId, 'width=600, height=600, scrollbars=1', 'ManualRefund_@(Model.EventId)_' + customerId);
+    }
+
+    function OpenPopUpforShippingPurchase(eventCustomerId, customerId) {
+        openParentAttachedPopup('/App/Franchisee/Technician/AcceptPayment.aspx?Type=FullfillmentOption&EventCustomerID=' + eventCustomerId + '&eventId=@Model.EventId&customerId=' + customerId, 'ManualRefund_@(Model.EventId)_' + customerId, 'width=595, height=580, scrollbars=1', 'ManualRefund_@(Model.EventId)_' + customerId);
+    }
+
+    function openPopupforEventEndofDay() {
+        openParentAttachedPopup("/Scheduling/Event/EndofDay?id=@Model.EventId", "End_of_Day", "width=900, height=600, scrollbars=1");
+    }
+
+    function openLinkforHostRanking() {
+        openParentAttachedPopup('/App/Franchisee/Technician/EndOfDayProcess.aspx?HostRanking=true&EventID=@Model.EventId&EventName=@(Model.HostName.Replace("'", "\\\'"))', "Host_Ranking", "width=600; height=520, scrollbars=1");
+    }
+
+    function ShowOrderDetails(orderId, customerId, customerName) {
+        openParentAttachedPopup("/App/Common/OrderSummary.aspx?OrderId=" + orderId + "&CustomerName=" + customerName + "&CustomerId=" + customerId, "OrderSummary_" + orderId + "_" + customerId, "width=750, height=400, resizable=0, scrollbars=1");
+        return false;
+    }
+
+    function ShowConfirmationPopup(customerId) {
+        openParentAttachedPopup("/Communication/AppointmentConfirmation?eventId=@Model.EventId&customerId=" + customerId, "AppointmentConfirmation_" + customerId, "width=680, height=700, resizable=0, scrollbars=1");
+        return false;
+    }
+
+    function ShowRecieptPopup(customerId) {
+        openParentAttachedPopup("/Config/Content/Controls/SmallPrintReciept.aspx?eventId=@Model.EventId&customerId=" + customerId, "PrintReciept_" + customerId, "width=450, height=735, resizable=0, scrollbars=1");
+        return false;
+    }
+    function ShowPcpAppointmentPopup(eventCustomerId) {
+        openParentAttachedPopup("/Scheduling/EventCustomerList/PcpAppointment?eventCustomerId=" + eventCustomerId,'Pcp Appointment' ,"width=1012, height=625, resizable=0, scrollbars=1");
+        return false;
+    }
+
+
+    function ShowFullfillmentMessage() {
+        alert("There is already a unprocessed shipping request in your order. Duplicate shipping cannot be added till this shipping request is processed.");
+        return false;
+    }
+
+    function ShowRefundRequestShippingMessage() {
+        alert("Customer has already requested for the removal of shipping for this event, the removal request is in process. Re-purchase of shipping is not allowed unless the request is resolved. Please contact your admin.");
+        return false;
+    }
+
+    function ShowAddOnProductMessage() {
+        alert("A product is already attached with the customer's order. Duplicate products are not allowed, please contact your admin.");
+        return false;
+    }
+
+    function ShowRefundRequestProductMessage() {
+        alert("Customer has already requested for the removal of product for this event, the removal request is in process. Re-purchase of product is not allowed unless the request is resolved. Please contact your admin.");
+        return false;
+    }
+
+    function GenerateBloodworksLabelinPrintableFormat(customerId) {
+        $.ajax({
+            type: "Get",
+            url: "/Operations/Reports/GenerateBloodworksLabelForCustomerPdf?eventId=@Model.EventId&customerId=" + customerId,
+            success: function (data) {
+                openIndependentPopup(data, "PDF");
+            },
+            error: function(arg){
+                if (arg.status == 401) {
+                    alert("You do not have the permission for Viewing Bloodwork Label!");
+                }
+            }
+        });
+    }
+
+    function openAddSlotpopUp() {
+        openParentAttachedPopup("/Scheduling/AppointmentSlot/AddAppointmentSlot?eventId=@Model.EventId&ViewSlotList=false", "Add_Slot", "width=500, height=300");
+    }
+
+    function ShowBarrierPopup(eventCustomerId) {
+        openParentAttachedPopup("/Scheduling/EventCustomerList/AddBarrierForCustomer?eventCustomerId=" + eventCustomerId,'Barrier' ,"width=1012, height=625, resizable=0, scrollbars=1");
+        return false;
+    }
+</script>
+<script language="javascript" type="text/javascript">
+
+    function openBlockAppointmentDiv(appointmentId)
+    {
+        $("#blockslot-div .event-appointmentid").val(appointmentId);
+        $("#blockslot-div").dialog("open");
+    }
+
+    function blockAppointmentSlot() {
+        var appointmentId = $(".event-appointmentid").val();
+
+        var blocktext = $("#blockslot-reason").val();
+
+        if($.trim(blocktext).length < 1){
+            alert("Please enter some text");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/Scheduling/AppointmentSlot/BlockAppointmentSlot",
+            contentType: "application/json",
+            data: "{'appointmentId' :" + appointmentId + ", 'blockText': '" + blocktext + "'}",
+            success: function (result) {
+                if (result.IsBlocked) {
+                    alert("Appointment blocked successfully.");
+                } else {
+                    alert("Appointment cannot be blocked.");
+                }
+                window.location.reload();
+            },
+            error: function () {
+                alert("Some error occured while processing the request.");
+            }
+        });
+    }
+
+    function deleteAppointmentSlot(appointmentId) {
+
+        $.ajax({
+            type: "POST",
+            dataType: "html",
+            url: "/Scheduling/AppointmentSlot/DeleteAppointment",
+            data: "appointmentId=" + appointmentId,
+            success: function (result) {
+                if (result == '@Boolean.TrueString') {
+                    alert("Appointment deleted successfully.");
+                } else {
+                    alert("Appointment cannot be deleted.");
+                }
+                window.location.reload();
+            },
+            error: function () {
+                alert("Some error occured while processing the request.");
+            }
+        });
+    }
+
+    function checkCustomerScreeningTestResultExist(selectedElement, eventCustomerId) {
+        if ($(selectedElement).is(':checked')) {
+            $.ajax({
+                url:"/Scheduling/EventCustomerList/CustomerScreeningTestResultExist?eventCustomerId="+eventCustomerId,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success : function(result){
+                    if (result) {
+                        $(selectedElement).removeAttr("checked");
+                        alert("Result Entry already made for customer. You cannot mark it as 'No Show'.");
+                    } else {
+                        updateNoShow(selectedElement, eventCustomerId);
+                    }
+
+                },
+                error: function(arg){
+                    alert("Error occured while updating 'No Show'. Please try again!");
+                }
+            });
+        } else {
+            updateNoShow(selectedElement, eventCustomerId);
+        }
+    }
+
+    function updateNoShow(selectedElement, eventCustomerId){
+        var parameter = "{'eventCustomerId':'" + eventCustomerId + "', 'isNoShowUp':'" + $(selectedElement).attr('checked') + "'}";
+
+        $.ajax({
+            url: '/App/Controllers/EventCustomerController.asmx/UpdateCustomerEventShowUp',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'Post',
+            data: parameter,
+            success : function(result){
+                loadEventMetrics();
+
+                if ($(selectedElement).is(':checked')) {
+                    $("#leftPatientchk_" + eventCustomerId).closest("div.left-without-screening-container").hide();
+                    $(selectedElement).closest("td").find("div.edit-customerattended-info").hide();
+                } else {
+                    $("#leftPatientchk_" + eventCustomerId).closest("div.left-without-screening-container").show();
+                    $(selectedElement).closest("td").find("div.edit-customerattended-info").show();
+                }
+                if('@Model.IsHealthPlanEvent.ToString()' == 'True')
+                {updateMedicareVisitStatus(eventCustomerId,$(selectedElement).attr('checked'));}
+            },
+            error: function(arg){
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating 'No Show'!");
+                }
+                else
+                {
+                    alert("Error occured while updating 'No Show'. Please try again!");
+                }
+            }
+        });
+    }
+
+    function updateMedicareVisitStatus(eventCustomerId,isNoShowMarked){
+
+        $.ajax({
+            url: '/Scheduling/EventCustomerList/UpdateMedicareVisitStatus?eventCustomerId=' + eventCustomerId + '&isNoShowMarked='+isNoShowMarked,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'Post',
+            data: null,
+            success : function(result){
+
+            },
+            error: function(arg){
+                if (a.status == 401) {
+                    alert("You do not have the permission for Update Medicare Visit Status");
+                }
+                else
+                {
+                    alert("Error occured while updating 'Update Medicare Visit Status'. Please try again!");
+                }
+            }
+        });
+    }
+
+    function setCurrentTime(elementToSetIn){
+        var currentTime = Date.parse( (new Date()).getHours() + ":" + (new Date()).getMinutes()).toString("hh:mm tt");
+        elementToSetIn.val(currentTime);
+        elementToSetIn.change();
+    }
+
+    function updateCheckinCheckout(currentElement, eventCustomerId, appointmentId){//debugger;
+        //debugger;
+        var checkInTimeInput = currentElement.parents(".edit-customerattended-info:first").find(".checkin-time");
+        var checkOutTimeInput = currentElement.parents(".edit-customerattended-info:first").find(".checkout-time");
+
+        var checkInTime = $.trim(checkInTimeInput.val()).length > 0 ? '@Model.EventDate.ToString("MM/dd/yyyy")' + " " + checkInTimeInput.val() : '';
+        var checkOutTime = $.trim(checkOutTimeInput.val()).length > 0 ? '@Model.EventDate.ToString("MM/dd/yyyy")' + " " + checkOutTimeInput.val() : '';
+
+        if(checkInTime.length < 1 && checkOutTime.length < 1)
+            return;
+
+        if(checkOutTime.length > 0 && checkInTime.length < 1){
+            alert("Please enter Checkin Time before CheckOut time.");
+            return;
+        }
+
+        if(checkOutTime.length > 0 && checkInTime.length > 0){
+            var jsParse_inTime = Date.parse(checkInTime);
+            var jsParse_outTime = Date.parse(checkOutTime);
+
+            jsParse_inTime = jsParse_inTime.addMinutes(2);
+
+            if(jsParse_inTime > jsParse_outTime){
+                alert("CheckOut time cannot be less than checkin time. And, there should be a difference of 2 minutes between Checkin Time and CheckOut time.");
+                checkOutTimeInput.val("");
+                return;
+            }
+        }
+
+        var parameter = "{'eventCustomerId':'" + eventCustomerId + "'";
+        parameter += ",'appointmentId':'" + appointmentId + "'";
+        parameter += ",'checkInTime':'" + checkInTime + "'";
+        parameter += ",'checkOutTime':'" + checkOutTime + "'}";
+
+        $.ajax({
+            url: '/App/Controllers/EventCustomerController.asmx/UpdateCheckInCheckOutTime',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'Post',
+            data: parameter,
+            success : function(result){
+                loadEventMetrics();
+
+                if (result.d != '') {
+                    alert(result.d);
+                    currentElement.val('');
+                }
+
+                //        CheckedTimeBox = null;
+                //        if ((checkInTimeBox.value != '' && checkOutTimeBox.value == '') || (checkInTimeBox.value == '' && checkOutTimeBox.value != '')) {
+                //            $(checkInTimeBox).parents('tr').css("background-color", "#FDF9D2");
+                //        }
+                //        else if (checkInTimeBox.value != '' && checkOutTimeBox.value != '') {
+                //            $(checkInTimeBox).parents('tr').css("background-color", "#D1E8D1");
+                //        }
+                //        else if (checkInTimeBox.value == '' && checkOutTimeBox.value == '') {
+                //            $(checkInTimeBox).parents('tr').css("background-color", "white");
+                //        }
+
+            },
+            error: function(arg){
+                alert("Error occured while updating 'Checkin/Checkout' time. Please try again!");
+            }
+        });
+
+    }
+
+    function saveEmrNotes() {
+        $(".emr-notes-buttons").toggle();
+
+        if(@(Model.EventId) > 0){
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/App/Controllers/EventCustomerController.asmx/SaveNotes",
+                data: "{'eventId' : '@(Model.EventId)', 'text' : '" + $("#emr-notes").val().replace(/'/gi, "\\\'").replace(/"/gi, "\\\"") + "'}",
+                success: function (result) {
+                    alert("Updated!");
+                    $(".emr-notes-buttons").toggle();
+                    $('#emr-notes-dialog').dialog('close');
+                },
+                error: function (a, b, c) {
+                    if (a.status == 401) {
+                        alert("You do not have the permission for saving EMR Notes!");
+                    }
+                    else
+                    {
+                        alert("Some error occured while saving EMR Notes! \nPlease try again or contact the support team!");
+                    }
+                    $(".emr-notes-buttons").toggle();
+                    $('#emr-notes-dialog').dialog('close');
+                }
+            });
+        }
+    }
+
+    function setHipaa(eventId, customerId, state) {
+        $(".hipaa_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdateHippaStatusforEventIdCustomerId",
+            data: "{'eventId' : '" + eventId + "', 'customerId' : '" + customerId + "', 'hippaStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".hipaa_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                $(".hipaa_" + customerId).toggle();
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating the HIPAA status!");
+                }
+                else
+                {
+                    alert("Some error occured while updating the HIPAA status! \nPlease try again or contact the support team!");
+                }
+            }
+        });
+
+    }
+
+
+    function setPartnerRelease(eventId, customerId, state) {
+        $(".partnerrelease_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdatePartnerReleaseStatusforEventIdCustomerId",
+            data: "{'eventId' : '" + eventId + "', 'customerId' : '" + customerId + "', 'partnerReleaseStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".partnerrelease_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                $(".partnerrelease_" + customerId).toggle();
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating the status for Partner Release!");
+                }
+                else
+                {
+                    alert("Some error occured while updating the status for Partner Release! \nPlease try again or contact the support team!");
+                }
+            }
+        });
+    }
+    function setAbnStatus(eventCustomerId, customerId, state) {
+        $(".abn_" + customerId).toggle();
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdateAbnStatus",
+            data: "{'eventCustomerId' : '" + eventCustomerId + "', 'abnStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".abn_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                $(".abn_" + customerId).toggle();
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating the status for Partner Release!");
+                }
+                else
+                {
+                    alert("Some error occured while updating the status for Partner Release! \nPlease try again or contact the support team!");
+                }
+            }
+        });
+
+    }
+
+    function setPcpConsentStatus(eventCustomerId, customerId, state) {
+        $(".pcpConsent_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdatePcpConsentStatus",
+            data: "{'eventCustomerId' : '" + eventCustomerId + "', 'pcpConsentStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".pcpConsent_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                $(".pcpConsent_" + customerId).toggle();
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating the status for Partner Release!");
+                }
+                else
+                {
+                    alert("Some error occured while updating the status for Partner Release! \nPlease try again or contact the support team!");
+                }
+            }
+        });
+
+    }
+
+    function setInsuranceReleaseStatus(eventCustomerId, customerId, state) {
+        $(".insurancerelease_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdateInsuranceReleaseStatus",
+            data: "{'eventCustomerId' : '" + eventCustomerId + "', 'insuranceReleaseStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".insurancerelease_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                $(".insurancerelease_" + customerId).toggle();
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating the status for Partner Release!");
+                }
+                else
+                {
+                    alert("Some error occured while updating the status for Partner Release! \nPlease try again or contact the support team!");
+                }
+            }
+        });
+
+    }
+
+    function setHospitalFacility(eventCustomerId, ctrlRef) {
+        var hospitalfacilityId = $(ctrlRef).val();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdateHospitalFacilitily",
+            data: "{'eventCustomerId' : '" + eventCustomerId + "', 'hospitalFacilityId' : '" + hospitalfacilityId + "'}",
+            success: function (result) {
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating the hospital facility!");
+                }
+                else
+                {
+                    alert("Some error occured while updating the hospital facility! \nPlease try again or contact the support team!");
+                }
+            }
+        });
+    }
+
+    function clearCheckinCheckoutTime(currentElement, eventCustomerId, appointmentId) {
+
+        var confirmation = confirm("Are you sure, you want to clear check-in/check-out time?");
+
+        if (!confirmation)
+            return;
+
+        var parameter = "{'eventCustomerId':'" + eventCustomerId + "', 'appointmentId':'" + appointmentId + "'}";
+
+        $.ajax({
+            url: '/App/Controllers/EventCustomerController.asmx/ClearCheckInCheckOutTime',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            type: 'Post',
+            data: parameter,
+            success : function(result) {
+                //debugger;
+                loadEventMetrics();
+
+                if (result.d != '') {
+                    alert(result.d);
+                }
+                else {
+                    var parentTd = currentElement.parents('td:first');
+                    parentTd.find('.edit-customerattended-info:first').find(".checkin-time").val('');
+                    parentTd.find('.edit-customerattended-info:first').find(".checkout-time").val('');
+                    parentTd.find('.edit-customerattended-info:first').show();
+
+                    if ($(currentElement).closest("td").find("#leftPatientchk_" + eventCustomerId).is(":checked") == false) {
+                        parentTd.find('.customer-noshow:first').show();
+                    }
+                    parentTd.find('.display-customerattended-info:first').hide();
+                }
+            },
+            error: function(arg){
+                alert("Error occured while updating 'No Show'. Please try again!");
+            }
+        });
+
+    }
+</script>
+<script language="javascript" type="text/javascript">
+
+    var parentAttachedPopups = new Array();
+
+    function openParentAttachedPopup(url, windowname, properties, replaceWith) {
+        var win = openChildPopup(url, windowname, properties, replaceWith);
+
+        win.onunload = function () {
+            findAndDeleteRef(this.name);
+        };
+
+        var nameFound = false;
+
+        $.each(parentAttachedPopups, function () {
+            if (this.name == win.name) {
+                nameFound = true;
+                return false;
+            }
+        });
+
+        if (!nameFound) {
+            parentAttachedPopups.push(win);
+        }
+    }
+
+    function openIndependentPopup(url, windowname, properties, replaceWith) {
+        openChildPopup(url, windowname, properties, replaceWith);
+    }
+
+    function openChildPopup(url, windowname, properties, replaceWith) {
+
+        if (windowname == null || windowname.length < 1) {
+            windowname = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"));
+        }
+
+        if (properties == null || properties.length < 1) {
+            properties = "width=" + Number($(window).width() - 20) + ", height=" + Number($(window).height() - 20) + ", resizable=1, scrollbars=1";
+        }
+
+        var win = (replaceWith == null || replaceWith.length < 1) ? window.open(url, windowname, properties) : window.open(url, windowname, properties, replaceWith);
+
+        return win;
+    }
+
+    function findAndDeleteRef(nameToFind) {
+
+        if (parentAttachedPopups == null)
+            return;
+        var winRef = parentAttachedPopups.pop();
+
+        if (winRef != null && winRef.name != nameToFind) {
+            findAndDeleteRef(nameToFind);
+        }
+        else {
+            return;
+        }
+
+        parentAttachedPopups.push(winRef);
+    }
+
+    function closeAllChildWindowsonDocUnload() {
+        $.each(parentAttachedPopups, function () {
+            if (!this.Closed) {
+                this.close();
+            }
+        });
+    }
+
+    window.onunload = closeAllChildWindowsonDocUnload;
+
+    $(document).ready(function() {
+        var selectedTr= $(".custId_@(Model.HighlightCustomerId)").closest("tr");
+        selectedTr.addClass("highlight-customer");
+
+        selectedTr.find("a[class='customer-name']").focus();
+    });
+</script>
+
+<script type="text/javascript">
+    function openTrackingNumberPopup() {
+        var bloodPackageTrackingNumber = $("#BloodPackageTrackingHiddenField").val();
+        var recordsPackageTrackingNumber = $("#RecordsPackageTrackingHiddenField").val();
+
+        $("#BloodPackageTrackingTextbox").val(bloodPackageTrackingNumber);
+        $("#RecordsPackageTrackingTextbox").val(recordsPackageTrackingNumber);
+        $('#package-tracking-numbers-dialog').dialog('open');
+    }
+
+    function savePackageTrackingNumbers() {
+
+        if(@(Model.EventId) > 0){
+
+            var bloodPackageTrackingNumber = $("#BloodPackageTrackingTextbox").val().replace(/'/gi, "\\\'").replace(/"/gi, "\\\"").trim();
+            var recordsPackageTrackingNumber = $("#RecordsPackageTrackingTextbox").val().replace(/'/gi, "\\\'").replace(/"/gi, "\\\"").trim();
+
+            if (bloodPackageTrackingNumber.length > 0 && bloodPackageTrackingNumber.length < 18) {
+                alert("Please enter atleast 18 characters for Blood Package Tracking");
+                return;
+            }
+
+            if (recordsPackageTrackingNumber.length > 0 && recordsPackageTrackingNumber.length < 18) {
+                alert("Please enter atleast 18 characters for Records Package Tracking");
+                return;
+            }
+
+            $(".package-tracking-numbers-buttons").toggle();
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/Scheduling/Event/UpdatePackageTrackingNumbers",
+                data: "{'eventId' : '@(Model.EventId)', 'bloodPackageTrackingNumber' : '" + bloodPackageTrackingNumber +  "', 'recordsPackageTrackingNumber' : '" + recordsPackageTrackingNumber + "'}",
+                success: function (result) {
+                    alert("Updated!");
+                    if (bloodPackageTrackingNumber.length > 0)
+                        $("#BloodPackageTrackingSpan").html(bloodPackageTrackingNumber);
+                    else
+                        $("#BloodPackageTrackingSpan").html("N/A");
+                    $("#BloodPackageTrackingHiddenField").val(bloodPackageTrackingNumber);
+
+                    if (recordsPackageTrackingNumber.length > 0)
+                        $("#RecordsPackageTrackingSpan").html(recordsPackageTrackingNumber);
+                    else
+                        $("#RecordsPackageTrackingSpan").html("N/A");
+                    $("#RecordsPackageTrackingHiddenField").val(recordsPackageTrackingNumber);
+
+                    $(".package-tracking-numbers-buttons").toggle();
+                    $('#package-tracking-numbers-dialog').dialog('close');
+                },
+                error: function (a, b, c) {
+                    if (a.status == 401) {
+                        alert("You do not have the permission to update the Tracking Number!");
+                    }
+                    else
+                    {
+                        alert("Some error occured while saving Package Tracking Numbers! \nPlease try again or contact the support team!");
+                    }
+                    $(".package-tracking-numbers-buttons").toggle();
+                    $('#package-tracking-numbers-dialog').dialog('close');
+                }
+            });
+        }
+    }
+
+
+</script>
+
+
+<script type="text/javascript">
+
+    function ShowPatientLeftPopup(selectedElement, eventCustomerId){
+        if($(selectedElement).is(':checked')){
+            $("#patient-left-reason-dialog #patientLeftReason").val(-1);
+            $("#patient-left-reason-dialog #patientLeftNote").val("");
+            $("#eventcustomerid").val(eventCustomerId);
+
+            @if( isTechnician || isNursePractitioner)
+            {
+                <text> $.ajax({
+                url:"/Scheduling/EventCustomerList/CanMarkedAsLeftWithoutScreening?eventCustomerId="+eventCustomerId,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success : function(result){
+                    if (result) {
+                        $('#patient-left-reason-dialog').dialog('open');
+
+                    } else {
+                        $(selectedElement).removeAttr("checked");
+                        alert("Patient status cannot be updated as the result is either with Physician for evaluation or beyond that state.");
+                    }
+
+                },
+                error: function(arg){
+                    alert("Error occured while updating 'Patient Left'. Please try again!");
+                }
+            });
+            </text>
+            }
+            else
+            {
+                 <text>$('#patient-left-reason-dialog').dialog('open');</text>
+            }
+        }
+        else{
+            $.ajax({
+                url: '/Scheduling/EventCustomerList/UpdateLeftReason',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'post',
+                data: JSON.stringify({EventCustomerId : eventCustomerId, LeftWithoutScreeningReasonId : null, Notes : null}),
+                success : function(result) {
+                    $("#leftPatientreasonId_" +eventCustomerId).val("");
+                    $("#patientLeftReasondiv_" +eventCustomerId).html("");
+                    $("#patientLeftReasondiv_" + eventCustomerId).find(".patient-left-notes").text("");
+                    $("#patientLeftReasondiv_" +eventCustomerId).hide();
+
+                    if ($("#leftPatientreasonId_" + eventCustomerId).closest("td").find(".edit-customerattended-info").is(":visible")) {
+                        $("#leftPatientreasonId_" +eventCustomerId).closest("td").find(".customer-noshow").show();
+                    }
+
+                    loadEventMetrics();
+                },
+                error: function(arg){
+                    alert("Error occured while updating 'Patient Left Reason'. Please try again!");
+                }
+            });
+
+        }
+    }
+
+    function SavePatientLeftReason() {
+
+        var eventCustomerId= $("#patient-left-reason-dialog #eventcustomerid").val();
+        var reasonId = $("#patientLeftReason").val();
+        var notes = $.trim($("#patientLeftNote").val());
+
+        if(reasonId > 0 && notes != '') {
+            var model = {
+                EventCustomerId: eventCustomerId,
+                LeftWithoutScreeningReasonId: reasonId,
+                Notes: notes
+            };
+            $(".patient-left-buttons").toggle();
+            $("#leftPatientreasonId_" +eventCustomerId).val("");
+            $("#leftPatientNote_" +eventCustomerId).val("");
+            $.ajax({
+                url: '/Scheduling/EventCustomerList/UpdateLeftReason',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'post',
+                data: JSON.stringify(model),
+                success : function(result) {
+                    if(result) {
+                        var objleftPatient = $("#leftPatientreasonId_" + eventCustomerId);
+                        var reasonText= $("#patientLeftReason option:selected").text();
+                        $("#patientLeftReasondiv_" +eventCustomerId).html("<b>Reason: </b>" + reasonText + "</br><a class='patient-left-note' href='javascript:void(0);' style='margin-left:30px;'>(Notes)</a><span class='patient-left-notes' style='display: none;'>" + notes + "</span>");
+                        $("#patientLeftReasondiv_" +eventCustomerId).show();
+                        $(objleftPatient).val(reasonId);
+                        $(objleftPatient).closest("td").find(".customer-noshow").hide();
+
+                        $("#leftPatientNote_" + eventCustomerId).val(notes);
+
+                        $("#patientLeftReasondiv_" + eventCustomerId).find(".patient-left-notes").text(notes);
+
+
+
+                        $("#patientLeftReasondiv_" + eventCustomerId).find(".patient-left-note").qtip({
+                            position: {
+                                viewport: $(window),
+                                adjust: {
+                                    method: 'shift'
+                                }
+                            },
+                            content: {
+                                title: "Patient Left Notes",
+                                text: function (api) {
+                                    return $(this).parent().find(".patient-left-notes").html();
+                                }
+                            },
+                            style: {
+                                width: '300px'
+                            }
+                        });
+
+                        $(".patient-left-buttons").toggle();
+                        loadEventMetrics();
+                        ClosePatientLeftPopup();
+                    }
+                },
+                error: function(arg){
+                    alert("Error occured while updating 'Patient Left Reason'. Please try again!");
+                    $(".patient-left-buttons").toggle();
+                }
+            });
+        }
+        else{
+            if(reasonId<=0)
+                alert("Please Select Reason to left.");
+            else if(notes=='')
+                alert("Please enter notes.");
+        }
+    }
+
+    function ClosePatientLeftPopup(){
+        $('#patient-left-reason-dialog').dialog('close');
+    }
+
+    $("#patient-left-reason-dialog").bind('dialogclose', function () {
+        var eventCustomerId = $("#patient-left-reason-dialog #eventcustomerid").val();
+
+        var checkbox =  $("#leftPatientchk_"+eventCustomerId);
+        var reasonId =$("#leftPatientreasonId_" + eventCustomerId).val();
+
+        if(reasonId != "" && Number(reasonId) > 0)
+        {
+            $(checkbox).attr('checked',true);
+        }else{
+            $(checkbox).removeAttr('checked');
+        }
+    });
+
+    function showGiftCertificatePopup(selectedElement, eventCustomerId) {
+        if($(selectedElement).is(':checked') && $(selectedElement).val()=='Yes'){
+            $("#gift-code-dialog #giftCode").val('');
+            $("#gift-code-dialog #eventcustomerid").val(eventCustomerId);
+            $("#giftCertificateNotGivenChk_"+eventCustomerId).removeAttr('checked');
+            $('#gift-code-dialog').dialog('open');
+        }
+    }
+
+    function showGiftCertificateNotGivenPopup(selectedElement, eventCustomerId) {
+        if($(selectedElement).is(':checked') && $(selectedElement).val()=='No'){
+            $("#gift-code-notGiven-dialog #GcNotGivenReasonId").val('');
+            $("#gift-code-notGiven-dialog #eventcustomerid").val(eventCustomerId);
+            $("#giftCertificateChk_"+eventCustomerId).removeAttr('checked');
+            $('#gift-code-notGiven-dialog').dialog('open');
+        }
+    }
+
+    function closeGiftCodePopup(){
+        $('#gift-code-dialog').dialog('close');
+    }
+
+    function closeGiftCodeNotGivenPopup() {
+        $('#gift-code-notGiven-dialog').dialog('close');
+    }
+
+    function saveGiftCode() {
+        var eventCustomerId= $("#gift-code-dialog #eventcustomerid").val();
+        var giftCode = $("#giftCode").val();
+
+        if(giftCode != null && giftCode != '')
+        {
+            $(".gift-code-buttons").toggle();
+            var model = {
+                EventCustomerId: eventCustomerId,
+                IsGiftCertificateDelivered: true,
+                GiftCode: giftCode,
+                GcNotGivenReasonId:null
+            };
+            $.ajax({
+                url: '/Scheduling/EventCustomerList/UpdateGiftCertificate',
+                dataType: "json",
+                type: 'post',
+                data: model,
+                success : function(result) {
+                    if(result) {
+                        var objGiftCode = $("#isGiftCertificateDelivered_" + eventCustomerId);
+                        $("#giftCode_" + eventCustomerId).val(giftCode);
+                        $("#giftCodeDiv_" +eventCustomerId).show();
+
+                        $("#spanGiftCodeNotGiven_" + eventCustomerId).text('');
+                        $("#giftCodeNotGivenReason_"+ eventCustomerId).val('');
+                        $("#giftCodeNotGiven_" + eventCustomerId).hide();
+
+                        $("#spanGiftCode_" + eventCustomerId).text(giftCode);
+                        $(objGiftCode).val(true);
+                        $(".gift-code-buttons").toggle();
+                        loadEventMetrics();
+                        closeGiftCodePopup();
+                    }
+                },
+                error: function(arg){
+                    alert("Error occured while updating 'Gift Certificate'. Please try again!");
+                    $(".gift-code-buttons").toggle();
+                }
+            });
+        }
+        else{
+            alert("Please enter Gift Code.");
+        }
+    }
+
+    function saveGiftCodeNotGivenReason() {
+        var eventCustomerId= $("#gift-code-notGiven-dialog #eventcustomerid").val();
+        var giftCodeNotGivenReasonId = parseInt($("#GcNotGivenReasonId :selected").val());
+        var giftCodeNotGivenReasonText = $("#GcNotGivenReasonId :selected").text();
+
+        if (giftCodeNotGivenReasonId > 0) {
+            $(".gift-code-notGiven-buttons").toggle();
+            var model= {
+                EventCustomerId: eventCustomerId,
+                IsGiftCertificateDelivered: false,
+                GcNotGivenReasonId: giftCodeNotGivenReasonId,
+                GiftCode: null
+            }
+            $.ajax({
+                url: '/Scheduling/EventCustomerList/UpdateGiftCertificate',
+                dataType: "json",
+                type: 'post',
+                data: model,
+                success : function(result) {
+                    if(result) {
+                        var objGiftCode = $("#isGiftCertificateDelivered_" + eventCustomerId);
+                        $("#giftCodeNotGivenReason_" + eventCustomerId).val(giftCodeNotGivenReasonId);
+                        $("#giftCodeNotGiven_" +eventCustomerId).show();
+
+                        $("#spanGiftCode_" + eventCustomerId).text('');
+                        $("#giftCode_"+ eventCustomerId).val('');
+                        $("#giftCodeDiv_" + eventCustomerId).hide();
+
+                        $("#spanGiftCodeNotGiven_" + eventCustomerId).text(giftCodeNotGivenReasonText);
+                        $(objGiftCode).val(false);
+                        $(".gift-code-notGiven-buttons").toggle();
+                        loadEventMetrics();
+                        closeGiftCodeNotGivenPopup();
+                    }
+                },
+                error: function(arg){
+                    alert("Error occured while updating 'Gift Certificate not given reason'. Please try again!");
+                    $(".gift-code-notGiven-buttons").toggle();
+                }
+            });
+
+        } else {
+            alert("Please select valid Reason.");
+        }
+    }
+
+    $(document).ready(function() {
+        $("#gift-code-dialog").bind('dialogclose', function () {
+            var eventCustomerId = $("#gift-code-dialog #eventcustomerid").val();
+            settleSelectedGCRadioButton(eventCustomerId, true);
+        });
+
+        $("#gift-code-notGiven-dialog").bind('dialogclose', function () {
+            var eventCustomerId = $("#gift-code-notGiven-dialog #eventcustomerid").val();
+            settleSelectedGCRadioButton(eventCustomerId, false);
+        });
+        markGcRadioOnPageLoad();
+    });
+
+    function markGcRadioOnPageLoad() {
+        @if (!Model.EventAppointmentSlotDistributions.IsNullOrEmpty())
+        {
+            foreach (var easd in Model.EventAppointmentSlotDistributions)
+            {
+                if (easd.Customer.IsGiftCertificateDelivered.HasValue && easd.Customer.IsGiftCertificateDelivered.Value)
+                {
+                    @: $("#giftCertificateChk_@easd.Customer.EventCustomerId").attr('checked',true);
+                        }
+                else if (easd.Customer.IsGiftCertificateDelivered.HasValue && !easd.Customer.IsGiftCertificateDelivered.Value)
+                {
+                    @: $("#giftCertificateNotGivenChk_@easd.Customer.EventCustomerId").attr('checked', true);
+                }
+            }
+        }
+    }
+
+    function settleSelectedGCRadioButton(eventCustomerId,isFromYesPopup) {
+        var giftCodeNotGivenReason = $("#giftCodeNotGivenReason_" + eventCustomerId).val();
+        var giftCodeSharedValue = $("#giftCode_" + eventCustomerId).val();
+
+        var radioForGCNotGiven = $("#giftCertificateNotGivenChk_"+eventCustomerId);
+        var radioForGcShared = $("#giftCertificateChk_" + eventCustomerId);
+
+        if(giftCodeNotGivenReason != null && giftCodeNotGivenReason != "")
+        {
+            $(radioForGCNotGiven).attr('checked',true);
+            $("#giftCodeDiv_" + eventCustomerId).hide();
+            $("#spanGiftCode_"+ eventCustomerId).val('');
+            $(radioForGcShared).removeAttr('checked');
+        }else if (giftCodeSharedValue!=null && giftCodeSharedValue!="") {
+            $(radioForGcShared).attr('checked',true);
+            $("#giftCodeNotGiven_" + eventCustomerId).hide();
+            $("#spanGiftCodeNotGiven_"+ eventCustomerId).val('');
+            $(radioForGCNotGiven).removeAttr('checked');
+        }else if (isFromYesPopup == true) {
+            $(radioForGcShared).removeAttr('checked');
+        } else {
+            $(radioForGCNotGiven).removeAttr('checked');
+        }
+    }
+</script>
+<script>
+    $('.rollover-menu').mouseover(function() {
+
+        var dropdownList = $('.rollover-sub-menu');
+
+        var dropdownheight = dropdownList.height();
+        var docHeight = $(window).height();
+        var row = $(this).position().top;
+        var pageScroll = $(window).scrollTop();
+
+        var offsetTop = (row - pageScroll);
+
+        var total = offsetTop + dropdownheight;
+
+        var isDropdownVisible = (total >= docHeight);
+
+        if (isDropdownVisible) {
+            dropdownList.addClass('dropup-sub-menu');
+            dropdownList.css({'bottom': + (docHeight - row) - 10 +'px'});
+        } 
+        else 
+        {
+            dropdownList.removeClass('dropup-sub-menu');
+            dropdownList.css({'bottom': ''});
+        }
+    });
+
+</script>

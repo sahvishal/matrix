@@ -1,0 +1,19 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+<div class="mini-container" >
+    <div style="overflow: hidden; border-right: 1px solid red; width: 61%; margin-right: 7px;
+        float: left;">
+        <div class="editor-row">
+            Select Tests<span class="reqiredmark"><sup>*</sup></span>:
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                The tests selected will appear as default selected when creating an event which is associated with the corporate/healthplan account. 
+                The coordinator will have option to remove the selection when creating the event.
+            </div>
+            <br />
+            @Html.DropDownList("test", DropDownHelper.CorporateTests(), new { @style = "width:98%;" })
+        </div>
+    </div>
+    <div style="overflow: hidden; width: 36%; float: left; margin-top: 10px;">
+        <input type="button" id="addTest" value="Attach" />
+    </div>
+</div>

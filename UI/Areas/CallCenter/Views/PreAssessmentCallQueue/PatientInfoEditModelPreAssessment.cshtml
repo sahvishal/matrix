@@ -1,0 +1,408 @@
+﻿@model Falcon.App.Core.Marketing.ViewModels.CallQueueCustomerEditModel
+@using Falcon.App.UI.HtmlHelpers;
+
+@Html.HiddenFor(m => m.CallId)
+@Html.HiddenFor(m => m.CustomerId)
+@Html.HiddenFor(m => m.ProspectCustomerId)
+@Html.HiddenFor(m => m.CallQueueCustomerId)
+@Html.HiddenFor(m => m.ActivityId)
+@Html.HiddenFor(m => m.UserId)
+@Html.HiddenFor(m => m.IsHealthPlanQueue)
+@Html.HiddenFor(m => m.Address.CountryId)
+@if (Model.PrimaryCarePhysician != null)
+{
+    @Html.HiddenFor(m => m.PrimaryCarePhysician.Address.CountryId)
+    @Html.HiddenFor(m => m.PrimaryCarePhysician.MailingAddress.CountryId)
+}
+
+
+<div class="info-row">
+    <div class="info-text-col-25">
+        Customer ID:
+        @if (Model.CustomerId == null || Model.CustomerId <= 0)
+        {
+            <span>N/A</span>
+        }
+        else
+        {
+            <b>@Model.CustomerId</b>
+        }
+    </div>
+</div>
+<div class="info-row">
+    <div class="info-text-col-50">
+        <label>First Name</label>
+        @Html.TextBoxFor(m => m.FirstName, new { @placeholder = "First Name", @id = "txtFirstName" })
+        @Html.ValidationMessageFor(m => m.FirstName)
+    </div>
+    <div class="info-text-col-50">
+        <label>Last Name</label>
+        @Html.TextBoxFor(m => m.LastName, new { @placeholder = "Last Name", @id = "txtLastName" })
+        @Html.ValidationMessageFor(m => m.LastName)
+    </div>
+</div>
+<div class="info-row">
+    <div class="info-text-col-50">
+        <label>Gender</label>
+        @Html.DropDownListFor(m => m.Gender, DropDownHelper.Genders(Model.Gender), new { @style = "width: 98%", @id = "ddlGender" })
+        @Html.ValidationMessageFor(m => m.Gender)
+    </div>
+    <div class="info-text-col-50">
+        <label>DOB</label>
+        @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "datePicker", @id = "txtDOB" })
+        @Html.ValidationMessageFor(m => m.DateOfBirth)
+    </div>
+</div>
+<div class="info-row">
+    <div class="info-text-col-50">
+        <label>Email</label>
+        @Html.TextBoxFor(m => m.Email, new { @placeholder = "Email", @id = "txtEmail", @onchange = "hideShowEmailConsentDiv()" })
+        @Html.ValidationMessageFor(m => m.Email)
+    </div>
+    <div class="info-text-col-50">
+        <label>Alternate Email</label>
+        @Html.TextBoxFor(m => m.AlternateEmail, new { @placeholder = "Alternate Email", @id = "txtAlternateEmail", @onchange = "hideShowEmailConsentDiv()" })
+        @Html.ValidationMessageFor(m => m.AlternateEmail)
+    </div>
+</div>
+<div class="info-row" id="dvEmailConsent">
+    <div class="info-text-col-25">
+        <label>Do you wish to receive Email?</label>
+    </div>
+    <div class="info-text-col-50">
+        @Html.RadioButton("EnableEmail", "true") Yes
+        @Html.RadioButton("EnableEmail", "false") No
+
+        @Html.ValidationMessageFor(m => m.EnableEmail)
+    </div>
+</div>
+<div class="info-row">
+    <div class="info-text-col-50">
+        <label>HICN Number</label>
+        @Html.TextBoxFor(m => m.Hicn, new {@placeholder = "HICN Number", @id = "txtHICN"})
+        @Html.ValidationMessageFor(m => m.Hicn)
+    </div>
+    <div class="info-text-col-50">
+        <label>Member ID</label>
+        @Html.TextBoxFor(m => m.MemberId, new {@placeholder = "Member ID", @id = "txtMemberId"})
+        @Html.ValidationMessageFor(m => m.MemberId)
+    </div>
+</div>
+<div class="info-row">
+    <div class="info-text-col-50">
+        <label>MBI Number</label>
+        @Html.TextBoxFor(m => m.Mbi, new { @placeholder = "MBI Number", @id = "txtMBI" })
+        @Html.ValidationMessageFor(m => m.Hicn)
+    </div>
+</div>
+<div class="info-row">
+    <div class="info-text-col-33">
+        <label>Home</label>
+        @Html.TextBoxFor(m => m.CallBackPhoneNumber, new { @placeholder = "Home", @style = "width:92%", @class = "mask-phone", @id = "txtHome" })
+        @Html.ValidationMessageFor(m => m.CallBackPhoneNumber)
+    </div>
+    <div class="info-text-col-33">
+        <label>Office</label>
+        @Html.TextBoxFor(m => m.OfficePhoneNumber, new { @placeholder = "Office", @style = "width:92%", @class = "mask-phone", @id = "txtOffice" })
+        @Html.ValidationMessageFor(m => m.OfficePhoneNumber)
+    </div>
+    <div class="info-text-col-33">
+        <label>Mobile</label>
+        @Html.TextBoxFor(m => m.MobilePhoneNumber, new { @placeholder = "Mobile", @class = "mask-phone", @id = "txtMobile" })
+        @Html.ValidationMessageFor(m => m.MobilePhoneNumber)
+    </div>
+</div>
+<div class="info-row">
+    <div class="info-text-col-50">
+        <label>Address</label>
+        @Html.TextBoxFor(m => m.Address.StreetAddressLine1, new { @placeholder = "Address Line 1", @id = "txtAddressLine1" })
+        @Html.ValidationMessageFor(m => m.Address.StreetAddressLine1)
+    </div>
+    <div class="info-text-col-50">
+        <label>&nbsp; </label>
+        @Html.TextBoxFor(m => m.Address.StreetAddressLine2, new { @placeholder = "Address Line 2", @id = "txtAddressLine2" })
+        @Html.ValidationMessageFor(m => m.Address.StreetAddressLine2)
+    </div>
+</div>
+<div class="info-row">
+    <div class="info-text-col-33">
+        <label>City</label>
+        @Html.TextBoxFor(m => m.Address.City, new { @class = "auto-search-customer-city", @placeholder = "City", @style = "width:92%", @id = "txtCity" })
+        @Html.ValidationMessageFor(m => m.Address.City)
+    </div>
+    <div class="info-text-col-33">
+        <label>State</label>
+        @Html.DropDownListFor(m => m.Address.StateId, DropDownHelper.States(), null, new { @placeholder = "State", @style = "width:98%", @id = "ddlState" })
+        @Html.ValidationMessageFor(m => m.Address.StateId)
+    </div>
+    <div class="info-text-col-33">
+        <label>Zip</label>
+        @Html.TextBoxFor(m => m.Address.ZipCode, new { @placeholder = "Zip", @id = "txtZip" })
+        @Html.ValidationMessageFor(m => m.Address.ZipCode)
+    </div>
+</div>
+
+<input type="hidden" id="CustomerZipcodeHiddenField" value="@Model.Address.ZipCode" />
+
+@if (Model.PrimaryCarePhysician != null)
+{
+    <div class="info-row">
+        <strong class="info-heading">PCP Details</strong>
+    </div>
+    <div class="info-row">
+        <div class="info-text-col-50">
+            <label>PCP First Name</label>
+            @Html.TextBoxFor(m => m.PrimaryCarePhysician.FullName.FirstName, new { @placeholder = "First Name", @id = "txtPCPFirstName" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.FullName.FirstName)
+        </div>
+        <div class="info-text-col-50">
+            <label>PCP Last Name</label>
+            @Html.TextBoxFor(m => m.PrimaryCarePhysician.FullName.LastName, new { @placeholder = "Last Name", @id = "txtPCPLastName" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.FullName.LastName)
+        </div>
+    </div>
+    <div class="info-row">
+        <div class="info-text-col-50">
+            <label>PCP Email</label>
+            @Html.TextBoxFor(m => m.PrimaryCarePhysician.Email, new { @placeholder = "Email", @id = "txtPCPEmail" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.Email)
+        </div>
+        <div class="info-text-col-50">
+            <label>PCP Phone Number</label>
+            @Html.TextBoxFor(m => m.PrimaryCarePhysician.Phone, new { @placeholder = "Phone Number", @class = "mask-phone", @id = "txtPCPPhone" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.Phone)
+        </div>
+    </div>
+    <div class="info-row">
+        <div class="info-text-col-50">
+            <label>PCP Address</label>
+            @Html.TextBoxFor(m => m.PrimaryCarePhysician.Address.StreetAddressLine1, new { @placeholder = "Address Line 1", @id = "txtPCPAddressLine1" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.Address.StreetAddressLine1)
+        </div>
+        <div class="info-text-col-50">
+            <label>&nbsp; </label>
+            @Html.TextBoxFor(m => m.PrimaryCarePhysician.Address.StreetAddressLine2, new { @placeholder = "Address Line 2", @id = "txtPCPAddressLine2" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.Address.StreetAddressLine2)
+        </div>
+    </div>
+    <div class="info-row">
+        <div class="info-text-col-33">
+            <label>PCP City</label>
+            @Html.TextBoxFor(m => m.PrimaryCarePhysician.Address.City, new { @class = "auto-search-city-pcp", @placeholder = "City", @style = "width:92%", @id = "txtPCPCity" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.Address.City)
+        </div>
+        <div class="info-text-col-33">
+            <label>PCP State</label>
+            @Html.DropDownListFor(m => m.PrimaryCarePhysician.Address.StateId, DropDownHelper.States(), null, new { @style = "width:98%", @id = "ddlPCPState" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.Address.StateId)
+        </div>
+        <div class="info-text-col-33">
+            <label>PCP Zip</label>
+            @Html.TextBoxFor(m => m.PrimaryCarePhysician.Address.ZipCode, new { @placeholder = "Zip", @id = "txtPCPZip" })
+            @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.Address.ZipCode)
+        </div>
+    </div>
+    <div class="info-row">
+        @Html.CheckBoxFor(m => m.PrimaryCarePhysician.HasSameAddress, new { @onclick = "showHidePCPMailingAddress()", @id = "chkHasSameAddress" })
+        <b>Has same mailing address</b>
+    </div>
+    <div id="dvPCPMailingAddress" style="display:none">
+        <div class="info-row">
+            <div class="info-text-col-50">
+                <label>PCP Mailing Address</label>
+                @Html.TextBoxFor(m => m.PrimaryCarePhysician.MailingAddress.StreetAddressLine1, new { @placeholder = "Address Line 1", @id = "txtPCPMailingAddressLine1" })
+                @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.MailingAddress.StreetAddressLine1)
+            </div>
+            <div class="info-text-col-50">
+                <label>&nbsp; </label>
+                @Html.TextBoxFor(m => m.PrimaryCarePhysician.MailingAddress.StreetAddressLine2, new { @placeholder = "Address Line 2", @id = "txtPCPMailingAddressLine2" })
+                @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.MailingAddress.StreetAddressLine2)
+            </div>
+        </div>
+        <div class="info-row">
+            <div class="info-text-col-33">
+                <label>PCP Mailing City</label>
+                @Html.TextBoxFor(m => m.PrimaryCarePhysician.MailingAddress.City, new { @class = "auto-search-city-pcpMailing", @placeholder = "City", @style = "width:92%", @id = "txtPCPMailingCity" })
+                @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.MailingAddress.City)
+            </div>
+            <div class="info-text-col-33">
+                <label>PCP Mailing State</label>
+                @Html.DropDownListFor(m => m.PrimaryCarePhysician.MailingAddress.StateId, DropDownHelper.States(), null, new { @style = "width:98%", @id = "ddlPCPMailingState" })
+                @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.MailingAddress.StateId)
+            </div>
+            <div class="info-text-col-33">
+                <label>PCP Mailing Zip</label>
+                @Html.TextBoxFor(m => m.PrimaryCarePhysician.MailingAddress.ZipCode, new { @placeholder = "Zip", @id = "txtPCPMailingZip" })
+                @Html.ValidationMessageFor(m => m.PrimaryCarePhysician.MailingAddress.ZipCode)
+            </div>
+        </div>
+    </div>
+}
+
+<div class="info-row" style="margin-top: 20px;">
+    <div class="info-text-col-100">
+        <button type="submit" class="pull-right" id="btnSaveCustomerInfo" onclick="return validateEmailConsent();">Save <i class="spin spin-right"></i></button>
+        <a href="javascript:void(0)" class="pull-right align-bottom right-buffer-10" onclick="fillPatientDataOnCancel(); UpdatePatientInfo(false); hideShowEmailConsentDiv();">Cancel</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        function copyStreetAddressOne() {
+            $("#txtPCPMailingAddressLine1").val($("#txtPCPAddressLine1").val());
+        }
+
+        function copyStreetAddressTwo() {
+            $("#txtPCPMailingAddressLine2").val($("#txtPCPAddressLine2").val());
+        }
+
+        function copyCity() {
+            $("#txtPCPMailingCity").val($("#txtPCPCity").val());
+        }
+
+        function copyState() {
+            $("#ddlPCPMailingState option[value=" + $("#ddlPCPState ").val() + "]").attr("selected", true);
+        }
+
+        function copyZip() {
+            $("#txtPCPMailingZip").val($("#txtPCPZip").val());
+        }
+
+        $("#txtPCPAddressLine1").keyup(function () { if (!$("#chkHasSameAddress").attr("checked")) return; copyStreetAddressOne(); });
+        $("#txtPCPAddressLine2").keyup(function () { if (!$("#chkHasSameAddress").attr("checked")) return; copyStreetAddressTwo(); });
+        $("#txtPCPCity").keyup(function () { if (!$("#chkHasSameAddress").attr("checked")) return; copyCity(); });
+        $("#txtPCPZip").keyup(function () { if (!$("#chkHasSameAddress").attr("checked")) return; copyZip(); });
+        $("#ddlPCPState").change(function () { if (!$("#chkHasSameAddress").attr("checked")) return; copyState(); });
+
+
+
+        $(".auto-search-city-pcp").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("GetCityByPrefixText", "ContactCustomer")',
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        text: $("#txtPCPCity").val()
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                $("#txtPCPCity").val(ui.item.label);
+            }
+        });
+
+        $(".auto-search-city-pcpMailing").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("GetCityByPrefixText", "ContactCustomer")',
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        text: $("#txtPCPMailingCity").val()
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                $("#txtPCPMailingCity").val(ui.item.label);
+            }
+        });
+
+        $(".auto-search-customer-city").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("GetCityByPrefixText", "ContactCustomer")',
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        text: $("#txtCity").val()
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                $("#txtCity").val(ui.item.label);
+            }
+        });
+        hideShowEmailConsentDiv();
+    });
+
+    function validateEmailConsent() {
+        var email = $("#txtEmail");
+        var alternateEmail = $("#txtAlternateEmail");
+        var pcpEmail = $("#txtPCPEmail");
+
+        if ($.trim(email.val()) != "") {
+            if (validateEmail(email, "Email") != true) {
+                return false;
+            }
+        }
+
+        if ($.trim(alternateEmail.val()) != "") {
+            if (validateEmail(alternateEmail, "Alternate Email") != true) {
+                return false;
+            }
+        }
+
+        if ($.trim(pcpEmail.val()) != "") {
+            if (validateEmail(pcpEmail, "PCP Email") != true) {
+                return false;
+            }
+        }
+        if (($.trim(email.val()) != "" || $.trim(alternateEmail.val()) != "") && $("input:radio[name$='EnableEmail'][value='false']").is(":checked")) {
+            $("input:radio[name$='EnableEmail']").focus();
+            var isContinue = confirm('Consent for Email is set to No. Do you wish to continue?');
+
+            if (!isContinue)
+                return false;
+        }
+
+        return true;
+    }
+    function hideShowEmailConsentDiv() {
+        var email1 = $("#txtEmail");
+        var otheremail = $("#txtAlternateEmail");
+
+        if ($.trim(email1.val()) != "" || $.trim(otheremail.val()) != "")
+            $("#dvEmailConsent").show();
+        else
+            $("#dvEmailConsent").hide();
+    }
+    function validateEmail(Control, returnmessage) {
+
+        var emailStr = Control.val();
+        var reg1 = /(@@.*@@)|(\.\.)|(@@\.)|(\.@@)|(^\.)/; // not valid
+        var reg2 = /^.+\@@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/; // valid
+        if (!reg1.test(emailStr) && reg2.test(emailStr)) {
+            return true;
+        } else {
+            alert(returnmessage + ' is not a valid email address.');
+            Control.focus();
+            return false;
+        }
+    }
+</script>

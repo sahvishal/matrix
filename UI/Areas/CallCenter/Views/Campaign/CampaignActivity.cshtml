@@ -1,0 +1,194 @@
+@using Falcon.App.Core.CallCenter.Enum
+@using Falcon.App.Core.CallCenter.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model CampaignActivityEditModel
+@{
+    Layout = null;
+}
+<script language="javascript" type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+<div class="editor-row">
+    @Html.HiddenFor(m => m.ActivityId)
+    @Html.HiddenFor(m => m.Name)
+    @Html.HiddenFor(m => m.Sequence)
+    @Html.HiddenFor(m => m.CampaignStartDate)
+    @Html.HiddenFor(m => m.CampaignEndDate)
+    @Html.HiddenFor(m=>m.CampaigndId)
+
+    <div class="editor-label">
+        Select Activity @Html.ValidationMessageFor(m => m.ActivityType)
+    </div>
+    @Html.DropDownListFor(m => m.ActivityType, DropDownHelper.GetCampaignActivityType(), new { @style = "width:240px;" })
+
+</div>
+<div class="editor-row">
+    <div class="editor-label">
+        Activity Date @Html.ValidationMessageFor(m => m.ActivityDate)
+    </div>
+    @Html.TextBoxFor(m => m.ActivityDate, new { @class = "datePicker", @style = "width:240px;" })
+</div>
+
+<div class="editor-row direct-mail-field" style="@(Model.ActivityType == (long)CampaignActivityType.DirectMail ? "display:block" : "display:none")">
+    <div class="editor-label">
+        Direct Mail Type @Html.ValidationMessageFor(m => m.DirectMailType)
+    </div>
+    @Html.DropDownListFor(m => m.DirectMailType, DropDownHelper.GetDirectMailType(), new { @style = "width:240px;" })
+</div>
+
+<div class="editor-row direct-mail-field" style="@(Model.ActivityType == (long)CampaignActivityType.DirectMail ? "display:block" : "display:none")">
+    <fieldset>
+        <legend>Activity Assigned To</legend>
+        <div class="editor-row">
+            <div class="editor-label">
+                Agent @Html.ValidationMessageFor(m => m.Assignments)
+            </div>
+            @Html.DropDownList("activityAssignedId", DropDownHelper.GetCallCenterRep(), new { @style = "width:240px;" })
+            <input type="button" value="Add" onclick="addAtivityAssignment();" />
+        </div>
+        <div id="activity-assignment-container">
+
+        </div>
+    </fieldset>
+</div>
+@if (!Model.ActivityEditMode)
+{
+    <div class="editor-row">
+        @if (Model.ActivityId > 0)
+        {
+            <div style="float: right" onclick="CloseActivityPopup()"><button>Modifiy Activity</button></div>
+        }
+        else
+        {
+            <div style="float: right" onclick="CloseActivityPopup()"><button>Add Activity</button></div>
+        }
+    </div>
+}
+
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script id="activityAssignmentTemplate" type="text/x-jquery-tmpl">
+    <div class="activityAssignment-row" style="margin-bottom: 10px; margin-top: 10px;">
+        <div>
+            ${Name}
+            <a href="javascript:void(0);" data-key="${Key}" class="removeAssignment">Remove</a>
+        </div>
+        <div style="display: none;">
+            <input type="hidden" name="Assignments.Index" value="${Key}" />
+            <input type="text" name="Assignments[${Key}].AssignedOrgRoleUserId" value="${AssignedOrgRoleUserId}" />
+            <input type="text" name="Assignments[${Key}].Name" value="${Name}" />
+        </div>
+    </div>
+</script>
+
+
+<script type="text/javascript">
+    var activityAssignments = new Object();
+
+    @if (Model.Assignments != null && Model.Assignments.Any())
+    {
+        <text>
+    var activityAssignmentKey = "";
+    var activityAssignment = new Object();
+    </text>
+        foreach (var queueAssignment in Model.Assignments)
+        {
+            <text>
+    activityAssignment = new Object();
+    activityAssignment.AssignedOrgRoleUserId = '@queueAssignment.AssignedOrgRoleUserId';
+    activityAssignment.Name = "@queueAssignment.Name";
+    activityAssignmentKey = "@queueAssignment.AssignedOrgRoleUserId";
+    activityAssignment.Key = activityAssignmentKey;
+    activityAssignments[activityAssignmentKey] = activityAssignment;
+    </text>
+        }
+    }
+
+    function addAtivityAssignment() {
+        if ($("#activityAssignedId").val() <= 0) {
+            alert("Please select Call center agent.");
+            return false;
+        }
+
+        var activityAssignment = new Object();
+        activityAssignment.AssignedOrgRoleUserId = $("#activityAssignedId").val();
+        activityAssignment.Name = $("#activityAssignedId option:selected").text();
+
+        activityAssignment.Key = activityAssignment.AssignedOrgRoleUserId;
+
+        if (activityAssignments[activityAssignment.Key] != undefined) {
+            alert("This assignment has already been added.");
+            return false;
+        }
+        activityAssignments[activityAssignment.Key] = activityAssignment;
+
+        renderActivityassignment();
+        return false;
+    }
+
+    function renderActivityassignment() {//debugger;
+        if ($.isEmptyObject(activityAssignments)) {
+            $("#activity-assignment-container").empty();
+        }
+        else {
+            $("#activity-assignment-container").empty();
+            $.each(activityAssignments, function (key, assignment) {
+                $("#activityAssignmentTemplate").tmpl(assignment).appendTo("#activity-assignment-container");
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        renderActivityassignment();
+
+        $("a.removeAssignment").live("click", function () {
+
+            $(this).parents("div.activityAssignment-row:first").remove();
+            delete activityAssignments[$(this).attr('data-key')];
+
+            if ($.isEmptyObject(activityAssignments)) {
+                $("#activity-assignment-container").empty();
+            }
+
+            return false;
+        });
+
+        @if (Model.IsValid && !Model.ActivityEditMode)
+        {
+        <text>
+        var activity = getActivityModel();
+        SetActivity(activity);
+        </text>
+        }
+    });
+
+    $("#ActivityType").change(function () {
+        var activityType = $(this).val();
+        if (activityType === '@((long)CampaignActivityType.DirectMail)') {
+            $(".direct-mail-field").show();
+        } else {
+            $(".direct-mail-field").hide();
+            $("#DirectMailType").val('-1');
+            $("#activityAssignedId").val('-1');
+            activityAssignments = new Object();
+            $("#activity-assignment-container").empty();
+        }
+    });
+
+    function CloseActivityPopup() {
+        var activity = getActivityModel();
+        ValidateActivity(activity);
+    }
+
+    function getActivityModel() {
+        var activity = new Object();
+        activity.ActivityId = $("#ActivityId").val();
+        activity.Name = $("#ActivityType option:selected").text();;
+        activity.ActivityType = $("#ActivityType").val();
+        activity.DirectMailType = $("#DirectMailType").val();
+        activity.ActivityDate = $("#ActivityDate").val();
+        activity.Assignments = activityAssignments;
+        activity.Sequence = $("#Sequence").val();
+        activity.CampaignStartDate = $("#CampaignStartDate").val();
+        activity.CampaignEndDate = $("#CampaignEndDate").val();
+
+        return activity;
+    }
+</script>

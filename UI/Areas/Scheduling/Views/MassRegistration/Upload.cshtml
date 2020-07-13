@@ -1,0 +1,74 @@
+﻿@using System.Data
+@model DataSet
+@{
+    ViewBag.Title = "Upload";
+}
+<h2>
+    Mass Registeration - Upload (*.csv)
+</h2>
+@{Html.BeginForm("Upload", "MassRegistration", FormMethod.Post, new { enctype = "multipart/form-data" });}
+<div class="editor-row" style="width: 98%; padding:1%;">
+    Upload file:
+    <input type="file" name="MassRegistrationFile" />
+    <input type="submit" id="FileSubmit" value="Upload" />
+</div>
+@{Html.EndForm();}
+
+<div class="editor-row" style="width: 98%; padding:1%;">
+@if (Model != null)
+{
+    int count = -1;
+
+    if (Model.Tables.Count < 1 || (Model.Tables[0].Rows.Count < 1 && Model.Tables.Count > 1 && Model.Tables[1].Rows.Count < 1))
+    {
+        <h4> No Records updated. </h4>
+    }
+    
+    foreach (DataTable table in Model.Tables)
+    {
+        count++;
+        if (table.Rows.Count < 1) { continue; }
+
+        if (count == 0)
+        {
+            <b> Records Pushed </b>    <br />
+        }
+        else if (count == 1)
+        {
+            <span style="float:left"> <b> Records Failed </b> </span>
+            if (Model.Tables.Count > 2 && Model.Tables[2].Rows.Count > 0)
+            {
+            <span style="float:right;"> <a href="@Model.Tables[2].Rows[0][0]"> Download Invalid Records </a> </span>
+            }
+            <br />
+        }
+        else
+        {
+            break;
+        }
+                
+        <table id="list-view" style="margin-bottom: 15px;">
+            @foreach (DataColumn col in table.Columns)
+            {
+                <th>@col.ColumnName
+                </th>
+            }
+            @foreach (DataRow row in table.Rows)
+            {
+                <tr>
+                    @foreach (DataColumn col in table.Columns)
+                    {
+                        <td>
+                            @(row[col.ColumnName] != null && row[col.ColumnName] != DBNull.Value ? row[col.ColumnName].ToString() : "")
+                        </td>    
+                    }
+                </tr>
+            }
+        </table>
+    }
+}
+else
+{
+    <h4> Please upload a file for the mass registeration! </h4>
+}
+</div>

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<KeyValuePair<string,string>>
+@{
+    var elements = Model.ToArray();
+    int jumpSize = 4;
+    
+    <table class="table table-condensed table-bordered list-table-audit">
+        @{
+            int index = 0;
+
+            while (index < elements.Count())
+            {
+                var length = index + jumpSize;
+                if (length > elements.Count())
+                {
+                    length = elements.Count();
+                }
+                var indexHeader = index;
+
+            <tr>
+                @while (indexHeader < length)
+                {
+                    <th>@elements[indexHeader].Key</th>
+                    indexHeader++;
+                }
+                @if (elements.Count() > jumpSize)
+                {
+                    for (int x = 0; x < length%jumpSize; x++)
+                    {
+                        <th>-</th>
+                    }
+                }
+            </tr>
+            <tr>
+                @while (index < length)
+                {
+                    <td>@elements[index].Value</td>
+                    index++;
+                }
+                @if (elements.Count() > jumpSize)
+                {
+                    for (int x = 0; x < length%jumpSize; x++)
+                    {
+                        <td>-</td>
+                    }
+                }
+            </tr>
+            }
+        }
+    </table>
+}

@@ -1,0 +1,263 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Operations.ViewModels
+@using Falcon.App.Core.Application.Enum
+
+@model PhysicianEventAssignmentEditModel
+
+@{
+    ViewBag.Title = "Assign/UnAssign Physician To Event";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml";
+}
+<style type="text/css">
+    #content {
+        min-height: 670px;
+    }
+</style>
+
+<h1>Assign/UnAssign Physician</h1>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+@{Html.BeginForm();}
+<div style="float: left; width: 800px;">
+    @if (Model.FeedbackMessage != null)
+    {
+        @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+    }
+    @Html.HiddenFor(m => m.IsEvaluationRestricted)
+    <fieldset>
+        <legend>Assign Physician</legend>
+        <div class="editor-row">
+            <div style="float:left; width:30%">
+                @Html.LabelFor(m => m.PhysicianId):
+            </div>
+            <div style="float:left; width:65%">
+                @Html.DropDownListFor(m => m.PhysicianId, DropDownHelper.PhysiciansForEvent(Model.EventId), new { @class = Model.IsEvaluationRestricted ? "physician-dropdown" : string.Empty }) @Html.ValidationMessageFor(m => m.PhysicianId)
+            </div>
+            @if (Model.IsEvaluationRestricted)
+            {
+                <div class="editor-row" style="display:none;clear:both;padding-top: 10px;" id="PrimaryPhysicianEvaluationRestricted">
+                    <fieldset>
+                        <legend>Evaluation Restricted</legend>
+                        @if (Model.EventTests != null && Model.EventTests.Any())
+                        {
+                            foreach (var test in Model.EventTests)
+                            {
+                                <div class="test_@(test.Id)" style="width: 25%; float: left; display: none;">
+                                    <input type="checkbox" value="@test.Id" /> @test.Alias
+                                </div>
+                            }
+                        }
+                    </fieldset>
+                </div>
+            }
+        </div>
+        <div class="editor-row">
+            <div style="float:left; width:30%">
+                @Html.LabelFor(m => m.OverReadPhysicianId):
+            </div>
+            <div style="float:left; width:65%">
+                @Html.DropDownListFor(m => m.OverReadPhysicianId, DropDownHelper.PhysiciansForEvent(Model.EventId), new { @class = Model.IsEvaluationRestricted ? "physician-dropdown" : string.Empty })@Html.ValidationMessageFor(m => m.OverReadPhysicianId)
+            </div>
+            @if (Model.IsEvaluationRestricted)
+            {
+                <div class="editor-row" style="display: none; clear: both; padding-top: 10px;" id="OverReadPhysicianEvaluationRestricted">
+                    <fieldset>
+                        <legend>Evaluation Restricted</legend>
+                        @if (Model.EventTests != null && Model.EventTests.Any())
+                        {
+                            foreach (var test in Model.EventTests)
+                            {
+                                <div class="test_@(test.Id)" style="width: 25%; float: left; display: none;">
+                                    <input type="checkbox" value="@test.Id" /> @test.Alias
+                                </div>
+                            }
+                        }
+                    </fieldset>
+                </div>
+            }
+
+        </div>
+
+        <div class="editor-row">
+            <div style="float:left; width:30%">
+                @Html.LabelFor(m => m.Notes):
+            </div>
+            <div style="float:left; width:65%">
+                @Html.TextAreaFor(m => m.Notes, new { @cols = 40 })
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.EventId)
+        <div class="submit-button-row">
+            <a href="javascript:void(0);" onclick="closeWindow();">Close </a> &nbsp;&nbsp; @Html.SubmitButton("Assign", Model.IsEvaluationRestricted ? "RestrictedEvaluationSubmit" : "Submit")
+        </div>
+    </fieldset>
+    @if (Model.AssignedPhysicians != null)
+    {
+        <h3>Current Physician Assignments</h3>
+        <table class="ui-widget ui-widget-content" style="width:100%">
+            <thead>
+                <tr class="ui-widget-header ">
+                    <th style="text-align: left;">Name</th>
+                    <th style="text-align: left;">Specialization</th>
+                    <th style="text-align: left;">Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var physician in Model.AssignedPhysicians)
+                {
+                    <tr class="data-row">
+                        <td>@physician.Name</td>
+                        <td>@physician.Specialization</td>
+                        <td>@(physician.IsOverReadPhysician ? "Over Read Physician" : "Primary Physician")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="info-box">
+            No physician have been assigned to this event. Please assign the physician as needed.
+        </div>
+    }
+    <div id="eventPhysicianTests" style="display: none;">
+    </div>
+</div>
+<script id="selectedTestTemplate" type="text/x-jquery-tmpl">
+    <input type="hidden" name="EventPhysicianTests.Index" value="${Key}" />
+    <input type="hidden" name="EventPhysicianTests[${Key}].PhysicianId" value="${PhysicianId}" />
+    <input type="hidden" name="EventPhysicianTests[${Key}].TestId" value="${TestId}" />
+</script>
+@if (Model.FeedbackMessage != null && (Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success || Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Warning))
+{
+    <script type="text/javascript" language="javascript">
+        //debugger;
+        $(window).unload(function () {
+            window.opener.location.reload();
+            @if (Model.IsEvaluationRestricted)
+            {
+                <text>loadPhysicianData();</text>
+            }
+        });
+
+    </script>
+}
+@if (Model.IsEvaluationRestricted)
+{
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            $(".physician-dropdown").change(function () {
+                var testContiner = $(this).closest(".editor-row").find(".editor-row");
+                $(testContiner).find("[class^='test_']").each(function () {
+                    $(this).hide();
+                });
+                if ($(this).val() != "-1") {
+                    getPhysicianPermittedTest($(this).val(), testContiner);
+                }
+                else {
+                    $(testContiner).hide();
+                }
+                   
+            });
+
+            getPrimaryPhysicianTests();
+            getOverreadPhysicianTests();
+
+            $("#RestrictedEvaluationSubmit").click(function () {
+                physicianEventArray = new Array();
+                SetRestrictedEvaluationTest();
+            });
+
+        });
+
+
+        function loadPhysicianData() {
+            getPrimaryPhysicianTests();
+            getOverreadPhysicianTests();
+        }
+
+        function getPrimaryPhysicianTests() {
+            var physicianObj = $("#PhysicianId");
+            var testContiner = $(physicianObj).closest(".editor-row").find(".editor-row");
+
+            $(testContiner).find("[class^='test_']").each(function () {
+                $(this).hide();
+            });
+            if ($(physicianObj).val() != "-1") {
+                getPhysicianPermittedTest($(physicianObj).val(), testContiner);
+            }
+        }
+
+        function getOverreadPhysicianTests() {
+            var physicianObj = $("#OverReadPhysicianId");
+
+            var testContiner = $(physicianObj).closest(".editor-row").find(".editor-row");
+            $(testContiner).find("[class^='test_']").each(function () {
+                $(this).hide();
+            });
+            if ($(physicianObj).val() != "-1") {
+                getPhysicianPermittedTest($(physicianObj).val(), testContiner);
+            }
+        }
+        function getPhysicianPermittedTest(physicianId, sectionContainer) {
+            $.ajax({
+                type: "GET",
+                cache: false,
+                dataType: "json",
+                url: "/Operations/PhysicianAssignment/GetTestAssignedToPhysician?eventId=@Model.EventId&physicianId=" + physicianId,
+                success: function (result) {
+                    $.each(result, function (i, item) {
+                        var testid = item.TestId;
+                        var testNameContainer = $(sectionContainer).find(".test_" + testid);
+                        if (item.IsSelected) {
+                            testNameContainer.find("input[type='checkbox']").attr("checked", true);
+                        } else {
+                            testNameContainer.find("input[type='checkbox']").attr("checked", false);
+                        }
+                        testNameContainer.show();
+                    });
+
+                    $(sectionContainer).show();
+                }
+            });
+        }
+
+
+
+        var physicianEventArray = new Array();
+        function SetRestrictedEvaluationTest() {
+            $("#PrimaryPhysicianEvaluationRestricted").find("input:checked").each(function () {
+                var physicianEvent = new Object();
+                physicianEvent.Key = $(this).val();
+                physicianEvent.TestId = $(this).val();
+                physicianEvent.PhysicianId = $("#PhysicianId").val();
+                physicianEventArray.push(physicianEvent);
+            });
+
+            $("#OverReadPhysicianEvaluationRestricted").find("input:checked").each(function () {
+                var physicianEvent = new Object();
+                physicianEvent.Key = $(this).val();
+                physicianEvent.TestId = $(this).val();
+                physicianEvent.PhysicianId = $("#OverReadPhysicianId").val();
+                physicianEventArray.push(physicianEvent);
+
+            });
+
+            renderTemplate();
+        }
+
+        function renderTemplate() {
+            $("#eventPhysicianTests").empty();
+            $.each(physicianEventArray, function (key, selRecord) {
+                $("#eventPhysicianTests").append($("#selectedTestTemplate").tmpl(selRecord));
+            });
+        }
+
+    </script>
+}
+<script type="text/javascript" language="javascript">
+    function closeWindow() {
+        window.close();
+    }
+</script>
+@{Html.EndForm();}
+

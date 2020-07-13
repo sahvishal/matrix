@@ -1,0 +1,652 @@
+﻿@using Falcon.App.UI.HtmlHelpers;
+@using Falcon.App.Core.Finance.ViewModels;
+@using Falcon.App.Core.Finance.Enum;
+@using Falcon.App.Core.Application.Enum;
+@model HealthPlanRevenueEditModel
+@{
+    long customerType = (long)HealthPlanRevenueType.PerCustomer;
+    long packageType = (long)HealthPlanRevenueType.PerPackage;
+    long testType = (long)HealthPlanRevenueType.PerTest;
+}
+<h1>
+    Health Plan Revenue Config
+</h1>
+
+<fieldset>
+    <script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+    @if (Model != null)
+    {
+        if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+        {
+            <script type="text/javascript">
+                alert("Health plan revenue has been saved successfully.");
+                window.location = "/Finance/HealthPlanRevenue/index";
+            </script>
+        }
+    }
+    @Html.HiddenFor(m => m.SelectedAccountId)
+
+    @if (Model != null)
+    {
+        <div style="float: left; width: 100%; margin-right: 5px; padding: 1%">
+            <div class="editor-row">
+                <div class="editor-label">
+                    Health Plan
+                </div>
+
+                @if (Model.SelectedAccountId > 0)
+                {
+                    @(DropDownHelper.GetHealthPlanCorporateAccounts().First(x => x.Value == Model.SelectedAccountId.ToString()).Text)
+                    @Html.HiddenFor(m => m.HealthPlanId)
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:200px;" })
+                    @Html.ValidationMessageFor(m => m.HealthPlanId)
+                }
+
+            </div>
+            <br />
+            <div class="editor-row" style="@(Model.HealthPlanId > 0 ? "display:block;" : "display:none")" id="dateDiv">
+                <div class="editor-label">
+                    Effective Date
+                </div>
+                @Html.TextBoxFor(m => m.DateFrom, new { @class = "datePicker", @style = "width:200px;", @value = DateTime.Now })
+                @Html.ValidationMessageFor(m => m.DateFrom)
+            </div>
+            <br />
+            <div class="editor-row" style="@(Model.HealthPlanId > 0 ? "display:block;" : "display:none")" id="healthplanrevenuetypediv">
+                <div class="editor-label">
+                    Pricing Type
+                </div>
+                @Html.DropDownListFor(m => m.RevenueItemTypeId, DropDownHelper.GetHealthPlanRevenueType(), new { @onclick = "ShowHideCustomePackageAndTest()", @style = "width:200px;" })
+                @Html.ValidationMessageFor(m => m.RevenueItemTypeId)
+            </div>
+            <br />
+            <script id="customerTemplate" type="text/x-jquery-tmpl">
+                <div class='mini-container' style="border: 1px solid gray !important;">
+                    <div style="float: left; margin-right: 20px; white-space:nowrap;">
+                        Price &nbsp; <input type="text" maxlength="10" name="Customer.Price" value="${Price}" class="customerclass" onkeydown="return KeyPress_DecimalAllowedOnly(event);" /> $
+                    </div>
+
+                </div>
+            </script>
+            <div class="editor-row" id="customerdiv" style="@(Model.RevenueItemTypeId == customerType ? "display:block;" : "display:none")">
+                <fieldset>
+                    <legend>
+                        <h3>Customer</h3>
+                    </legend>
+                    <div id="customerContainer">
+                        @Html.EditorFor(m => m.Customer)
+                    </div>
+                </fieldset>
+            </div>
+            <script id="packageTemplate" type="text/x-jquery-tmpl">
+                <div class='mini-container' style="border: 1px solid gray !important;">
+                    <div style="float: left; margin-right: 20px; white-space:nowrap;">
+                        ${PackageName}  &nbsp; <input type="text" maxlength="10" name="PackageList[${Key}].Price" value="${Price}" class="packageclass" onblur="updatePackage(this)" onkeydown="return KeyPress_DecimalAllowedOnly(event);" /> $&nbsp; [<a href="#" data-key="${Key}" class="unAssignPackage">Remove</a>]
+                    </div>
+                    <div style="display: none;">
+                        <input type="hidden" name="PackageList.Index" value="${Key}" />
+                        <input type="hidden" name="PackageList[${Key}].PackageId" value="${PackageId}" />
+                        <br />
+                        <input type="hidden" name="PackageList[${Key}].PackageName" value="${PackageName}" />
+                    </div>
+                </div>
+            </script>
+            <div class="editor-row" id="packagediv" style="@(Model.RevenueItemTypeId == packageType ? "display:block;" : "display:none")">
+                <fieldset>
+                    <legend>
+                        <h3>Package</h3>
+                    </legend>
+                    <select class="package" id="ddlPackage" style="width:200px;">  </select> <input type="button" value="Attach" id="btnAddPackages" />
+                    <div id="packageContainer">
+                        @if (Model.PackageList == null)
+                        {
+                            <div class="info-box" id="divInfoBoxPackage">
+                                Package not selected.
+                            </div>
+                        }
+                        else
+                        {
+                            @Html.EditorFor(m => m.PackageList)
+                        }
+                    </div>
+                </fieldset>
+            </div>
+            <script id="testTemplate" type="text/x-jquery-tmpl">
+                <div class='mini-container' style="border: 1px solid gray !important;">
+                    <div style="float: left; margin-right: 20px; white-space:nowrap;">
+                        ${TestName}  &nbsp; <input type="text" maxlength="10" name="TestList[${Key}].Price" value="${Price}" class="testclass" onblur="updateTest(this)" onkeydown="return KeyPress_DecimalAllowedOnly(event);" /> $&nbsp; [<a href="#" data-key="${Key}" class="unAssignTest">Remove</a>]
+                    </div>
+                    <div style="display: none;">
+                        <input type="hidden" name="TestList.Index" value="${Key}" />
+                        <input type="hidden" name="TestList[${Key}].TestId" value="${TestId}" />
+                        <br />
+                        <input type="hidden" name="TestList[${Key}].TestName" value="${TestName}" />
+                    </div>
+                </div>
+            </script>
+            <div class="editor-row" id="testdiv" style="@(Model.RevenueItemTypeId == testType ? "display:block;" : "display:none")">
+                <fieldset>
+                    <legend>
+                        <h3>Test</h3>
+                    </legend>
+                    <select class="test" id="ddlTest" style="width:200px;">  </select> <input type="button" value="Attach" id="btnAddTests" />
+                    <div id="testContainer">
+                        @if (Model.TestList == null)
+                        {
+                            <div class="info-box" id="divInfoBoxTest">
+                                Test not selected.
+                            </div>
+                        }
+                        else
+                        {
+                            @Html.EditorFor(m => m.TestList)
+                        }
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var packagesList = new Array();
+            var testsList = new Array();
+            var customer = new Array();
+            var packagesMasterList = new Array();
+            var testsMasterList = new Array();
+            var keycounter = 0;
+            $(".test").empty();
+            $(".package").empty();
+            $(".test").append("<option value='-1'>-- Select Tests --</option>");
+            $(".package").append("<option value='-1'>-- Select Packages --</option>");
+            @if ((Model.PackageMasterList != null) && (Model.PackageMasterList.Any()))
+              {
+
+                  foreach (var package in Model.PackageMasterList)
+                    {
+
+                        <text>
+                            {
+                                var packageObj = new Object();
+                                packageObj.PackageId = '@package.FirstValue';
+                                packageObj.PackageName = '@package.SecondValue';
+                                packageObj.Key = keycounter;
+                                packagesMasterList.push(packageObj);
+                                keycounter = keycounter + 1;
+                                $('.package').append($('<option>', {
+                                    value: packageObj.PackageId,
+                                    text: packageObj.PackageName
+                                }));
+                            }
+                    </text>
+                    }
+                }
+            
+            keycounter = 0;
+            @if ((Model.TestMasterList != null) && (Model.TestMasterList.Any()))
+        {
+
+            foreach (var test in Model.TestMasterList)
+            {
+
+                <text>
+            {
+                var testObj = new Object();
+                testObj.TestId = '@test.FirstValue';
+                testObj.TestName = '@test.SecondValue';
+                testObj.Key = keycounter;
+                testsMasterList.push(testObj);
+                keycounter = keycounter + 1;
+                $('.test').append($('<option>', {
+                    value: testObj.TestId,
+                    text: testObj.TestName
+                }));
+            }
+            </text>
+        }
+        }
+            keycounter = 0;
+            @if ((Model.PackageList != null) && (Model.PackageList.Any()))
+             {
+                foreach (var package in Model.PackageList)
+                 {
+
+                     <text>
+            {
+                var packageObj = new Object();
+                packageObj.PackageId = '@package.PackageId';
+                packageObj.PackageName = '@package.PackageName';
+                packageObj.Price = '@package.Price';
+                packageObj.Key = keycounter;
+                packagesList.push(packageObj);
+                keycounter = keycounter + 1;
+            }
+            </text>
+             }
+
+            }
+            keycounter = 0;
+            @if ((Model.TestList != null) && (Model.TestList.Any()))
+              {
+                                    foreach (var test in Model.TestList)
+                  {
+
+                      <text>
+            {
+                var testObj = new Object();
+                testObj.TestId = '@test.TestId';
+                testObj.TestName = '@test.TestName';
+                testObj.Price = '@test.Price';
+                testObj.Key = keycounter;
+                testsList.push(testObj);
+                keycounter = keycounter + 1;
+            }
+            </text>
+              }
+            }
+            $("#HealthPlanId").change(function () {
+                var healthPlanId = parseInt($("#HealthPlanId").val());
+                if (healthPlanId > 0) {
+                    $("#healthplanrevenuetypediv").show();
+                    $("#dateDiv").show();
+                    $("#customerdiv").hide();
+                    $("#packagediv").hide();
+                    $("#testdiv").hide();
+                    $("#packageContainer").html('');
+                    $("#testContainer").html('');
+                    $("#RevenueItemTypeId").val("-1");
+                    $("#DateFrom").val('');
+                }
+                else {
+                    $("#healthplanrevenuetypediv").hide();
+                    $("#dateDiv").hide();
+                }
+            });
+
+            $(document).ready(function () {
+
+                var revenueItemTypeId = parseInt($("#RevenueItemTypeId").val());
+                if (revenueItemTypeId == '@customerType') {
+                    $("#customerdiv").show();
+                    $("#packagediv").hide();
+                    $("#testdiv").hide();
+                    $("#packageContainer").empty();
+                    $("#testContainer").empty();
+
+                }
+                else if (revenueItemTypeId == '@packageType') {
+                    $("#customerdiv").hide();
+                    $("#packagediv").show();
+                    $("#testdiv").hide();
+                    $("#testContainer").empty();
+                    $("#customerContainer").empty();
+                }
+                else if (revenueItemTypeId == '@testType') {
+                    $("#customerdiv").hide();
+                    $("#packagediv").hide();
+                    $("#testdiv").show();
+                    $("#packageContainer").empty();
+                    $("#customerContainer").empty();
+                }
+            });
+
+
+            function ShowHideCustomePackageAndTest() {
+                 packagesList = new Array();
+                 testsList = new Array();
+                
+                var revenueItemTypeId = parseInt($("#RevenueItemTypeId").val());
+                if (revenueItemTypeId == '@customerType') {
+                    renderCustomers();
+                    $("#customerdiv").show();
+                    $("#packagediv").hide();
+                    $("#testdiv").hide();
+                    $("#packageContainer").empty();
+                    $("#testContainer").empty();
+
+                }
+                else if (revenueItemTypeId == '@packageType') {
+                    $("#customerdiv").hide();
+                    $("#packagediv").show();
+                    $("#testdiv").hide();
+                    $("#testContainer").empty();
+                    $("#customerContainer").empty();
+                }
+                else if (revenueItemTypeId == '@testType') {
+                    $("#customerdiv").hide();
+                    $("#packagediv").hide();
+                    $("#testdiv").show();
+                    $("#packageContainer").empty();
+                    $("#customerContainer").empty();
+                }
+                else {
+                    $("#customerdiv").hide();
+                    $("#packagediv").hide();
+                    $("#testdiv").hide();
+                    $("#packageContainer").empty();
+                    $("#testContainer").empty();
+                    $("#customerContainer").empty();
+                }
+            }
+            
+            $("#btnAddPackages").click(assignPackages);
+            $("#btnAddTests").click(assignTests);
+            
+            function assignPackages() {
+
+                var key = $("#ddlPackage").val();
+                
+                if (parseInt(key) == -1) {
+                    alert("Please select a Package.");
+                    return false;
+                }
+
+                if (checkIfPackageAlreadySelected(parseInt(key))) {
+                    alert("Package already selected.");
+                    $("#ddlPackage option").first().attr("selected", true);
+                    return false;
+                }
+                else {
+                    createPackageListObject();
+                }
+
+                $("#ddlPackage option").first().attr("selected", true);
+
+                $("#divInfoBoxPackage").hide();
+
+                renderPackages();
+                return false;
+            }
+            function assignTests() {
+                var key = $("#ddlTest").val();
+
+                if (parseInt(key) == -1) {
+                    alert("Please select a Test.");
+                    return false;
+                }
+
+                if (checkIfTestAlreadySelected(parseInt(key))) {
+                    alert("Test already selected.");
+                    $("#ddlTest option").first().attr("selected", true);
+                    return false;
+                }
+                else {
+                    createTestListObject();
+                }
+
+                $("#ddlTest option").first().attr("selected", true);
+
+                $("#divInfoBoxTest").hide();
+
+                renderTests();
+                return false;
+            }
+            function checkIfPackageAlreadySelected(packageId) {
+
+                var isAlreadySelected = false;
+                if (packagesList != null && packagesList.length > 0) {
+
+                    $(packagesList).each(function (index, obj) {
+
+                        if (parseInt(obj.PackageId) === packageId && isAlreadySelected == false) {
+                            isAlreadySelected = true;
+                        }
+                    });
+                }
+                return isAlreadySelected;
+            }
+            function checkIfTestAlreadySelected(testId) {
+                var isAlreadySelected = false;
+                if (testsList != null && testsList.length > 0) {
+
+                    $(testsList).each(function (index, obj) {
+
+                        if (parseInt(obj.TestId) === testId && isAlreadySelected == false) {
+                            isAlreadySelected = true;
+                        }
+                    });
+                }
+                return isAlreadySelected;
+            }
+            function createPackageListObject() {
+
+                var key = $("#ddlPackage").val();
+                var text = $("#ddlPackage option:selected").text();
+
+                var itemAlreadyAdded = $("#packageContainer").find(".mini-container").length;
+
+                var packageObj = new Object();
+                packageObj.PackageId = key;
+                packageObj.PackageName = text;
+                packageObj.Key = itemAlreadyAdded;
+                packagesList.push(packageObj);
+                
+
+                var keys = new Array();
+                $(packagesList).each(function (index, obj) {
+                    obj.Key = index;
+                    keys.push(parseInt(obj.PackageId));
+                });
+                keys.sort();
+                var sortedAdditionalFieldList = new Array();
+
+                $(keys).each(function (index, keyobj) {
+                    $(packagesList).each(function (indexinner, obj) {
+                        if (parseInt(obj.PackageId) == keyobj) {
+                            obj.Key = index;
+                            sortedAdditionalFieldList.push(obj);
+                        }
+                    });
+                });
+                packagesList = new Array();
+                packagesList = sortedAdditionalFieldList;
+            }
+            
+            function createTestListObject() {
+
+                var key = $("#ddlTest").val();
+                var text = $("#ddlTest option:selected").text();
+
+                var itemAlreadyAdded = $("#testContainer").find(".mini-container").length;
+
+                var testObj = new Object();
+                testObj.TestId = key;
+                testObj.TestName = text;
+                testObj.Key = itemAlreadyAdded;
+                testsList.push(testObj);
+                
+
+                var keys = new Array();
+                $(testsList).each(function (index, obj) {
+                    obj.Key = index;
+                    keys.push(parseInt(obj.TestId));
+                });
+                keys.sort();
+                var sortedAdditionalFieldList = new Array();
+
+                $(keys).each(function (index, keyobj) {
+                    $(testsList).each(function (indexinner, obj) {
+                        if (parseInt(obj.TestId) == keyobj) {
+                            obj.Key = index;
+                            sortedAdditionalFieldList.push(obj);
+                        }
+                    });
+                });
+                
+                testsList = new Array();
+                testsList = sortedAdditionalFieldList;
+            }
+
+            function renderCustomers() {
+                customer = new Array();
+                var customerObj = new Object();
+                customerObj.Price = '';
+                customer.push(customerObj);
+                $("#customerContainer div.mini-container").remove();
+                $.each(customer, function (key, customerObj) {
+                    $("#customerTemplate").tmpl(customerObj).appendTo("#customerContainer");
+                });
+            }
+            function renderPackages() {
+                $("#packageContainer div.mini-container").remove();
+                $.each(packagesList, function (key, packagesObj) {
+                    $("#packageTemplate").tmpl(packagesObj).appendTo("#packageContainer");
+                });
+            }
+            function renderTests() {
+                $("#testContainer div.mini-container").remove();
+                $.each(testsList, function (key, testObj) {
+                    $("#testTemplate").tmpl(testObj).appendTo("#testContainer");
+                });
+            }
+
+            $("a.unAssignPackage").live("click", function () {
+
+                var element = $(this);
+
+                var packageId = parseInt($(element).closest(".mini-container").find("[name$='PackageId']").val());
+                
+                $($(element).closest(".mini-container")).remove();
+                var tempList = new Array();
+                var key = 0;
+                $(packagesList).each(function (index, obj) {
+                    if (parseInt(obj.PackageId) != packageId) {
+                        obj.Key = key;
+                        tempList.push(obj);
+                        key = key + 1;
+                    }
+                });
+
+                packagesList = tempList;
+
+                renderPackages();
+
+                if ($.isEmptyObject(packagesList)) {
+                    $("#divInfoBoxPackage").show();
+                }
+
+                return false;
+
+            });
+            $("a.unAssignTest").live("click", function () {
+
+                var element = $(this);
+
+                var testId = parseInt($(element).closest(".mini-container").find("[name$='TestId']").val());
+
+                $($(element).closest(".mini-container")).remove();
+                var tempList = new Array();
+                var key = 0;
+                $(testsList).each(function (index, obj) {
+                    if (parseInt(obj.TestId) != testId) {
+                        obj.Key = key;
+                        tempList.push(obj);
+                        key = key + 1;
+                    }
+                });
+
+                testsList = tempList;
+
+                renderTests();
+
+                if ($.isEmptyObject(testsList)) {
+                    $("#divInfoBoxTest").show();
+                }
+
+                return false;
+
+            });
+            function updatePackage(element) {
+
+                var packageId = parseInt($(element).closest(".mini-container").find("[name$='PackageId']").val());
+                var tempList = new Array();
+                $(packagesList).each(function (index, obj) {
+
+                    if (parseInt(obj.PackageId) === packageId) {
+                        obj.Price = $(element).val();
+                    }
+
+                    tempList.push(obj);
+                });
+
+                packagesList = tempList;
+            }
+            function updateTest(element) {
+
+                var testId = parseInt($(element).closest(".mini-container").find("[name$='TestId']").val());
+                var tempList = new Array();
+                $(testsList).each(function (index, obj) {
+
+                    if (parseInt(obj.TestId) === testId) {
+                        obj.Price = $(element).val();
+                    }
+
+                    tempList.push(obj);
+                });
+
+                testsList = tempList;
+            }
+            
+            function RemoveTest(element) {
+
+                var testId = parseInt($(element).closest(".mini-container").find("[name$='TestId']").val());
+
+                $($(element).closest(".mini-container")).remove();
+                var tempList = new Array();
+                var key = 0;
+                
+                $(testsList).each(function (index, obj) {
+                    if (parseInt(obj.TestId) != testId) {
+                        obj.Key = key;
+                        tempList.push(obj);
+                        key = key + 1;
+                    }
+                });
+
+                testsList = tempList;
+
+                renderTests();
+
+                if ($.isEmptyObject(testsList)) {
+                    $("#divInfoBoxTest").show();
+                }
+
+                return false;
+            }
+            
+            function RemovePackage(element) {
+                
+                var packageId = parseInt($(element).closest(".mini-container").find("[name$='PackageId']").val());
+                var miniContainerdivId = "#miniContainer" + packageId.toString();
+
+                $(miniContainerdivId).remove();
+                var tempList = new Array();
+                var key = 0;
+                $(packagesList).each(function (index, obj) {
+                    if (parseInt(obj.PackageId) != packageId) {
+                        obj.Key = key;
+                        tempList.push(obj);
+                        key = key + 1;
+                    }
+                });
+
+                packagesList = tempList;
+
+                renderPackages();
+
+                if ($.isEmptyObject(packagesList)) {
+                    $("#divInfoBoxPackage").show();
+                }
+
+                return false;
+            }
+            $("#DateFrom").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-10:+50"
+            });
+        </script>
+    }
+
+</fieldset>

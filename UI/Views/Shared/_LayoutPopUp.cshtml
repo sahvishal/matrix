@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+     <title>@ViewBag.Title</title>
+    <link rel='shortcut icon' href='/favicon.ico' type="image/x-icon" />
+    <link href="@Url.Content("/Content/Styles/Style.css")" rel="stylesheet" type="text/css" />    
+    <link type="text/css" href="@Url.Content("~/Content/Styles/jquery-ui-1.8.12.custom.css")" rel="Stylesheet" />
+    <link href="@Url.Content("/Content/Styles/Menu.css")" rel="stylesheet" type="text/css" />    
+    @RenderSection("css",false)
+    
+         
+    <script type="text/javascript" src="@Url.Content("/Scripts/jquery-1.5.2.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("/Scripts/jquery-ui-1.8.12.custom.min.js")"></script>
+    <script type="text/javascript" src="/App/jquery/js/jquery.hoverIntent.js"></script>
+    <script type="text/javascript" src="/Content/JavaScript/Menu.js"></script>
+    <script type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+</head>
+<body style="overflow: auto">
+    <div id="container">
+        <div id="content">
+            @RenderBody()
+        </div>
+    </div>
+</body>
+ @* please put all scripts at the end *@
+    @RenderSection("scripts", false)
+</html>

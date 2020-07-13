@@ -1,0 +1,100 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.MonarchAttestaionFormViewModel
+
+@{
+    Layout = null;
+}
+<style type="text/css">
+    #monarch-attestationForm .full-width-attes {
+        float: left;
+        width: 865px;
+        margin-top: 5px;
+    }
+
+    #monarch-attestationForm .half-width-attes {
+        float: left;
+        width: 432px;
+    }
+    #monarch-attestationForm .bold-underline-attes {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    #monarch-attestationForm .underline-attes {
+        text-decoration: underline;
+    }
+    #monarch-attestationForm .inline-bullets ul li {
+        display: inline-block;
+        list-style-type: disc;
+        list-style-position: outside;
+        float: left;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+</style>
+
+<div id="monarch-attestationForm" style="float: left; width: 97%; font-size: 18px; margin-top: 30px;padding-bottom: 30px;">
+    <div class="full-width-attes">
+        <div style="width: 99%;float: left;text-align: center;"><img src="/Content/Images/MonarchHealthCare_Attestation.png" /></div>
+    </div>
+    <div class="full-width-attes" style="margin-top: 18px; text-align: center; padding-bottom: 30px">
+        2017 HealthFair Mobile Vendor Member Screenings Completed
+    </div>
+    <div class="full-width-attes" style="font-size: 18px; padding-bottom: 15px;padding-left: 50px;">
+        <div style="width: 140px; float: left;">
+            Member Name:
+        </div>
+        <div style="width: 550px; float: left;">
+            <input type="text" style="border: none; border-bottom: 1px solid black;width:595px;" value="@Model.MemberName"/>
+        </div>
+    </div>
+    <div class="full-width-attes" style="font-size: 18px; padding-bottom: 15px; padding-left: 50px;">
+        <div style="width: 140px; float: left; ">
+            Member DOB:
+        </div>
+        <div style="width: 550px; float: left;">
+            <input type="text" style="border: none; border-bottom: 1px solid black;width:595px;" value="@(Model.Dob.HasValue? Model.Dob.Value.ToShortDateString() : string.Empty)" />
+        </div>
+    </div>
+    <div class="full-width-attes" style="font-size: 18px; padding-bottom: 15px; padding-left: 50px;">
+        <div style="width: 140px; float: left; ">
+            Member Id:
+        </div>
+        <div style="width: 550px; float: left;">
+            <input type="text" style="border: none; border-bottom: 1px solid black;width:595px;" value="@Model.MemberId" />
+        </div>
+    </div>
+    <div class="full-width-attes" style="font-size: 18px; padding-bottom: 15px; padding-left: 50px;">
+        <div style="width: 140px; float: left; ">
+            Screening Date:
+        </div>
+        <div style="width: 550px; float: left;">
+            <input type="text" style="border: none; border-bottom: 1px solid black;width:595px;" value="@Model.ScreeningDate.ToShortDateString()" />
+        </div>
+    </div>
+    <div class="full-width-attes" style="font-size: 18px;; padding-left: 50px;">
+        Screening(s) completed (check all that apply):
+    </div>
+    <div class="full-width-attes" style="font-size: 18px; padding-left: 70px;">
+        <ul style="text-decoration: none;list-style: none;">
+            <li style="padding-bottom: 20px">
+                <b><input type="checkbox" /> DPN Neurometrix</b>
+            </li>
+            <li style ="padding-bottom: 20px">
+                <b><input type="checkbox" /> QuantaFlo</b>
+            </li>
+            <li style="padding-bottom: 20px">
+                <b><input type="checkbox" /> Spirometry</b>
+            </li>
+        </ul>
+    </div>
+    <div class="full-width-attes" style="padding-top: 40px; float: left; font-size: 18px; padding-left: 50px; ">
+        <div style="width: 99%;padding-bottom: 15px;"><u><b>Instruction to HealthFair:</b></u></div>
+        Please complete member information above, and return (as page 2 of individual member packet) with Attestation, progress note, and all applicable screening test reports.
+    </div>
+    <div class="full-width-attes" style="padding-top: 400px; float: left; font-size: 18px; padding-left: 50px; ">
+        <div style="text-align: center;" class="inline-bullets">
+            11 Technology Drive <span style="font-size: 10px;padding-bottom: 5px;">&#9670;</span> Irvine <span style="font-size: 10px;">&#9670;</span> California <span style="font-size: 10px;">&#9670;</span> 92618 
+        </div>
+    </div>
+</div>
+

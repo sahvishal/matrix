@@ -1,0 +1,27 @@
+@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.HealthPlanCallQueueListModelFilter
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 40%">
+        <div class="small-text">
+                HealthPlan:
+        </div>        
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width: 85%" })
+    </div>
+    <div class="editor-column" style="width: 40%">
+        <div class="small-text">
+            Call Queue:
+        </div>
+        @{
+            var userSession = IoC.Resolve<ISessionContext>().UserSession;
+        }
+        @Html.DropDownListFor(m => m.CallQueueId, DropDownHelper.GetAllHealthPlanCallQueue(userSession.CurrentOrganizationRole.GetSystemRoleId), new { @style = "width: 85%" })
+    </div>
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "ManageCriteria", "HealthPlanCallQueueCriteria") | @Html.SubmitButton("Search")
+    </div>
+</div>

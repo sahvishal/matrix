@@ -1,0 +1,1913 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{674848DB-9FE6-4C62-BA79-F77A69E1FFC0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Falcon.App.Infrastructure</RootNamespace>
+    <AssemblyName>Falcon.App.Infrastructure</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Testing\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\Falcon.App.Infrastructure.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;d:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;d:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'qa-hf|AnyCPU'">
+    <OutputPath>bin\qa-hf\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'prod-hf|AnyCPU'">
+    <OutputPath>bin\prod-hf\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v100|AnyCPU'">
+    <OutputPath>bin\v100\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip1-hf|AnyCPU'">
+    <OutputPath>bin\hip1-hf\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip3-hf|AnyCPU'">
+    <OutputPath>bin\hip3-hf\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev-hf|AnyCPU'">
+    <OutputPath>bin\dev-hf\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ABCpdf, Version=10.1.0.7, Culture=neutral, PublicKeyToken=a7a0b3f5184f2169, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\WebSupergoo\ABCpdf .NET 10.1 x64\ABCpdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AuthorizeNet">
+      <HintPath>..\..\lib\AuthorizeNet.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\lib\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.CryptoExt, Version=1.7.4114.6378, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle-Ext.1.7.0\lib\net20\BouncyCastle.CryptoExt.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="eFaxDeveloper">
+      <HintPath>..\..\lib\eFaxDeveloper.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation">
+      <HintPath>..\packages\FluentValidation.5.5.0.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\..\lib\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.6.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\..\lib\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MongoDB.Bson">
+      <HintPath>..\..\lib\Mongo-CSharpDriver-1.7.0.4714\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver">
+      <HintPath>..\..\lib\Mongo-CSharpDriver-1.7.0.4714\MongoDB.Driver.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="opendicom-sharp">
+      <HintPath>..\..\lib\Dicom\opendicom-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine">
+      <HintPath>..\..\lib\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Renci.SshNet, Version=2016.0.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\packages\SSH.NET.2016.0.0\lib\net40\Renci.SshNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.LinqSupportClasses.NET35, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SD.LLBLGen.Pro.LinqSupportClasses.NET35.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses.NET20, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SD.LLBLGen.Pro.ORMSupportClasses.NET20.dll</HintPath>
+    </Reference>
+    <Reference Include="StackExchange.Redis.StrongName">
+      <HintPath>..\packages\StackExchange.Redis.StrongName.1.2.1\lib\net45\StackExchange.Redis.StrongName.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Twilio.Api, Version=3.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Twilio.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Zen.Barcode.Core">
+      <HintPath>..\..\lib\Zen.Barcode.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ACL\Impl\AccessControlCacheHelper.cs" />
+    <Compile Include="ACL\Impl\AccessControlHelper.cs" />
+    <Compile Include="ACL\Impl\AuthorizeEntity.cs" />
+    <Compile Include="ACL\Impl\RoleAccessControlListService.cs" />
+    <Compile Include="Application\Impl\AppContextStore.cs" />
+    <Compile Include="Application\Impl\ApplicationAuthenticationService.cs" />
+    <Compile Include="Application\Impl\DateAddedSettingManager.cs" />
+    <Compile Include="Application\Impl\DeleteExportableReportsPollingAgent.cs" />
+    <Compile Include="Application\Impl\ResultPdfEmailNotificationHelper.cs" />
+    <Compile Include="Application\Impl\PgpFileEncryption.cs" />
+    <Compile Include="Application\Impl\PgpFileEncryptionHelper.cs" />
+    <Compile Include="Application\Impl\PipeDelimitedReportHelper.cs" />
+    <Compile Include="Application\Impl\RedisConnection.cs" />
+    <Compile Include="Application\Impl\ResultPdfFileHelper.cs" />
+    <Compile Include="Application\Impl\SftpCridentialManager.cs" />
+    <Compile Include="Application\Impl\SingleSessionHelper.cs" />
+    <Compile Include="ACL\Repositories\AccessControlObjectUrlRepository.cs" />
+    <Compile Include="ACL\Repositories\AccessControlObjectRepository.cs" />
+    <Compile Include="ACL\Repositories\RoleAccessControlObjectRepository.cs" />
+    <Compile Include="Application\Extensions\AutoMapperExtensions.cs" />
+    <Compile Include="Application\Extensions\PredicateExtensions.cs" />
+    <Compile Include="Application\Impl\AutoMapperBootstrapper.cs" />
+    <Compile Include="Application\Impl\BarCodeGenerator.cs" />
+    <Compile Include="Application\Impl\CdContentCreator.cs" />
+    <Compile Include="Application\Impl\CsvReader.cs" />
+    <Compile Include="Application\Impl\CustomSettingManager.cs" />
+    <Compile Include="Application\Impl\DicomExtractor.cs" />
+    <Compile Include="Application\Impl\ExcelReader.cs" />
+    <Compile Include="Application\Impl\FileHelper.cs" />
+    <Compile Include="Application\Impl\HttpCache.cs" />
+    <Compile Include="Application\Impl\LookupRepository.cs" />
+    <Compile Include="Application\Impl\MovieMaker.cs" />
+    <Compile Include="Application\Impl\NLogLogManager.cs" />
+    <Compile Include="Application\Impl\MediaRepository.cs" />
+    <Compile Include="Application\Impl\NLogLogger.cs" />
+    <Compile Include="Application\Impl\OrderingSortingHelper.cs" />
+    <Compile Include="Application\Impl\PDFGenerator.cs" />
+    <Compile Include="Application\Impl\PdftoImageConverter.cs" />
+    <Compile Include="Application\Impl\ProcessFtp.cs" />
+    <Compile Include="Application\Impl\Repository.cs" />
+    <Compile Include="Application\Impl\Scope.cs" />
+    <Compile Include="Application\Impl\Settings.cs" />
+    <Compile Include="Application\Impl\SqlPersistenceLayer.cs" />
+    <Compile Include="Application\Impl\SvgToImageConverter.cs" />
+    <Compile Include="Application\Impl\TraleApiService.cs" />
+    <Compile Include="Application\Impl\UniqueItemRepository.cs" />
+    <Compile Include="Application\Impl\XmlSerializer.cs" />
+    <Compile Include="Application\Impl\ZipHelper.cs" />
+    <Compile Include="Application\Repositories\ApplicationAuthenticationRepository.cs" />
+    <Compile Include="Application\Repositories\NotesRepository.cs" />
+    <Compile Include="Application\Repositories\ToolTipRepository.cs" />
+    <Compile Include="Audit\IActivityLogFactory.cs" />
+    <Compile Include="Audit\Impl\ActivityLogFactory.cs" />
+    <Compile Include="Audit\Impl\ActivityLogService.cs" />
+    <Compile Include="Audit\Impl\ActivityLogViewService.cs" />
+    <Compile Include="Audit\Impl\ReflectionFactory.cs" />
+    <Compile Include="Audit\IReflectionFactory.cs" />
+    <Compile Include="CallCenter\Factories\AgentConversionReportFactory.cs" />
+    <Compile Include="CallCenter\Factories\CallCenterTeamListModelFactory.cs" />
+    <Compile Include="CallCenter\Factories\CallQueueCustomerPubFactory.cs" />
+    <Compile Include="CallCenter\Factories\CallUploadListModelFactory.cs" />
+    <Compile Include="CallCenter\Factories\CampaignListModelFactory.cs" />
+    <Compile Include="CallCenter\Impl\AnthemHomeVisitRequestedCustomerExportPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\AnthemIncorrectPhoneNumberPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\ApplyRulesOnLockedCustomersPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\BcbsMiHomeVisitRequestExportPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\BcbsMiIncorrectPhoneExportPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\CallCenterExportableReportHelper.cs" />
+    <Compile Include="CallCenter\Impl\CallCenterReportsPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\CallCenterTeamService.cs" />
+    <Compile Include="CallCenter\Impl\CallQueueCustomerPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\CallQueueCustomerPublisher.cs" />
+    <Compile Include="CallCenter\Impl\CallSkippedReportFactory.cs" />
+    <Compile Include="CallCenter\Impl\CallSkippedReportService.cs" />
+    <Compile Include="CallCenter\Impl\CallUploadFileParserPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\CallUploadHelper.cs" />
+    <Compile Include="CallCenter\Impl\CallUploadRuleEngine.cs" />
+    <Compile Include="CallCenter\Impl\CallUploadService.cs" />
+    <Compile Include="CallCenter\Impl\CampaignFactory.cs" />
+    <Compile Include="CallCenter\Impl\CampaignService.cs" />
+    <Compile Include="CallCenter\Impl\GmsCallParserHelper.cs" />
+    <Compile Include="CallCenter\Impl\GmsCallParserPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\HealthPlanHomeVisitRequestedCustomerExportPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\HealthPlanIncorrectPhoneExportPollingAgent.cs" />
+    <Compile Include="CallCenter\Impl\HealthPlanOutreachCallReportPollingAgent.cs" />
+    <Compile Include="CallCenter\Repositories\CallCenterAgentTeamLogRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CallCenterNotesRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CallCenterRepMetricDetailRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CallCenterRepMetricRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CallCenterRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CallCenterRepRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CallCenterTeamRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CampaignActivityAssignmentRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CampaignActivityRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CampaignAssignmentRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CampaignRepository.cs" />
+    <Compile Include="CallCenter\Repositories\DirectMailRepository.cs" />
+    <Compile Include="CallCenter\Repositories\HealthPlanCriteriaAssignmentUploadRepository.cs" />
+    <Compile Include="CallCenter\Repositories\HealthPlanCriteriaTeamAssignmentRepository.cs" />
+    <Compile Include="CallCenter\Repositories\ScriptRepository.cs" />
+    <Compile Include="CallQueues\Factories\AccountCallQueueSettingFactory.cs" />
+    <Compile Include="CallQueues\Factories\CallCenterCallReportListModelFactory.cs" />
+    <Compile Include="CallQueues\Factories\CallQueueExcludedCustomerReportListModelFactory.cs" />
+    <Compile Include="CallQueues\Factories\CallQueueListModelFactory.cs" />
+    <Compile Include="CallQueues\Factories\CallQueueReportListModelFactory.cs" />
+    <Compile Include="CallQueues\Factories\GmsCallQueueCustomerModelFactory.cs" />
+    <Compile Include="CallQueues\Factories\HealthPlanCallQueueReportListModelFactory.cs" />
+    <Compile Include="CallQueues\Factories\MailRoundCustomersReportFactory.cs" />
+    <Compile Include="CallQueues\Factories\OutboundCallQueueListModelFactory.cs" />
+    <Compile Include="CallQueues\Factories\OutreachCallReportListModelFactory.cs" />
+    <Compile Include="CallQueues\Factories\ProspectCustomerFactory.cs" />
+    <Compile Include="CallQueues\Factories\UncontactedCustomersListModelFactory.cs" />
+    <Compile Include="CallQueues\Impl\AnnualCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\CallCenterReportService.cs" />
+    <Compile Include="CallQueues\Impl\CallQueueCustomerContactService.cs" />
+    <Compile Include="CallQueues\Impl\CallQueueCustomerDetailService.cs" />
+    <Compile Include="CallQueues\Impl\CallQueueCustomerEqualityComparer.cs" />
+    <Compile Include="CallQueues\Impl\CallQueueCustomerHelper.cs" />
+    <Compile Include="CallQueues\Impl\CallQueueCustomerReportFactory.cs" />
+    <Compile Include="CallQueues\Impl\CallQueueCustomerReportService.cs" />
+    <Compile Include="CallQueues\Impl\CallQueuePatientInfomationFactory.cs" />
+    <Compile Include="CallQueues\Impl\CallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\CallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\CallRoundCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\ConfirmationCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\ConfirmationCallQueueService.cs" />
+    <Compile Include="CallQueues\Factories\CustomerWithNoEventsInAreaReportListModelFactory.cs" />
+    <Compile Include="CallQueues\Impl\ConfirmationReportingFactory.cs" />
+    <Compile Include="CallQueues\Impl\ConfirmationReportingService.cs" />
+    <Compile Include="CallQueues\Impl\CustomerCallQueueCallAttemptService.cs" />
+    <Compile Include="CallQueues\Impl\DeletePastEventCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\DeletePastEventSystemGeneratedCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\EasiestToConvertCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\EventZipProductTypePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\EventZipProductTypeService.cs" />
+    <Compile Include="CallQueues\Impl\EventZipProductTypeSubstitutePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\FillEventsCallQueueHelper.cs" />
+    <Compile Include="CallQueues\Impl\FillEventsCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\GmsCallQueueCustomerReportPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\GmsExcludedCustomerPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\GmsExcludedCustomerService.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCallQueueCriteriaEditModelFactory.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCallQueueCriteriaService.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCallQueueCustomerHelper.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCallQueueForFillEventsPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCallRoundService.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanConfirmationQueueNotGeneratedPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanConfirmationQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCriteriaDirectMailService.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCriteriaForDeletionPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanCustomerExportService.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanEventZipForQueueNotGeneratedPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanEventZipPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\AccountEventZipSubstituteRegenerationPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanEventZipService.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanExportCustomerViewModelFactory.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanFillEventCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanLanguageBarrierPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanMailRoundCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanOutboundCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\HealthPlanUncontactedCustomersCallqueue.cs" />
+    <Compile Include="CallQueues\Impl\HourlyOutreachCallReportPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\HourlyOutreachReportingService.cs" />
+    <Compile Include="CallQueues\Impl\HousecallOutreachCallReportPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\LanguageBarrierRegeneratePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\MailRoundCustomersReportPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\NoShowCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\PreAssessmentCallQueuePatientInfomationFactory.cs" />
+    <Compile Include="CallQueues\Impl\PreAssessmentCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\PreAssessmentReportingFactory.cs" />
+    <Compile Include="CallQueues\Impl\PreAssessmentReportingService.cs" />
+    <Compile Include="CallQueues\Impl\PullBackPreAssessmentCallQueueCustomerPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\SystemGeneratedCallQueueCriteriaService.cs" />
+    <Compile Include="CallQueues\Impl\FillEventsCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\OutboundCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\PullBackCallQueueCustomerPollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\SystemGeneratedCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\CallBackCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\UncontactedCustomersRegeneratePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\UpsellCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Impl\UpsellCallQueueService.cs" />
+    <Compile Include="CallQueues\Impl\ZipRadiusCallQueuePollingAgent.cs" />
+    <Compile Include="CallQueues\Repositories\AccountCallQueueSettingRepository.cs" />
+    <Compile Include="CallQueues\Repositories\AccountEventZipReposiory.cs" />
+    <Compile Include="CallQueues\Repositories\CallQueueAssignmentRepository.cs" />
+    <Compile Include="CallQueues\Repositories\CallQueueCriteriaRepository.cs" />
+    <Compile Include="CallQueues\Repositories\CallQueueCustomerCallRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallQueues\Repositories\CallQueueCustomerLockRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallQueues\Repositories\CallQueueCustomerRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallQueues\Repositories\CallQueueRepository.cs" />
+    <Compile Include="CallQueues\Repositories\CallRoundCallQueueCriteriaAssignmentRepository.cs" />
+    <Compile Include="CallQueues\Repositories\CallRoundCallQueueRepository.cs" />
+    <Compile Include="CallQueues\Repositories\CriteriaRepository.cs" />
+    <Compile Include="CallQueues\Repositories\CustomerCallAttemptsRepository.cs" />
+    <Compile Include="CallQueues\Repositories\CustomerCallQueueCallAttemptRepository.cs" />
+    <Compile Include="CallQueues\Repositories\CustomerLockForCallRepository.cs" />
+    <Compile Include="CallQueues\Repositories\EventZipProductTypeRepository.cs" />
+    <Compile Include="CallQueues\Repositories\ExcludedCustomerRepository.cs" />
+    <Compile Include="CallQueues\Repositories\FillEventCallQueueCriteriaAssignmentRepository.cs" />
+    <Compile Include="CallQueues\Repositories\FillEventCallQueueRepository.cs" />
+    <Compile Include="CallQueues\Repositories\GmsExcludedCustomerRepository.cs" />
+    <Compile Include="CallQueues\Repositories\HealthPlanCallQueueAssignmentRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallQueues\Repositories\HealthPlanCallQueueCriteriaRepository.cs" />
+    <Compile Include="CallQueues\Repositories\HealthPlanCriteriaAssignmentRepository.cs" />
+    <Compile Include="CallQueues\Repositories\HealthPlanCriteriaDirectMailRepository.cs" />
+    <Compile Include="CallQueues\Repositories\HealthPlanEventZipRepository.cs" />
+    <Compile Include="CallQueues\Repositories\HealthPlanFillEventCallQueueRepository.cs" />
+    <Compile Include="CallQueues\Repositories\LanguageBarrierCallQueueCriteriaAssignmentRepository.cs" />
+    <Compile Include="CallQueues\Repositories\LanguageBarrierCallQueueRepository.cs" />
+    <Compile Include="CallQueues\Repositories\MailRoundCallQueueCriteriaAssignmentRepository.cs" />
+    <Compile Include="CallQueues\Repositories\MailRoundCallQueueRepository.cs" />
+    <Compile Include="CallQueues\Repositories\NoShowCallQueueCriteriaAssignmentRepository.cs" />
+    <Compile Include="CallQueues\Repositories\NoShowCallQueueRepository.cs" />
+    <Compile Include="CallQueues\Repositories\PreAssessmentCallQueueCustomerLockRepository.cs" />
+    <Compile Include="CallQueues\Repositories\PreAssessmentCustomerCallQueueCallAttemptRepository.cs" />
+    <Compile Include="CallQueues\Repositories\SystemGeneratedCallQueueAssignmentRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallQueues\Repositories\SystemGeneratedCallQueueCriteriaRepository.cs" />
+    <Compile Include="CallQueues\Repositories\UncontactedCustomerCallQueueCriteriaAssignmentRepository.cs" />
+    <Compile Include="CallQueues\Repositories\UncontactedCustomerCallQueueRepository.cs" />
+    <Compile Include="CCD\Impl\CcdVitalSectionFactory.cs" />
+    <Compile Include="CCD\Impl\ClinicalDocumentFactory.cs" />
+    <Compile Include="CCD\Impl\ClinicalDocumentHelper.cs" />
+    <Compile Include="CCD\Impl\ClinicalDocumentReportingService.cs" />
+    <Compile Include="Communication\EmailNotificationModelsFactory.cs" />
+    <Compile Include="Communication\EmailTemplateFormatter.cs" />
+    <Compile Include="Communication\Factories\EmailTemplateEditModelFactory.cs" />
+    <Compile Include="Communication\Impl\CustomEventNotificationRepository.cs" />
+    <Compile Include="Communication\Impl\EFaxApi.cs" />
+    <Compile Include="Communication\Impl\EFaxHelperService.cs" />
+    <Compile Include="Communication\Impl\EmailTemplateService.cs" />
+    <Compile Include="Communication\Impl\EventCustomerCustomNotificationRepository.cs" />
+    <Compile Include="Communication\Impl\EventCustomNotificationPollingAgent.cs" />
+    <Compile Include="Communication\Impl\PhysicianPartnerSendFaxPollingAgent.cs" />
+    <Compile Include="Communication\Impl\SmsReceivedNotificationService.cs" />
+    <Compile Include="Communication\Impl\SmtpCredentials.cs" />
+    <Compile Include="Communication\Impl\TwilioMessagePollingAgent.cs" />
+    <Compile Include="Communication\Impl\TwilioMessagingService.cs" />
+    <Compile Include="Communication\Mappers\CommonNotificationPopulator.cs" />
+    <Compile Include="Communication\Mappers\EmailTemplateMapper.cs" />
+    <Compile Include="Communication\Mappers\NotificationEmailMapper.cs" />
+    <Compile Include="Communication\Mappers\NotificationMapper.cs" />
+    <Compile Include="Communication\Mappers\NotificationMediumMapper.cs" />
+    <Compile Include="Communication\Mappers\NotificationPhoneMapper.cs" />
+    <Compile Include="Communication\Mappers\NotificationSubscriberMapper.cs" />
+    <Compile Include="Communication\Mappers\NotificationTypeMapper.cs" />
+    <Compile Include="Communication\NotificationEmailSender.cs" />
+    <Compile Include="Communication\Repositories\CustomerUnsubscribedSmsNotificationRepository.cs" />
+    <Compile Include="Communication\Repositories\EmailTemplateMacroRepository.cs" />
+    <Compile Include="Communication\Repositories\EmailTemplateRepository.cs" />
+    <Compile Include="Communication\Repositories\EventCustomerNotificationRepository.cs" />
+    <Compile Include="Communication\Repositories\EventNotificationRepository.cs" />
+    <Compile Include="Communication\Repositories\NotificationMediumRepository.cs" />
+    <Compile Include="Communication\Repositories\NotificationRepository.cs" />
+    <Compile Include="Communication\Repositories\NotificationSubscriberRepository.cs" />
+    <Compile Include="Communication\Repositories\NotificationTypeRepository.cs" />
+    <Compile Include="Communication\Repositories\SmsReceivedRepository.cs" />
+    <Compile Include="Communication\Repositories\TemplateMacroRepository.cs" />
+    <Compile Include="Communication\Impl\PhoneNotificationModelsFactory.cs" />
+    <Compile Include="Deprecated\EventCustomerConversionController.cs" />
+    <Compile Include="Deprecated\Factories\ECallFactory.cs" />
+    <Compile Include="Deprecated\Factories\EAddressFactory.cs" />
+    <Compile Include="Deprecated\Factories\EventCustomerFindingFactory.cs" />
+    <Compile Include="Deprecated\Repository\CallCenterCallRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CallUploadRepository.cs" />
+    <Compile Include="CallCenter\Repositories\CallUploadLogRepository.cs" />
+    <Compile Include="Deprecated\Repository\EventCustomerFindingRepository.cs" />
+    <Compile Include="Application\Impl\BaseReportPollingAgent.cs" />
+    <Compile Include="Application\Impl\ConvertSvgToImagePolingAgent.cs" />
+    <Compile Include="Factories\Screening\AwvFluShotTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\ChlamydiaTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\QvTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\CsTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\DpnTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\FluShotTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\FocTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\MammogramTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\MyBioAssessmentTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\PneumococcalTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\QuantaFloABITestResultFactory.cs" />
+    <Compile Include="Factories\Screening\UrineMicroalbuminTestResultFactory.cs" />
+    <Compile Include="Factories\Users\CustomerProfileHistoryFactory.cs" />
+    <Compile Include="Finance\Factories\DailyPatientRecapListModelFactory.cs" />
+    <Compile Include="Finance\Factories\GiftCertificateWellmedReportFactory.cs" />
+    <Compile Include="Finance\Factories\GiftCertificateOptumReportFactory.cs" />
+    <Compile Include="Finance\Impl\CallCenterBonusReportingFactory.cs" />
+    <Compile Include="Finance\Impl\CallCenterBounsReportingService.cs" />
+    <Compile Include="Finance\Impl\DailyPatientRecapReportPollingAgent.cs" />
+    <Compile Include="Finance\Impl\GiftCerificateWellmedReportService.cs" />
+    <Compile Include="Finance\Impl\GiftCerificateOptumReportService.cs" />
+    <Compile Include="Finance\Impl\GiftCertificateWellmedPollingAgent.cs" />
+    <Compile Include="Finance\Impl\HealthPlanRevenueFactory.cs" />
+    <Compile Include="Finance\Impl\HealthPlanRevenueHelper.cs" />
+    <Compile Include="Finance\Impl\HealthplanRevenueListFactory.cs" />
+    <Compile Include="Finance\Impl\HealthPlanRevenueService.cs" />
+    <Compile Include="Finance\Impl\FinanceExportableReportHelper.cs" />
+    <Compile Include="Finance\Impl\PayPeriodBookedCustomerFactory.cs" />
+    <Compile Include="Finance\Impl\PayPeriodFactory.cs" />
+    <Compile Include="Finance\Impl\PayPeriodService.cs" />
+    <Compile Include="Finance\Impl\GiftCertificateOptumPollingAgent.cs" />
+    <Compile Include="Finance\Repositories\HealthPlanRevenueItemRepository.cs" />
+    <Compile Include="Finance\Repositories\HealthPlanRevenueRepository.cs" />
+    <Compile Include="Finance\Repositories\PayPeriodCriteriaRepository.cs" />
+    <Compile Include="Finance\Repositories\PayPeriodRepository.cs" />
+    <Compile Include="Geo\Impl\ZipRadiusDistanceRepository.cs" />
+    <Compile Include="InboundReport\Impl\CrosswalkInboundReportFactory.cs" />
+    <Compile Include="InboundReport\Impl\CrosswalkLabInboundReportPollingAgent.cs" />
+    <Compile Include="InboundReport\Impl\InterviewInboundReportFactory.cs" />
+    <Compile Include="InboundReport\Impl\CrosswalkInboundReportPollingAgent.cs" />
+    <Compile Include="InboundReport\Impl\InterviewInboundReportPollingAgent.cs" />
+    <Compile Include="InboundReport\Impl\CrosswalkInboundReportService.cs" />
+    <Compile Include="InboundReport\Impl\InterviewInboundReportService.cs" />
+    <Compile Include="InboundReport\Impl\LabsInboundReportFactory.cs" />
+    <Compile Include="InboundReport\Impl\BarrierInboundReportFactory.cs" />
+    <Compile Include="InboundReport\Impl\LabsInboundReportPollingAgent.cs" />
+    <Compile Include="InboundReport\Impl\LabsInboundReportService.cs" />
+    <Compile Include="InboundReport\Impl\BarrierInboundReportService.cs" />
+    <Compile Include="InboundReport\Impl\ConditionInboundReportFactory.cs" />
+    <Compile Include="InboundReport\Impl\BarrierInboundReportPollingAgent.cs" />
+    <Compile Include="InboundReport\Impl\ConditionInboundReportPollingAgent.cs" />
+    <Compile Include="InboundReport\Impl\ConditionInboundReportService.cs" />
+    <Compile Include="InboundReport\Impl\ResponseVendorReportFactory.cs" />
+    <Compile Include="InboundReport\Impl\ResponseVendorReportPollingAgent.cs" />
+    <Compile Include="InboundReport\Impl\ResponseVendorReportService.cs" />
+    <Compile Include="Insurance\Impl\PatientKareoIntegrationPollingAgent.cs" />
+    <Compile Include="Mappers\EventCustomerViewMapper.cs" />
+    <Compile Include="Marketing\Impl\CustomerResultPosedService.cs" />
+    <Compile Include="Marketing\Impl\DirectMailActivityReminderPollingAgent.cs" />
+    <Compile Include="Marketing\Repositories\CustomerResultPostedRepository.cs" />
+    <Compile Include="Marketing\Repositories\DirectMailTypeRepository.cs" />
+    <Compile Include="Medical\Factories\CustomTestPerformedListModelFactory.cs" />
+    <Compile Include="Medical\Factories\DiabeticRetinopathyParserlogFactory.cs" />
+    <Compile Include="Medical\Factories\EventCustomerQuestionAnswerFactory.cs" />
+    <Compile Include="Medical\Factories\HouseCallHafResultExportFactory.cs" />
+    <Compile Include="Medical\Factories\MedicationFactory.cs" />
+    <Compile Include="Medical\Factories\MemberUploadbyAcesFailedCustomerFactory.cs" />
+    <Compile Include="Medical\Factories\PatientWithNoCustomTagFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportAwvLipidFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportBoneMassFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportQuantaFloABIFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportDiabeticNeuropathyFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportDiabeticRetinopathyFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportAwvHemoglobinFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportDpnFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportFlushotFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportHemoglobinA1CFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportIfobtFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportLeadFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportMammographyFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportOsteoporosisFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportUrineMicroalbuminFactory.cs" />
+    <Compile Include="Medical\Factories\BcbsMiPcpResultMailedReportListModelFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultMailedReportListModelFactory.cs" />
+    <Compile Include="Medical\Factories\PcpSummaryLogReportListModelFactory.cs" />
+    <Compile Include="Medical\Factories\PreQualifiedQuestionTemplateFactory.cs" />
+    <Compile Include="Medical\Factories\SurveyQuestionAnswerEditModelFactory.cs" />
+    <Compile Include="Medical\Factories\TestNotPerformedFactory.cs" />
+    <Compile Include="Medical\Factories\TestPerformedExternallyFactory.cs" />
+    <Compile Include="Medical\Impl\ActivityTypeService.cs" />
+    <Compile Include="Medical\Impl\AnthemCaResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\AnthemResultExportService.cs" />
+    <Compile Include="Medical\Impl\AnthemResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\ChatAssessmentApiService.cs" />
+    <Compile Include="Medical\Impl\AwvAAAResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\AwvEkgResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\BcbsMemberResultMailedReportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BcbsMiPcpResultMailedReportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BcbsMiResultExportService.cs" />
+    <Compile Include="Medical\Impl\BcbsMiResultPdfDownloadPdfAgent.cs" />
+    <Compile Include="Medical\Impl\BcbsMnPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BcbsResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BcbsScResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BioSound2AaaParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2AwvAaaParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2AwvCarotidParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2EchoParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2HcpAaaParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2HcpCarotidParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2ImtParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2LeadParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2PpAaaParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2ResultParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2StrokeParser.cs" />
+    <Compile Include="Medical\Impl\BioSound2ThyroidParser.cs" />
+    <Compile Include="Medical\Impl\BiWeeklyMicroAlbuminFobtPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BiWeeklyMicroAlbuminFobtReportFactory.cs" />
+    <Compile Include="Medical\Impl\BiWeeklyMicroAlbuminFobtReportService.cs" />
+    <Compile Include="Medical\Impl\BloodResultParsePollingAgent.cs" />
+    <Compile Include="Medical\Impl\BloodResultParser.cs" />
+    <Compile Include="Medical\Impl\ChaperoneService.cs" />
+    <Compile Include="Medical\Impl\ChatAssessmentService.cs" />
+    <Compile Include="Medical\Impl\CheckListTemplateService.cs" />
+    <Compile Include="Medical\Impl\CustomerWithDuplicateAcesIdFileGenerator.cs" />
+    <Compile Include="Medical\Impl\SendMediaFileHelper.cs" />
+    <Compile Include="Medical\Impl\CopyMediaResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\CorporateEventResultReadyNotificationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BcbsMiTestPerformedReportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\CorporateUploadService.cs" />
+    <Compile Include="Medical\Impl\CustomTestPerformedReportService.cs" />
+    <Compile Include="Medical\Impl\DpnParser.cs" />
+    <Compile Include="Medical\Impl\ExitInterviewService.cs" />
+    <Compile Include="Medical\Impl\FluConsentSignatureRepository.cs" />
+    <Compile Include="Medical\Impl\ParticipationConsentSignatureRepository.cs" />
+    <Compile Include="Medical\Impl\EventCustomerGiftCardRepository.cs" />
+    <Compile Include="Medical\Impl\EventCustomerQuestionAnswerService.cs" />
+    <Compile Include="Medical\Impl\EventCustomerResultHistoryFactory.cs" />
+    <Compile Include="Medical\Impl\GenerateTestPdfHelper.cs" />
+    <Compile Include="Medical\Impl\FluConsentService.cs" />
+    <Compile Include="Medical\Impl\ParticipationConsentService.cs" />
+    <Compile Include="Medical\Impl\GiftCardService.cs" />
+    <Compile Include="Medical\Impl\LabReportParserPollingAgent.cs" />
+    <Compile Include="Medical\Impl\LabReportParser.cs" />
+    <Compile Include="Medical\Impl\DiabeticRetinopathyParserlogPollingAgent.cs" />
+    <Compile Include="Medical\Impl\DiabeticRetinopathyParserlogService.cs" />
+    <Compile Include="Medical\Impl\EawvHraParser.cs" />
+    <Compile Include="Medical\Impl\EawvHraParserPollingAgent.cs" />
+    <Compile Include="Medical\Impl\EkgCardioCardFileParser.cs" />
+    <Compile Include="Medical\Impl\EventArchiveStatsFactory.cs" />
+    <Compile Include="Medical\Impl\EventArchiveStatsService.cs" />
+    <Compile Include="Medical\Impl\FloridaBlueResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\HafGenerationPublisher.cs" />
+    <Compile Include="Medical\Impl\HafGenerationService.cs" />
+    <Compile Include="Medical\Impl\HafGenerationSubscriber.cs" />
+    <Compile Include="Medical\Impl\HealthNowResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\HkynXmlPollingAgent.cs" />
+    <Compile Include="Medical\Impl\HouseCallHafResultExportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\HouseCallHafResultExportService.cs" />
+    <Compile Include="Medical\Impl\ImportFilesForHafGenerationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\LabFormService.cs" />
+    <Compile Include="Medical\Impl\LeadResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\ManualAuditAndEnteryService.cs" />
+    <Compile Include="Medical\Impl\MarkFailedResultArchiveUploadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MedicalExportableReportHelper.cs" />
+    <Compile Include="Medical\Impl\MedicalReportsPollingAgent.cs" />
+    <Compile Include="Finance\Impl\FinanceReportsPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MedicationUploadFileParserPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MedicationUploadHelper.cs" />
+    <Compile Include="Medical\Impl\BcbsMiMemberResultMailedReportFactory.cs" />
+    <Compile Include="Medical\Impl\MemberResultMailedReportFactory.cs" />
+    <Compile Include="Medical\Impl\BcbsMiMemberResultMailedReportService.cs" />
+    <Compile Include="Medical\Impl\MemberResultMailedReportService.cs" />
+    <Compile Include="Medical\Impl\MemberTermByAbsencePublisher.cs" />
+    <Compile Include="Medical\Impl\MemberTermByAbsenceService.cs" />
+    <Compile Include="Medical\Impl\MemberTermByAbsenceSubscriber.cs" />
+    <Compile Include="Medical\Impl\MemberUploadByAcesHelper.cs" />
+    <Compile Include="Medical\Impl\MemberUploadbyAcesPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MonarchResultPdfToWellmedDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MyBioChekAssesmentPollingAgent.cs" />
+    <Compile Include="Medical\Impl\NtspResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Application\Impl\BaseExportableReportHelper.cs" />
+    <Compile Include="Application\Impl\BaseReportService.cs" />
+    <Compile Include="Medical\Impl\OptumResultExportService.cs" />
+    <Compile Include="Medical\Impl\OptumResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\OptumResultZipCreationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\PatientInputFileFactory.cs" />
+    <Compile Include="Medical\Impl\PatientInputFilePollingAgent.cs" />
+    <Compile Include="Medical\Impl\PatientInputFileService.cs" />
+    <Compile Include="Medical\Impl\BcbsMiPcpResultMailedReportService.cs" />
+    <Compile Include="Medical\Impl\PcpResultMailedReportService.cs" />
+    <Compile Include="Medical\Impl\PcpSummaryLogReportService.cs" />
+    <Compile Include="Medical\Impl\PhysicianLabTestRepository.cs" />
+    <Compile Include="Medical\Impl\PhysicianRecordRequestService.cs" />
+    <Compile Include="Medical\Impl\PhysicianRecordRequestSignatureRepository.cs" />
+    <Compile Include="Medical\Impl\PotentialPcpChangePollingAgent.cs" />
+    <Compile Include="Medical\Impl\PotentialPcpChangeReportFactory.cs" />
+    <Compile Include="Medical\Impl\PotentialPcpChangeReportService.cs" />
+    <Compile Include="Medical\Impl\PreQualifiedQuestionTemplateEditModelValidator.cs" />
+    <Compile Include="Medical\Impl\ResultPacketGeneratorAfterPhysicianEvaluationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\SendTestMediaFilesService.cs" />
+    <Compile Include="Medical\Impl\SendTestMediaFilesPublisher.cs" />
+    <Compile Include="Medical\Impl\SendTestMediaFilesSubscriber.cs" />
+    <Compile Include="Medical\Impl\SpiroParser.cs" />
+    <Compile Include="Medical\Impl\SurveyTemplateEditModelValidator.cs" />
+    <Compile Include="Medical\Impl\SurveyTemplateService.cs" />
+    <Compile Include="Medical\Repositories\ActivityTypeRepository.cs" />
+    <Compile Include="Medical\Repositories\ChaperoneAnswerRepository.cs" />
+    <Compile Include="Medical\Repositories\ChaperoneQuestionRepository.cs" />
+    <Compile Include="Medical\Repositories\ChaperoneSignatureRepository.cs" />
+    <Compile Include="Medical\Repositories\ConsentSignatureRepository.cs" />
+    <Compile Include="Medical\Repositories\DependentDisqualifiedTestRepository.cs" />
+    <Compile Include="Medical\Impl\PreQualifiedQuestionTemplateService.cs" />
+    <Compile Include="Medical\Impl\QuantaFloABIParser.cs" />
+    <Compile Include="Medical\Impl\RapsUploadFileParserPollingAgent.cs" />
+    <Compile Include="Medical\Impl\RapsUploadHelper.cs" />
+    <Compile Include="Medical\Impl\SuspectConditionService.cs" />
+    <Compile Include="Medical\Impl\SuspectConditionUploadHelper.cs" />
+    <Compile Include="Medical\Impl\SyncResultsReadyForCodingPollingAgent.cs" />
+    <Compile Include="Medical\Interfaces\IEventCustomerResultHistoryFactory.cs" />
+    <Compile Include="Medical\Impl\SendNotiificationToNursePractitionerPollingAgent.cs" />
+    <Compile Include="Medical\Repositories\DisqualifiedTestRepository.cs" />
+    <Compile Include="Medical\Repositories\EventCustomerQuestionAnswerRepository.cs" />
+    <Compile Include="Medical\Repositories\EventCustomerResultBloodLabParserRepository.cs" />
+    <Compile Include="Medical\Repositories\ExitInterviewAnswerRepository.cs" />
+    <Compile Include="Medical\Repositories\FluConsentAnswerRepository.cs" />
+    <Compile Include="Medical\Repositories\ExitInterviewQuestionRepository.cs" />
+    <Compile Include="Medical\Repositories\FluConsentQuestionRepository.cs" />
+    <Compile Include="Medical\Repositories\FluConsentTemplateRepository.cs" />
+    <Compile Include="Medical\Repositories\PreQualificationQuestionRuleRepository.cs" />
+    <Compile Include="Medical\Repositories\PreQualificationQuestionRepository.cs" />
+    <Compile Include="Medical\Repositories\PreQualificationTemplateDependentTestRepository.cs" />
+    <Compile Include="Medical\Repositories\PreQualificationTestTemplateRepository.cs" />
+    <Compile Include="Medical\Repositories\TestPerformedExternallyRepository.cs" />
+    <Compile Include="Medical\Repositories\SurveyAnswerRepository.cs" />
+    <Compile Include="Medical\Repositories\SurveyQuestionRepository.cs" />
+    <Compile Include="Medical\Repositories\SurveyTemplateRepository.cs" />
+    <Compile Include="Medicare\Impl\NewResultFlowStateService.cs" />
+    <Compile Include="Medicare\Impl\SyncSuspectConditionPollingAgent.cs" />
+    <Compile Include="Medical\Impl\TestNotPerformedHelper.cs" />
+    <Compile Include="Medical\Impl\TestNotPerformedReportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\TestNotPerformedService.cs" />
+    <Compile Include="Medical\Impl\TestPerformedCsvExportHelper.cs" />
+    <Compile Include="Medical\Impl\TestPerformedReportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\WellCarePcpSummaryLogEasyChoiceReportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\WellCarePcpSummaryLogReportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\WellCareResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\WellCareToWellmedResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Interfaces\IHouseCallHafResultExportFactory.cs" />
+    <Compile Include="Medical\Repositories\AccountNotReviewableTestRepository.cs" />
+    <Compile Include="Medical\Repositories\CheckListAnswerRepository.cs" />
+    <Compile Include="Medical\Repositories\CheckListGroupRepository.cs" />
+    <Compile Include="Medical\Repositories\CheckListQuestionRepository.cs" />
+    <Compile Include="Medical\Repositories\CheckListTemplateRepository.cs" />
+    <Compile Include="Medical\Repositories\CustomerEventTestStateRepository.cs" />
+    <Compile Include="Medical\Repositories\CustomerTraleRepository.cs" />
+    <Compile Include="Medical\Repositories\DiabeticRetinopathyParserlogRepository.cs" />
+    <Compile Include="Medical\Repositories\EventCustomerCriticalQuestionRepository.cs" />
+    <Compile Include="Medical\Repositories\EventCustomerPrimaryCarePhysicianRepository.cs" />
+    <Compile Include="Medical\Repositories\EventCustomerResultTraleRepository.cs" />
+    <Compile Include="Medical\Repositories\EventCustomerRetestRepository.cs" />
+    <Compile Include="Medical\Repositories\EventCustomerTestNotPerformedNotificationRepository.cs" />
+    <Compile Include="Medical\Repositories\MedicationRepository.cs" />
+    <Compile Include="Medical\Repositories\MedicationUploadLogRepository.cs" />
+    <Compile Include="Medical\Repositories\MedicationUploadRepository.cs" />
+    <Compile Include="Medical\Repositories\SuspectConditionRepository.cs" />
+    <Compile Include="Medical\Repositories\SuspectConditionUploadLogRepository.cs" />
+    <Compile Include="Medical\Repositories\SuspectConditionUploadRepository.cs" />
+    <Compile Include="Medical\Repositories\TestHcpcsCodeRepository.cs" />
+    <Compile Include="Medical\Repositories\HcpcsCodeRepository.cs" />
+    <Compile Include="Medical\Repositories\RapsRepository.cs" />
+    <Compile Include="Medical\Repositories\RapsUploadLogRepository.cs" />
+    <Compile Include="Medical\Repositories\RapsUploadRepository.cs" />
+    <Compile Include="Medical\Repositories\TestNotPerformedReasonRepository.cs" />
+    <Compile Include="Medical\Repositories\TestNotPerformedRepository.cs" />
+    <Compile Include="Medical\Repositories\UnitRepository.cs" />
+    <Compile Include="Medicare\Impl\MedicareApiService.cs" />
+    <Compile Include="Medicare\Impl\MedicareFactory.cs" />
+    <Compile Include="Medicare\Impl\MedicareOrderService.cs" />
+    <Compile Include="Medicare\Impl\MedicareService.cs" />
+    <Compile Include="Medicare\Impl\SyncEventTestPollingAgent.cs" />
+    <Compile Include="Medicare\Impl\SyncMedicationPollingAgent.cs" />
+    <Compile Include="Medicare\Impl\SyncRapsPollingAgent.cs" />
+    <Compile Include="Medicare\Impl\SyncUserCredentialsPollingAgent.cs" />
+    <Compile Include="Medicare\Impl\SyncCustomerResultPollingAgent.cs" />
+    <Compile Include="Medicare\Impl\SyncHealthPlanPollingAgent.cs" />
+    <Compile Include="Medicare\Impl\SyncCustomerPollingAgent.cs" />
+    <Compile Include="Operations\Factories\ExportableReportsQueueFactory.cs" />
+    <Compile Include="Operations\Factories\MergeCustomerUploadListModelFactory.cs" />
+    <Compile Include="Operations\Factories\StaffEventScheduleUploadListModelFactory.cs" />
+    <Compile Include="Operations\Impl\CheckListQuestionAnswerEditModelFactory.cs" />
+    <Compile Include="Operations\Impl\CustomerCheckListService.cs" />
+    <Compile Include="Operations\Impl\CustomerEligibilityUploadPollingAgent.cs" />
+    <Compile Include="Operations\Impl\CustomerShippingService.cs" />
+    <Compile Include="Operations\Impl\ExportableReportsQueueService.cs" />
+    <Compile Include="Operations\Impl\MergeCustomerPollingAgent.cs" />
+    <Compile Include="Operations\Impl\MergeCustomerUploadHelper.cs" />
+    <Compile Include="Operations\Impl\ParsePatientDataFromAcesPollingAgent.cs" />
+    <Compile Include="Operations\Impl\StaffEventScheduleExportService.cs" />
+    <Compile Include="Operations\Impl\StaffEventScheduleParsePollingAgent.cs" />
+    <Compile Include="Operations\Repositories\MergeCustomerUploadLogRepository.cs" />
+    <Compile Include="Operations\Impl\MergeCustomerUploadService.cs" />
+    <Compile Include="Operations\Repositories\MergeCustomerUploadRepository.cs" />
+    <Compile Include="Operations\Repositories\StaffEventScheduleUploadLogRepository.cs" />
+    <Compile Include="Operations\Repositories\StaffEventScheduleUploadRepository.cs" />
+    <Compile Include="OutboundReport\Impl\DiagnosisReportFactory.cs" />
+    <Compile Include="OutboundReport\Impl\DiagnosisReportParsingPollingAgent.cs" />
+    <Compile Include="OutboundReport\Impl\LoincCrosswalkPollingAgent.cs" />
+    <Compile Include="OutboundReport\Impl\LoincLabDataPollingAgent.cs" />
+    <Compile Include="OutboundReport\Impl\PatientDetailReportParsingPollingAgent.cs" />
+    <Compile Include="OutboundReport\Impl\CareCodingOutboundParsePollingAgent.cs" />
+    <Compile Include="OutboundReport\Impl\CareCodingOutboundFactory.cs" />
+    <Compile Include="OutboundReport\Impl\ChaseOutboundFactory.cs" />
+    <Compile Include="OutboundReport\Impl\ChaseOutboundParsePollingAgent.cs" />
+    <Compile Include="OutboundReport\Impl\OutboundFileImportPollingAgent.cs" />
+    <Compile Include="OutboundReport\Impl\PreApprovedTestUpdatePollingAgent.cs" />
+    <Compile Include="OutboundReport\Repositories\CareCodingOutboundRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\ChaseCampaignRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\ChaseChannelLevelRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\ChaseGroupRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\ChaseOutboundRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\ChaseCampaignTypeRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\ChaseProductRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\EventCustomerDiagnosisRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\LoincCrosswalkRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\LoincLabDataRepository.cs" />
+    <Compile Include="OutboundReport\Repositories\OutboundUploadRepository.cs" />
+    <Compile Include="Repositories\Screening\QvTestRepository.cs" />
+    <Compile Include="Repositories\Screening\CsTestRepository.cs" />
+    <Compile Include="Repositories\Screening\DpnTestRepository.cs" />
+    <Compile Include="Repositories\Screening\EventCustomerResultHistoryRepository.cs" />
+    <Compile Include="Repositories\Screening\FocTestRepository.cs" />
+    <Compile Include="Repositories\Screening\MyBioAssessmentTestRepository.cs" />
+    <Compile Include="Sales\Factories\CustomerPhoneNumberListModelFactory.cs" />
+    <Compile Include="Sales\Factories\EligibilityUploadListModelFactory.cs" />
+    <Compile Include="Sales\Factories\EventScheduleReportFactory.cs" />
+    <Compile Include="Sales\Impl\CustomerOrderHistoryService.cs" />
+    <Compile Include="Sales\Impl\EligibilityUploadParsePollingAgent.cs" />
+    <Compile Include="Sales\Impl\NonTargetableReportPollingAgent.cs" />
+    <Compile Include="Sales\Impl\PhoneNumberUpdatePollingAgent.cs" />
+    <Compile Include="Sales\Impl\PhoneNumberUpdateUploadHelper.cs" />
+    <Compile Include="Sales\Repositories\CustomerOrderHistoryRepository.cs" />
+    <Compile Include="Sales\Repositories\CustomerPhoneNumberUpdateUploadLogRepository.cs" />
+    <Compile Include="Sales\Repositories\CustomerPhoneNumberUpdateUploadRepository.cs" />
+    <Compile Include="Sales\Repositories\CustomerPredictedZipRespository.cs" />
+    <Compile Include="Sales\Repositories\EligibilityUploadRepository.cs" />
+    <Compile Include="Sales\Repositories\MemberUploadLogRepository.cs" />
+    <Compile Include="Sales\Services\EligibilityUploadService.cs" />
+    <Compile Include="Sales\Services\NonTargetableReportService.cs" />
+    <Compile Include="Sales\Services\PhoneNumberUploadService.cs" />
+    <Compile Include="Scheduling\Facotries\AddEventNoteFactory.cs" />
+    <Compile Include="Scheduling\Facotries\HiptoAcesCrossWalkFactory.cs" />
+    <Compile Include="Scheduling\Facotries\PcpTrackingReportFactory.cs" />
+    <Compile Include="Scheduling\Facotries\CustomAppointmentsBookedModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\GiftCertificateReportFactory.cs" />
+    <Compile Include="Scheduling\Facotries\MapEventListModelFactory.cs" />
+    <Compile Include="Scheduling\Impl\AnthemAppointmentBookedExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\AppointmentBookedExportCsvHelper.cs" />
+    <Compile Include="Scheduling\Impl\AppointmentBookedReportingService.cs" />
+    <Compile Include="Scheduling\Impl\AppointmentEncounterFactory.cs" />
+    <Compile Include="Scheduling\Impl\AppointmentEncounterPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\AppointmentEncounterService.cs" />
+    <Compile Include="Scheduling\Impl\BcbsMiAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\BioCheckJsonForFailedCustomersPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\BioCheckJsonGeneratorPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\CorporateUploadHelper.cs" />
+    <Compile Include="Scheduling\Impl\CustomerActivityTypeUploadPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\CustomerConsentDataReportService.cs" />
+    <Compile Include="Scheduling\Impl\CustomerLeftWithoutScreeningService.cs" />
+    <Compile Include="Scheduling\Impl\CustomerScheduleCsvHelper.cs" />
+    <Compile Include="Scheduling\Impl\DailyVolumeReportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\EventListGmsPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\EventScheduleReportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\GenerateHkynXmlPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\HcpCaAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\HealthPlanGiftCertificateReportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\HiptoAcesCrossWalkPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\HiptoAcesCrossWalkService.cs" />
+    <Compile Include="Scheduling\Impl\ImportEventFilesPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\MyBioCheckAssessmentJsonHelper.cs" />
+    <Compile Include="Scheduling\Impl\OptumAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\ParseHkynPdfPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\ParseWellmedLockedEventFilePollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\ParseMonarchAttesationFormPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\PcpTrackingReportService.cs" />
+    <Compile Include="Scheduling\Impl\TimeZoneHelper.cs" />
+    <Compile Include="Scheduling\Impl\UniversalMemberPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\UniversalMemberReportService.cs" />
+    <Compile Include="Scheduling\Impl\UniversalProviderPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\UniversalProviderReportService.cs" />
+    <Compile Include="Scheduling\Impl\WellCareToWellmedAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\WellmedMemberStatusReportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\WellmedCatalystAppointmentsBookedExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Repositories\BarrierRepository.cs" />
+    <Compile Include="Scheduling\Repositories\CustomerActivityTypeUploadRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventCustomerCurrentMedicationRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventCustomerIcdCodesRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventNoteRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventProductTypeRepository.cs" />
+    <Compile Include="Scheduling\Repositories\GcNotGivenReasonRepository.cs" />
+    <Compile Include="Scheduling\Repositories\RequiredTestRepository.cs" />
+    <Compile Include="Scheduling\Repositories\RescheduleCancelDispositionRepository.cs" />
+    <Compile Include="Scheduling\Services\CorporateCustomerUploadService.cs" />
+    <Compile Include="Scheduling\Services\CustomerActivityTypeUploadService.cs" />
+    <Compile Include="Scheduling\Services\CustomerBarrierService.cs" />
+    <Compile Include="Service\CustomAppointmentBookedReportingService.cs" />
+    <Compile Include="Service\EventProductTypeService.cs" />
+    <Compile Include="Service\HourlyAppointmentBookedReportingService.cs" />
+    <Compile Include="Service\HourlyAppointmentBookedReportPollingAgent.cs" />
+    <Compile Include="Users\Factories\AccountCallCenterOrganizationFactory.cs" />
+    <Compile Include="Users\Factories\AccountHraChatQuestionnaireFactory.cs" />
+    <Compile Include="Users\Factories\MemberUploadParseDetailFactory.cs" />
+    <Compile Include="Users\Impl\AccountCheckoutPhoneNumberFactory.cs" />
+    <Compile Include="Users\Impl\AccountHraChatQuestionnaireRepository.cs" />
+    <Compile Include="Users\Impl\AccountHraChatQuestionnaireHistoryServices.cs" />
+    <Compile Include="Users\Impl\CustomerRegistrationHelper.cs" />
+    <Compile Include="Scheduling\Impl\SendConsentDataPollingAgent.cs" />
+    <Compile Include="Users\Impl\MemberUploadParsePollingAgent.cs" />
+    <Compile Include="Users\Impl\PinChangeLogService.cs" />
+    <Compile Include="Users\Impl\UserDeactivationByLastLogInPollingAgent.cs" />
+    <Compile Include="Users\Interfaces\ICustomerProfileHistoryFactory.cs" />
+    <Compile Include="Users\Mappers\GuardianMapper.cs" />
+    <Compile Include="Users\Mappers\PhysicianLabTestMapper.cs" />
+    <Compile Include="Users\Repositories\AccountCallCenterOrganizationRepository.cs" />
+    <Compile Include="Users\Repositories\AccountCheckoutPhoneNumberRepository.cs" />
+    <Compile Include="Users\Repositories\CallCenterRepProfileRepository.cs" />
+    <Compile Include="Users\Repositories\CustomerAccountGlocomNumberRepository.cs" />
+    <Compile Include="Users\Repositories\CustomerEligibilityRepository.cs" />
+    <Compile Include="Users\Repositories\CustomerProfileHistoryRepository.cs" />
+    <Compile Include="Users\Repositories\CustomerTargetedRepository.cs" />
+    <Compile Include="Users\Repositories\CustomerWarmTransferRepository.cs" />
+    <Compile Include="Users\Repositories\GuardianRepository.cs" />
+    <Compile Include="Users\Repositories\MemberUploadParseDetailRepository.cs" />
+    <Compile Include="Users\Repositories\PinChangeLogRepository.cs" />
+    <Compile Include="Users\Repositories\SystemUserInfoRepository.cs" />
+    <Compile Include="Users\Repositories\UserNpiInfoRepository.cs" />
+    <Compile Include="Users\Repositories\RelationshipRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvFluShotTestRepository.cs" />
+    <Compile Include="Repositories\Screening\ChlamydiaTestRepository.cs" />
+    <Compile Include="Repositories\Screening\FluShotTestRepository.cs" />
+    <Compile Include="Repositories\Screening\PneumococcalTestRepository.cs" />
+    <Compile Include="Repositories\Screening\QuantaFloABITestRepository.cs" />
+    <Compile Include="Sales\Factories\DailyVolumeFactory.cs" />
+    <Compile Include="Sales\Impl\CorporateAccountCustomerFactory.cs" />
+    <Compile Include="Sales\Impl\CorporateTagPollingAgent.cs" />
+    <Compile Include="Sales\Impl\CustomTagFactory.cs" />
+    <Compile Include="Sales\Impl\CustomTagService.cs" />
+    <Compile Include="Scheduling\Facotries\MemberStatusModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\CustomerLeftWithoutScreeningModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\TextReminderModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\VoiceMailReminderModelFactory.cs" />
+    <Compile Include="Scheduling\Impl\CancellationRescheduleAppointmentNotificationService.cs" />
+    <Compile Include="Scheduling\Impl\CorporateEventCustomerFactory.cs" />
+    <Compile Include="Scheduling\Impl\CustomerNotesService.cs" />
+    <Compile Include="Scheduling\Impl\HealthPlanMemberStatusReportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\MartinPointDailyAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\GapsClosureModelFactory.cs" />
+    <Compile Include="Scheduling\Impl\SchedulingExportableReportHelper.cs" />
+    <Compile Include="Application\Impl\ExportableReportsPollingAgent.cs" />
+    <Compile Include="Operations\Repositories\ExportableReportsQueueRepository.cs" />
+    <Compile Include="Operations\Repositories\ExportableReportsRepository.cs" />
+    <Compile Include="Repositories\Screening\MammogramTestRepository.cs" />
+    <Compile Include="Repositories\Screening\UrineMicroalbuminTestRepository.cs" />
+    <Compile Include="Sales\Impl\SalesReportsPollingAgent.cs" />
+    <Compile Include="Sales\Repositories\CorporateUploadRepository.cs" />
+    <Compile Include="Scheduling\Facotries\PcpAppointmentViewModelFactory.cs" />
+    <Compile Include="Scheduling\Repositories\CurrentMedicationRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventCustomerPreApprovedPackageTestRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventCustomerPreApprovedTestRepository.cs" />
+    <Compile Include="Scheduling\Repositories\NdcRepository.cs" />
+    <Compile Include="Scheduling\Repositories\PcpAppointmentRepository.cs" />
+    <Compile Include="Scheduling\Repositories\PcpDispositionRepository.cs" />
+    <Compile Include="Service\EventCustomerPreApprovedTestService.cs" />
+    <Compile Include="Users\Factories\AccountCoordinatorProfileFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Users\Impl\AccountNotReviewableTestFactory.cs" />
+    <Compile Include="Users\Impl\CorporateAccountDashboardFactory.cs" />
+    <Compile Include="Users\Impl\UserReportsPollingAgent.cs" />
+    <Compile Include="Application\Impl\PdfGeneratorPollingAgent.cs" />
+    <Compile Include="Application\Impl\MovieMakerPollingAgent.cs" />
+    <Compile Include="Marketing\Impl\MarketingReportsPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\SchedulingReportsPollingAgent.cs" />
+    <Compile Include="Factories\Events\EventCustomerViewDataFactory.cs" />
+    <Compile Include="Factories\Events\EventMetricsViewDataFactory.cs" />
+    <Compile Include="Factories\Events\EventCustomerFilterPredicateFactory.cs" />
+    <Compile Include="Factories\Events\EventCustomerRegistrationViewDataFactory.cs" />
+    <Compile Include="Factories\Events\EventFilterPredicateFactory.cs" />
+    <Compile Include="Factories\Events\EventHostViewDataFactory.cs" />
+    <Compile Include="Factories\Screening\AwvAaaTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvAbiTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvBoneMassTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvCarotidTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvEchocardiogramTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvEkgIppeTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvEkgTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvGlucoseTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvHemaglobinTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvLipidTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvSpiroTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvSubsequentTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\AwvTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\CholesterolTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\CrpTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\CustomerScreeningViewDataFactory.cs" />
+    <Compile Include="Factories\Screening\DiabetesFootExamTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\DiabetesTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\DiabeticNeuropathyTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\DiabeticRetinopathyTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\EAwvTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\EchocardiogramTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\FloChecABITestResultFactory.cs" />
+    <Compile Include="Factories\Screening\FocAttestationTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\GlaucomaTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\HcpAaaTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\HcpCarotidTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\HcpEchocardiogramTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\HearingTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\HemaglobinTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\HemoglobinTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\IFOBTTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\HPyloriTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\HypertensionTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\ImtTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\LeadTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\MedicareTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\MenBloodPanelTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\MonofilamentTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\Phq9TestResultFactory.cs" />
+    <Compile Include="Factories\Screening\PpAaaTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\PpEchocardiogramTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\PsaTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\PulmonaryFunctionTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\QualityMeasuresTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\RinneWeberHearingTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\SpiroTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\TestosteroneTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\ThyroidTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\VisionTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\VitaminDTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\WomenBloodPanelTestResultFactory.cs" />
+    <Compile Include="Finance\Factories\CdImageStatusModelFactory.cs" />
+    <Compile Include="Finance\Factories\CreditCardReconcileListModelFactory.cs" />
+    <Compile Include="Finance\Factories\DailyRecapModelFactory.cs" />
+    <Compile Include="Finance\Factories\DeferredRevenueListModelFactory.cs" />
+    <Compile Include="Finance\Factories\InsurancePaymentListModelFactory.cs" />
+    <Compile Include="Finance\Factories\ItemizedReceiptModelFactory.cs" />
+    <Compile Include="Finance\Factories\RefundRequestListModelFactory.cs" />
+    <Compile Include="Finance\Factories\ShippingRevenueSummaryListModelFactory.cs" />
+    <Compile Include="Finance\Impl\CancellationFeeOrderItemTraits.cs" />
+    <Compile Include="Finance\Impl\CustomerReceiptModelService.cs" />
+    <Compile Include="Finance\Impl\DailyPatientRecapReportingService.cs" />
+    <Compile Include="Finance\Impl\ECheckService.cs" />
+    <Compile Include="Finance\Impl\EventPackageOrderItemTraits.cs" />
+    <Compile Include="Finance\Impl\EventTestOrderItemTraits.cs" />
+    <Compile Include="Finance\Impl\FinanceReportingService.cs" />
+    <Compile Include="Finance\Impl\GiftCertificateOrderItemTraits.cs" />
+    <Compile Include="Finance\Impl\GiftCertificateService.cs" />
+    <Compile Include="Finance\Impl\OrderController.cs" />
+    <Compile Include="Finance\Impl\OrderSummaryService.cs" />
+    <Compile Include="Finance\Impl\PaymentController.cs" />
+    <Compile Include="Finance\Impl\ProductOrderItemTraits.cs" />
+    <Compile Include="Finance\Impl\RefundOrderItemTraits.cs" />
+    <Compile Include="Finance\Impl\RefundRequestService.cs" />
+    <Compile Include="Finance\Interfaces\IHostDepositFactory.cs" />
+    <Compile Include="Finance\Interfaces\IHostPaymentFactory.cs" />
+    <Compile Include="Finance\Interfaces\IMedicalVendorEarningAggregateFactory.cs" />
+    <Compile Include="Finance\Interfaces\IMedicalVendorEarningCustomerAggregateFactory.cs" />
+    <Compile Include="Finance\Interfaces\IMedicalVendorInvoiceBaseFactory.cs" />
+    <Compile Include="Finance\Interfaces\IMedicalVendorInvoiceFactory.cs" />
+    <Compile Include="Finance\Interfaces\IMedicalVendorInvoiceItemFactory.cs" />
+    <Compile Include="Finance\Interfaces\IMedicalVendorInvoiceStatisticFactory.cs" />
+    <Compile Include="Finance\Interfaces\IOrderItemTraits.cs" />
+    <Compile Include="Finance\Interfaces\IOrderItemTraitsFactory.cs" />
+    <Compile Include="Finance\Interfaces\IOrderViewDataFactory.cs" />
+    <Compile Include="Finance\Interfaces\IPaymentInstrumentFactory.cs" />
+    <Compile Include="Finance\Mappers\InsurancePaymentMapper.cs" />
+    <Compile Include="Finance\Mappers\PaymentInstructionMapper.cs" />
+    <Compile Include="Finance\Repositories\HostDepositRepository.cs" />
+    <Compile Include="Finance\Repositories\HostPaymentRepository.cs" />
+    <Compile Include="Finance\Repositories\HostPaymentTransactionRepository.cs" />
+    <Compile Include="Finance\Repositories\InsurancePaymentRepository.cs" />
+    <Compile Include="Finance\Repositories\PaymentInstructionRepository.cs" />
+    <Compile Include="Finance\Repositories\RefundRequestRepository.cs" />
+    <Compile Include="Geo\IAddressFactory.cs" />
+    <Compile Include="Geo\Impl\AddressRepository.cs" />
+    <Compile Include="Geo\Impl\AddressService.cs" />
+    <Compile Include="Geo\Impl\CityRepository.cs" />
+    <Compile Include="Geo\Impl\CountryRepository.cs" />
+    <Compile Include="Geo\Impl\StateRepository.cs" />
+    <Compile Include="Geo\Impl\TerritoryRepository.cs" />
+    <Compile Include="Geo\Impl\ZipCodeRepository.cs" />
+    <Compile Include="Factories\Order\OrderViewDataFactory.cs" />
+    <Compile Include="Factories\Payment\PaymentViewDataFactory.cs" />
+    <Compile Include="Factories\PrintOrder\PrintOrderFactory.cs" />
+    <Compile Include="Factories\PrintOrder\PrintOrderItemFactory.cs" />
+    <Compile Include="Factories\PrintOrder\PrintOrderItemTrackingViewData.cs" />
+    <Compile Include="Factories\Screening\AAATestResultFactory.cs" />
+    <Compile Include="Factories\Screening\ASITestResultFactory.cs" />
+    <Compile Include="Factories\Screening\OsteoporosisTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\PackageSelectionViewDataFactory.cs" />
+    <Compile Include="Factories\Screening\PackageViewDataFactory.cs" />
+    <Compile Include="Factories\Screening\PadTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\StrokeTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\TestViewDataFactory.cs" />
+    <Compile Include="Factories\Shipping\EventCustomerShippingDetailViewDataFactory.cs" />
+    <Compile Include="Factories\PrintOrder\PrintOrderItemViewDataFactory.cs" />
+    <Compile Include="Factories\Users\CustomerEventRegistrationViewDataFactory.cs" />
+    <Compile Include="Factories\Users\CustomerFactory.cs" />
+    <Compile Include="Factories\Hosts\HostDepositFactory.cs" />
+    <Compile Include="Factories\Users\CutomerTestimonailAggregateFactory.cs" />
+    <Compile Include="Factories\Users\EventCustomerPackageTestDetailViewDataFactory.cs" />
+    <Compile Include="Factories\Users\ProspectCustomerViewDataFactory.cs" />
+    <Compile Include="Geo\Impl\ZipDataRepository.cs" />
+    <Compile Include="Geo\ITerritoryFactory.cs" />
+    <Compile Include="Insurance\Impl\ClaimPollingAgent.cs" />
+    <Compile Include="Insurance\Impl\EligibilityApi.cs" />
+    <Compile Include="Insurance\Impl\EligibilityService.cs" />
+    <Compile Include="Insurance\Impl\EncounterPollingAgent.cs" />
+    <Compile Include="Insurance\Impl\KareoApi.cs" />
+    <Compile Include="Insurance\Repositories\BillingAccountRepository.cs" />
+    <Compile Include="Insurance\Repositories\ClaimRepository.cs" />
+    <Compile Include="Insurance\Repositories\CustomerBillingAccountRepository.cs" />
+    <Compile Include="Insurance\Repositories\EligibilityRepository.cs" />
+    <Compile Include="Insurance\Repositories\EncounterRepository.cs" />
+    <Compile Include="Insurance\Repositories\InsuranceCompanyRepository.cs" />
+    <Compile Include="Insurance\Repositories\InsuranceServiceTypeRepository.cs" />
+    <Compile Include="Mappers\Events\EventTestMapper.cs" />
+    <Compile Include="Mappers\Orders\ElectronicProductMapper.cs" />
+    <Compile Include="Mappers\Orders\PhysicalProductMapper.cs" />
+    <Compile Include="Mappers\Territories\PodTerritoryMapper.cs" />
+    <Compile Include="Marketing\Impl\MarketingSourceService.cs" />
+    <Compile Include="Marketing\Impl\OnlinePackageService.cs" />
+    <Compile Include="Marketing\Impl\UniqueSourceCodeGenerator.cs" />
+    <Compile Include="Marketing\Interfaces\IClickConversionReportCampaignFilter.cs" />
+    <Compile Include="Marketing\Interfaces\IPackageSelectionViewDataFactory.cs" />
+    <Compile Include="Marketing\Interfaces\IPackageViewDataFactory.cs" />
+    <Compile Include="Marketing\Interfaces\IPrintOrderFactory.cs" />
+    <Compile Include="Marketing\Interfaces\IPrintOrderItemFactory.cs" />
+    <Compile Include="Marketing\Interfaces\IPrintOrderItemViewDataFactory.cs" />
+    <Compile Include="Marketing\Interfaces\IProspectCustomerViewDataFactory.cs" />
+    <Compile Include="Marketing\Interfaces\IPrintOrderItemTrackingViewDataFactory.cs" />
+    <Compile Include="Marketing\MarketingSourceMapper.cs" />
+    <Compile Include="Marketing\Repositories\AffiliateCommisionGenerationRepository.cs" />
+    <Compile Include="Marketing\Repositories\ClickConversionRepository.cs" />
+    <Compile Include="Marketing\Repositories\MarketingSourceRepository.cs" />
+    <Compile Include="Marketing\Repositories\PackageTestRepository.cs" />
+    <Compile Include="Medical\Factories\CustomerEventCriticalDataFactory.cs" />
+    <Compile Include="Medical\Factories\CustomerEventCriticalTestDataFactory.cs" />
+    <Compile Include="Medical\Factories\EventCustomerResultStatusListFactory.cs" />
+    <Compile Include="Medical\Factories\EventResultStatusListFactory.cs" />
+    <Compile Include="Medical\Factories\EventScreeningAuthorizationEditModelFactory.cs" />
+    <Compile Include="Medical\Factories\HealthAssessmentFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportPhq9Factory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportQualityMeasuresFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportVisionFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportHypertensionFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportAwvSpiroFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportAwvEkgFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportAwvEchoFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportAwvCarotidFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportAwvAbiFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianEventQueueListFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianPartnerResultExportAaaFactory.cs" />
+    <Compile Include="Medical\Factories\PcpResultExportAwvAaaFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianPartnerResultExportEchoFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianPartnerResultExportFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianPartnerResultExportLeadFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianPartnerResultExportSpiroFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianQueueListFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianReviewListFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianReviewSummaryListFactory.cs" />
+    <Compile Include="Medical\Factories\PhysicianTestReviewListFactory.cs" />
+    <Compile Include="Medical\Factories\TechnicalLimitedScreeningCustomerFactory.cs" />
+    <Compile Include="Medical\Factories\TestPerformedListModelFactory.cs" />
+    <Compile Include="Medical\IHealthAssessmentFactory.cs" />
+    <Compile Include="Medical\Impl\AbiResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\ArchiveResultDataPollingAgent.cs" />
+    <Compile Include="Medical\Impl\AttestationFormService.cs" />
+    <Compile Include="Medical\Impl\AwvParser.cs" />
+    <Compile Include="Medical\Impl\AwvPrimaryCarePhysicianImportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BioSoundAaaParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundAaaParser2.cs" />
+    <Compile Include="Medical\Impl\BioSoundAwvAaaParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundAwvCarotidParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundEchoParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundHcpAaaParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundHcpCarotidParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundImtParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundLeadParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundPpAaaParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundResultParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundStrokeParser.cs" />
+    <Compile Include="Medical\Impl\BioSoundThyroidParser.cs" />
+    <Compile Include="Medical\Impl\BloodLabResultParserPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BloodPanelResultHelper.cs" />
+    <Compile Include="Medical\Impl\BloodPressureSynchronizer.cs" />
+    <Compile Include="Medical\Impl\BloodTestParser.cs" />
+    <Compile Include="Medical\Impl\BloodTestResultParserPollingAgent.cs" />
+    <Compile Include="Medical\Impl\BloodworkAppLipidParser.cs" />
+    <Compile Include="Medical\Impl\BloodworksHemaglobinParser.cs" />
+    <Compile Include="Medical\Impl\BloodworksLipidParser.cs" />
+    <Compile Include="Medical\Impl\BloodworksResultParser.cs" />
+    <Compile Include="Medical\Impl\BloodworksResultParser2.cs" />
+    <Compile Include="Medical\Impl\CardiovisionAsiParser.cs" />
+    <Compile Include="Medical\Impl\CardiovisionAwvAbiParser.cs" />
+    <Compile Include="Medical\Impl\CardiovisionLipidParser.cs" />
+    <Compile Include="Medical\Impl\CardiovisionPadParser.cs" />
+    <Compile Include="Medical\Impl\CardiovisionResultParser.cs" />
+    <Compile Include="Medical\Impl\ClinicalQuestionsHealthAssessmentHelper.cs" />
+    <Compile Include="Medical\Impl\ClinicalQuestionTemplateCriteriaService.cs" />
+    <Compile Include="Medical\Impl\ClinicalTemplateService.cs" />
+    <Compile Include="Medical\Impl\ConvertPdfToTiff.cs" />
+    <Compile Include="Medical\Impl\CustomerClinicalQuestionAnswerService.cs" />
+    <Compile Include="Medical\Impl\CustomerHafQuestionService.cs" />
+    <Compile Include="Medical\Impl\CustomerMedicareQuestionService.cs" />
+    <Compile Include="Medical\Impl\DiabeticRetinopathyParser.cs" />
+    <Compile Include="Medical\Impl\DiabeticRetinopathyParserPollingAgent.cs" />
+    <Compile Include="Medical\Impl\EchoResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\EkgFileParser.cs" />
+    <Compile Include="Medical\Impl\EkgFileParser2.cs" />
+    <Compile Include="Medical\Impl\EvaluationReminderNotificationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\EventResultReadyNotificationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\FloChecABIParser.cs" />
+    <Compile Include="Medical\Impl\FluVaccinationConsentService.cs" />
+    <Compile Include="Medical\Impl\FOCAttestationParser.cs" />
+    <Compile Include="Medical\Impl\HcpCaliforniaResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MolinaResultExportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MolinaResultExportService.cs" />
+    <Compile Include="Medical\Impl\MolinaResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\PcpResultExportServiceHelper.cs" />
+    <Compile Include="Medical\Impl\HealthAssessmentTemplateService.cs" />
+    <Compile Include="Medical\Impl\HPyloriResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\LipidParserHelper.cs" />
+    <Compile Include="Medical\Impl\LipidResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\OnlineHealthAssessmentService.cs" />
+    <Compile Include="Medical\Impl\PcpResultExportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\PcpResultExportService.cs" />
+    <Compile Include="Medical\Impl\PhysicianPartnerQueueFaxPollingAgent.cs" />
+    <Compile Include="Medical\Impl\GenerateFinalPdf.cs" />
+    <Compile Include="Medical\Impl\GeAaaResultParser.cs" />
+    <Compile Include="Medical\Impl\GeEchoResultParser.cs" />
+    <Compile Include="Medical\Impl\GenerateKynLipidService.cs" />
+    <Compile Include="Medical\Impl\GeResultParser.cs" />
+    <Compile Include="Medical\Impl\GeStrokeResultParser.cs" />
+    <Compile Include="Medical\Impl\HealthAssessmentService.cs" />
+    <Compile Include="Medical\Impl\KynAppLipidParser.cs" />
+    <Compile Include="Medical\Impl\KynCustomerReportingFactory.cs" />
+    <Compile Include="Medical\Impl\KynCustomerReportService.cs" />
+    <Compile Include="Medical\Impl\KynFirstNotificationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\KynHealthAssessmentFactory.cs" />
+    <Compile Include="Medical\Impl\KynHealthAssessmentHelper.cs" />
+    <Compile Include="Medical\Impl\KynHealthAssessmentService.cs" />
+    <Compile Include="Medical\Impl\KynNotificationService.cs" />
+    <Compile Include="Medical\Impl\KynResultParser.cs" />
+    <Compile Include="Medical\Impl\KynSecondNotificationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\KynXmlPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MediaCleanUpPollingAgent.cs" />
+    <Compile Include="Medical\Impl\MediaHelper.cs" />
+    <Compile Include="Medical\Impl\PftFileParser.cs" />
+    <Compile Include="Medical\Impl\PhysicianPartnerResultExportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\PhysicianPartnerResultExportService.cs" />
+    <Compile Include="Medical\Impl\PcpResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\PhysicianPartnerResultPdfDownloadPollingAgent.cs" />
+    <Compile Include="Medical\Impl\PrimaryCarePhysicianImportService.cs" />
+    <Compile Include="Medical\Impl\PriorityInQueueNotificationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\PriorityInQueueService.cs" />
+    <Compile Include="Medical\Impl\ResultArchivePollingAgent.cs" />
+    <Compile Include="Medical\Impl\ResultNotificationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\ResultPacketGeneratorPollingAgent.cs" />
+    <Compile Include="Medical\Impl\ResultParser.cs" />
+    <Compile Include="Medical\Impl\ResultParserHelper.cs" />
+    <Compile Include="Medical\Impl\ResultPdfDownloaderHelper.cs" />
+    <Compile Include="Medical\Impl\ResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\ResultReadyNotificationPollingAgent.cs" />
+    <Compile Include="Medical\Impl\ScreeningAuthorizationService.cs" />
+    <Compile Include="Medical\Impl\StrokeResultPdfHelper.cs" />
+    <Compile Include="Medical\Impl\TestResultService.cs" />
+    <Compile Include="Medical\Impl\TestService.cs" />
+    <Compile Include="Medical\Impl\UltrasoundTransducerResultParser.cs" />
+    <Compile Include="Medical\Impl\WellmedAttestationService.cs" />
+    <Compile Include="Medical\Impl\WellmedResultExportPollingAgent.cs" />
+    <Compile Include="Medical\Impl\WellmedResultExportService.cs" />
+    <Compile Include="Medical\Impl\WellmedResultPdfDownloadPollingAgent .cs" />
+    <Compile Include="Medical\Interfaces\ICustomerScreeningViewDataFactory.cs" />
+    <Compile Include="Medical\Interfaces\IPcpResultExportFactory.cs" />
+    <Compile Include="Medical\Interfaces\IPcpResultExportServiceHelper.cs" />
+    <Compile Include="Medical\Interfaces\IPhysicianPartnerResultExportFactory.cs.cs" />
+    <Compile Include="Medical\Interfaces\IStandardFindingFactory.cs" />
+    <Compile Include="Medical\Interfaces\ITestResultFactory.cs" />
+    <Compile Include="Medical\Interfaces\ITestViewDataFactory.cs" />
+    <Compile Include="Medical\Mappers\ClinicalTestQualificationCriteriaMapper.cs" />
+    <Compile Include="Medical\Mappers\PhysicianEvaluationMapper.cs" />
+    <Compile Include="Medical\Mappers\PrimaryCarePhysicianMapper.cs" />
+    <Compile Include="Medical\Mappers\ScreeningAuthorizationMapper.cs" />
+    <Compile Include="Medical\Repositories\AccountTestRepository.cs" />
+    <Compile Include="Medical\Repositories\BasicBiometricRepository.cs" />
+    <Compile Include="Medical\Repositories\ClinicalTestQualificationCriteriaRepository.cs" />
+    <Compile Include="Medical\Repositories\CommunicationRepository.cs" />
+    <Compile Include="Medical\Repositories\AccountPackageRepository.cs" />
+    <Compile Include="Medical\Repositories\CustomerClinicalQuestionAnswerRepository.cs" />
+    <Compile Include="Medical\Repositories\CustomerCriticalDataRepository.cs" />
+    <Compile Include="Medical\Repositories\CustomerEventPriorityInQueueDataRepository.cs" />
+    <Compile Include="Medical\Repositories\EventCustomerResultBloodLabRepository.cs" />
+    <Compile Include="Medical\Repositories\HealthAssessmentQuestionDependencyRuleRepository.cs" />
+    <Compile Include="Medical\Repositories\HealthAssessmentRepository.cs" />
+    <Compile Include="Medical\Repositories\HealthAssessmentTemplateRepository.cs" />
+    <Compile Include="Medical\Repositories\HospitalPartnerPackageRepository.cs" />
+    <Compile Include="Medical\Repositories\KynLabValuesRepository.cs" />
+    <Compile Include="Medical\Repositories\MedicareQuestionRepository.cs" />
+    <Compile Include="Medical\Repositories\MolinaAttestationRepository.cs" />
+    <Compile Include="Medical\Repositories\PhysicianEvaluationRepository.cs" />
+    <Compile Include="Medical\Repositories\PhysicianMasterRepository.cs" />
+    <Compile Include="Medical\Repositories\PrimaryCarePhysicianRepository.cs" />
+    <Compile Include="Medical\Repositories\PriorityInQueueRepository.cs" />
+    <Compile Include="Medical\Repositories\ScreeningAuthorizationRepository.cs" />
+    <Compile Include="Medical\Repositories\WellMedAttestationRepository.cs" />
+    <Compile Include="Mongo\Domain\ActivityLog.cs" />
+    <Compile Include="Mongo\Domain\LoggedCollectionModel.cs" />
+    <Compile Include="Mongo\Domain\LoggedModel.cs" />
+    <Compile Include="Mongo\IMongoFactory.cs" />
+    <Compile Include="Mongo\IMongoRepository.cs" />
+    <Compile Include="Mongo\Impl\MongoFactory.cs" />
+    <Compile Include="Mongo\Impl\MongoRepository.cs" />
+    <Compile Include="Mongo\DomainBase.cs" />
+    <Compile Include="Operations\Factories\BatchLabelViewModelFactory.cs" />
+    <Compile Include="Operations\Factories\BloodworksLabelViewModelFactory.cs" />
+    <Compile Include="Operations\Factories\CdLabelViewModelFactory.cs" />
+    <Compile Include="Operations\Factories\CustomerCdContentTrackingModelFactory.cs" />
+    <Compile Include="Operations\Impl\EventPhysicianTestFactory.cs" />
+    <Compile Include="Operations\Impl\EventPodService.cs" />
+    <Compile Include="Operations\Impl\OperationReportsPollingAgent.cs" />
+    <Compile Include="Operations\Impl\OperationsReportingService.cs" />
+    <Compile Include="Operations\Impl\PatientWorksheetService.cs" />
+    <Compile Include="Operations\Impl\PcpShippingService.cs" />
+    <Compile Include="Operations\Impl\PhysicianAssignmentService.cs" />
+    <Compile Include="Operations\Impl\ShippingController.cs" />
+    <Compile Include="Operations\Impl\EventStaffAssignmentService.cs" />
+    <Compile Include="Operations\Impl\ShippingDetailService.cs" />
+    <Compile Include="Operations\Mappers\CdContentGeneratorTrackingMapper.cs" />
+    <Compile Include="Operations\Mappers\EventRoleMapper.cs" />
+    <Compile Include="Operations\Mappers\PhysicianCustomerAssignmentMapper.cs" />
+    <Compile Include="Operations\Mappers\PhysicianEventAssignmentMapper.cs" />
+    <Compile Include="Operations\Mappers\PodTeamAssignmentMapper.cs" />
+    <Compile Include="Operations\Repositories\CdContentGeneratorTrackingRepository.cs" />
+    <Compile Include="Operations\Repositories\EventPhysicianTestRepository.cs" />
+    <Compile Include="Operations\Repositories\EventPodRepository.cs" />
+    <Compile Include="Operations\Repositories\EventPodRoomRepository.cs" />
+    <Compile Include="Operations\Repositories\EventRoleRepository.cs" />
+    <Compile Include="Operations\Repositories\EventStaffAssignmentRepository.cs" />
+    <Compile Include="Operations\Repositories\PhysicianCustomerAssignmentRepository.cs" />
+    <Compile Include="Operations\Repositories\PhysicianEventAssignmentRepository.cs" />
+    <Compile Include="Operations\Repositories\PodRoomRepository.cs" />
+    <Compile Include="Operations\Repositories\ResultArchiveUploadRepository.cs" />
+    <Compile Include="Operations\Repositories\PodRepository.cs" />
+    <Compile Include="Operations\Repositories\PodStaffAssignmentRepository.cs" />
+    <Compile Include="Operations\Repositories\ResultArchiveUploadLogRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvAaaTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvAbiTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvBoneMassTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvCarotidTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvEchocardiogramTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvEkgIppeTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvEkgTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvGlucoseTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvHemaglobinTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvLipidTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvSpiroTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvSubsequentTestRepository.cs" />
+    <Compile Include="Repositories\Screening\AwvTestRepository.cs" />
+    <Compile Include="Repositories\Screening\CholesterolTestRepository.cs" />
+    <Compile Include="Repositories\Screening\CrpTestRepository.cs" />
+    <Compile Include="Repositories\Screening\DiabetesFootExamTestRepository.cs" />
+    <Compile Include="Repositories\Screening\DiabetesTestRepository.cs" />
+    <Compile Include="Repositories\Screening\DiabeticNeuropathyTestRepository.cs" />
+    <Compile Include="Repositories\Screening\DiabeticRetinopathyTestRepository.cs" />
+    <Compile Include="Repositories\Screening\EAwvTestRepository.cs" />
+    <Compile Include="Repositories\Screening\FloChecABITestRepository.cs" />
+    <Compile Include="Repositories\Screening\FocAttestationTestRepository.cs" />
+    <Compile Include="Repositories\Screening\GlaucomaTestRepository.cs" />
+    <Compile Include="Repositories\Screening\HcpAaaTestRepository.cs" />
+    <Compile Include="Repositories\Screening\HcpCarotidTestRepository.cs" />
+    <Compile Include="Repositories\Screening\HcpEchocardiogramTestRepository.cs" />
+    <Compile Include="Repositories\Screening\HearingTestRepository.cs" />
+    <Compile Include="Repositories\Screening\HemaglobinTestRepository.cs" />
+    <Compile Include="Repositories\Screening\HemoglobinTestRepository.cs" />
+    <Compile Include="Repositories\Screening\IFOBTTestRepository.cs" />
+    <Compile Include="Repositories\Screening\HPyloriTestRepository.cs" />
+    <Compile Include="Repositories\Screening\HypertensionTestRepository.cs" />
+    <Compile Include="Repositories\Screening\LeadTestRepository.cs" />
+    <Compile Include="Repositories\Screening\MedicareTestRepository.cs" />
+    <Compile Include="Repositories\Screening\MenBloodPanelTestRepository.cs" />
+    <Compile Include="Repositories\Screening\MonofilamentTestRepository.cs" />
+    <Compile Include="Repositories\Screening\Phq9TestRepository.cs" />
+    <Compile Include="Repositories\Screening\PpAaaTestRepository.cs" />
+    <Compile Include="Repositories\Screening\PpEchocardiogramTestRepository.cs" />
+    <Compile Include="Repositories\Screening\PsaTestRepository.cs" />
+    <Compile Include="Repositories\Screening\QualityMeasuresTestRepository.cs" />
+    <Compile Include="Repositories\Screening\RinneWeberHearingTestRepository.cs" />
+    <Compile Include="Repositories\Screening\SpiroTestRepository.cs" />
+    <Compile Include="Repositories\Screening\TestosteroneTestRepository.cs" />
+    <Compile Include="Repositories\Screening\VisionTestRepository.cs" />
+    <Compile Include="Repositories\Screening\VitaminDTestRepository.cs" />
+    <Compile Include="Repositories\Screening\WomenBloodPanelTestRepository.cs" />
+    <Compile Include="Repositories\Users\ProspectContactRoleRepository.cs" />
+    <Compile Include="Repositories\Users\SafeComputerHistoryRepository.cs" />
+    <Compile Include="Repositories\Users\LoginSettingRepository.cs" />
+    <Compile Include="Repositories\Users\LoginOtpRepository.cs" />
+    <Compile Include="Repositories\Users\PasswordChangelogRepository.cs" />
+    <Compile Include="Sales\Factories\ContactFactory.cs" />
+    <Compile Include="Sales\Factories\CorporateAccountEventListFactory.cs" />
+    <Compile Include="Sales\Factories\HospitalPartnerCustomerViewModelFactory.cs" />
+    <Compile Include="Sales\Factories\HospitalPartnerEventListFactory.cs" />
+    <Compile Include="Sales\Impl\ContentService.cs" />
+    <Compile Include="Sales\Impl\HospitalPartnerService.cs" />
+    <Compile Include="Sales\Impl\HostService.cs" />
+    <Compile Include="Sales\Impl\LanguageService.cs" />
+    <Compile Include="Sales\Interfaces\IContactFactory.cs" />
+    <Compile Include="Sales\Mappers\HospitalPartnerCustomerMapper.cs" />
+    <Compile Include="Sales\Mappers\TagMapper.cs" />
+    <Compile Include="Sales\Repositories\ContactRepository.cs" />
+    <Compile Include="Sales\Repositories\ContentRepository.cs" />
+    <Compile Include="Sales\Repositories\CorporateCustomerCustomTagRepository.cs" />
+    <Compile Include="Sales\Repositories\CorporateTagRepository.cs" />
+    <Compile Include="Sales\Repositories\CustomerIcdCodesRepository.cs" />
+    <Compile Include="Sales\Repositories\IcdCodesRepository.cs" />
+    <Compile Include="Sales\Repositories\HospitalPartnerCustomerRepository.cs" />
+    <Compile Include="Sales\Repositories\LabRepository.cs" />
+    <Compile Include="Sales\Repositories\LanguageRepository.cs" />
+    <Compile Include="Sales\Repositories\TagRepository.cs" />
+    <Compile Include="Sales\Services\CorporateCustomerCustomTagService.cs" />
+    <Compile Include="Sales\Services\CallOutcomeService.cs" />
+    <Compile Include="Sales\Services\CorporateTagService.cs" />
+    <Compile Include="Scheduling\Facotries\TestsBookedModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\CancelledCustomerModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\CustomerExportModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\EventAppointmentOnlineListModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\EventCancellationModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\EventEndofDayFactory.cs" />
+    <Compile Include="Scheduling\Facotries\OnlineEventListModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\OnlineSchedulingDataFactory.cs" />
+    <Compile Include="Scheduling\Facotries\OnlineSchedulingEventListModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\RescheduleApplointmentModelFactory.cs" />
+    <Compile Include="Scheduling\Impl\AnnualReminderPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\EventCustomerPcpAppointmentService.cs" />
+    <Compile Include="Scheduling\Impl\LockCorporateEventPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\MolinaAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\NoShowCustomerPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\OnlineAppointmentService.cs" />
+    <Compile Include="Scheduling\Impl\OnlineEventService.cs" />
+    <Compile Include="Scheduling\Impl\OnlineShippingService.cs" />
+    <Compile Include="Scheduling\Impl\ParseLockedEventFilePollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\PcpAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\PhysicianPartnerAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\EventAppointmentStatsService.cs" />
+    <Compile Include="Scheduling\Impl\EventSchedulingSlotService.cs" />
+    <Compile Include="Scheduling\Impl\GenerateKynXmlPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\GoogleAnalyticsReportingDataService.cs" />
+    <Compile Include="Scheduling\Impl\PollForAppointmentReminderViaSms.cs" />
+    <Compile Include="Scheduling\Impl\PrimaryCarePhysicianHelper.cs" />
+    <Compile Include="Scheduling\Impl\ProspectCustomerFollowupPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\ScreeningReminderPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\EventCustomerListModelFactory.cs" />
+    <Compile Include="Scheduling\Impl\EventSchedulerService.cs" />
+    <Compile Include="Scheduling\Impl\SecondScreeningReminderPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\SmsHelper.cs" />
+    <Compile Include="Scheduling\Impl\SurveyEmailPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\TempcartService.cs" />
+    <Compile Include="Scheduling\Impl\TestUpsellPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\UnlockCorporateEventsPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\WellmedAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Impl\WellmedWeeklyAppointmentBookExportPollingAgent.cs" />
+    <Compile Include="Scheduling\Repositories\EventAppointmentCancellationLogRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventAppointmentChangeLogRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventSchedulingSlotRepository.cs" />
+    <Compile Include="Scheduling\Repositories\PreApprovedPackageRepository.cs" />
+    <Compile Include="Scheduling\Repositories\PreApprovedTestRepository.cs" />
+    <Compile Include="Scheduling\Repositories\PreQualificationResultRepository.cs" />
+    <Compile Include="Scheduling\Repositories\TempCartRepository.cs" />
+    <Compile Include="Scheduling\Services\CustomerRegistrationService.cs" />
+    <Compile Include="Scheduling\Services\EventEndofDayService.cs" />
+    <Compile Include="Service References\Kareo\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service\EventCallQueueHelper.cs" />
+    <Compile Include="Service\HealthPlanEventService.cs" />
+    <Compile Include="Service\SafeComputerHistoryService.cs" />
+    <Compile Include="Service\LoginOtpService.cs" />
+    <Compile Include="Service\PasswordChangelogService.cs" />
+    <Compile Include="Users\Factories\RoleFactory.cs" />
+    <Compile Include="Users\Factories\HospitalFacilityFactory.cs" />
+    <Compile Include="Users\Factories\TechnicianFactory.cs" />
+    <Compile Include="Users\Impl\AccountTestFactory.cs" />
+    <Compile Include="Users\Impl\AccountPackageFactory.cs" />
+    <Compile Include="Users\Impl\CorporateAccountService.cs" />
+    <Compile Include="Users\Impl\HospitalFacilityListModelFactory.cs" />
+    <Compile Include="Users\Impl\HospitalPartnerDashboardViewModelFactory.cs" />
+    <Compile Include="Users\Impl\HospitalPartnerPackageFactory.cs" />
+    <Compile Include="Users\Impl\RegistrationConfigFactory.cs" />
+    <Compile Include="Users\Impl\RoleService.cs" />
+    <Compile Include="Users\Impl\UserProfileService.cs" />
+    <Compile Include="Users\Interfaces\IAccountCoordinatorProfileFactory.cs" />
+    <Compile Include="Users\Interfaces\IHospitalFacilityFactory.cs" />
+    <Compile Include="Users\Interfaces\ITechnicianFactory.cs" />
+    <Compile Include="Users\Mappers\PhysicianLicenseMapper.cs" />
+    <Compile Include="Users\Repositories\AccountAdditionalFieldRepository.cs" />
+    <Compile Include="Users\Repositories\AccountCoordinatorProfileRepository.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Users\Repositories\AdditionalFieldsRepository.cs" />
+    <Compile Include="Users\Repositories\HospitalFacilityRepository.cs" />
+    <Compile Include="Users\Repositories\TechnicianRepository.cs" />
+    <Compile Include="Operations\Repositories\VanRepository.cs" />
+    <Compile Include="Users\Repositories\PhysicianRepository.cs" />
+    <Compile Include="Repositories\Order\ElectronicProductRepository.cs" />
+    <Compile Include="Repositories\Screening\CustomerScreeningViewDataRepository.cs" />
+    <Compile Include="Repositories\Screening\EchocardiogramTestRepository.cs" />
+    <Compile Include="Repositories\Screening\ImtTestRepository.cs" />
+    <Compile Include="Repositories\Screening\PulmonaryFunctionTestRepository.cs" />
+    <Compile Include="Repositories\Screening\ThyroidTestRepository.cs" />
+    <Compile Include="Sales\Factories\CustomerUpsellModelFactory.cs" />
+    <Compile Include="Sales\Factories\DetailOpenOrderModelFactory.cs" />
+    <Compile Include="Sales\Factories\EventVolumeFactory.cs" />
+    <Compile Include="Sales\Interfaces\IHostFactory.cs" />
+    <Compile Include="Sales\Repositories\HostRepository.cs" />
+    <Compile Include="Scheduling\Facotries\AppointmentsBookedModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\CustomerScheduleModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\EventAppointmentBasicInfoModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\EventCustomerSummaryModelFactory.cs" />
+    <Compile Include="Scheduling\Facotries\NoShowCustomerModelFactory.cs" />
+    <Compile Include="Scheduling\Impl\AppointmentConsolidationService.cs" />
+    <Compile Include="Scheduling\Impl\EventReportingService.cs" />
+    <Compile Include="Scheduling\Interfaces\ICustomerEventRegistrationViewDataFactory.cs" />
+    <Compile Include="Scheduling\Interfaces\IEventCustomerAggregateFactory.cs" />
+    <Compile Include="Scheduling\Interfaces\IEventCustomerFilterPredicateFactory.cs" />
+    <Compile Include="Scheduling\Interfaces\IEventCustomerRegistrationViewDataFactory.cs" />
+    <Compile Include="Scheduling\Interfaces\IEventCustomerShippingDetailViewDataFactory.cs" />
+    <Compile Include="Scheduling\Interfaces\IEventCustomerViewDataFactory.cs" />
+    <Compile Include="Scheduling\Interfaces\IEventMetricsViewDataFactory.cs" />
+    <Compile Include="Scheduling\Mappers\CustomerCallNotesMapper.cs" />
+    <Compile Include="Scheduling\Repositories\CustomerCallNotesRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventAppointmentAggregateRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventCustomerAggregateRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventCustomerRegistrationViewDataRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventCustomerRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventPackageRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventRepository.cs" />
+    <Compile Include="Scheduling\Repositories\EventTestRepository.cs" />
+    <Compile Include="Scheduling\Services\EventAppointmentService.cs" />
+    <Compile Include="Scheduling\Services\EventPackageSelectorService.cs" />
+    <Compile Include="Service\AuthorizeNetCreditCardPaymentGateway.cs" />
+    <Compile Include="Service\CallCenterRepService.cs" />
+    <Compile Include="Service\EventCustomerPackageTestDetailService.cs" />
+    <Compile Include="Service\EventCustomerReportingService.cs" />
+    <Compile Include="Users\Interfaces\ICallCenterRepService.cs" />
+    <Compile Include="Service\OrderReceiptService.cs" />
+    <Compile Include="Service\OrderSynchronizationService.cs" />
+    <Compile Include="Service\ShoppingCartRecommendationService.cs" />
+    <Compile Include="Service\ShoppingCartService.cs" />
+    <Compile Include="Factories\Hosts\HostFactory.cs" />
+    <Compile Include="Mappers\AppointmentMapper.cs" />
+    <Compile Include="Mappers\CityMapper.cs" />
+    <Compile Include="Mappers\CountryMapper.cs" />
+    <Compile Include="Mappers\DigitalAssetAccessLogMapper.cs" />
+    <Compile Include="Mappers\DomainEntityMapper.cs" />
+    <Compile Include="Mappers\EventCustomerMapper.cs" />
+    <Compile Include="Mappers\EventMapper.cs" />
+    <Compile Include="Mappers\FileMapper.cs" />
+    <Compile Include="Mappers\HospitalPartnerMapper.cs" />
+    <Compile Include="Factories\Hosts\HostPaymentFactory.cs" />
+    <Compile Include="Mappers\Hosts\HostFacilityRankingMapper.cs" />
+    <Compile Include="Mappers\Hosts\HostPaymentTransactionMapper.cs" />
+    <Compile Include="Mappers\MedicalVendorEarningMapper.cs" />
+    <Compile Include="Mappers\MedicalVendorPaymentMapper.cs" />
+    <Compile Include="Mappers\Orders\EventCustomerOrderDetailMapper.cs" />
+    <Compile Include="Mappers\Orders\GiftCertificateTypeMapper.cs" />
+    <Compile Include="Mappers\Orders\OrderDetailMapper.cs" />
+    <Compile Include="Mappers\Orders\ShippingDetailOrderDetailMapper.cs" />
+    <Compile Include="Mappers\OrganizationRoleUserMapper.cs" />
+    <Compile Include="Mappers\PackageMapper.cs" />
+    <Compile Include="Mappers\PrintOrder\PrintOrderItemMapper.cs" />
+    <Compile Include="Mappers\PrintOrder\PrintOrderItemTrackingMapper.cs" />
+    <Compile Include="Mappers\ProspectCustomerMapper.cs" />
+    <Compile Include="Mappers\Screening\EventCustomerResultMapper.cs" />
+    <Compile Include="Mappers\Screening\FraminghamCalculationSourceMapper.cs" />
+    <Compile Include="Mappers\Screening\IncidentalFindingMapper.cs" />
+    <Compile Include="Mappers\Screening\ResultReadingMapper.cs" />
+    <Compile Include="Mappers\Screening\StandardFindingMapper.cs" />
+    <Compile Include="Mappers\Screening\UnableToScreenStatusMapper.cs" />
+    <Compile Include="Mappers\Shipping\CarrierMapper.cs" />
+    <Compile Include="Mappers\Shipping\ShippingDetailMapper.cs" />
+    <Compile Include="Mappers\Shipping\ShippingOptionMapper.cs" />
+    <Compile Include="Factories\Users\UserLoginFactory.cs" />
+    <Compile Include="Mappers\Orders\GiftCertificateMapper.cs" />
+    <Compile Include="Mappers\Payments\CashPaymentMapper.cs" />
+    <Compile Include="Mappers\Payments\ChargeCardMapper.cs" />
+    <Compile Include="Mappers\Payments\ChargeCardPaymentMapper.cs" />
+    <Compile Include="Mappers\Payments\CheckMapper.cs" />
+    <Compile Include="Factories\Screening\FraminghamRiskTestResultFactory.cs" />
+    <Compile Include="Mappers\Orders\SourceCodeOrderDetailMapper.cs" />
+    <Compile Include="Mappers\Orders\OrderMapper.cs" />
+    <Compile Include="Mappers\PodMapper.cs" />
+    <Compile Include="Mappers\StateMapper.cs" />
+    <Compile Include="Mappers\Territories\AdvertiserTerritoryMapper.cs" />
+    <Compile Include="Mappers\Territories\FranchiseeTerritoryMapper.cs" />
+    <Compile Include="Mappers\Territories\HospitalPartnerTerritoryMapper.cs" />
+    <Compile Include="Mappers\Territories\ReadingPhysicianTerritoryMapper.cs" />
+    <Compile Include="Mappers\Territories\SalesRepTerritoryMapper.cs" />
+    <Compile Include="Mappers\Territories\TerritoryMapper.cs" />
+    <Compile Include="Mappers\TestimonialMapper.cs" />
+    <Compile Include="Mappers\TestMapper.cs" />
+    <Compile Include="Mappers\UserLoginLogMapper.cs" />
+    <Compile Include="Mappers\VanMapper.cs" />
+    <Compile Include="Mappers\ZipCodeMapper.cs" />
+    <Compile Include="Repositories\ActivityRepository.cs" />
+    <Compile Include="Repositories\ActivityTemplateRepository.cs" />
+    <Compile Include="Repositories\AppointmentRepository.cs" />
+    <Compile Include="Repositories\DigitalAssetAccessLogRepository.cs" />
+    <Compile Include="Repositories\FileRepository.cs" />
+    <Compile Include="Repositories\Host\HostFacilityRankingRepository.cs" />
+    <Compile Include="Repositories\IncomingPhoneNumberResolverRule.cs" />
+    <Compile Include="Repositories\Order\EventCustomerOrderDetailRepository.cs" />
+    <Compile Include="Repositories\Order\GiftCertificateTypeRepository.cs" />
+    <Compile Include="Repositories\Order\ShippingDetailOrderDetailRepository.cs" />
+    <Compile Include="Repositories\Order\SourceCodeOrderDetailRepository.cs" />
+    <Compile Include="Mappers\Payments\CheckPaymentMapper.cs" />
+    <Compile Include="Mappers\Payments\ECheckPaymentMapper.cs" />
+    <Compile Include="Mappers\Payments\GiftCertificatePaymentMapper.cs" />
+    <Compile Include="Mappers\Orders\EventPackageMapper.cs" />
+    <Compile Include="Repositories\PackageRepository.cs" />
+    <Compile Include="Repositories\Payment\ChargeCardRepository.cs" />
+    <Compile Include="Repositories\Payment\CashPaymentRepository.cs" />
+    <Compile Include="Repositories\Payment\ECheckPaymentRepository.cs" />
+    <Compile Include="Repositories\Payment\GiftCertificatePaymentRepository.cs" />
+    <Compile Include="Repositories\Payment\CheckPaymentRepository.cs" />
+    <Compile Include="Repositories\Payment\CheckRepository.cs" />
+    <Compile Include="Mappers\Payments\PaymentMapper.cs" />
+    <Compile Include="Factories\Order\OrderDetailFactory.cs" />
+    <Compile Include="Factories\Order\OrderItemTraitsFactory.cs" />
+    <Compile Include="Factories\Screening\EKGTestResultFactory.cs" />
+    <Compile Include="Mappers\Orders\RefundMapper.cs" />
+    <Compile Include="Factories\Payment\PaymentInstrumentRepositoryListFactory.cs" />
+    <Compile Include="Repositories\Order\GiftCertificateRepository.cs" />
+    <Compile Include="Repositories\Order\RefundRepository.cs" />
+    <Compile Include="Factories\Screening\LipidTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\LiverTestResultFactory.cs" />
+    <Compile Include="Factories\Screening\StandardFindingFactory.cs" />
+    <Compile Include="Factories\Screening\TestResultFactory.cs" />
+    <Compile Include="Mappers\MarketingMaterialMapper.cs" />
+    <Compile Include="Factories\AddressFactory.cs" />
+    <Compile Include="Factories\MedicalVendorMedicalVendorUserAggregateFactory.cs" />
+    <Compile Include="Factories\SalesRepresentativeFactory.cs" />
+    <Compile Include="Factories\TerritoryFactory.cs" />
+    <Compile Include="Factories\Users\UserFactory.cs" />
+    <Compile Include="Factories\MedicalVendorInvoiceBaseFactory.cs" />
+    <Compile Include="Factories\MedicalVendorMedicalVendorUserFactory.cs" />
+    <Compile Include="Factories\MedicalVendorInvoiceFactory.cs" />
+    <Compile Include="Mappers\SourceCodeMapper.cs" />
+    <Compile Include="Repositories\ConfigurationSettingRepository.cs" />
+    <Compile Include="Factories\Events\EventCustomerAggregateFactory.cs" />
+    <Compile Include="Repositories\CustomCampaignContentRepository.cs" />
+    <Compile Include="Repositories\PrintOrder\PrintOrderItemRepository.cs" />
+    <Compile Include="Repositories\PrintOrder\PrintOrderRepository.cs" />
+    <Compile Include="Repositories\PrintOrder\PrintOrderItemTrackingRepository.cs" />
+    <Compile Include="Repositories\Screening\AAATestRepository.cs" />
+    <Compile Include="Repositories\Screening\ASITestRepository.cs" />
+    <Compile Include="Repositories\Screening\EventCustomerResultRepository.cs" />
+    <Compile Include="Repositories\Screening\OsteoporosisTestRepository.cs" />
+    <Compile Include="Repositories\Screening\PadTestRepository.cs" />
+    <Compile Include="Repositories\Screening\StrokeTestRepository.cs" />
+    <Compile Include="Repositories\Users\CustomerEventRegistrationViewDataRepository.cs" />
+    <Compile Include="Repositories\Users\CustomerRepository.cs" />
+    <Compile Include="Interfaces\IPersistenceLayer.cs" />
+    <Compile Include="Factories\MedicalVendorEarningCustomerAggregateFactory.cs" />
+    <Compile Include="Repositories\HospitalPartnerRepository.cs" />
+    <Compile Include="Repositories\MarketingMaterialRepository.cs" />
+    <Compile Include="Repositories\MedicalVendorEarningCustomerAggregateRepository.cs" />
+    <Compile Include="Repositories\MedicalVendorEarningRepository.cs" />
+    <Compile Include="Factories\MedicalVendorInvoiceItemFactory.cs" />
+    <Compile Include="Factories\MedicalVendorFactory.cs" />
+    <Compile Include="Repositories\MedicalVendorInvoiceItemRepository.cs" />
+    <Compile Include="Repositories\MedicalVendorInvoiceRepository.cs" />
+    <Compile Include="Factories\MedicalVendorInvoiceStatisticFactory.cs" />
+    <Compile Include="Repositories\MedicalVendorInvoiceStatisticRepository.cs" />
+    <Compile Include="Repositories\MedicalVendorMedicalVendorUserAggregateRepository.cs" />
+    <Compile Include="Repositories\MedicalVendorMedicalVendorUserRepository.cs" />
+    <Compile Include="Repositories\MedicalVendorPaymentRepository.cs" />
+    <Compile Include="Repositories\MedicalVendorRepository.cs" />
+    <Compile Include="Repositories\Order\OrderDetailRepository.cs" />
+    <Compile Include="Repositories\Order\OrderItemRepository.cs" />
+    <Compile Include="Repositories\Order\OrderRepository.cs" />
+    <Compile Include="Repositories\Users\OrganizationRoleUserRepository.cs" />
+    <Compile Include="Factories\PaymentInstrumentFactory.cs" />
+    <Compile Include="Repositories\CombinedPaymentInstrumentRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\Payment\ChargeCardPaymentRepository.cs" />
+    <Compile Include="Repositories\Payment\CombinedPaymentInstrumentRepository.cs" />
+    <Compile Include="Repositories\Payment\PaymentInstrumentRepository.cs" />
+    <Compile Include="Repositories\Payment\PaymentRepository.cs" />
+    <Compile Include="Repositories\PersistenceRepository.cs" />
+    <Compile Include="Repositories\Users\ProspectCustomerRepository.cs" />
+    <Compile Include="Repositories\SalesRepresentativeRepository.cs" />
+    <Compile Include="Repositories\Screening\EKGTestRepository.cs" />
+    <Compile Include="Repositories\Screening\FraminghamRiskCalculationRepository.cs" />
+    <Compile Include="Repositories\Screening\FraminghamRiskTestResultRepository.cs" />
+    <Compile Include="Repositories\Screening\IncidentalFindingRepository.cs" />
+    <Compile Include="Repositories\Screening\LipidTestRepository.cs" />
+    <Compile Include="Repositories\Screening\LiverTestRepository.cs" />
+    <Compile Include="Repositories\Screening\StandardFindingRepository.cs" />
+    <Compile Include="Repositories\Screening\TestResultRepository.cs" />
+    <Compile Include="Repositories\Screening\UnableToScreenStatusRepository.cs" />
+    <Compile Include="Repositories\Shipping\CarrierRepository.cs" />
+    <Compile Include="Repositories\Shipping\ShippingDetailRepository.cs" />
+    <Compile Include="Repositories\Shipping\ShippingOptionRepository.cs" />
+    <Compile Include="Repositories\SourceCodeRepository.cs" />
+    <Compile Include="Repositories\SystemInformationRepository.cs" />
+    <Compile Include="Repositories\TestRepository.cs" />
+    <Compile Include="Repositories\Users\TestimonialRepository.cs" />
+    <Compile Include="Repositories\Users\UserLoginLogRepository.cs" />
+    <Compile Include="Repositories\Users\UserLoginRepository.cs" />
+    <Compile Include="Repositories\Users\UserRepository.cs" />
+    <Compile Include="Service\AuthorizeNetECheckPaymentGateway.cs" />
+    <Compile Include="Service\CallCenterRepMetricService.cs" />
+    <Compile Include="Service\CustomerService.cs" />
+    <Compile Include="Factories\MedicalVendorEarningAggregateFactory.cs" />
+    <Compile Include="Repositories\MedicalVendorEarningAggregateRepository.cs" />
+    <Compile Include="Service\EventCustomerService.cs" />
+    <Compile Include="Service\EventService.cs" />
+    <Compile Include="Service\HostDepositService.cs" />
+    <Compile Include="Service\HostFacilityRankingService.cs" />
+    <Compile Include="Service\MedicalVendorEarningService.cs" />
+    <Compile Include="Service\MedicalVendorPaymentService.cs" />
+    <Compile Include="Service\OrderService.cs" />
+    <Compile Include="Service\EventMetricsService.cs" />
+    <Compile Include="Service\ProspectCustomerService.cs" />
+    <Compile Include="Service\TestResultService.cs" />
+    <Compile Include="Service\UserLoginService.cs" />
+    <Compile Include="Users\Interfaces\IUserListModelFactory.cs" />
+    <Compile Include="Users\Factories\PhysicianFactory.cs" />
+    <Compile Include="Users\Interfaces\ICustomerFactory.cs" />
+    <Compile Include="Users\Interfaces\IMedicalVendorFactory.cs" />
+    <Compile Include="Users\Interfaces\IMedicalVendorMedicalVendorUserAggregateFactory.cs" />
+    <Compile Include="Users\Interfaces\IMedicalVendorMedicalVendorUserFactory.cs" />
+    <Compile Include="Users\Interfaces\IPhysicianFactory.cs" />
+    <Compile Include="Users\Interfaces\ISalesRepresentativeFactory.cs" />
+    <Compile Include="Users\Interfaces\IUserFactory.cs" />
+    <Compile Include="Users\Interfaces\IUserLoginFactory.cs" />
+    <Compile Include="Users\Mappers\CorporateAccountMapper.cs" />
+    <Compile Include="Users\Mappers\OrganizationMapper.cs" />
+    <Compile Include="Users\Mappers\OrganizationroleUserModelMapper.cs" />
+    <Compile Include="Users\Factories\UserListModelFactory.cs" />
+    <Compile Include="Users\Interfaces\IUsersListModelRepository.cs" />
+    <Compile Include="Users\Repositories\CorporateAccountRepository.cs" />
+    <Compile Include="Users\Repositories\OrganizationRepository.cs" />
+    <Compile Include="Users\Repositories\RoleRepository.cs" />
+    <Compile Include="Users\Repositories\UserListModelRepository.cs" />
+    <Compile Include="Users\Services\AccountCallCenterOrganizationService.cs" />
+    <Compile Include="Users\Services\CustomerAccountGlocomNumberService.cs" />
+    <Compile Include="Users\Services\CustomerEligibilityService.cs" />
+    <Compile Include="Users\Services\CustomerTargetedService.cs" />
+    <Compile Include="Users\Services\CustomerWarmTransferService.cs" />
+    <Compile Include="Users\Services\OrganizationService.cs" />
+    <Compile Include="Users\Services\UserService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{A170C6CA-FC12-4074-A822-027DEE8218A1}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Falcon.Data.csproj">
+      <Project>{2E11C425-09CE-48D8-9A9B-58F3816A58E3}</Project>
+      <Name>Falcon.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Falcon.Data.Sql.csproj">
+      <Project>{4E3F35B2-CD71-473A-9442-EFC18D2883D8}</Project>
+      <Name>Falcon.Data.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Entity\Falcon.Entity.csproj">
+      <Project>{D5DBB9D2-2E4D-4972-B90F-1AE1F5CA3D4B}</Project>
+      <Name>Falcon.Entity</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CallCenter\Interfaces\" />
+    <Folder Include="CallCenter\Mappers\" />
+    <Folder Include="CallQueues\Mappers\" />
+    <Folder Include="Communication\Strategies\" />
+    <Folder Include="Repositories\MedicalVendor\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.CreateEncounterResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetAllPatientsResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetAppointmentsResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetChargesResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetExternalVendorsResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetPatientResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetPatientsResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetPaymentsResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetPracticesResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetProcedureCodesResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetProvidersResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetServiceLocationsResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.GetTransactionsResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.ModifyPatientResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.RegisterExternalVendorResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\Falcon.App.Infrastructure.Kareo.UpdatePatientsExternalIDResp.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Kareo\KareoServices.wsdl" />
+    <None Include="Service References\Kareo\KareoServices.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Kareo\KareoServices1.wsdl" />
+    <None Include="Service References\Kareo\KareoServices1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Kareo\KareoServices2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Kareo\KareoServices3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Kareo\KareoServices4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\Kareo\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Kareo\KareoServices.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Kareo\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Kareo\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Kareo\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

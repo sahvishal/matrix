@@ -1,0 +1,183 @@
+﻿@model Falcon.App.Core.Communication.ViewModels.AppointmentConfirmationViewModel
+@{
+    Layout = null;
+}
+
+<table width="600" cellpadding="0" cellspacing="0" border="1" style="border-collapse: collapse;
+    border-color: black;">
+    <tr>
+        <td style="vertical-align: top;">
+            <table width="600" cellpadding="2" cellspacing="0" border="0" style="font-family: Arial">
+                <tr>
+                    <td style="height: 100px">
+                        <table width="600" cellpadding="2" cellspacing="0" border="0">
+                            <tr>
+                                <td style="width: 250px">
+                                    <img src="@Model.EmailCommunicationBaseInfo.EmailNotificationLogoRelativePath" />
+                                </td>
+                                <td align="right" style="color: #5DB3ED; width: 350px">
+                                    Screening Appointment Confirmation&nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="normaltxt_pw" style="font-size: 13px">
+                        Dear @Model.CustomerName,<br />
+                        <br />
+                        Below are your preventive screening appointment details:<br />
+                        <br />
+                        When:&nbsp;&nbsp;<b>@Model.EventDate.ToString("MM/dd/yyyy") at @Model.AppointmentTime.ToString("hh:mm tt")</b><br />
+                        <table cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-color: black;
+                            font: 13px Arial">
+                            <tr>
+                                <td class="normaltxt_pw" style="font-size: 13px; vertical-align: top; width: 50px">
+                                    &nbsp;
+                                </td>
+                                <td class="normaltxt_pw" style="font-size: 13px">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="normaltxt_pw" style="font-size: 13px; vertical-align: top; width: 50px">
+                                    Where:&nbsp;<br />
+                                </td>
+                                <td class="normaltxt_pw" style="font-size: 13px">
+                                    <b>@Model.LocationName, @Model.AddressOfVenue.ToString()</b><a href="http://maps.google.com/maps?f=q&hl=en&geocode=&q=@Model.AddressOfVenue.StreetAddressLine1,@Model.AddressOfVenue.City,@Model.AddressOfVenue.State,@Model.AddressOfVenue.ZipCode&ie=UTF8&z=16"
+                                    target="_blank">[Map to the location]</a>
+                                    <br />
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font: normal 12px arial">
+                            <tr>
+                                <td colspan="2" style="font-weight: bold">
+                                    <u>Order Detail</u>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="17%" valign="top">
+                                    Package:
+                                </td>
+                                <td width="83%" valign="top">
+                                        @if (Model.Packages != null)
+                                        {
+                                    <b>@Model.Packages.Name</b>
+                                    <ul style="margin: 0 0 0 15px; padding: 0 0 0 10px">
+                                        @foreach (var test in Model.Packages.Tests)
+                                    {                                        <li style="margin: 0px 10px; padding: 0px 0px;
+                                        list-style: disc;">@test.Name </li>                                        }
+                                    </ul>
+                                        }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            @if (Model.Tests != null)
+                        {                            <tr>
+                            <td width="17%" valign="top">
+                                Additional Test(s):
+                            </td>
+                            <td valign="top">
+                                <ul style="margin: 0 0 0 15px; padding: 0 0 0 10px">
+                                    <strong>
+                                        @foreach (var test in Model.Tests)
+                                        {                                            <li style="margin: 0px 10px; padding: 0px 0px;
+                                            list-style: disc;">@test.Name </li>                                            }
+                                    </strong>
+                                </ul>
+                            </td>
+                        </tr>                            }
+                            <tr>
+                                <td colspan="2">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    Screening Price:
+                                </td>
+                                <td valign="top">
+                                    <b>$@Model.PackagePrice.ToString("0.00")</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    Product Price: 
+                                </td>
+                                <td valign="top">
+                                    <b>$@Model.AddlnProductPrice.ToString("0.00")</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    Shipping Price:
+                                </td>
+                                <td valign="top">
+                                    <b>$@Model.ShippingPrice.ToString("0.00")</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    Order Value:
+                                </td>
+                                <td valign="top">
+                                    <strong>$@Model.TotalDue.ToString("0.00"), @Model.PaymentStatus</strong>
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i>*If payment status is 'Unpaid', please bring payment to your scheduled appointment
+                            in the form of credit card, check or cash. If 'Paid', thank you for your participation.</i><br />
+                        <br />
+                        @*<b>Preparation for the screening:</b> To learn how to prepare for your screening
+                        please follow the link below:<br />
+                        <a target="_blank" href="@Model.EmailCommunicationBaseInfo.TestPreparationInstructions">
+                            @Model.EmailCommunicationBaseInfo.TestPreparationInstructions</a><br />
+                        (If the link is not clickable, please copy and paste it into your browser&rsquo;s
+                        address field.)<br />*@
+                        <br />
+                        We applaud you for taking a proactive approach to your health and look forward to
+                        seeing you for this valuable health screening.<br />
+                        <br />
+                        If you ever need to contact us, we&rsquo;re just an email or a phone call away!You
+                        may contact us at <a href="mailto:@Model.EmailCommunicationBaseInfo.SupportEmail">@Model.EmailCommunicationBaseInfo.SupportEmail</a>
+                        or @Model.EmailCommunicationBaseInfo.PhoneTollFree (Toll free).<br />
+                        <br />
+                        <br />
+                        - The @Model.EmailCommunicationBaseInfo.CompanyName<br />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <hr style="border: 1px; color: Black" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="normaltxt_pw" style="font-size: 12px; color: Gray">
+                        &copy; @Model.EmailCommunicationBaseInfo.CopyrightText <a target="_blank" href="@Model.EmailCommunicationBaseInfo.PrivacyPolicyUrl">
+                            Privacy Policy</a> and <a target="_blank" href="@Model.EmailCommunicationBaseInfo.TermsConditionsUrl">
+                                Terms of Service</a><br />
+                        Reminder: @Model.EmailCommunicationBaseInfo.CompanyName will never ask for your
+                        password or creditcard number in an email.<br />
+                        <br />
+                        This email was sent by @Model.EmailCommunicationBaseInfo.CompanyName because you
+                        or someone on your behalf registered online at <a target="_blank" href="@Model.EmailCommunicationBaseInfo.SiteUrl">@Model.EmailCommunicationBaseInfo.SiteUrl.</a><br />
+                        <br />
+                        <b>@Model.EmailCommunicationBaseInfo.CompanyName</b><br />
+                        @Model.EmailCommunicationBaseInfo.CompanyAddress.StreetAddressLine1<br />
+                        @Model.EmailCommunicationBaseInfo.CompanyAddress.StreetAddressLine2<br />
+                        @Model.EmailCommunicationBaseInfo.CompanyAddress.City, @Model.EmailCommunicationBaseInfo.CompanyAddress.State&nbsp;
+                        @Model.EmailCommunicationBaseInfo.CompanyAddress.ZipCode<br />
+                        @Model.EmailCommunicationBaseInfo.PhoneTollFree (Toll free)
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

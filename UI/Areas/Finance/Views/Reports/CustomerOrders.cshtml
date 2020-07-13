@@ -1,0 +1,53 @@
+@using Falcon.App.Core.Finance.ViewModels
+
+@model CustomerOrderListModel
+@{
+    Layout = null;
+}
+
+@if (Model != null && Model.Orders != null && Model.Orders.Count > 0)
+{
+    <table id="list-view">
+        <tr>
+            <th style="text-align:center">
+                @Html.LabelFor(m => m.Orders.FirstOrDefault().EventId) 
+            </th>            
+            <th style="text-align:center">
+                @Html.LabelFor(m => m.Orders.FirstOrDefault().EventDate) 
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Orders.FirstOrDefault().Location) 
+            </th>            
+            <th style="text-align:right">
+                @Html.LabelFor(m => m.Orders.FirstOrDefault().DiscountedTotal) 
+            </th>
+            <th style="text-align:right">
+                @Html.LabelFor(m => m.Orders.FirstOrDefault().TotalPayment) 
+            </th>
+            <th style="text-align:right">
+                Details 
+            </th>
+        </tr>
+        @foreach (var customerOrder in Model.Orders)
+        {
+            <tr>
+                <td style="text-align:center">@customerOrder.EventId</td>                
+                <td style="text-align:center">@customerOrder.EventDate.ToShortDateString()</td>
+                <td>@customerOrder.Location</td>
+                <td style="text-align:right">$@customerOrder.DiscountedTotal.ToString("00.00")</td>
+                <td style="text-align:right">$@customerOrder.TotalPayment.ToString("00.00")</td>
+                <td style="text-align:right">
+                    @{decimal amountDue = customerOrder.DiscountedTotal - customerOrder.TotalPayment;}
+                    <a href="javascript:void(0);" onclick="return ShowOrderDetailPopUp('@customerOrder.OrderId','@customerOrder.DiscountedTotal.ToString("00.00")','@customerOrder.TotalPayment.ToString("00.00")','@amountDue.ToString("00.00")','@(Model.CustomerName.Replace("'", "\\'").Replace("\"", "\\\""))','@Model.CustomerId')">View</a>
+                </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <h2>
+        No orders for customer.
+    </h2>
+}
+

@@ -1,0 +1,111 @@
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="Franchisee_Technician_TechnicianMaster"
+    CodeBehind="TechnicianMaster.master.cs" %>
+
+<%@ Import Namespace="Falcon.App.Core.Application" %>
+<%@ Import Namespace="Falcon.App.DependencyResolution" %>
+<%--<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>--%>
+<%@ Register Src="uctechnicianleftpanel.ascx" TagName="uctechnicianleftpanel" TagPrefix="uc3" %>
+<%@ Register Src="../../UCCommon/ucmenucontrol.ascx" TagName="ucmenucontrol" TagPrefix="uc1" %>
+<%@ Register Src="../../UCCommon/ucwelcomebox.ascx" TagName="ucwelcomebox" TagPrefix="uc2" %>
+<%@ Register Src="~/App/UCCommon/ucQADiv.ascx" TagName="ucQaDiv" TagPrefix="ucQaDiv" %>
+<%@ Register Src="~/App/UCCommon/Footer.ascx" TagName="Footer" TagPrefix="FooterControl" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Untitled Page</title>
+    <link href="/Content/Styles/Style.css" rel="Stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link href="/App/StyleSheets/Technician.css" rel="stylesheet" type="text/css" />
+    <link href="/App/StyleSheets/Commonstyle.css" rel="Stylesheet" type="text/css" />
+    <link href="/App/StyleSheets/UC.css" rel="stylesheet" type="text/css" />
+    <link href="/App/StyleSheets/Bubbletip.css" rel="stylesheet" type="text/css" />
+    <script src="/scripts/jquery-1.5.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+    <script src="/App/JavascriptFiles/validations.js" language="javascript" type="text/javascript"></script>
+    <script src="/App/JavascriptFiles/gridcommon.js" language="javascript" type="text/javascript"></script>
+    <script type="text/javascript" src="/App/jquery/js/jquery.hoverIntent.js"></script>
+    <script type="text/javascript" src="/Content/JavaScript/Menu.js"></script>
+    <script type="text/javascript">
+        var openedWindow_Array = new Array(50);
+        var count;
+        var shouldClose;
+        function closePopup_Array() {//debugger
+            if (shouldClose == 1) {
+                for (i = 0; i <= count; i++) {
+                    if (openedWindow_Array[i] != undefined && !openedWindow_Array[i].closed) {
+                        openedWindow_Array[i].close()
+                    }
+                }
+            }
+        }
+        function setVariables() {
+            count = 0;
+            shouldClose = 1;
+        }
+        //onunload="closePopup();"
+
+        var openedWindow;
+        function closePopup() {//debugger
+            if (openedWindow != undefined && !openedWindow.closed) {
+                openedWindow.close()
+            }
+        }
+
+            
+    </script>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body onunload="closePopup();">
+    <form id="form1" runat="server">
+    <div style="float: left; width: 100%;">
+        <ucQaDiv:ucQaDiv ID="QaDiv" runat="server" />
+    </div>
+    <div class="maintopcontainer">
+        <div class="topintercontainer">
+            <%--** Date Panel ***--%>
+            <div class="datepanelmain">
+                <div>
+                    Today is: <span id="spcurdate" runat="server"></span>
+                </div>
+            </div>
+            <%-- *** --%>
+            <%-- ** Logo Row ** --%>
+            <div class="logoside" style="background: url(<%= IoC.Resolve<ISettings>().SmallLogo %>) no-repeat">
+            </div>
+            <uc2:ucwelcomebox ID="Ucwelcomebox1" runat="server" />
+            <%-- **** --%>
+            <%--****Menu Row *** --%>
+            <div class="mainnav">
+                <uc1:ucmenucontrol ID="Ucmenucontrol1" runat="server" />
+            </div>
+            <%-- **** --%>
+        </div>
+        <div class="mainbodyouter">
+            <div class="searchtab">
+                <div class="rgtprt">
+                    <div class="searchtabtxt">
+                        <span id="spnRoot" runat="server"></span><span id="spchildname" runat="server"></span>
+                    </div>
+                </div>
+            </div>
+            <%--**** left panel starts **--%>
+            <div runat="server" id="divleftcontainer" class="leftcontainer_main">
+                <uc3:uctechnicianleftpanel ID="Uctechnicianleftpanel1" runat="server" />
+                <%--links to come here for left part of the form--%>
+            </div>
+            <%-- **** --%>
+            <%-- ** Content PlaceHolder here ** --%>
+            <div class="left">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+            <%-- ***** --%>
+        </div>
+        <%-- **** Footer starts here *** --%>
+        <FooterControl:Footer ID="FooterControl" runat="server" />
+        <%-- **** --%>
+    </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,20 @@
+﻿<h3 class="orngbold14_default mt_medium">
+	Would you like to add any of these important tests?</h3>
+<table class="gridselectpackage" cellspacing="0" cellpadding="10" border="0">
+	{#foreach $T as Test}
+	<tr class="row2 test-row">
+		<td class="package-test-select">
+			<input type="checkbox" id="SelectTestCheckBox" />
+			<input type="hidden" id="TestIdHidden" value='{$T.Test.Id}' />
+		</td>
+		<td class="test-name">
+			{$T.Test.Name}
+			<span style="padding-left: 10px;"><a id="PackageDetailsAnchor" href="javascript:void(0);"
+				onclick="javascript:ShowUpgradeTestDetails('{$T.Test.Name}');"><b>(details)</b></a></span>
+		</td>
+		<td style="color: #E78839; text-align: right" class="actual-price">
+			<span id="ActualPriceSpan">{FormatCurrency($T.Test.Price)}</span>
+		</td>
+	</tr>
+	{#/for}
+</table>

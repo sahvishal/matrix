@@ -1,0 +1,90 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.DependencyResolution
+@model CheckListFormEditModel
+
+@{
+    ViewBag.Title = "Customer Check List Form";
+    var currentLoggedInRoleId = IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.RoleId;
+}
+<div style="float:left; width: 860px; clear:both;">
+    @if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/CheckListForm.cshtml")))
+    {
+        using (Html.BeginForm())
+        {
+            @Html.Partial("/Config/Content/Views/Shared/CheckListForm.cshtml", Model)
+        }
+    }
+</div>
+@if (currentLoggedInRoleId != (long)Falcon.App.Core.Enum.Roles.MedicalVendorUser)
+{
+    <div class="full-width-ccl" style="margin-left: 10px;margin-top: 20px; border-top:solid 2px gray;">
+        <div class="check-list-buttons" style="padding-top:20px; float:right;">
+            <input type="button" value="Cancel" href="javascript:void(0)" style="width: 70px; height: 25px;" onclick="cancel();" />
+            @if (Model.IsEditable)
+            {
+                <input type="button" value="Save" href="javascript:void(0)" style="width: 70px; height: 25px; margin-left: 5px;" onclick="save()" />
+            }
+        </div>
+        <div class="check-list-buttons" style="display: none; padding-top:20px; text-align: right;">
+            <img src="/App/Images/loading.gif" alt="" />Updating
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+
+    function save() {
+        $('.check-list-buttons').toggle();
+        var answers = new Array();
+        $('span[questionid]:visible').each(function (spanIndex, spanElement) {
+            $(spanElement).find('input').each(function (inputIndex, inputElement) {
+                //console.log('questionId - ' + $(spanElement).attr('questionId') + ', input no. - ' + inputIndex);
+                if ($(inputElement).is(':radio') && $(inputElement).is(':checked')) {
+                    answers.push({ QuestionId: $(spanElement).attr('questionId'), Answer: $(inputElement).val() });
+                } else if ($(inputElement).is(':checkbox') && $(inputElement).is(':checked')) {
+                    answers.push({ QuestionId: $(spanElement).attr('questionId'), Answer: 'Yes' });
+                } else if ($(inputElement).is(':text') && $(inputElement).val() != null && $(inputElement).val() != '') {
+                    answers.push({ QuestionId: $(spanElement).attr('questionId'), Answer: $(inputElement).val() });
+                }
+            });
+        });
+
+        var isPostCheckListForm = true;
+        if (answers.length <= 0) {
+            alert('You have not answered any question in the form. Please answer atleast one question to proceed.');
+            isPostCheckListForm = false;
+            $('.check-list-buttons').toggle();
+        }
+        if (isPostCheckListForm)
+            postCheckListAnswers(answers);
+    }
+
+    function postCheckListAnswers(answers) {
+        var model = {
+            EventCustomerId: '@Model.EventCustomerId',
+            Answers: answers
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/Scheduling/EventCustomerList/SaveChecklistAnswers',
+            data: model,
+            success: function (isSaved) {
+                if (isSaved == '@Boolean.TrueString') {
+                    alert('Saved successfully.');
+                    window.location.href = '/Scheduling/EventCustomerList/Index?id=@Model.EventId';
+                } else {
+                    alert('Some error occurred.');
+                    $('.check-list-buttons').toggle();
+                }
+            }
+        });
+    }
+
+    function cancel() {
+        $('.check-list-buttons').toggle();
+        window.location.href = '/Scheduling/EventCustomerList/Index?id=@Model.EventId';
+    }
+
+</script>

@@ -1,0 +1,55 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.EventVolumeListModelFilter
+<h2>
+    Search Events</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 15%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 19%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            @Html.LabelFor(m=> m.Vehicle)
+        </div>
+        @Html.TextBoxFor(m => m.Vehicle)
+    </div>
+    <div class="editor-column" style="width: 15%">
+        <div class="small-text">
+            @Html.LabelFor(m=> m.ZipCode)
+        </div>
+        @Html.TextBoxFor(m => m.ZipCode, new { @style="width:70%; " })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            @Html.LabelFor(m=> m.Territory)
+        </div>
+        @Html.TextBoxFor(m => m.Territory)
+    </div>
+    <div class="editor-column" style="width: 25%; margin-top:5px;">
+        <div class="small-text">
+            Event Type
+        </div>
+        <input type="checkbox" id="is-public-event" @(Model.IsPublicEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPublicEvent');" />Public
+        <input type="checkbox" id="is-private-event" @(Model.IsPrivateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPrivateEvent');" />Private
+        @Html.HiddenFor(m => m.IsPublicEvent)
+        @Html.HiddenFor(m => m.IsPrivateEvent)
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+    function onCheckEventType(checkBox, hiddenBox) {
+        if ($(checkBox).attr("checked")) {
+            $("#" + hiddenBox).val('@Boolean.TrueString');
+        }
+        else {
+            $("#" + hiddenBox).val('@Boolean.FalseString');
+        }
+    }
+</script>

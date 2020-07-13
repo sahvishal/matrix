@@ -1,0 +1,76 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.TextReminderModelFilter
+<h2>
+    Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 180px;">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 180px;">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 180px;">
+        <div class="small-text">
+            Event Id
+        </div>
+        @Html.TextBoxFor(m => m.EventId)
+    </div>
+    <div class="editor-column" style="width: 20%; display:none;">
+        <div class="small-text">
+            Customer Id
+        </div>
+        @Html.TextBoxFor(m => m.CustomerId)
+    </div>
+    <div class="editor-column" style="width: 180px;">
+        <div class="small-text">
+            Health Plan
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:100%;" })
+    </div>
+    <div class="editor-column" style="width: 80%; float: left; padding-top: 5px;">
+        <div class="small-text" style="clear: both;">
+            SMS Reminder Status
+        </div>
+        <div style="float: left; width: 90px">
+            <input type="radio" name="corporateType" @(!Model.ShowSmsOptedCustomers && !Model.ShowSmsNotOptedCustomers ? "checked" : "") onclick="setSmmOptedStatus(this, '');" />Show All
+        </div>
+        <div style="float: left; width: 190px">
+            <input type="radio" name="corporateType" @((Model.ShowSmsOptedCustomers) ? "checked" : "") onclick="setSmmOptedStatus(this, 'ShowSmsOptedCustomers');" />Opted SMS Reminder Only
+        </div>
+        <div style="float: left; width: 230px">
+            <input type="radio" name="corporateType" @((Model.ShowSmsNotOptedCustomers) ? "checked" : "") onclick="setSmmOptedStatus(this, 'ShowSmsNotOptedCustomers');" />Not opted SMS Reminder Only
+        </div>
+        @Html.HiddenFor(m => m.ShowSmsOptedCustomers)
+        @Html.HiddenFor(m => m.ShowSmsNotOptedCustomers)
+
+    </div>
+    <div class="editor-column" style="padding-top: 10px; float:right; text-align:right;">
+        @Html.ActionLink("Clear", "TextReminder", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+
+<script type="text/javascript">
+    function setSmmOptedStatus(radioBtn, hiddenBox) {
+
+        var showSmsOptedCustomers = $("#ShowSmsOptedCustomers");
+        var showSmsNotOptedCustomers = $("#ShowSmsNotOptedCustomers");
+
+        $(showSmsOptedCustomers).val(false);
+        $(showSmsNotOptedCustomers).val(false);
+
+        if ($(radioBtn).is(":checked")) {
+            if (hiddenBox == 'ShowSmsOptedCustomers') {
+                $(showSmsOptedCustomers).val(true);
+            }
+            if (hiddenBox == 'ShowSmsNotOptedCustomers') {
+                $(showSmsNotOptedCustomers).val(true);
+            }
+        }
+    }
+</script>

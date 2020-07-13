@@ -1,0 +1,14 @@
+@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@{
+    ViewBag.Title = "Thank You";
+}
+<h1>
+    Thank you!</h1>
+<h3>
+    <p>
+        Thank you for registering for the event. This is the first step towards proactively managing your health. We look forward to seeing you at the event.
+    </p>
+    <p>
+        If you had provided an email during the registration process then you will receive an email confirming your appointment within hour. If you don't receive an email, please contact us at @(IoC.Resolve<ISettings>().PhoneTollFree) (toll-free). </p>
+</h3>

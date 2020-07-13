@@ -1,0 +1,480 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model Falcon.App.Core.Users.ViewModels.CorporateAccountEditModel
+@{
+    var toolTipRepository = IoC.Resolve<IToolTipRepository>();
+    var insuranceIdLabel = toolTipRepository.GetToolTipContentByTag(Falcon.App.Core.Enum.ToolTipType.InsuranceIdLabel);
+    insuranceIdLabel = string.IsNullOrEmpty(insuranceIdLabel) ? "Insurance Id" : insuranceIdLabel;
+}
+
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<style type="text/css">
+    textarea
+    {
+        width: 98%;
+    }
+</style>
+<div style="width: 64%; float: left; margin-right: 5px;">
+    <fieldset>
+        <legend><b>Organization </b></legend>
+        @Html.EditorFor(m => m.OrganizationEditModel)
+        <div class="editor-label">
+            @Html.LabelFor(m => m.ContractNotes) @Html.ValidationMessageFor(m => m.ContractNotes)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(m => m.ContractNotes)
+        </div>
+        <div class="editor-row">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Content)
+            </div>
+            <div class="editor-field" style="float:left; width:590px;">
+                @Html.TextAreaFor(m => m.Content, new { @rows = "10", @cols = "60", @class = "myTextEditor" })
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div class="content-side-column" style="margin-bottom: 10px; width:32%;">
+    <h2>
+        Account Configuration</h2>
+    <hr />
+    <div class="editor-row">
+        <div class="small-text">
+            Organization Logo
+        </div>
+        <table cellpadding="2" cellspacing="2" style="width: 100%;">
+            <tr>
+                <td style="width: 70%;">
+                    <input type="file" name="organization_logo" />
+                </td>
+                @if (Model.OrganizationEditModel.LogoImage != null && Model.OrganizationEditModel.LogoImage.Id > 0)
+                {
+                    var mediaLocation = IoC.Resolve<IMediaRepository>().GetOrganizationLogoImageFolderLocation();
+                    <td style="text-align: right;">
+                        <a href="@(mediaLocation.Url + Model.OrganizationEditModel.LogoImage.Path)" id="view_logoimage" target="_blank">
+                            View </a>
+                    </td> <td>
+                        <a href="javascript:void(0);" onclick="removeFileLink($(this), 'LogoImage', $('#view_logoimage'));"
+                            style="padding-top: 5px;">Remove </a>
+                    </td>
+                    @Html.HiddenFor(m => m.OrganizationEditModel.LogoImage.Id)
+                }
+                else
+                {
+                    <td>
+                    </td> <td>
+                    </td> 
+                }
+            </tr>
+        </table>
+    </div>
+    <div class="editor-row" style="font-size: 8pt;">
+        *<i> Upload only images (best resolution: 200 X 60) </i>
+    </div>
+    <hr />
+
+    <div class="editor-row">
+        <div class="small-text">
+            Marketing Letter <a id="fluffletter-qtip"><b>?</b></a>
+        </div>
+        <table cellpadding="2" cellspacing="2" style="width: 100%;">
+            <tr>
+                <td style="width: 70%;">
+                    <input type="file" name="fluff_letter" />
+                </td>
+                @if (Model.FluffLetter != null && Model.FluffLetter.Id > 0)
+                {
+                    var mediaLocation = IoC.Resolve<IMediaRepository>().GetCorporateFluffLetterFolderLocation();
+                    <td style="text-align: right;">
+                        <a href="@(mediaLocation.Url + Model.FluffLetter.Path)" id="view_fluff_letter" target="_blank">
+                            View </a>
+                    </td> <td>
+                        <a href="javascript:void(0);" onclick="removeFileLink($(this), 'FluffLetter', $('#view_fluff_letter'));"
+                            style="padding-top: 5px;">Remove </a>
+                    </td>
+                    @Html.HiddenFor(m => m.FluffLetter.Id)
+                }
+                else
+                {
+                    <td>
+                    </td> <td>
+                    </td> 
+                }
+            </tr>
+        </table>
+    </div>
+    <div class="editor-row" style="font-size: 8pt;">
+        *<i> Upload only PDF</i>
+    </div>
+    <hr />
+
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.AccountCode) @Html.ValidationMessageFor(m => m.AccountCode)
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.AccountCode, new { @style = "width: 50%;" })
+        </div>
+        <div style="font-weight:normal; padding-top:5px; font-size:8pt;">
+        * <i> Used to identify Corporate Events, which are also open to public. </i>
+        </div>
+    </div>
+    <hr />
+    <div class="editor-row">
+        <div style="width: 70%; float: left;">
+            @Html.CheckBoxFor(m => m.ShowSponsoredByUrl) Show Sponsored By Logo             
+        </div>
+    </div>
+    <div class="editor-row">        
+        <div style="width: 48%; float: left;">
+            @Html.CheckBoxFor(m => m.CreateHost) Create Host @Html.ValidationMessageFor(m => m.CreateHost)
+            <input type="hidden" name="ConvertedHostId" value="@Model.ConvertedHostId" />
+        </div>        
+    </div>
+    <div class="editor-row">
+        <div style="width: 70%; float: left;">
+            @Html.CheckBoxFor(m => m.CorporateWhiteLabeling) Include Corporate Letter             
+        </div>
+    </div>  
+    <div class="editor-row">
+        <div style="width: 90%; float: left;">
+            @Html.CheckBoxFor(m => m.AllowCobranding) Allow cobranding in customer portal        
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 90%; float: left;">
+            @Html.CheckBoxFor(m => m.CaptureInsuranceId) Capture @insuranceIdLabel      
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 90%; float: left;">
+            @Html.CheckBoxFor(m => m.InsuranceIdRequired) Is @insuranceIdLabel required      
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 90%; float: left;">
+            @Html.CheckBoxFor(m => m.SendAppointmentMail) Send Appointment Mail
+        </div>
+    </div>
+    @if (Model.ShippingOptions != null && Model.ShippingOptions.Any())
+    { 
+        <hr />
+        <h3>Shipping Options:</h3>
+        foreach(var shippingOption in Model.ShippingOptions)
+        {
+            <div class="editor-row">
+                @if(Model.ShippingOptionIds !=null && Model.ShippingOptionIds.Contains(shippingOption.Id))
+                {
+                    <input type="checkbox" id="@shippingOption.Id" checked="checked" onclick="FillShipping(this);" /> @shippingOption.Name
+                }
+                else
+                {
+                    <input type="checkbox" id="@shippingOption.Id" onclick="FillShipping(this);" /> @shippingOption.Name 
+                }
+                <input type="hidden" value="@shippingOption.Id" />
+            </div>
+        }
+        if (Model.ShippingOptionIds != null && Model.ShippingOptionIds.Count() > 0)
+        {
+                <script type="text/javascript" language="javascript">                    $(document).ready(function () { RenderShipping(); });        </script>
+        }
+        <div id="selectedShippingContainer" style="display: none;">
+        </div>
+    }  
+</div>
+<div class="content-side-column" style="width:32%;">
+    @* Form to add a new role the user *@
+    @Html.ValidationMessageFor(m => m.DefaultPackages)
+    @Html.Partial("AttachPackageMiniForm")
+    <div id="userPackageContainer">
+        @if (Model.DefaultPackages == null)
+        {
+            <div class="info-box">
+                No Package is associated to this account. Click on the attach package link.
+            </div>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">                $(document).ready(function () { renderAssignedPackages(); });        </script>
+        }
+    </div>
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript" language="javascript">
+
+    var assignedPackages = new Object();
+        @if ((Model.DefaultPackages != null) && (Model.DefaultPackages.Count() > 0))
+        {
+        <text>
+        </text>
+            foreach (var defaultPackage in Model.DefaultPackages)
+            {                                 
+                <text>
+                {
+                    var package = new Object();
+                    package.Id = @defaultPackage.Id;               
+                    package.Name = '@defaultPackage.Name';
+                    package.Key = @defaultPackage.Id ; 
+                    assignedPackages[package.Key] = package;
+                }
+                </text>
+            }
+        }
+
+    function checkValidImage(){
+            var fileName = $("input[name='organization_logo']").val();
+            var fileExpression = /^.+(.gif|.GIF|.jpg|.JPG|.jpeg|.JPEG|.bmp|.BMP|.png|.PNG)$/;
+            if ($.trim(fileName).length > 0 && fileExpression.exec(fileName) == null) {
+                alert('Only valid Image file types (gif, bmp, png, jpg or jpeg) are allowed!')
+                return false;
+            }
+            
+            return true;
+        }
+
+    function checkValidPdf(){
+            var fileName = $("input[name='fluff_letter']").val();
+            var fileExpression = /^.+(.pdf|.PDF)$/;
+            if ($.trim(fileName).length > 0 && fileExpression.exec(fileName) == null) {
+                alert('Only valid PDF file is allowed for Marketing letter!')
+                return false;
+            }            
+            return true;
+        }
+
+    function ValidateFileType(){            
+            var result = checkValidImage();
+            if(!result) return false; 
+                        
+            result = checkValidPdf();
+            if(!result) return false;           
+
+            return true;
+        }  
+    $(document).ready(function () { 
+        
+        $("#OrganizationEditModel_OrganizationType , label[for=OrganizationEditModel_OrganizationType]").hide();
+            
+        $("#addPackage").click(assignPackagetoAccount); 
+
+        $("input[id*='CaptureInsuranceId']").bind("click", function(){checkInsuranceId();});
+
+        checkInsuranceId();
+
+        $("a.unAssign").live("click", function () {                
+            $(this).parents("div.mini-container:first").remove();
+                
+            delete assignedPackages[$(this).attr('data-key')];
+            if ($.isEmptyObject(assignedPackages)) {
+                $(".info-box").show();
+            }
+            return false;
+        });
+
+        if ($("#ShowRetailPackages").attr("checked")){
+            showAllPackages();
+        }
+
+        $("input[type=submit]").click(ValidateFileType);
+
+        $("#fluffletter-qtip").qtip({
+            position: {
+                my: 'right top'
+            },
+            style: {
+                width: '500px'
+            },
+            content: {
+                title: "Marketing Letter",
+                text: function (api) {
+                    return 'To include Marketing letter in result report, you will have to select "Include Corporate Letter" checkbox.';
+                }
+            }
+        });
+    });
+
+    function assignPackagetoAccount() {
+            
+        var key = $("#package").val();
+        var package = {"Id" : $("#package").val(), "Name" : $("#package option:selected").text(), "Key" : key };
+            
+        if (package.Id == -1) {
+            alert("Please select a Package.");
+            return false;
+        }
+        
+        if(assignedPackages[key] != null)
+        {
+            alert("Package already selected.")
+            $("#package option").first().attr("selected",true);
+            return;
+        }
+        else
+            assignedPackages[package.Key] = package;
+        
+        $("#package option").first().attr("selected",true);
+                                     
+        $(".info-box").hide();
+        renderAssignedPackages();
+        return false;
+    }
+
+    function renderAssignedPackages() {
+        $("#userPackageContainer div.mini-container").remove();
+        $.each(assignedPackages, function (key, package) {
+            $("#assignedPackageTemplate").tmpl(package).appendTo("#userPackageContainer");
+        });
+    }
+
+    function removeFileLink(ctrlRef, controlIdString, viewLinkControlElement) {
+        ctrlRef.hide();
+        $("input[type=hidden][id*='" + controlIdString + "']").val(0);
+        viewLinkControlElement.hide();
+    }
+
+    function checkInsuranceId() {
+        if ($("input[id*='CaptureInsuranceId']").is(":checked") == false) {
+            $("input[id*='InsuranceIdRequired']").attr("checked", false);
+            $("input[id*='InsuranceIdRequired']").attr("disabled", "disabled");
+        } else {
+            $("input[id*='InsuranceIdRequired']").removeAttr("disabled");
+        }
+    }
+</script>
+
+<script id="assignedPackageTemplate" type="text/x-jquery-tmpl">
+    <div class='mini-container'>
+        <h4>${Name} </h4> [<a href="#" data-key="${Key}" class="unAssign">Remove</a>]
+
+        <div style="display:none;">
+            <input type="hidden" name="DefaultPackages.Index" value="${Key}" />
+            <input type="text" name="DefaultPackages[${Key}].Id" value="${Id}" />
+            <input type="text" name="DefaultPackages[${Key}].Name" value="${Name}" />
+        </div> 
+    </div>                      
+</script>
+
+<script type="text/javascript" language="javascript">
+    function showAllPackages() {//debugger;
+        var url = "";
+        if ($("#ShowRetailPackages").attr("checked")) {
+            url = "/Marketing/Package/GetAllPackages";
+        }
+        else {
+            url = "/Marketing/Package/GetCorporatePackages";
+        }
+
+        $.getJSON(url, null, function (allPackages) {
+            $("#package").empty();
+            $("#package").append("<option value='-1'>-- Select Packages --</option>");
+            $.each(allPackages, function (index, package) {
+                $("#package").append("<option value='" + package.SecondValue + "'>" + package.FirstValue + "</option>");
+            });
+        });
+    }    
+</script>
+
+<script type="text/javascript" src="/App/JavascriptFiles/tiny_mce/tiny_mce.js"></script>
+<script language="javascript" type="text/javascript">    
+    tinyMCE.init({
+        // General options
+        //mode: "textareas",
+        mode: "specific_textareas",
+        editor_selector: "myTextEditor",
+        theme: "advanced",        
+        height: "300",
+        plugins: "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+
+        // Theme options
+        theme_advanced_buttons1: "newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,cleanup,code", //anchor,image //,help
+        theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,advhr,|,ltr,rtl", //iespell,media,//,|,print,|,ltr,rtl,|,fullscreen
+        theme_advanced_buttons4: "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak,restoredraft,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+        theme_advanced_toolbar_location: "top",
+        theme_advanced_toolbar_align: "left",
+        theme_advanced_statusbar_location: "bottom",
+        theme_advanced_resizing: false,
+        theme_advanced_resizing_min_width : 320,
+
+        // Example content CSS (should be your site CSS)
+        content_css: "/App/JavascriptFiles/tiny_mce/css/content.css",
+
+        // Drop lists for link/image/media/template dialogs
+        template_external_list_url: "/App/JavascriptFiles/tiny_mce/lists/template_list.js",
+        external_link_list_url: "/App/JavascriptFiles/tiny_mce/lists/link_list.js",
+        external_image_list_url: "/App/JavascriptFiles/tiny_mce/lists/image_list.js",
+        media_external_list_url: "/App/JavascriptFiles/tiny_mce/lists/media_list.js",
+
+        // Style formats
+        style_formats: [
+			{ title: 'Bold text', inline: 'b' },
+			{ title: 'Red text', inline: 'span', styles: { color: '#ff0000'} },
+			{ title: 'Red header', block: 'h1', styles: { color: '#ff0000'} },
+			{ title: 'Example 1', inline: 'span', classes: 'example1' },
+			{ title: 'Example 2', inline: 'span', classes: 'example2' },
+			{ title: 'Table styles' },
+			{ title: 'Table row 1', selector: 'tr', classes: 'tablerow1' }
+		],
+
+        // Replace values for the template plugin
+        template_replace_values: {
+            username: "Some User",
+            staffid: "991234"
+        }
+    });
+</script>
+
+@* Set Shipping Options *@
+    <script type="text/javascript" language="javascript">
+        var selectedShippings = new Object();
+        @if (Model.ShippingOptionIds != null && Model.ShippingOptionIds.Count() > 0)
+        {
+            <text>
+                var shipping = new Object();
+            </text>
+            foreach (var shippingOptionId in Model.ShippingOptionIds)
+            {  
+                    <text>
+                    {
+                        shipping = new Object();
+                        shipping.Id = @shippingOptionId;
+                        selectedShippings[shipping.Id] = shipping;
+                    }
+                    </text>
+            }
+        }
+
+        function FillShipping(sourceCheckbox){//debugger;
+            var checkedBox = $(sourceCheckbox);
+            var val = checkedBox.parent().find("input:hidden").val();
+            if(sourceCheckbox.checked){
+                shipping = new Object();
+                shipping.Id = val;
+                selectedShippings[val] = shipping;   
+               
+            }
+            else{
+                if(selectedShippings[val]  != null){
+                    delete selectedShippings[val];
+                }
+            }
+            RenderShipping();
+        }
+
+        function RenderShipping() {
+            $("#selectedShippingContainer").empty();
+            $.each(selectedShippings, function (key, terr) {
+                $("#selectedShippingTemplate").tmpl(terr).appendTo("#selectedShippingContainer");
+            });
+        }        
+    </script>
+
+    <script id="selectedShippingTemplate" type="text/x-jquery-tmpl">
+        <div style="display:none;">
+            <input type="hidden" name="ShippingOptionIds.Index" value="${Id}" />
+            <input type="text" name="ShippingOptionIds[${Id}]" value="${Id}" />
+        </div>                  
+    </script>
+    @* End- Set Shipping Options *@

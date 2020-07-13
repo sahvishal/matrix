@@ -1,0 +1,802 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model MedicalVendorEditModel
+<style type="text/css">
+    textarea {
+        width: 98%;
+    }
+</style>
+<div style="float: left; width: 63%; margin-right: 5px;">
+    <fieldset>
+        <legend>Medical Vendor Details</legend>
+        <div class="editor-label">
+            @Html.LabelFor(m => m.MedicalVendorType) @Html.ValidationMessageFor(m => m.MedicalVendorType)
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(m => m.MedicalVendorType, DropDownHelper.MedicalVendorTypes(), new { onchange = "ShowHideHospitalPartner();" })
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(m => m.ContractId) @Html.ValidationMessageFor(m => m.ContractId)
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(m => m.ContractId, DropDownHelper.Contracts())
+        </div>
+        @Html.EditorFor(m => m.OrganizationEditModel)
+        <div class="editor-row hospital-partner-detail-div">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.HospitalPartnerEditModel.CannedMessage)
+            </div>
+            <div class="editor-field" style="float: left; width: 500px;">
+                @Html.TextAreaFor(m => m.HospitalPartnerEditModel.CannedMessage, new { @rows = "10", @cols = "20", @class = "myTextEditor" })
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div style="float: left; width: 35%;">
+    <div class="content-side-column" style="width: 98%; margin: 10px 0px;">
+        <div class="editor-row">
+            <div class="small-text">
+                <b>Organization Logo</b>
+            </div>
+            <table cellpadding="2" cellspacing="2" style="width: 100%;">
+                <tr>
+                    <td style="width: 70%;">
+                        <input type="file" name="organization_logo" />
+                    </td>
+                    @if (Model.OrganizationEditModel.LogoImage != null && Model.OrganizationEditModel.LogoImage.Id > 0)
+                    {
+                        var mediaLocation = IoC.Resolve<IMediaRepository>().GetOrganizationLogoImageFolderLocation();
+                        <td style="text-align: right;">
+                            <a href="@(mediaLocation.Url + Model.OrganizationEditModel.LogoImage.Path)" id="view_logoimage" target="_blank">View </a>
+                        </td> <td>
+                            <a href="javascript:void(0);" onclick="removeFileLink($(this), 'LogoImage', $('#view_logoimage'));"
+                                style="padding-top: 5px;">Remove </a>
+                        </td>
+                        @Html.HiddenFor(m => m.OrganizationEditModel.LogoImage.Id)
+                    }
+                    else
+                    {
+                        <td></td> <td></td> 
+                    }
+                </tr>
+            </table>
+        </div>
+        <div class="editor-row" style="font-size: 8pt;">
+            *<i> Upload only images (best resolution: 200 X 60) </i>
+        </div>
+        <hr />
+        <div class="editor-row" style="margin-top: 10px;">
+            <div class="small-text">
+                <b>Result Letter</b>
+            </div>
+            <table cellpadding="2" cellspacing="2" style="width: 100%;">
+                <tr>
+                    <td style="width: 70%;">
+                        <input type="file" name="result_letter" />
+                    </td>
+                    @if (Model.ResultLetterCoBrandingFile != null && Model.ResultLetterCoBrandingFile.Id > 0)
+                    {
+                        var mediaLocation = IoC.Resolve<IMediaRepository>().GetOrganizationResultLetterFolderLocation();
+                        <td style="text-align: right;">
+                            <a href="@(mediaLocation.Url + Model.ResultLetterCoBrandingFile.Path)" id="view_document_resultletter" target="_blank">View </a>
+                        </td> <td style="text-align: left;">
+                            <a href="javascript:void(0);" onclick="removeFileLink($(this), 'ResultLetterCoBrandingFile', $('#view_document_resultletter'));"
+                                style="padding-top: 5px;">Remove </a>
+                        </td>
+                        @Html.HiddenFor(m => m.ResultLetterCoBrandingFile.Id)
+                    }
+                    else
+                    {
+                        <td></td> <td></td> 
+                    }
+                </tr>
+            </table>
+        </div>
+        <div class="editor-row" style="font-size: 8pt;">
+            *<i> Upload only PDF files </i>
+        </div>
+        <hr />
+        <div class="editor-row" style="margin-top: 10px;">
+            <div class="small-text">
+                <b>Doctor Letter</b>
+            </div>
+            <table cellpadding="2" cellspacing="2" style="width: 100%;">
+                <tr>
+                    <td style="width: 70%;">
+                        <input type="file" name="doctor_letter" />
+                    </td>
+                    @if (Model.DoctorLetterFile != null && Model.DoctorLetterFile.Id > 0)
+                    {
+                        var mediaLocation = IoC.Resolve<IMediaRepository>().GetOrganizationDoctorLetterFolderLocation();
+                        <td style="text-align: right;">
+                            <a href="@(mediaLocation.Url + Model.DoctorLetterFile.Path)" id="view_document_doctorletter" target="_blank">View </a>
+                        </td>
+                        <td style="text-align: left;">
+                            <a href="javascript:void(0);" onclick="removeFileLink($(this), 'DoctorLetterFile', $('#view_document_doctorletter'));"
+                               style="padding-top: 5px;">Remove</a>
+                        </td>
+                        @Html.HiddenFor(m => m.DoctorLetterFile.Id)
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td></td>
+                    }
+                </tr>
+            </table>
+        </div>
+        <div class="editor-row" style="font-size: 8pt;">
+            *<i> Upload only PDF files </i>
+        </div>
+    </div>
+    <div class="content-side-column" style="clear: both; width: 98%;" id="HospitalPartnerDiv">
+        <fieldset>
+            <legend>Hospital Partner Details</legend>
+            @Html.CheckBoxFor(m => m.IsHospitalPartner, new { onclick = "ShowHideHospitalPartnerDetails();" })
+            <span>Is Hospital Partner</span>
+            <div style="margin-top: 10px; display: none;" class="hospital-partner-detail-div">
+                @if (Model.HospitalPartnerEditModel != null)
+                {                
+                    <div class="editor-row">
+                        @Html.EditorFor(m => m.HospitalPartnerEditModel.AssociatedPhoneNumber)
+                    </div>   
+                    <hr />  
+                    <div class="editor-row">
+                        <div style="width: 90%; float: left;">
+                            @Html.CheckBoxFor(m => m.HospitalPartnerEditModel.CaptureSsn) Capture SSN     
+                        </div>
+                    </div>  
+                    <div class="editor-row">
+                        <div style="width: 90%; float: left;">
+                            @Html.CheckBoxFor(m => m.HospitalPartnerEditModel.RecommendPackage) Recommend Package     
+                        </div>
+                    </div>  
+                    if (Model.HospitalPartnerEditModel.ShowAskPreQualificationQuestionSetttings)
+                    {
+                    <div class="editor-row">
+                        <div style="width: 90%; float: left;">
+                            @Html.CheckBoxFor(m => m.HospitalPartnerEditModel.AskPreQualificationQuestion) Ask Pre-Qualification Question     
+                        </div>
+                    </div>      
+                    }
+                    <div class="editor-row">
+                        <div style="width: 90%; float: left;">
+                            @Html.CheckBoxFor(m => m.HospitalPartnerEditModel.AttachDoctorLetter) Attach Doctor Letter    
+                        </div>
+                    </div>
+                    <div class="editor-row">
+                        <div style="width: 90%; float: left;">
+                            @Html.CheckBoxFor(m => m.HospitalPartnerEditModel.RestrictEvaluation) Restrict Physician Evaluation    
+                        </div>
+                    </div>  
+                    
+                    <hr />                       
+                    <div class="editor-field">
+                        <div class="small-text">
+                            @Html.LabelFor(m => m.HospitalPartnerEditModel.MailTransitDays) @Html.ValidationMessageFor(m => m.HospitalPartnerEditModel.MailTransitDays)
+                        </div>
+                        @Html.TextBoxFor(m => m.HospitalPartnerEditModel.MailTransitDays)
+                    </div>   
+                    <hr />         
+                    <div class="editor-row">
+                        <div style="float: left; width: 50%">
+                            <h4>Result Archive Period</h4>
+                        </div>
+                        <div style="float: left; width: 30%">
+                            - (in days)
+                        </div>
+                    </div>
+                    <div class="editor-row">
+                        <div style="float: left; width: 74%;">@Html.LabelFor(m => m.HospitalPartnerEditModel.NormalResultValidityPeriod)
+                            :
+                        </div>
+                        <div style="float: left; width: 26%;">@Html.TextBoxFor(m => m.HospitalPartnerEditModel.NormalResultValidityPeriod, new { @style = "width:50px;" })</div>
+                    </div>
+                    <div class="editor-row">
+                        <div style="float: left; width: 74%;">@Html.LabelFor(m => m.HospitalPartnerEditModel.AbnormalResultValidityPeriod)
+                            :
+                        </div>
+                        <div style="float: left; width: 26%;">@Html.TextBoxFor(m => m.HospitalPartnerEditModel.AbnormalResultValidityPeriod, new { @style = "width:50px;" })</div>
+                    </div>
+                    <div class="editor-row">
+                        <div style="float: left; width: 74%;">@Html.LabelFor(m => m.HospitalPartnerEditModel.CriticalResultValidityPeriod)
+                            :
+                        </div>
+                        <div style="float: left; width: 26%;">@Html.TextBoxFor(m => m.HospitalPartnerEditModel.CriticalResultValidityPeriod, new { @style = "width:50px;" })</div>
+                    </div>
+                    <hr />
+                    if (Model.HospitalPartnerEditModel != null)
+                    {
+                        <h4>Shipping Options:</h4>
+                    
+                        <div class="editor-row">
+                            <div style="width: 90%; float: left;">
+                                @Html.CheckBoxFor(m => m.HospitalPartnerEditModel.ShowOnlineShipping) Online Shipping
+                            </div>
+                        </div>
+                        if (Model.HospitalPartnerEditModel.ShippingOptions != null && Model.HospitalPartnerEditModel.ShippingOptions.Any())
+                        {
+                            foreach (var shippingOption in Model.HospitalPartnerEditModel.ShippingOptions)
+                            {
+                                <div class="editor-row">
+                                    @if (Model.HospitalPartnerEditModel.ShippingOptionIds != null && Model.HospitalPartnerEditModel.ShippingOptionIds.Contains(shippingOption.Id))
+                                    {
+                                        <input type="checkbox" id="@shippingOption.Id" checked="checked" onclick="FillShipping(this);" /> @shippingOption.Name
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" id="@shippingOption.Id" onclick="FillShipping(this);" /> @shippingOption.Name
+                                    }
+                                    <input type="hidden" value="@shippingOption.Id" />
+                                </div>
+                            }
+                            
+                            <div id="selectedShippingContainer" style="display: none;">
+                            </div>
+                        }
+                    }
+                    
+                    <hr />
+                    
+                    if (Model.HospitalPartnerEditModel != null)
+                    {
+                    <h4>Packages</h4>
+                    <div class="editor-row">
+                        @Html.DropDownList("selectpackagebox", DropDownHelper.Packages(), new { @style = "width: 243px;" })
+                    
+                        <input type="button" value="Add" onclick="AddPackage();" />
+                    </div>  
+                    <hr />
+                    <div id="selectedpackagesContainer">
+                    </div>                     
+                    }
+
+
+                    if (Model.HospitalPartnerEditModel.Territories != null && Model.HospitalPartnerEditModel.Territories.Any())
+                    {
+                    <hr />
+                    <h4>Territory</h4>
+                        foreach (var territory in Model.HospitalPartnerEditModel.Territories)
+                        {
+                    <div class="editor-row">
+                        @if (Model.HospitalPartnerEditModel.TerritoryIds != null && Model.HospitalPartnerEditModel.TerritoryIds.Contains(territory.FirstValue))
+                        {
+                            <input type="checkbox" id="@territory.FirstValue" checked="checked" onclick="FillTerritory(this);" /> @territory.SecondValue
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="@territory.FirstValue" onclick="FillTerritory(this);" /> @territory.SecondValue 
+                        }
+                        <input type="hidden" value="@territory.FirstValue" />
+                    </div>
+                        }
+                    }                   
+                    
+                    <h4>Health Assessment Template</h4>
+                    <div class="editor-row" style="width: 99%;">
+                        <div class="editor-field">
+                            @Html.DropDownListFor(m => m.HospitalPartnerEditModel.HealthAssessmentTemplateId, DropDownHelper.GetHealthAssessmentTemplatesByType(Falcon.App.Core.Medical.Enum.HealthAssessmentTemplateType.HospitalPartner))
+                            <div style="float: right; text-align: right; width: 60px;">
+                                <a href="javascript:void(0);" id="view-template" onclick="viewHealthAssessmentTemplateQuestion();" style="margin-left: 10px;">View</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr />
+                    if (Model.HospitalPartnerEditModel.HospitalFacilities != null && Model.HospitalPartnerEditModel.HospitalFacilities.Any())
+                    {
+                    <h4>Hospital Facilities</h4>
+                    <div class="editor-row">
+                        <select id="selecthospitalfacilitybox" style="width: 200px;">
+                            <option value="-1">-- Select Hospital Facility --</option>
+                            @foreach (var hospitalFacility in Model.HospitalPartnerEditModel.HospitalFacilities)
+                            {
+                                <option value="@hospitalFacility.FirstValue">@hospitalFacility.SecondValue </option>
+                            }
+                        </select>
+                        <input type="button" value="Add" onclick="AddHospitalFacility();" />
+                    </div>  
+                    <hr />
+                    <div id="selectedHospitalFacilityContainer">
+                    </div>                     
+                    }
+                }
+            </div>
+        </fieldset>
+        <div id="selectedTerritoriesContainer" style="display: none;">
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+
+
+
+<script type="text/javascript" language="javascript">
+    
+    var packageList = new Object();
+
+    @if (Model.HospitalPartnerEditModel != null && !Model.HospitalPartnerEditModel.OrganizationPackageList.IsNullOrEmpty())
+    {
+        var organizationPackages = Model.HospitalPartnerEditModel.OrganizationPackageList;
+        foreach (var item in organizationPackages)
+        {
+            <text>
+    var packageItem = new Object();
+    packageItem.PackageId = '@item.Id';
+    packageItem.Name = '@item.Name';
+    packageItem.Gender = '@item.Gender';
+    packageItem.GenderDescription = '@item.Gender.GetDescription()';
+    packageItem.Key = '@item.Id';
+    packageItem.IsRecommended=false;
+    packageList[packageItem.Key] = packageItem;
+            </text>
+        }
+    }
+    var selectedPackages = new Object();
+    @if ((Model.HospitalPartnerEditModel != null && Model.HospitalPartnerEditModel.DefaultPackages != null) && (Model.HospitalPartnerEditModel.DefaultPackages.Any()))
+    {
+            <text>
+    var package = new Object();
+                </text>
+        foreach (var defaultPackage in Model.HospitalPartnerEditModel.DefaultPackages)
+        {
+                        <text>
+    {
+        package = new Object();
+        package.PackageId = '@defaultPackage.PackageId';
+        package.Name = '@defaultPackage.PackageName';
+        package.GenderDescription = '@defaultPackage.Gender.GetDescription()';
+        package.Gender = '@defaultPackage.Gender';
+        package.IsRecommended =@(defaultPackage.IsRecommended ? "true" : "false") 
+        package.Key = '@defaultPackage.PackageId';
+        selectedPackages[package.PackageId] = package;
+    }
+                        </text>
+        }
+
+            <text>
+    $(document).ready(function () { RenderSelectedPackages(); }); 
+            </text>
+    }
+
+    function AddPackage()
+    {
+        var option = $("#selectpackagebox option:selected");
+        var key = Number(option.val());
+        if(option.length < 1)
+            return;
+
+        if(key < 1)
+            return;
+
+        if (selectedPackages[key] != null) {
+            alert("Already added.");
+            return;
+        }
+        //  debugger;
+        selectedPackages[key] = packageList[key];   
+            
+        RenderSelectedPackages();
+    }
+
+    $("a.unAssign").live("click", function() {
+        delete selectedPackages[$(this).attr('data-key')];
+
+        RenderSelectedPackages();
+    });
+
+    function RenderSelectedPackages() {
+        $("#selectedpackagesContainer").empty();
+        $.each(selectedPackages, function (key, terr) {
+            // debugger;
+            $("#selectedPackageTemplate").tmpl(terr).appendTo("#selectedpackagesContainer");
+        });
+    }
+</script>
+
+
+<script id="selectedPackageTemplate" type="text/x-jquery-tmpl">
+    <div class='mini-container'>
+        <div style="float: left; margin-right: 20px;">
+            <h4>${Name}</h4> [<a href="#" data-key="${Key}" class="unAssign">Remove</a> | {{if !IsRecommended}} <a href="javascript:void(0);" data-key="${Key}" data-value="${Gender}" class="recommended">Mark as Recommended</a>{{/if}} {{if IsRecommended}} <a href="javascript:void(0);" data-key="${Key}" data-value="${Gender}" class="unRecommend">Recommended</a>{{/if}} ]
+        </div>
+        
+             <div style="clear: both; float: left;"> Available For Gender: <b>${GenderDescription}</b> </div>
+        @*[<a href="#" data-key="${Key}" class="unAssign">Remove</a>] [{{if !IsRecommended}} <a href="#" data-key="${Key}" class="recommended">Mark as Recommended</a>{{/if}} {{if IsRecommended}} <a href="#" data-key="${Key}" class="recommended">Recommended</a>{{/if}} ]*@
+        <div style="display: none;">
+            <input type="hidden" name="HospitalPartnerEditModel.DefaultPackages.Index" value="${Key}" />
+            <input type="text" name="HospitalPartnerEditModel.DefaultPackages[${Key}].PackageId" value="${PackageId}" />
+            <input type="text" name="HospitalPartnerEditModel.DefaultPackages[${Key}].PackageName" value="${Name}" />
+            <input type="text" name="HospitalPartnerEditModel.DefaultPackages[${Key}].Gender" value="${Gender}" />
+            <input type="text" name="HospitalPartnerEditModel.DefaultPackages[${Key}].IsRecommended" value="${IsRecommended}" />
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript" language="javascript">
+    var selectedTerritories = new Object();
+    @if ((Model.HospitalPartnerEditModel != null && Model.HospitalPartnerEditModel.TerritoryIds != null) && (Model.HospitalPartnerEditModel.TerritoryIds.Count() > 0))
+    {
+            <text>
+    var territory = new Object();
+            </text>
+        foreach (var selectedTerritory in Model.HospitalPartnerEditModel.TerritoryIds)
+        {  
+                    <text>
+    {
+        territory = new Object();
+        territory.Id = @selectedTerritory;
+        selectedTerritories[territory.Id] = territory;
+    }
+                    </text>
+        }
+            <text>
+    $(document).ready(function () { RenderSelectedTerritories(); }); 
+            </text>
+    }
+        
+    function FillTerritory(sourceCheckbox){//debugger;
+        var checkedBox = $(sourceCheckbox);
+        var val = checkedBox.parent().find("input:hidden").val();
+        if(sourceCheckbox.checked){
+            territory = new Object();
+            territory.Id = val;
+            selectedTerritories[val] = territory;   
+        }
+        else{
+            if(selectedTerritories[val]  != null){
+                delete selectedTerritories[val];
+            }
+        }
+        RenderSelectedTerritories();
+    }
+
+    function RenderSelectedTerritories() {
+        $("#selectedTerritoriesContainer").empty();
+        $.each(selectedTerritories, function (key, terr) {
+            $("#selectedTerritoryTemplate").tmpl(terr).appendTo("#selectedTerritoriesContainer");
+        });
+    }
+
+    function checkValidImage(){
+        var fileName = $("input[name='organization_logo']").val();
+        var fileExpression = /^.+(.gif|.GIF|.jpg|.JPG|.jpeg|.JPEG|.bmp|.BMP|.png|.PNG)$/;
+        if ($.trim(fileName).length > 0 && fileExpression.exec(fileName) == null) {
+            alert('Only valid Image file types (gif, bmp, png, jpg or jpeg) are allowed!')
+            return false;
+        }
+            
+        return true;
+    }
+
+    function checkValidPdf(){
+        var fileName = $("input[name='result_letter']").val();
+        var fileExpression = /^.+(.pdf|.PDF)$/;
+        if ($.trim(fileName).length > 0 && fileExpression.exec(fileName) == null) {
+            alert('Only Pdf file types are allowed!')
+            return false;
+        }
+
+        return true;
+    }
+
+
+    function ValidateFileType(){            
+        var result = checkValidImage();
+        if(!result) return false;
+
+        result = checkValidPdf();
+        if(!result) return false;
+
+        return true;
+    }
+
+    $(document).ready(function(){
+        $("input[type=submit]").click(ValidateFileType);
+        @if (Model.OrganizationEditModel.LogoImage != null && Model.OrganizationEditModel.LogoImage.Id > 0)
+        {
+                <text>
+        $("input[type='hidden'][name*='LogoImage']").val('@Model.OrganizationEditModel.LogoImage.Id');
+        </text>
+        }
+        @if (Model.ResultLetterCoBrandingFile != null && Model.ResultLetterCoBrandingFile.Id > 0)
+        {
+                <text>
+        $("input[type='hidden'][name*='ResultLetterCoBrandingFile']").val('@Model.ResultLetterCoBrandingFile.Id');
+        </text>
+        }
+    });
+
+</script>
+<script id="selectedTerritoryTemplate" type="text/x-jquery-tmpl">
+    <div style="display: none;">
+        <input type="hidden" name="HospitalPartnerEditModel.TerritoryIds.Index" value="${Id}" />
+        <input type="text" name="HospitalPartnerEditModel.TerritoryIds[${Id}]" value="${Id}" />
+    </div>
+</script>
+<script type="text/javascript" language="javascript">
+    function viewHealthAssessmentTemplateQuestion() {
+        var templateId = $("#HospitalPartnerEditModel_HealthAssessmentTemplateId").val();
+        if (parseInt(templateId) > 0) {
+            window.open("/Medical/HealthAssessment/View?id=" + templateId, "Template_Question", "width=720, height=620, scrollbars=1");
+        }
+    }
+
+    function showHideViewTemplate() {
+        var templateId = $("#HospitalPartnerEditModel_HealthAssessmentTemplateId").val();
+        if (parseInt(templateId) > 0) {
+            $("#view-template").show();
+        }
+        else {
+            $("#view-template").hide();
+        }
+    }
+</script>
+
+<script type="text/javascript" src="/App/JavascriptFiles/tiny_mce/tiny_mce.js"></script>
+<script language="javascript" type="text/javascript">    
+    tinyMCE.init({
+        // General options
+        //mode: "textareas",
+        mode: "specific_textareas",
+        editor_selector: "myTextEditor",
+        theme: "advanced",        
+        height: "300",
+        plugins: "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+
+        // Theme options
+        theme_advanced_buttons1: "newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,cleanup,code", //anchor,image //,help
+        theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,advhr,|,ltr,rtl", //iespell,media,//,|,print,|,ltr,rtl,|,fullscreen
+        theme_advanced_buttons4: "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak,restoredraft,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+        theme_advanced_toolbar_location: "top",
+        theme_advanced_toolbar_align: "left",
+        theme_advanced_statusbar_location: "bottom",
+        theme_advanced_resizing: false,
+        theme_advanced_resizing_min_width : 200,
+
+        // Example content CSS (should be your site CSS)
+        content_css: "/App/JavascriptFiles/tiny_mce/css/content.css",
+
+        // Drop lists for link/image/media/template dialogs
+        template_external_list_url: "/App/JavascriptFiles/tiny_mce/lists/template_list.js",
+        external_link_list_url: "/App/JavascriptFiles/tiny_mce/lists/link_list.js",
+        external_image_list_url: "/App/JavascriptFiles/tiny_mce/lists/image_list.js",
+        media_external_list_url: "/App/JavascriptFiles/tiny_mce/lists/media_list.js",
+
+        // Style formats
+        style_formats: [
+            { title: 'Bold text', inline: 'b' },
+            { title: 'Red text', inline: 'span', styles: { color: '#ff0000'} },
+            { title: 'Red header', block: 'h1', styles: { color: '#ff0000'} },
+            { title: 'Example 1', inline: 'span', classes: 'example1' },
+            { title: 'Example 2', inline: 'span', classes: 'example2' },
+            { title: 'Table styles' },
+            { title: 'Table row 1', selector: 'tr', classes: 'tablerow1' }
+        ],
+
+        // Replace values for the template plugin
+        template_replace_values: {
+            username: "Some User",
+            staffid: "991234"
+        }
+    });
+</script>
+
+
+<script type="text/javascript" language="javascript">
+    var selectedHospitalFacilities = new Object();
+    @if ((Model.HospitalPartnerEditModel != null && Model.HospitalPartnerEditModel.HospitalFacilityIds != null) && (Model.HospitalPartnerEditModel.HospitalFacilityIds.Any()))
+    {
+        <text>
+    var hospitalFacility = new Object();
+        </text>
+        foreach (var selectedHospitalFacilityId in Model.HospitalPartnerEditModel.HospitalFacilityIds)
+        {
+            var selectedHospitalFacility = Model.HospitalPartnerEditModel.HospitalFacilities.Single(p => p.FirstValue == selectedHospitalFacilityId);
+            <text>
+    {
+        hospitalFacility = new Object();
+        hospitalFacility.Id = '@selectedHospitalFacility.FirstValue';
+        hospitalFacility.Name = '@selectedHospitalFacility.SecondValue';
+        selectedHospitalFacilities[hospitalFacility.Id] = hospitalFacility;
+    }
+            </text>
+        }
+
+        <text>
+    $(document).ready(function () { RenderSelectedHospitalFacilities(); }); 
+        </text>
+    }
+
+    function AddHospitalFacility()
+    {
+        var option = $("#selecthospitalfacilitybox option:selected");
+
+        if(option.length < 1)
+            return;
+
+        if(Number(option.val()) < 1)
+            return;
+
+        if (selectedHospitalFacilities[option.val()] != null) {
+            alert("Already added.");
+            return;
+        }
+                            
+        var hospitalFacility = new Object();
+        hospitalFacility.Id = option.val();
+        hospitalFacility.Name = option.text();
+        selectedHospitalFacilities[hospitalFacility.Id] = hospitalFacility;   
+            
+        RenderSelectedHospitalFacilities();
+    }
+
+    function RemoveHospitalFacility(key){
+        delete selectedHospitalFacilities[key];
+
+        RenderSelectedHospitalFacilities();
+    }
+
+    function RenderSelectedHospitalFacilities() {
+        $("#selectedHospitalFacilityContainer").empty();
+        $.each(selectedHospitalFacilities, function (key, terr) {
+            $("#selectedHospitalFacilityTemplate").tmpl(terr).appendTo("#selectedHospitalFacilityContainer");
+        });
+    }
+</script>
+<script id="selectedHospitalFacilityTemplate" type="text/x-jquery-tmpl">
+    <div style="width: 98%; padding: 3px; margin: 2px 0px; border-bottom: solid 1px;">
+        <h4>${Name}</h4>
+        <div style="text-align: right;">
+            <a href="javascript:void(0);" onclick="RemoveHospitalFacility(${Id})">Remove </a>
+        </div>
+        <input type="hidden" name="HospitalPartnerEditModel.HospitalFacilityIds.Index" value="${Id}" />
+        <input type="text" style="display: none;" name="HospitalPartnerEditModel.HospitalFacilityIds[${Id}]" value="${Id}" />
+    </div>
+</script>
+
+<!-- Shipping Option-->
+<script type="text/javascript">
+    var selectedShippings = new Object();
+    @if (Model.HospitalPartnerEditModel.ShippingOptionIds != null && Model.HospitalPartnerEditModel.ShippingOptionIds.Any())
+    {
+        <text>
+        var shipping = new Object();
+        </text>
+        foreach (var shippingOptionId in Model.HospitalPartnerEditModel.ShippingOptionIds)
+        {
+            <text>
+            {
+                shipping = new Object();
+                shipping.Id = '@shippingOptionId';
+                selectedShippings[shipping.Id] = shipping;
+            }
+            </text>
+        }
+        <text>
+            $(document).ready(function(){RenderShipping()});
+        </text>
+    }
+
+    function FillShipping(sourceCheckbox) {//debugger;
+        var checkedBox = $(sourceCheckbox);
+        var val = checkedBox.parent().find("input:hidden").val();
+        if (sourceCheckbox.checked) {
+            shipping = new Object();
+            shipping.Id = val;
+            selectedShippings[val] = shipping;
+
+        }
+        else {
+            if (selectedShippings[val] != null) {
+                delete selectedShippings[val];
+            }
+        }
+        RenderShipping();
+    }
+
+    function RenderShipping() {
+        $("#selectedShippingContainer").empty();
+        $.each(selectedShippings, function (key, terr) {
+            $("#selectedShippingTemplate").tmpl(terr).appendTo("#selectedShippingContainer");
+        });
+    }
+</script>
+
+<script id="selectedShippingTemplate" type="text/x-jquery-tmpl">
+    <div style="display: none;">
+        <input type="hidden" name="HospitalPartnerEditModel.ShippingOptionIds.Index" value="${Id}" />
+        <input type="text" name="HospitalPartnerEditModel.ShippingOptionIds[${Id}]" value="${Id}" />
+    </div>
+</script>
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+
+        $("#OrganizationEditModel_OrganizationType , label[for=OrganizationEditModel_OrganizationType]").hide();
+
+        ShowHideHospitalPartner();
+        ShowHideHospitalPartnerDetails();
+        showHideViewTemplate();
+        $("#HospitalPartnerEditModel_HealthAssessmentTemplateId").bind("change", function () { showHideViewTemplate(); });
+    });
+
+    function ShowHideHospitalPartner() {
+        if ($("#MedicalVendorType option:selected").text() == "Hospital")
+            $("#HospitalPartnerDiv").show();
+        else
+            $("#HospitalPartnerDiv").hide();
+    }
+
+    function ShowHideHospitalPartnerDetails() {
+        if ($("#IsHospitalPartner").attr("checked"))
+            $(".hospital-partner-detail-div").show();
+        else
+            $(".hospital-partner-detail-div").hide();
+    }
+
+    function removeFileLink(ctrlRef, controlIdString, viewLinkControlElement) {
+        ctrlRef.hide();
+        $("input[type=hidden][id*='" + controlIdString + "']").val(0);
+        viewLinkControlElement.hide();
+    }
+
+    var male = '@Gender.Male';
+    var Female = '@Gender.Female';
+    var Both = '@Gender.Unspecified';
+
+    function MarkAsRecommended(selectedKey, gender) {
+
+        if (gender == Both) {
+            $.each(selectedPackages, function (key) {
+                selectedPackages[key].IsRecommended = (selectedKey == "") ? selectedPackages[key].IsRecommended : false;
+
+            });
+        }
+
+        $.each(selectedPackages, function (key, item) {
+
+            if (item.Key == selectedKey) {
+                selectedPackages[key].IsRecommended = true;
+            }
+            else if (item.Gender == gender || item.Gender == Both) {
+                selectedPackages[key].IsRecommended = (selectedKey == "") ? selectedPackages[key].IsRecommended : false;
+            }
+
+        });
+        RenderSelectedPackages();
+    }
+
+    $("a.recommended").live("click", function () {
+        MarkAsRecommended($(this).attr('data-key'), $(this).attr('data-value'));
+        return false;
+    });
+
+    $("a.unRecommend").live("click", function () {
+        var key = $(this).attr('data-key');
+        selectedPackages[key].IsRecommended = false;
+        RenderSelectedPackages();
+    });
+
+//function MarkAsRecommended(selectedKey) {
+    //    $.each(selectedPackages, function (key, item) {
+            
+    //        if (item.Key == selectedKey) {
+    //            selectedPackages[key].IsRecommended = true;
+    //        }
+    //        else {
+    //            selectedPackages[key].IsRecommended = (selectedKey == "") ? selectedPackages[key].IsRecommended : false;
+    //        }
+    //    });
+    //    RenderSelectedPackages();
+    //}
+
+    //$("a.recommended").live("click", function () {
+    //    MarkAsRecommended($(this).attr('data-key'));
+    //    return false;
+    //});
+</script>

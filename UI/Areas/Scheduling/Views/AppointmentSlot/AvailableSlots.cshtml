@@ -1,0 +1,124 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model Falcon.App.Core.Scheduling.ViewModels.AppointmentSlotListModel
+@{
+    var sessionContext = IoC.Resolve<ISessionContext>();
+    var configurationSettingRepository = IoC.Resolve<IConfigurationSettingRepository>();
+    var isCustomer = sessionContext == null || sessionContext.UserSession == null || sessionContext.UserSession.CurrentOrganizationRole.GetSystemRoleId == (long)Falcon.App.Core.Enum.Roles.Customer;
+    int numberOfSlotstoShowinaRow = isCustomer ? 2 : 4;
+    int maxNumberOfSlotstoShow = Convert.ToInt32(configurationSettingRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.MaxNoOfAppointmentSlotsToShowOnline));
+}
+<style type="text/css">
+    .appointment-slot
+    {
+        width: 95%;
+        text-align: center;
+    }
+    
+    .appointment-slot td th
+    {
+        text-align: center;
+    }
+</style>
+<table class="appointment-slot">
+    @{
+        int index = 0;
+
+        while (index < Model.Slots.Count())
+        {
+            int i;        
+        <tr>
+            @for (i = 0; i < numberOfSlotstoShowinaRow && index < Model.Slots.Count(); i++)
+            {
+                var item = @Model.Slots.ElementAt(index);
+                <td>
+                    <input type="radio" onclick="selectAppointment('@item.AppointmentId');" />@Html.DisplayFor(m => item.StartTime)
+                </td>
+                                                                                         index++;
+            }
+            @while (i < numberOfSlotstoShowinaRow)
+            {
+                <td class="blank">
+                    &nbsp;
+                </td>
+                i++;
+            }
+        </tr>
+        }
+    }
+</table>
+@if (isCustomer && Model.Slots.Count() < maxNumberOfSlotstoShow && Model.Slots.Count() < Model.TotalSlots)
+{
+    <div style="width: 95%; text-align: right;">
+        <a href="javascript:void(0);" onclick="onClickShowMore(@(Model.Slots.Count() + 2));">
+            Show More </a>
+    </div>
+}
+<script language="javascript" type="text/javascript">
+
+    var _getSlots;
+    var _onSuccessSelectAppointment;
+    var _onFailureSelectAppointment;
+    var _alreadyBookedSlotIds = null;
+    var _isCalledFromChangePackage = false;
+    function setGetSlotsMethodRef(methodRefGetSlots, alreadyBookedSlotIds,isCalledFromChangePackage) {
+        _getSlots = methodRefGetSlots;
+        _alreadyBookedSlotIds = alreadyBookedSlotIds;
+        _isCalledFromChangePackage = isCalledFromChangePackage;
+    }
+
+    function onClickShowMore(numberOfSlotstoShow) {
+        if (_getSlots != null) {            
+            _getSlots(numberOfSlotstoShow);
+        }
+    }
+
+    function setOnCompleteSelectAppointment(methodRefonSuccess, methodRefonFailure) {
+        _onSuccessSelectAppointment = methodRefonSuccess;
+        _onFailureSelectAppointment = methodRefonFailure;
+    }
+
+    function selectAppointment(slotId) {
+        
+        var testIds = null;
+        @if (!Model.AddOnTestIds.IsNullOrEmpty())
+        {
+            <text>
+                eval('testIds = [@(string.Join(",", Model.AddOnTestIds))]');
+            </text>
+        }
+        
+        $.ajax({
+            url: '/Scheduling/AppointmentSlot/BookSlotTemporarily',
+            type: 'Post',
+            data: "{'selectedSlotId' : " + slotId + ", 'screeningTime' : @Model.ScreeningTime, 'packageId' : @Model.PackageId, 'testIds' : " + JSON.stringify(testIds) + ", 'bookedSlotIds' : " + JSON.stringify(_alreadyBookedSlotIds) + ", 'isChangePackageRequest' : " + JSON.stringify(_isCalledFromChangePackage) + "}",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+              //  debugger;
+                if (result == null) {
+                    alert('The slot selected by you is no longer available as it is booked for another customer. Please Choose another slot or select any other preferable hour.');
+
+                    if (_onFailureSelectAppointment != null) {
+                        _onFailureSelectAppointment();
+                    }
+
+                    return;
+                }
+
+                if (_onSuccessSelectAppointment != null) {
+                    _onSuccessSelectAppointment(result);
+                }
+            },
+            error: function (arg1, arg2) {
+                //debugger;
+                alert('The slot selected by you is no longer available as it is booked for another customer. Please Choose another slot or select any other preferable hour.');
+
+                if (_onFailureSelectAppointment != null) {
+                    _onFailureSelectAppointment();
+                }
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,249 @@
+﻿@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Medical.ViewModels
+@model TemplateCriteriaEditModel
+
+<style>
+    .small-textbox {
+        width: 50px !important;
+    }
+
+    .ispublishedValidation span {
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .small-select {
+        width: 85px;
+        margin-left: 5px;
+    }
+</style>
+@Html.HiddenFor(m => m.TemplateId)
+
+<div class="ispublishedValidation" style="margin-bottom: 10px;">@Html.ValidationMessageFor(m => m.IsPublished)</div>
+@if (Model != null && Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+{
+    <script type="text/javascript"> window.location.href = "/Medical/ClinicalQuestion/Index" </script>
+}
+@Html.EditorFor(m => m.Criteria)
+
+<input type="hidden" id="isFirstLoad" value="" />
+<div class="btnrow" style="clear: both;float: left">
+    @Html.CheckBoxFor(x => x.IsPublished) Publish
+</div>
+<script type="text/javascript">
+    $(".setCriteria").click(function () {
+        if ($(this).is(":checked")) {
+            $(this).closest(".criteria").find(".operator input,.operator select").removeAttr("disabled");
+
+        } else {
+            $(this).closest(".criteria").find(".operator select").val(-1);
+            $(this).closest(".criteria").find(".operator input,.operator select").attr("disabled", "disabled");
+            $(this).closest(".criteria").find(".operator .max-age-text,.min-age-text,.OnMedicationHidden").val('').hide();
+        }
+        $(this).closest(".criteria").find(".operator input[type='hidden']").removeAttr("disabled");
+    });
+
+
+    $(".answerCheckBox").click(function () {
+        if ($(this).is(":checked")==false) {
+            $(this).closest(".criteria").find(".operator .AnswerHidden").val('');
+            $(this).closest(".criteria").find(".operator .noOfQuestionDdl").val(-1);
+        } 
+    });
+    $(".genderCheckBox").click(function () {
+        if ($(this).is(":checked")==false) {
+            $(this).closest(".criteria").find(".operator input").attr('checked', '');
+        } 
+    });
+
+    var onComparisionDdlChange = function (elem) {
+        var selectedVal = elem.val();
+
+        if (selectedVal == '@((long)ComparisonOperators.LessThan)') {
+            elem.closest(".criteria").find(".operator .max-age-text").show();
+            elem.closest(".criteria").find(".operator .min-age-text").hide();
+            elem.closest(".criteria").find(".operator .ageMinTextBox").val('');
+        } else if (selectedVal == '@((long)ComparisonOperators.LessThanEqualTo)') {
+            elem.closest(".criteria").find(".operator .max-age-text").show();
+            elem.closest(".criteria").find(".operator .min-age-text").hide();
+            elem.closest(".criteria").find(".operator .ageMinTextBox").val('');
+        } else if (selectedVal == '@((long)ComparisonOperators.GreaterThan)') {
+            elem.closest(".criteria").find(".operator .max-age-text").hide();
+            elem.closest(".criteria").find(".operator .ageMaxTextBox").val('');
+            elem.closest(".criteria").find(".operator .min-age-text").show();
+        } else if (selectedVal == '@((long)ComparisonOperators.GreaterThanEqualTo)') {
+            elem.closest(".criteria").find(".operator .max-age-text").hide();
+            elem.closest(".criteria").find(".operator .ageMaxTextBox").val('');
+            elem.closest(".criteria").find(".operator .min-age-text").show();
+        } else if (selectedVal == '@((long)ComparisonOperators.Between)') {
+            elem.closest(".criteria").find(".operator .max-age-text").show();
+            elem.closest(".criteria").find(".operator .min-age-text").show();
+        } else {
+            elem.closest(".criteria").find(".operator .max-age-text").val('').hide();
+            elem.closest(".criteria").find(".operator .min-age-text").val('').hide();
+            elem.closest(".criteria").find(".operator .ageMinTextBox").val('');
+            elem.closest(".criteria").find(".operator .ageMaxTextBox").val('');
+        }
+        
+    };
+
+    $(".comparisionDdl").change(function () {
+        onComparisionDdlChange($(this));
+    });
+    $('.YesNoDdl').change(function () {
+        if ($(this).val() == 1)
+            $(this).closest(".criteria").find(".operator .AnswerHidden").val('Yes');
+        else if ($(this).val() == 0) {
+            $(this).closest(".criteria").find(".operator .AnswerHidden").val('No');
+        }
+        else if ($(this).val() == -1) {
+            $(this).closest(".criteria").find(".operator .AnswerHidden").val('');
+        }
+    });
+
+    $(".medicationCheckBox").click(function () {
+        if ($(this).is(":checked")) {
+            $(this).closest(".criteria").find(".operator .OnMedicationHidden").val('true');
+        } else {
+            $(this).closest(".criteria").find(".operator .OnMedicationHidden").val('');
+            $(this).closest(".criteria").find(".operator select").val('');
+            var templateRow = $(this).closest(".templateRow");
+            ResetNumberResponseQuestion(templateRow);
+            $(templateRow).find(".DisqualifierQuestionDdl").find("option").show();
+        }
+    });
+
+    function ResetNumberResponseQuestion(template) {
+
+        var medicationQuestionId = $(template).find(".MedicationQuestionDdl").val();
+        var disqualifierQuestionId = $(template).find(".DisqualifierQuestionDdl").val();
+        var noOfQuesDdl = $(template).find(".noOfQuestionDdl");
+        $(noOfQuesDdl).find("option").show();
+        var val = -1;
+
+        if (parseInt(medicationQuestionId) > -1) {
+            val = $(noOfQuesDdl).find("option:last").val();
+            if (val == $(noOfQuesDdl).val()) {
+                $(noOfQuesDdl).val(-1);
+                $(template).find(".YesNoAnswerDdl").val("");
+            }
+            $(noOfQuesDdl).find("option[value='" + val + "']").hide();
+
+        }
+
+        if (parseInt(disqualifierQuestionId) > -1) {
+            var options = $(noOfQuesDdl).find("option:not([value='" + val + "']):last");
+            val = $(options).val();
+            if (val == $(noOfQuesDdl).val()) {
+                $(noOfQuesDdl).val(-1);
+                $(template).find(".YesNoAnswerDdl").val("");
+            }
+            $(noOfQuesDdl).find("option[value='" + val + "']").hide();
+        }
+    }
+
+    $(".MedicationQuestionDdl").change(function () {
+
+        var templateRow = $(this).closest(".templateRow");
+        var selectedQuestionId = $(this).val();
+        ResetNumberResponseQuestion(templateRow);
+
+        //hide show Question from Disqualifier Question dropdown
+        SetDisqualifierOptions(templateRow, selectedQuestionId);
+    });
+
+    $(".DisqualifierQuestionDdl").change(function () {
+        var disqualificationQuestionId = $(this).val();
+        var templateRow = $(this).closest(".templateRow");
+        ResetNumberResponseQuestion(templateRow);
+
+        //hide show Question from Medication dropdown
+        SetMedicationOptions(templateRow, disqualificationQuestionId);
+    });
+
+    $(".disqualifierCheckBox").click(function () {
+        if ($(this).is(":checked") == false) {
+            var templateRow = $(this).closest(".templateRow");
+            ResetNumberResponseQuestion(templateRow);
+            $(templateRow).find(".MedicationQuestionDdl").find("option").show();
+        }
+    });
+
+    function SetDisqualifierOptions(template, questionId) {
+        var disqualifierDropdown = $(template).find(".DisqualifierQuestionDdl");
+        $(disqualifierDropdown).find("option").show();
+
+        if (questionId > -1) {
+            if ($(disqualifierDropdown).val() == questionId) {
+                $(disqualifierDropdown).val(-1);
+            }
+            $(disqualifierDropdown).find("option[value='" + questionId + "']").hide();
+        }
+    }
+
+    function SetMedicationOptions(template, questionId) {
+        
+        var medicationDropDown = $(template).find(".MedicationQuestionDdl");
+        $(medicationDropDown).find("option").show();
+        if (questionId > -1) {
+            if (questionId == $(medicationDropDown).val()) {
+                $(medicationDropDown).val(-1);
+            }
+            $(medicationDropDown).find("option[value='" + questionId + "']").hide();
+        }
+    }
+
+    $(document).ready(function () {
+
+        var templates = $(".templateRow");
+        $.each(templates, function () {
+            var template = $(this);
+            ResetNumberResponseQuestion($(this));
+            var medicationQuesionId = $(this).find(".MedicationQuestionDdl").val();
+            var disQualifierQuesionId = $(this).find(".DisqualifierQuestionDdl").val();
+            if (medicationQuesionId > -1) {
+                SetDisqualifierOptions(template, medicationQuesionId);
+            }
+            if (disQualifierQuesionId > -1) {
+                SetMedicationOptions(template, disQualifierQuesionId);
+            }
+        });
+
+        var allCheckBox = $(".setCriteria");
+        $.each(allCheckBox, function (i, item) {
+            if ($(item).is(":checked")) {
+                $(item).closest(".criteria").find(".operator input,.operator select").removeAttr("disabled");
+            } else {
+                $(item).closest(".criteria").find(".operator select").val(-1);
+                $(item).closest(".criteria").find(".operator input,.operator select").attr("disabled", "disabled");
+                $(item).closest(".criteria").find(".operator .max-age-text").val(0).hide();
+                $(item).closest(".criteria").find(".operator .min-age-text").val(0).hide();
+            }
+            $(item).closest(".criteria").find(".operator input[type='hidden']").removeAttr("disabled");
+        });
+
+        var comparisionDdls = $(".comparisionDdl");
+        $.each(comparisionDdls, function (i, item) {
+            onComparisionDdlChange($(item));
+        });
+
+        $(".on-medication-tooltip").each(function () {
+            $(this).qtip({
+                position: {
+                    viewport: $(window),
+                    adjust: {
+                        method: 'shift'
+                    }
+                },
+                content: {
+                    text: function (api) {
+                        //from the selector to a child element.
+                        return $(this).parent().find('ul').html();
+                    }
+                }
+            });
+        });
+
+    });
+
+</script>

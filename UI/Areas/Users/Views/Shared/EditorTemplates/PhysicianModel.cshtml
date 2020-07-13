@@ -1,0 +1,549 @@
+﻿@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Users.ViewModels
+
+@model PhysicianModel
+
+<div class="content-main-column">
+    <fieldset>
+        <legend>Physician Profile</legend>
+        <h4>Basic Info</h4>
+        @Html.EditorFor(m => m.PhysicianId)
+        <div style="margin-left:20px; margin-bottom:10px;">
+            <div class="editor-row" style="width:99%;">
+                <div class="editor-column" style="width:50%;">
+                    <div class="editor-label">
+                        @Html.LabelFor(m=>m.SpecializationId)@Html.ValidationMessageFor(m=>m.SpecializationId)
+                    </div>
+                    <div class="editor-field">
+                        @Html.DropDownListFor(m=>m.SpecializationId,DropDownHelper.PhysicianSpecialization(Model.SpecializationId))
+                    </div>
+                </div>
+                <div class="editor-column" style="width:30%;">
+                    @Html.EditorFor(m=>m.CutOffDate)
+                </div>
+            </div>
+            <div class="editor-row" style="width:99%;">
+                <div class="editor-column" style="width:50%;display: none;">
+                    @Html.CheckBoxFor(m => m.SkipAudit) Skip Audit
+                </div>
+                <div class="editor-column" style="width:30%;">                    
+                    @Html.CheckBoxFor(m=>m.IsDefault) IsDefault
+                    @Html.ValidationMessageFor(m => m.IsDefault)
+                </div>
+            </div>
+            <div class="editor-row" style="width:99%;">
+                <div class="editor-column" style="width:50%;">
+                    <div class="editor-label" style="width:100%">
+                        @Html.LabelFor(m => m.SignatureFile)
+                        @if (Model.SignatureFile != null && Model.SignatureFile.Id < 1)
+                        {
+                            @Html.ValidationMessageFor(m => m.SignatureFile.Path)
+                        }
+                    </div>
+                    <div class="editor-field" style="width:100%">
+                        <input type="file" name="PhysicianProfile.SignatureFile.Path" />
+                    </div>
+                    @if (Model.SignatureFile != null && Model.SignatureFile.Id > 0)
+                    {
+                        <img src="@Model.SignatureFile.Path" style="width:150px; height:50px;" />
+                    }
+                    @Html.HiddenFor(m => m.SignatureFile.Id)
+                </div>
+                <div class="editor-column" style="width:40%;">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.DisplayName)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m=>m.DisplayName)
+                    </div>
+                </div>
+                <div class="editor-column" style="width:40%;">
+                    <div class="editor-label">
+                        @Html.LabelFor(m => m.Npi)
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(m => m.Npi)
+                    </div>
+                </div>
+            </div>
+            <div class="editor-row" style="width:99%;">
+                <div class="editor-column" style="width:50%;">
+                    @Html.CheckBoxFor(m => m.UpdateResultEntry) Update Result Entry
+                </div>
+            </div>
+            
+            <div class="editor-row" style="width:99%;">
+                @if (IoC.Resolve<ISettings>().IsAuthorizationRequired)
+                {
+                <div class="editor-column" style="width:50%;">
+                    @Html.CheckBoxFor(m => m.CanDoAuthorizations) Can do authorization.
+                </div>
+                }
+                <div class="editor-column" style="width:50%; display:none;">
+                    @Html.CheckBoxFor(m => m.CanSeeEarnings) Can see earnings.
+                </div>
+            </div>            
+        </div>
+        <h4>Licensing</h4>@Html.ValidationMessageFor(m => m.Licenses)
+        <div style="float:right;margin-bottom:10px;" class="editor-row">
+            <a href="#" id="addPhysicianLicense">Add License</a>
+        </div>       
+        <div style="margin-left:20px;margin-bottom:10px; clear:both;">
+            <table class="licenseContainer" id="list-view" style="display:none">
+                <tr>
+                    <th style="text-align:center">
+                        @Html.LabelFor(m => m.Licenses.FirstOrDefault().State) 
+                    </th>            
+                    <th style="text-align:center">
+                        @Html.LabelFor(m => m.Licenses.FirstOrDefault().LicenseNumber) 
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Licenses.FirstOrDefault().Expirydate) 
+                    </th>
+                    <th style="text-align:center">
+                        Action 
+                    </th>
+                </tr>              
+            </table>
+            <div class="info-box license-info-box">No license has been added.</div>            
+        </div>
+        <div id="AddLicenseDialogDiv">
+            @Html.Partial("AddPhysicianLicenseMiniForm")
+        </div>        
+        <h4>Permitted Tests</h4>@Html.ValidationMessageFor(m => m.PermittedTests)        
+        <div style="margin-left:20px;margin-bottom:10px;">
+            @if (Model.Tests != null && Model.Tests.Count() > 0)
+            {
+                <div><input type="checkbox" id="SelectAllTestCheckBox" onclick="SelectAllTest();" /> All</div>
+                <div class="editor-row test-div" style="width:99%;">
+                    @foreach (var test in Model.Tests)
+                    {
+                        <div class="editor-column" style="width:40%;">
+                            @if (Model.PermittedTests != null && Model.PermittedTests.Contains(test.Id))
+                            {
+                                <input type="checkbox" id="@test.Id" checked="checked" onclick="FillTest(this);" /> @test.Name
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="@test.Id" onclick="FillTest(this);" /> @test.Name 
+                            }
+                            <input type="hidden" value="@test.Id" />
+                        </div>   
+                    }
+                </div>
+            }
+            @if (Model.PermittedTests != null && Model.PermittedTests.Count() > 0)
+            {
+                <script type="text/javascript" language="javascript">                    $(document).ready(function () { RenderPermittedTests(); CheckTestCheckBox(); });        </script>
+            }
+        </div>
+        <div id="permittedTestsContainer" style="display: none;">
+        </div>
+        <h4>Assign Pods</h4>@Html.ValidationMessageFor(m => m.AssignedPodIds)
+        <div style="margin-left:20px;margin-bottom:10px;">
+            @if (Model.Pods != null && Model.Pods.Count() > 0)
+            {
+                <div><input type="checkbox" id="SelectAllPodsCheckBox" onclick="SelectAllPod();" /> All</div>
+                <div class="editor-row pod-div" style="width:99%;">
+                    @foreach (var pod in Model.Pods)
+                    {
+                        <div class="editor-column" style="width:40%;">
+                            @if (Model.AssignedPodIds != null && Model.AssignedPodIds.Contains(pod.Id))
+                            {
+                                <input type="checkbox" id="@pod.Id" checked="checked" onclick="FillPod(this);" /> @pod.Name
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="@pod.Id" onclick="FillPod(this);" /> @pod.Name 
+                            }
+                            <input type="hidden" value="@pod.Id" />
+                        </div>
+                    }
+                </div>
+            }
+            @if (Model.AssignedPodIds != null && Model.AssignedPodIds.Count() > 0)
+            {
+                <script type="text/javascript" language="javascript">                    $(document).ready(function () { RenderAssignedPods(); CheckPodCheckBox(); });        </script>
+            }
+        </div>
+        <div id="assignedPodsContainer" style="display: none;">
+        </div>
+        <h4>Pay Rates</h4>
+        <div style="margin-left:20px; margin-bottom:10px;">
+            <div class="editor-row">                
+                @Html.LabelFor(m => m.StandardRate): 
+                $@Html.TextBoxFor(m => m.StandardRate) per customer @Html.ValidationMessageFor(m => m.StandardRate)
+            </div>
+            <div class="editor-row">                
+                @Html.LabelFor(m => m.OverReadRate):
+                $@Html.TextBoxFor(m => m.OverReadRate) per customer @Html.ValidationMessageFor(m => m.OverReadRate)
+            </div>
+            <div class="editor-row">
+                <i>Overread, if used if one patient is sent to two doctors - due to licensing or other operational issue. Standard rate Overread rates can be the same.</i>
+            </div>
+        </div>
+        <div style="float:right;margin-top:10px;" class="editor-row">
+            <input type="button" value="Close" onclick="ClosePhysicianProfile();" />
+        </div>
+    </fieldset>
+
+    @* Set permitted tests *@
+    <script type="text/javascript" language="javascript">
+        var permittedTests = new Object();
+        @if ((Model.PermittedTests != null) && (Model.PermittedTests.Count() > 0))
+        {
+            <text>
+                var test = new Object();
+            </text>
+            foreach (var permittedTest in Model.PermittedTests)
+            {  
+                    <text>
+                    {
+                        test = new Object();
+                        test.Id = @permittedTest;
+                        permittedTests[test.Id] = test;
+                    }
+                    </text>
+            }
+        }
+
+        function FillTest(sourceCheckbox){//debugger;
+            var checkedBox = $(sourceCheckbox);
+            var val = checkedBox.parent().find("input:hidden").val();
+            if(sourceCheckbox.checked){
+                test = new Object();
+                test.Id = val;
+                permittedTests[val] = test;   
+                CheckTestCheckBox();
+            }
+            else{
+                if(permittedTests[val]  != null){
+                    delete permittedTests[val];
+                    $('#SelectAllTestCheckBox').attr("checked",false);
+                }
+            }
+            RenderPermittedTests();
+        }
+
+        function RenderPermittedTests() {
+            $("#permittedTestsContainer").empty();
+            $.each(permittedTests, function (key, terr) {
+                $("#permittedTestsTemplate").tmpl(terr).appendTo("#permittedTestsContainer");
+            });
+        }
+
+        function SelectAllTest()
+        {//debugger;
+            if($('#SelectAllTestCheckBox').attr('checked'))
+            {
+                $('.test-div :checkbox').each(function(){
+                    if ($(this).is(':checked')==false)
+                    {
+                        $(this).attr('checked',true);
+                        $(this).click();
+                        $(this).attr('checked',true);
+                    }
+                });
+            }
+            else
+            {
+                $('.test-div :checkbox').each(function(){
+                    if ($(this).is(':checked'))
+                    {
+                        $(this).attr('checked',false);
+                        $(this).click();
+                        $(this).attr('checked',false);
+                    }
+                });
+            }
+        }
+
+        function CheckTestCheckBox()
+        {
+            var allSelected = true;
+            $('.test-div :checkbox').each(function(){
+                if ($(this).is(':checked')==false)
+                    allSelected = false;
+            });
+            $('#SelectAllTestCheckBox').attr('checked',allSelected);
+        }
+    </script>
+
+    <script id="permittedTestsTemplate" type="text/x-jquery-tmpl">
+        <div style="display:none;">
+            <input type="hidden" name="PhysicianProfile.PermittedTests.Index" value="${Id}" />
+            <input type="text" name="PhysicianProfile.PermittedTests[${Id}]" value="${Id}" />
+        </div>                  
+    </script>
+    @* End- Set permitted tests *@
+
+    @* Set assigned pods *@
+    <script type="text/javascript" language="javascript">
+        var assignedPods = new Object();
+        @if ((Model.AssignedPodIds != null) && (Model.AssignedPodIds.Count() > 0))
+        {
+            <text>
+                var pod = new Object();
+            </text>
+            foreach (var assignedPod in Model.AssignedPodIds)
+            {  
+                    <text>
+                    {
+                        pod = new Object();
+                        pod.Id = @assignedPod;
+                        assignedPods[pod.Id] = pod;
+                    }
+                    </text>
+            }
+        }
+
+        function FillPod(sourceCheckbox){//debugger;
+            var checkedBox = $(sourceCheckbox);
+            var val = checkedBox.parent().find("input:hidden").val();
+            if(sourceCheckbox.checked){
+                pod = new Object();
+                pod.Id = val;
+                assignedPods[val] = pod; 
+                CheckPodCheckBox();  
+            }
+            else{
+                if(assignedPods[val]  != null){
+                    delete assignedPods[val];
+                    $('#SelectAllPodsCheckBox').attr("checked",false);
+                }
+            }
+            RenderAssignedPods();
+        }
+
+        function RenderAssignedPods() {
+            $("#assignedPodsContainer").empty();
+            $.each(assignedPods, function (key, terr) {
+                $("#assignedPodsTemplate").tmpl(terr).appendTo("#assignedPodsContainer");
+            });
+        }
+
+        function SelectAllPod()
+        {//debugger;
+            if($('#SelectAllPodsCheckBox').attr('checked'))
+            {
+                $('.pod-div :checkbox').each(function(){
+                    if ($(this).is(':checked')==false)
+                    {
+                        $(this).attr('checked',true);
+                        $(this).click();
+                        $(this).attr('checked',true);
+                    }
+                });
+            }
+            else
+            {
+                $('.pod-div :checkbox').each(function(){
+                    if ($(this).is(':checked'))
+                    {
+                        $(this).attr('checked',false);
+                        $(this).click();
+                        $(this).attr('checked',false);
+                    }
+                });
+            }
+        }
+
+        function CheckPodCheckBox()
+        {
+            var allSelected = true;
+            $('.pod-div :checkbox').each(function(){
+                if ($(this).is(':checked')==false)
+                    allSelected = false;
+            });
+            $('#SelectAllPodsCheckBox').attr('checked',allSelected);
+        }
+    </script>
+
+    <script id="assignedPodsTemplate" type="text/x-jquery-tmpl">
+        <div style="display:none;">
+            <input type="hidden" name="PhysicianProfile.AssignedPodIds.Index" value="${Id}" />
+            <input type="text" name="PhysicianProfile.AssignedPodIds[${Id}]" value="${Id}" />
+        </div>                  
+    </script>
+    @* End - Set assigned pods *@
+
+    @* Set physician license *@
+    <script type="text/javascript" language="javascript">
+        
+        var physicianLicenses = new Object();
+        var addEditLicenseMode = "add";
+        @if (Model.Licenses != null)
+        {
+            <text>
+            var lincenseKey = "";
+            var physicianLicense = new Object();
+            </text>
+            foreach (var license in Model.Licenses)
+            {
+                <text>
+                {
+                    physicianLicense = new Object();
+                    physicianLicense.LicenseId = @license.LicenseId;
+                    physicianLicense.LicenseNumber = "@license.LicenseNumber";
+                    physicianLicense.Expirydate = '@license.Expirydate.ToString("MM/dd/yyyy")';
+                    physicianLicense.State = "@license.State";
+                    physicianLicense.StateId = @license.StateId;
+                    physicianLicense.DateCreated = "@license.DateCreated";
+                    lincenseKey = "@license.StateId" + "_" + "@license.LicenseNumber";
+                    physicianLicense.Key = lincenseKey;
+                    physicianLicenses[lincenseKey] = physicianLicense;
+                }
+                </text>
+            }
+        }
+        
+        function renderLicense() {//debugger;
+            if ($.isEmptyObject(physicianLicenses)) {
+                $(".license-info-box").show();
+                $(".licenseContainer").hide();
+            }
+            else
+            {
+                $(".licenseContainer tr.license-row").remove();            
+                $.each(physicianLicenses, function (key, physicianLicense) {
+                    $("#licenseDisplayTemplate").tmpl(physicianLicense).appendTo(".licenseContainer");
+                });
+
+                $(".license-info-box").hide();
+                $(".licenseContainer").show();
+            }
+        }
+
+        $(document).ready(function () {
+            $('#AddLicenseDialogDiv').dialog({ autoOpen: false, width: 500, height: 200, closeOnEscape: true, buttons: { 'Close':function(){$(this).dialog('close');},'Save': function () {addPhysicianLicense(); } } });
+
+            $('#addPhysicianLicense').bind("click", function (){
+                addEditLicenseMode = "add";
+                resetAddLicenseFields();
+                $('#AddLicenseDialogDiv').dialog('open');
+            });
+
+            renderLicense();
+        
+
+            $("a.removeLicense").live("click", function () {
+                $(this).parents("tr.license-row:first").remove();
+                delete physicianLicenses[$(this).attr('data-key')];
+
+                if ($.isEmptyObject(physicianLicenses)) {
+                    $(".license-info-box").show();
+                    $(".licenseContainer").hide();
+                }
+                return false;
+            });
+
+            $("a.editLicense").live("click", function () {//debugger;
+           
+                var editpl= physicianLicenses[$(this).attr('data-key')];
+                $('#PhysicianProfile_StateId').val(editpl.StateId);
+                $('#PhysicianProfile_LicenseNumber').val(editpl.LicenseNumber);
+                $('#PhysicianProfile_Expirydate').val(editpl.Expirydate);
+                $('#LicenseKey').val(editpl.Key);
+
+                addEditLicenseMode = "edit";
+                $('#AddLicenseDialogDiv').dialog('open');            
+            });
+
+        });
+
+        function addPhysicianLicense()
+        {//debugger;
+            if($("#PhysicianProfile_StateId").val()<=0)
+            {
+                alert("Please select state.");
+                return false;
+            }
+            if($("#PhysicianProfile_LicenseNumber").val()=="")
+            {
+                alert("Please enter license number.");
+                return false;
+            }
+            if($("#PhysicianProfile_Expirydate").val()=="")
+            {
+                alert("Please enter expiry date.");
+                return false;
+            }
+
+            var physicianLicense;
+            if(addEditLicenseMode == "add")
+            {
+                physicianLicense = new Object();
+                physicianLicense.State = $("#PhysicianProfile_StateId option:selected").text();
+                physicianLicense.StateId = $("#PhysicianProfile_StateId").val();
+                physicianLicense.LicenseNumber = $("#PhysicianProfile_LicenseNumber").val();
+                physicianLicense.Expirydate = $("#PhysicianProfile_Expirydate").val();            
+                physicianLicense.Key = physicianLicense.State + "_" + physicianLicense.LicenseNumber;
+            }
+            else
+            {
+                physicianLicense= physicianLicenses[$('#LicenseKey').val()];
+                physicianLicense.State = $("#PhysicianProfile_StateId option:selected").text();
+                physicianLicense.StateId = $("#PhysicianProfile_StateId").val();
+                physicianLicense.LicenseNumber = $("#PhysicianProfile_LicenseNumber").val();
+                physicianLicense.Expirydate = $("#PhysicianProfile_Expirydate").val();            
+                physicianLicense.Key = physicianLicense.State + "_" + physicianLicense.LicenseNumber;
+
+                delete physicianLicenses[$('#LicenseKey').val()];
+                
+            }
+            if (physicianLicenses[physicianLicense.Key] != undefined) {
+                alert("This license has already has been added.");
+                return false;
+            }
+
+            physicianLicenses[physicianLicense.Key] = physicianLicense;
+
+            $(".license-info-box").hide();
+            renderLicense();                        
+            
+            $('#AddLicenseDialogDiv').dialog('close');
+            return false;
+        }
+
+        function resetAddLicenseFields()
+        {
+            $('#PhysicianProfile_StateId').val('-1');
+            $('#PhysicianProfile_LicenseNumber').val('');
+            $('#PhysicianProfile_Expirydate').val('');
+        }
+
+        function ClosePhysicianProfile()
+        {            
+            $('.user-detail-div').animate({
+                height: '100%'
+                },
+                {
+                    duration: 1000
+            });
+
+            $('#PhysicianProfileDiv').hide()
+        }
+    </script>
+
+    <script id="licenseDisplayTemplate" type="text/x-jquery-tmpl">    
+        <tr class="license-row">
+            <td style="text-align:center">${State}</td>                
+            <td style="text-align:center">${LicenseNumber}</td>                            
+            <td style="text-align:center">${Expirydate}</td>
+            <td style="text-align:center">
+                <a href="#" data-key="${Key}" class="editLicense">Edit</a> | <a href="#" data-key="${Key}" class="removeLicense">Remove</a>
+            </td>
+            <td style="display:none;">
+                <input type="hidden" name="PhysicianProfile.Licenses.Index" value="${Key}" />
+                <input type="text" name="PhysicianProfile.Licenses[${Key}].LicenseId" value="${LicenseId}" />
+                <input type="text" name="PhysicianProfile.Licenses[${Key}].LicenseNumber" value="${LicenseNumber}" />
+                <input type="text" name="PhysicianProfile.Licenses[${Key}].Expirydate" value="${Expirydate}" />
+                <input type="text" name="PhysicianProfile.Licenses[${Key}].State" value="${State}" />
+                <input type="text" name="PhysicianProfile.Licenses[${Key}].StateId" value="${StateId}" />
+                <input type="text" name="PhysicianProfile.Licenses[${Key}].DateCreated" value="${DateCreated}" />
+            </td>
+        </tr>            
+    </script>
+ </div>

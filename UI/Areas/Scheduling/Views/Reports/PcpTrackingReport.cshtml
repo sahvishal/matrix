@@ -1,0 +1,129 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.PcpTrackingReportListModel
+<script src="/Scripts/reportexportqueue.js"></script>
+@{
+    ViewBag.Title = "PCP Change Tracking";
+}
+<h1>
+    PCP Change Tracking
+</h1>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("PcpTrackingReport", "Reports", FormMethod.Get);}
+    @Html.Partial("PcpTrackingReportFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 1000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/Scheduling/ReportsQueue/PcpTrackingReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                Export CSV
+            </a>
+        }
+        else
+        {
+            <a target="_blank" href="/Scheduling/ExportableReports/PcpTrackingReport?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV</a>
+        }
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <table id="list-view" style="width:100%;">
+            <tr>
+                <th>
+                    Patient ID
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Health Plan
+                </th>
+                <th>
+                    PCP Info(provided by Health Plan)
+                </th>
+                <th>
+                    Is Updated
+                </th>
+                <th>
+                    New PCP Info
+                </th>
+            </tr>
+            @foreach (var item in Model.Collection)
+            {
+                <tr>
+                    <td>@item.PatientId</td>
+                    <td>@item.PatientName</td>
+                    <td>@item.HealthPlan</td>
+                    <td>
+                        <span><b>Name: </b>@item.PcpName</span><br />
+                        @if (!string.IsNullOrEmpty(item.PcpAddress))
+                        {
+                            <span><b>Address: </b>@item.PcpAddress</span><br />
+                        }
+                        @if (!string.IsNullOrEmpty(item.PcpEmail))
+                        {
+                            <span><b>Email: </b>@item.PcpEmail</span><br />
+                        }
+                        @if (!string.IsNullOrEmpty(item.PcpPhone))
+                        {
+                            <span><b>Phone: </b>@item.PcpPhone</span>
+                        }
+                    </td>
+                    <td>
+                        @item.IsUpdated
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.NewPcpName))
+                        {
+                            <span><b>Name: </b>@item.NewPcpName</span><br />
+                            if (!string.IsNullOrEmpty(item.NewPcpAddress))
+                            {
+                                <span><b>Address: </b>@item.NewPcpAddress</span><br />
+                            }
+                            if (!string.IsNullOrEmpty(item.NewPcpEmail))
+                            {
+                                <span><b>Email: </b>@item.NewPcpEmail</span><br />
+                            }
+                            if (!string.IsNullOrEmpty(item.NewPcpPhone))
+                            {
+                                <span><b>Phone: </b>@item.NewPcpPhone</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,24 @@
+﻿@model Falcon.App.Core.Communication.ViewModels.AppointmentConfirmationViewModel
+@{
+    Layout = null;
+}
+    <script src="/scripts/jquery-1.5.2.min.js" type="text/javascript"></script>
+<div id="PrintDiv">
+    @Html.Partial("AppointmentConfirmation", Model)
+</div>
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function () {
+        //debugger;
+        var prtContent = $('#PrintDiv').html();
+        var winPrint = window.open('', '', 'left=0,top=0,width=1,height=1,toolbar=0,scrollbars=0,status=0');
+        winPrint.document.write(prtContent);
+        winPrint.document.close();
+        winPrint.focus();
+        winPrint.print();
+        winPrint.close();
+
+    });
+
+
+</script>

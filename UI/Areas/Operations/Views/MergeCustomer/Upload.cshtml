@@ -1,0 +1,50 @@
+﻿@using Falcon.App.Core.Operations.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model MergeCustomerEditModel
+
+@{
+    ViewBag.Title = "Merge Customer Upload";
+}
+
+<h2>
+    Merge Customer Upload (*.csv)
+</h2>
+
+
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+
+@{Html.BeginForm("Upload", "MergeCustomer", FormMethod.Post, new { enctype = "multipart/form-data" });}
+@if (Model != null)
+{
+        <div class="editor-row account-detail" id="upload-div" style="margin-top: 20px;">
+            Upload file:
+            <input type="file" name="MergeCustomerUpload" accept=".csv" />
+            <input type="submit" id="FileSubmit" value="Upload" onclick="checkUploadFile();" />
+            <a style="margin-left: 20px;" href='@(Model.UploadCsvMediaUrl + "MergeCustomerUpload_Sample.csv")'>Sample CSV</a>            
+            <h4 style="width:250px;">Please upload a csv file! </h4>
+        </div>
+
+        <div id="parse-in-progress-div" style="display: none;">
+            <br /><h4 style="width:250px;"> Parse in progress </h4><br />
+            <img src="/Content/Images/pbar-ani.gif" style="width:400px; height: 40px;" />
+        </div>      
+}    
+    
+
+<script type="text/javascript">
+
+    function checkUploadFile() {
+        $("#upload-div").hide();
+        $("#parse-in-progress-div").show();
+        return true;
+    }
+
+    
+  
+
+</script>
+@{Html.EndForm();}
+

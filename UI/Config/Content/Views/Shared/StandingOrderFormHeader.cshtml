@@ -1,0 +1,175 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.Core.Users.Enum
+
+@model StandingOrderFormHeaderEditModel
+<style type="text/css">
+    .full-width-ccl {
+        float: left;
+        width: 895px;
+        margin-top: 5px;
+        font-size: 14px;
+    }
+
+    .half-width-ccl {
+        float: left;
+        width: 432px;
+        font-size: 14px;
+    }
+
+    .test-info-ccl {
+        padding-left: 0px;
+        padding-top: 10px;
+        line-height: 25px;
+        page-break-after: auto;
+        -moz-page-break-inside: avoid;
+        page-break-inside: avoid;
+        clear: both !important;
+        font-size: 14px;
+    }
+
+        .test-info-ccl input[type='text'] {
+            border: none;
+            border-bottom: 1px solid black;
+        }
+
+        .test-info-ccl .small-input {
+            width: 65%;
+        }
+
+        .test-info-ccl .input-40 {
+            width: 40px;
+        }
+
+        .test-info-ccl .input-46 {
+            width: 46px;
+        }
+
+        .test-info-ccl .input-75 {
+            width: 75px;
+        }
+
+    .test-info-full-div {
+        clear: both;
+        float: left;
+        width: 100%;
+    }
+
+    .test-info-half-div {
+        width: 50%;
+        float: left;
+    }
+
+    .ccl-specialist {
+        width: 500px;
+        float: left;
+    }
+
+    .ccl-specialist-div-check {
+        width: 240px;
+        float: left;
+    }
+
+    .ccl-specialist-div-input {
+        float: left;
+    }
+
+    .ccl-specialist input[type='text'] {
+        width: 230px;
+    }
+
+    .ccl-specialist-add {
+        width: 310px;
+        float: left;
+    }
+
+        .ccl-specialist-add input[type='text'] {
+            width: 220px;
+            margin-left: 15px;
+        }
+
+    .exit-info-ccl input[type='text'] {
+        border: none;
+        border-bottom: 1px solid black;
+        margin-left: 20px;
+    }
+
+    .critical-info-ccl input[type='text'] {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .input-75 {
+        width: 75px;
+    }
+
+
+    .input-140 {
+        width: 140px;
+    }
+
+    .margin-left-15 {
+        margin-left: 15px;
+    }
+
+    input[type="checkbox"] {
+        margin-right: 5px;
+    }
+</style>
+<div id="headerInfo" style="margin-left: 15px;">
+    <div class="full-width-ccl" style="float: left; font-size: 15px; margin-top: 30px; font-size: 18px;line-height: 2em">
+        <b>Patient Info</b>
+    </div>
+    <div class="full-width-ccl test-info-ccl" style="margin-top: 15px; ">
+        <div style="width:600px; float:left">
+            <b>Customer Id:</b>
+            <input type="text" class="small-input" readonly="readonly" style="border: none;border-bottom: 1px solid black;width:150px;" value="@Model.CustomerId" />
+
+        </div>
+        <div style="width:200px; float:left;">
+            <b>Event Id: </b><input type="text" class="small-input" readonly="readonly" style="border: none; border-bottom: 1px solid black;width:110px;" value="@Model.EventId" />
+        </div>
+    </div>
+    <div class="full-width-ccl" style="margin-top: 10px; ">
+        <div style="width: 400px;float: left;">
+            <b>Customer Name:</b> <input type="text" class="small-input" style="border: none; border-bottom: 1px solid black;width:150px;" value="@Model.Name.ToString()" />
+        </div>
+        <div style="width:200px; float:left">
+            <b>DOB:</b> <input type="text" class="small-input" style="border: none;border-bottom: 1px solid black;width:100px;" value='@(Model.DoB.HasValue ? Model.DoB.Value.ToShortDateString() : "")' />
+        </div>
+        <div style="width:100px; float:left;">
+            <b>Sex:</b> <input type="text" class="small-input" style="border: none;border-bottom: 1px solid black;width:20px;" value=' @(Model.Gender == Gender.Male ? "M" : Model.Gender == Gender.Female ? "F" : "") ' />
+        </div>
+    </div>
+    <div class="full-width-ccl">
+        <b>Pre-approved test:</b>
+        @if (!Model.PreApporvedTestNames.IsNullOrEmpty())
+        {
+            var preApprovedTests = Model.PreApporvedTestNames.Select(x => string.Format("\"{0}\"", x));
+            @(string.Join(", ", preApprovedTests))
+        }
+        else
+        {
+            <span>N/A</span>
+        }
+    </div>
+    <div class="full-width-ccl test-info-ccl">
+        <div style="width: 22%;float: left;">
+            <span questionid="1"><b>NP:</b> <input type="text" style="border: none;border-bottom: 1px solid black;" class="small-input"> </span>
+        </div>
+        <div style="width: 22%; float: left;">
+            <span questionid="2"> <b>CVT:</b> <input type="text" style="border: none;border-bottom: 1px solid black;" class="small-input"></span>
+        </div>
+        <div style="width: 31%; float: left;">
+            <span questionid="3"><b>Front Desk: </b><input type="text" style="border: none;border-bottom: 1px solid black;" class="small-input"></span>
+        </div>
+        <div style="width: 25%; float: left;">
+            <span questionid="240"><b>CS: </b><input type="text" style="border: none;border-bottom: 1px solid black;" class="small-input"></span>
+        </div>
+    </div>
+</div>
+
+
+
+
+

@@ -1,0 +1,115 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Operations.ViewModels
+@model CustomerCdContentTrackingListModel
+@{
+    ViewBag.Title = "Customer Cd Content Tracking";
+}
+
+<h1>Customer Cd Content Tracking</h1>
+<div id="list-filter">
+    @{Html.BeginForm("CustomerCdContentTracking", "CdContentTracking", FormMethod.Get);}
+    @Html.Partial("CustomerCdConentTrackingModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    var cryptographyService = new Falcon.App.Core.Application.Impl.DigitalDeliveryCryptographyService();
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Customer Id
+            </th>
+            <th>
+                Customer Name
+            </th>
+            <th>
+                Event Id
+            </th>
+            <th>
+                Order
+            </th>
+            <th>
+                Download Info
+            </th>            
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var customer in Model.Collection)
+        {
+            <tr>
+                <td>@customer.CustomerId
+                </td>
+                <td>@customer.Name
+                </td>                
+                <td>@customer.EventId
+                </td>
+                <td>
+                    <a href="javascript:void(0)" onclick="ShowOrderDetails(@customer.OrderId, @customer.CustomerId, '@customer.Name.Replace("'", "\\\'")');">
+                        View Order</a>
+                </td>
+                <td>
+                    @if (customer.CdContentDownloaded)
+                    {
+                        <span>@customer.DownloadedBy</span><br />
+                        <span>
+                            @customer.DownloadedTime.Value.ToLongDateString() at @customer.DownloadedTime.Value.ToShortTimeString()
+                        </span>
+                    }
+                    else
+                    {
+                        <span>-N/A-</span>
+                    }
+                </td>
+                <td>
+                    @if (customer.CdContentGenerated)
+                    {
+                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(customer.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.CdContent))" onclick="updateDownloadInfo(@customer.CdContentTrackingId);" 
+                            target="_blank">Download</a>                    
+                    }
+                    else
+                    {
+                        <span>-N/A-</span>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div><h2>No Records found!</h2></div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function ShowOrderDetails(orderId, customerId, customerName) {
+            window.open("/App/Common/OrderSummary.aspx?OrderId=" + orderId + "&CustomerName=" + customerName + "&CustomerId=" + customerId, "OrderSummary", "width=750, height=400, menubar=0, toolbar=0, status=0, location=0, resizable=0, dependent=1, scrollbars=1");
+            return false;
+        }
+
+        function updateDownloadInfo(cdContentTrackingId) {
+            $.ajax({ type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json", url: "/Operations/CdContentTracking/UpdateDowloadinfo?id=" + cdContentTrackingId, data: '{}',
+                success: function (result) {}, error: function (a, b, c) { }
+            });
+        }
+    </script>
+}
+

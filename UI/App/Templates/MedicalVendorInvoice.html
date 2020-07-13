@@ -1,0 +1,65 @@
+﻿<div>
+    <!--Invoice Summary-->
+    <div id="invoiceSummaryDiv">        
+        <div style="float:left;width:30%;overflow:hidden;">                
+            Invoice Number: {$T.Id}<br />
+            Period: {DateDeserialize($T.PayPeriodStartDate).format("shortDate")} - {DateDeserialize($T.PayPeriodEndDate).format("shortDate")}
+        </div>
+
+        <div style="float:left;width:34%">            
+            Physician Name: {$T.PhysicianName}<br />
+            Payable To: {$T.MedicalVendorName}
+        </div>
+        <div style="float:left;width:32%" >
+            Number of Evaluations: {$T.NumberOfEvaluations}<br />
+            <span class="amt">Total Amount Earned: {FormatCurrency($T.InvoiceAmount)}</span> 
+        </div>
+    </div>
+     
+    <div style="clear:both;">
+        &nbsp;
+    </div>
+    
+    <!--Invoice items-->
+    <div id="invoiceItemRepeaterDiv" runat="server" style="overflow: hidden">
+        <table id="MedicalVendorInvoiceItemTable" class="divgrid_clnew" cellspacing="3" cellpadding="0" width="100%" style="font-size: smaller"> 
+            <tr>
+                <th style="white-space:nowrap;">
+                    <b>Review Date</b>
+                </th>
+                <th style="white-space:nowrap;">
+                    <b>Event Id</b> 
+                </th>                        
+                <th style="white-space:nowrap;">
+                    <b>Customer Name</b>
+                </th>
+                <th style="white-space:nowrap;">
+                    <b>Package Name</b>
+                </th>              
+                <th class="amt">
+                    <b>Amount</b>
+                </th>
+            </tr>
+            {#foreach $T.MedicalVendorInvoiceItems as MedicalVendorInvoiceItem}
+            <tr>
+                <td style="white-space:nowrap;">
+                   {DateDeserialize($T.MedicalVendorInvoiceItem.ReviewDate).format("shortDate")}
+                </td>
+                <td style="white-space:nowrap;">
+                   {$T.MedicalVendorInvoiceItem.EventId}
+                </td>                        
+                <td style="white-space:nowrap;">
+                    {$T.MedicalVendorInvoiceItem.CustomerName}
+                </td>
+                <td>
+                    {$T.MedicalVendorInvoiceItem.PackageName}
+                </td>
+                
+                <td style="white-space:nowrap;" class="amt">
+                    {FormatCurrency($T.MedicalVendorInvoiceItem.MedicalVendorAmountEarned)}
+                </td>                    
+            </tr>  
+            {#/for}                                              
+        </table>
+    </div>
+</div>

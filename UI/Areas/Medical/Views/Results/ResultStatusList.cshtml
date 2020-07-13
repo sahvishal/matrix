@@ -1,0 +1,2095 @@
+﻿@using Falcon.App.Core.Medical.ValueType
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Extensions
+@model EventCustomerResultStatusListModel
+@{
+    ViewBag.Title = "Result Status List";
+    var _settings = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>();
+}
+
+<style type="text/css">
+    .list-view-wrap {
+        position: relative;
+    }
+
+    .list-view-inner-wrap {
+        overflow-x: scroll;
+        margin-left: 260px;
+        border-left: 1px solid #ababab;
+    }
+
+    .headcol {
+        position: absolute;
+        width: 250px;
+        left: 0;
+        top: auto;
+        margin-top: -1px;
+        border-top: 1px solid #000 !important;
+    }
+    #list-view{ border-left: 0;}
+    .top-buffer-3{ margin-top: 3px;}
+    .clearfix{ clear: both;}
+
+    .links4 {height: 56px;}
+    .links5{ height: 70px;}
+    .links6{ height: 84px;}
+    .links7{ height: 90px;}
+    .links8 {height: 104px;}
+    .links9 {height: 118px;}
+    .links10 {height: 132px;}
+    .links11 {height: 146px;}
+    .links12 {height: 160px;}
+</style>
+
+<h1>Result Status List
+</h1>
+@{Html.BeginForm("ResultStatusList", "Results", FormMethod.Get);}
+@if (Model != null)
+{
+    @Html.Partial("EventCustomerResultStatusListModelFilter", new ViewDataDictionary(Model.Filter))
+}
+else
+{
+    @Html.Partial("EventCustomerResultStatusListModelFilter")
+}
+@{Html.EndForm();}
+<br />
+
+@{
+     var vd = new ViewDataDictionary();
+     
+    var isNewResultFlow = (Model !=null && Model.EventDate >= _settings.ResultFlowChangeDate);
+    vd.Add("IsNewResultFlow", isNewResultFlow);
+    @Html.Partial("TestStateLegends",vd)
+}
+
+@{
+    var mediaRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IMediaRepository>();
+    var cryptographyService = new Falcon.App.Core.Application.Impl.DigitalDeliveryCryptographyService();
+}
+@if (Model != null)
+{
+    var mediaLocScannedDocs = mediaRepository.GetScannedDocumentStorageFileLocation(Model.EventId);
+    var mediaLocScannedDocsAll = mediaRepository.GetScannedDocumentStorageFolderLocation();
+    <div>
+        <div style="text-align: right; color: #EE8111; font-weight: bold; font-size: 10pt;"
+            class="eventdetail-row">
+            @if (Directory.Exists(mediaLocScannedDocs.PhysicalPath))
+            {
+                var filesScannedDocs = Directory.GetFiles(mediaLocScannedDocs.PhysicalPath);
+                if (filesScannedDocs.Count() > 0)
+                {
+                <div id="scanneddocument-div" style="display: none; width: 500px;">
+                    <h2>Event [@Model.Host] [Id: @Model.EventId] [@Model.EventDate.ToShortDateString()]
+
+                            <div style="float: right; padding-right: 10px; font-size: 9pt;">
+                                @if (File.Exists(mediaLocScannedDocsAll.PhysicalPath + Model.EventId + ".zip"))
+                                {
+                                    var allScannedDocUrl = mediaLocScannedDocsAll.Url + Model.EventId + ".zip";
+                                    <a href='@allScannedDocUrl' target='_blank'>Download All</a>
+                                }
+                            </div>
+                    </h2>
+
+                    <table cellspacing="5" cellpadding="2" class="list-view">
+                        <tr>
+                            <th></th>
+                            <th>File Name
+                            </th>
+                            <th>Size
+                            </th>
+                        </tr>
+                        @foreach (var file in filesScannedDocs)
+                        {
+                            var fileNamewithoutExtension = Path.GetFileName(file);
+                            var fileNameUrl = mediaLocScannedDocs.Url + Path.GetFileName(file);
+                            var fileNameExtension = Path.GetExtension(file).ToLower();
+                            var fileObj = new FileInfo(file);
+                            <tr>
+                                <td>
+                                    @if (fileNameExtension.Contains("xls"))
+                                    {
+                                        <img src="/content/images/icons/xls.gif" alt="" />
+                                    }
+                                    else if (fileNameExtension.Contains("csv"))
+                                    {
+                                        <img src="/content/images/icons/csv.gif" alt="" />
+                                    }
+                                    else if (fileNameExtension.Contains("doc"))
+                                    {
+                                        <img src="/content/images/icons/doc.gif" alt="" />
+                                    }
+                                    else if (fileNameExtension.Contains("pdf"))
+                                    {
+                                        <img src="/content/images/icons/pdf.gif" alt="" />
+                                    }
+                                    else if (fileNameExtension.Contains("zip") || fileNameExtension.Contains("rar"))
+                                    {
+                                        <img src="/content/images/icons/zip.gif" alt="" />
+                                    }
+                                    else if (fileNameExtension.Contains("xml"))
+                                    {
+                                        <img src="/content/images/icons/xml.gif" alt="" />
+                                    }
+                                    else
+                                    {
+                                        <img src="/content/images/icons/unknown.gif" alt="" />
+                                    }
+                                </td>
+                                <td>
+                                    <a href='@fileNameUrl' target='_blank'>@fileNamewithoutExtension </a>
+                                </td>
+                                <td>
+                                    @if (fileObj.Length > (1024 * 1024))
+                                    {
+                                        <b>
+                                            @(Math.Round((decimal)fileObj.Length / (1024 * 1024), 1))
+                                            MB
+                                        </b>
+                                    }
+                                    else if (fileObj.Length > 1024)
+                                    {
+                                        <span>
+                                            @(Math.Round((decimal)fileObj.Length / 1024, 0))
+                                            KB
+                                        </span>
+                                    }
+                                    else if (fileObj.Length > 0)
+                                    {
+                                        <i>(@fileObj.Length bytes) </i>
+                                    }
+                                    else
+                                    {
+                                        <span>0 KB </span>
+                                    }
+                                </td>
+                            </tr>
+
+                        }
+                    </table>
+                </div>
+                <span>
+                    <a style="color: #EE8111;" href="javascript:openDirectoryListing(); void(0);">Scanned Documents
+                    </a>|
+                </span>
+
+                <script type="text/javascript" language="javascript">
+
+                    function openDirectoryListing() {
+                        $("#scanneddocument-div").dialog('open');
+                    }
+
+                    $(document).ready(function () {
+                        $("#scanneddocument-div").dialog({ 'title': "Directory Listing", autoOpen: false, width: 550, height: 400 });
+                    });
+
+                </script>
+                }
+            }
+            <span>
+                <a href="javascript:$('#emr-notes-dialog').dialog('open'); void(0);" style="color: #EE8111;">EMR Notes
+                </a>
+            </span>
+            <script type="text/javascript" language="javascript">
+
+                function saveEmrNotes() {
+                    $(".emr-notes-buttons").toggle();
+                    var evntId = Number('@(Model.EventId)'); 
+                    if(evntId > 0){
+                        $.ajax({
+                            type: "POST",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            url: "/App/Controllers/EventCustomerController.asmx/SaveNotes",
+                            data: "{'eventId' : '@(Model.EventId)', 'text' : '" + $("#emr-notes").val().replace(/'/gi, "\\\'").replace(/"/gi, "\\\"") + "'}",
+                            success: function (result) {
+                                alert("Updated!");
+                                $(".emr-notes-buttons").toggle();
+                                $('#emr-notes-dialog').dialog('close');
+                            },
+                            error: function (a, b, c) {
+                                if (a.status == 401) {
+                                    alert("You do not have the permission for saving the EMR Notes");
+                                }
+                                else
+                                {
+                                    alert("Some error occured while saving EMR Notes! \nPlease try again or contact the support team!");
+                                }
+                                $(".emr-notes-buttons").toggle();
+                                $('#emr-notes-dialog').dialog('close');
+                            }
+                        });
+                    }
+                }
+
+                function generateCdLables() {
+                    $.ajax({
+                        type: "Post",
+                        url: "/Operations/Reports/GenerateCdLabelForEventPdf?eventId=@(Model.EventId)",
+                        success: function (data) {
+                            window.open(data, "PDF", "");
+                        },
+                        error: function (a) {
+                            if (a.status == 401) {
+                                alert("You do not have the permission to Print CD Labels.");
+                            }
+                            else {
+                                alert("Some error occured while Printing CD Labels! \nPlease try again or contact the support team!");
+                            }
+                         
+                        }
+                    });
+                }
+            </script>
+            @{
+            var eventCustomerRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Scheduling.Interfaces.IEventCustomerRepository>();
+            var eventCustomers = eventCustomerRepository.GetEventCustomersForCdLabel(Model.EventId);
+            if (eventCustomers != null && eventCustomers.Count() > 0)
+            {
+                <span>| <a href="javascript:void(0);" onclick="generateCdLables(); return false;" style="color: #EE8111;">Print Cd Labels</a></span>
+            }
+            }
+
+        </div>
+        <div class="eventdetail-row">
+            <div class="fieldLabelValue">
+                @Html.LabelFor(m => m.EventId):
+                @Model.EventId
+            </div>
+            @{
+            var location = mediaRepository.GetResultPacketMediaLocation(Model.EventId);
+            var zipFile = location.PhysicalPath + mediaRepository.GetAllPremiumPdfName(Model.EventId) + ".zip";
+            var zipFileUrl = location.Url + mediaRepository.GetAllPremiumPdfName(Model.EventId) + ".zip";
+            if (File.Exists(zipFile))
+            {
+                <div class="spactionlink_cdpage">
+                    <a href="javascript:void(0);" onclick="DisplayCustomerActionLinks(this);" onmouseout="HideCustomerActionLinks(this, event);">
+                        <b>Download Result</b>
+                    </a>
+                    <img src="/App/Images/downarrowsmall.gif" />
+                </div>
+            }
+            }
+            <div id="divDownloadLinks" style="display: none;" class="spaction_cdpage" onmouseout="this.style.display = 'none';"
+                onmouseover="this.style.display = 'block';">
+                <div onmouseout="HideActionLinksITSELF(this, event);" onmouseover="this.parentNode.style.display = 'block';"
+                    class="spactioninner_cdpage">
+                    @{
+            if (File.Exists(zipFile))
+            {
+                        <div class="spactionelement_cdpage">
+                            <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, Falcon.App.Core.Deprecated.Enum.EPDFType.All))" class="action-link download-allresultpdf-toggle" target="_blank">All</a>
+                            <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="download-allresultpdf-toggle" />
+                        </div>
+            }
+
+            var zipFilePaperCopyOnly = location.PhysicalPath + mediaRepository.GetAllPremiumPdfPaperCopyOnly(Model.EventId) + ".zip";
+
+            if (File.Exists(zipFilePaperCopyOnly))
+            {
+                        <div class="spactionelement_cdpage">
+                            <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, Falcon.App.Core.Deprecated.Enum.EPDFType.PaperOnly))" class="action-link download-allresultpdf-toggle" target="_blank">Paper Copy Only </a>
+                            <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="download-allresultpdf-toggle" />
+                        </div>
+            }
+
+            var zipFileOnlineOnly = location.PhysicalPath + mediaRepository.GetAllPremiumPdfOnlineOnly(Model.EventId) + ".zip";
+
+            if (File.Exists(zipFileOnlineOnly))
+            {
+                        <div class="spactionelement_cdpage">
+                            <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, Falcon.App.Core.Deprecated.Enum.EPDFType.OnlineOnly))" class="action-link download-allresultpdf-toggle" target="_blank">Online Only</a>
+                            <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="download-allresultpdf-toggle" />
+                        </div>
+            }
+            var zipFilePcpOnly = location.PhysicalPath + mediaRepository.GetAllPremiumPdfPcpOnly(Model.EventId) + ".zip";
+
+            if (File.Exists(zipFilePcpOnly))
+            {
+                        <div class="spactionelement_cdpage">
+                            <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, Falcon.App.Core.Deprecated.Enum.EPDFType.AllPcpResultReportOnly))" class="action-link download-allresultpdf-toggle" target="_blank">Pcp Only</a>
+                            <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="download-allresultpdf-toggle" />
+                        </div>
+            }
+
+            var zipFileEawvReportOnly = location.PhysicalPath + mediaRepository.GetAllPremiumPdfEawvReportOnly(Model.EventId) + ".zip";
+
+            if (File.Exists(zipFileEawvReportOnly))
+            {
+                        <div class="spactionelement_cdpage">
+                            <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, Falcon.App.Core.Deprecated.Enum.EPDFType.AllEawvPreventionPlanReportOnly))" class="action-link download-allresultpdf-toggle" target="_blank">Eawv Report Only</a>
+                            <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="download-allresultpdf-toggle" />
+                        </div>
+            }
+
+    var zipFileHealthPlanReportOnly = location.PhysicalPath + mediaRepository.GetAllPremiumPdfHealthPlanReportOnly(Model.EventId) + ".zip";
+    if (File.Exists(zipFileHealthPlanReportOnly))
+            {
+                <div class="spactionelement_cdpage">
+                    <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, Falcon.App.Core.Deprecated.Enum.EPDFType.AllHealthPlanReportOnly))" class="action-link download-allresultpdf-toggle" target="_blank">Health Plan Report Only</a>
+                    <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="download-allresultpdf-toggle" />
+                </div>
+            }
+}
+                </div>
+            </div>
+        </div>
+        <div class="eventdetail-row">
+            <div class="fieldLabelValue" style="width: 20%;">
+                <label style="width: 70px;">
+                    @Html.LabelFor(m => m.EventDate):
+                </label>
+                @Model.EventDate.ToShortDateString()
+            </div>
+            <div class="fieldLabelValue" style="width: 27%;">
+                <label>
+                    @Html.LabelFor(m => m.Host):
+                </label>
+                @Model.Host
+            </div>
+            <div class="fieldLabelValue" style="width: 50%;">
+                <label>
+                    @Html.LabelFor(m => m.Address):
+                </label>
+                @Model.Address
+            </div>
+        </div>
+        <div class="eventdetail-row">
+            <div class="fieldLabelValue" style="width: 48%;">
+                <label>Blood Package Tracking:</label>
+                @(string.IsNullOrEmpty(Model.BloodPackageTracking) ? "N/A" : Model.BloodPackageTracking)
+            </div>
+            <div class="fieldLabelValue" style="width: 50%;">
+                <label>Records Package Tracking:</label>
+                @(string.IsNullOrEmpty(Model.RecordsPackageTracking) ? "N/A" : Model.RecordsPackageTracking)
+            </div>
+        </div>
+    </div>
+
+    <br />
+    if (!(Model.Customers == null || Model.Customers.Count() < 1))
+    {
+        var colCount = 1;
+        <div class="list-view-wrap">
+            <div class="list-view-inner-wrap">
+                <table id="list-view">
+                    <thead>
+                        <tr>
+                            <th class="headcol" style="height: 45px; text-align: center; line-height: 45px; border-top-color: #ababab !important;">
+                                Customer
+                            </th>
+                            @foreach (var test in Model.EventTests)
+                            {
+                                colCount++;
+                                <th style="height: 45px; border-bottom: 1px solid #000;">
+                                    @test.Alias
+                                </th>
+                            }
+                        </tr>
+                    </thead> 
+                    <tbody>
+                        @if (Model.Customers != null && Model.Customers.Count() > 0)
+                        {
+                            var currentUser = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISessionContext>().UserSession;
+                            var currentOrgRole = currentUser.CurrentOrganizationRole;
+                            
+                            for (int i = 0; i < Model.Customers.Count(); i++)
+                            {
+                                var linkCount = 0;
+                                var customer = Model.Customers.ElementAt(i);
+                                var isCritical = customer.TestResults != null ? customer.TestResults.Any(tr => tr.CriticalMarkedByPhysician || tr.IsCritical) : false;
+                                var isPriorityInQueue = customer.InQueuePriority != null && customer.InQueuePriority > 0? true : false;
+                                
+                                bool gotOneTest = false;
+                                bool isAwvTestPurchased = false;
+                                var recordableTestforCustomer = customer.TestResults != null ? customer.TestResults.Where(tr => Model.EventTests.Select(t => t.Id).Contains(tr.TestId)).ToArray() : new TestResultStatusViewModel[0];
+                                var maxStatus = recordableTestforCustomer.Length > 0 ? (int)recordableTestforCustomer.Select(t => t.ResultState).Max() : 0;
+                                var minStatus = recordableTestforCustomer.Length > 0 ? (int)recordableTestforCustomer.Select(t => t.ResultState).Min() : 0;
+
+                                var maxStatus_Label = (TestResultStateLabel)(recordableTestforCustomer.Length > 0 ? (int)recordableTestforCustomer.Select(t => t.State).Max() : 0);
+                                var minStatus_Label = (TestResultStateLabel)(recordableTestforCustomer.Length > 0 ? (int)recordableTestforCustomer.Select(t => t.State).Min() : 0);
+
+                                var isKynPurchased = false;
+                                var isLipidPurchased = false;
+
+                                var isPartial = false;
+
+                                if (customer.TestResults != null)
+                                {
+                                    isAwvTestPurchased = customer.TestResults.Any(x => TestGroup.AwvTestIds.Contains(x.TestId));
+
+                                    foreach (var test in Model.EventTests)
+                                    {
+                                        var customerTest = customer.TestResults.Where(t => t.TestId == test.Id).FirstOrDefault();
+                                        if (customerTest != null)
+                                        {
+                                            if (customerTest.TestId == (long)TestType.Kyn && (long)customerTest.ResultState >= (long)TestResultStateNumber.PreAudit)
+                                            {
+                                                isKynPurchased = true;
+                                            }
+                                            if (customerTest.TestId == (long)TestType.Lipid && (long)customerTest.ResultState >= (long)TestResultStateNumber.PreAudit)
+                                            {
+                                                isLipidPurchased = true;
+                                            }
+
+                                            isPartial = isPartial || customerTest.IsPartial;
+                                            gotOneTest = true;
+                                        }
+                                    }
+                                    
+                                }
+                                <tr>
+                                    <td class="headcol">
+                                        @if (isCritical)
+                                        {
+                                            <div style="float: left; color: White; background-color: Red; margin-right: 5px; border: 2px solid; border-radius: 14px; width: 15px; text-align: center;"
+                                                 title="Critical Patient">
+                                                <b>C</b>
+                                            </div>
+                                        }
+                                        @if (!customer.IsPaid)
+                                        {
+                                            <div style="float: left; color: White; background-color: Red; margin-right: 5px; border: 2px solid; border-radius: 14px; width: 15px; text-align: center;"
+                                                 title="Unpaid Patient">
+                                                <b>U</b>
+                                            </div>
+                                        }
+                                        @if (isPriorityInQueue)
+                                        {
+                                            <div id="PriorityInQueueDiv@(customer.EventCustomerId)" style="float: left; color: black; background-color: yellow; margin-right: 5px; border: 2px ; border-radius: 14px; width: 15px; text-align: center;"
+                                                    title="Priority In Queue">
+                                                <b>P</b>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div id="PriorityInQueueDiv@(customer.EventCustomerId)" style="float: left; color: black; background-color: yellow; margin-right: 5px; border: 2px ; border-radius: 14px; width: 15px; text-align: center; display: none;"
+                                                 title="Priority In Queue">
+                                                <b>P</b>
+                                            </div>
+                                        }
+                                        @if (!currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.NursePractitioner))
+                                        {
+                                            <a class="customer-info" href="/App/Franchisor/FranchisorCustomerDetails.aspx?CustomerId=@customer.CustomerId&EventId=@Model.EventId" target="_blank">
+                                                <b>@customer.CustomerName.ToString()</b>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="customer-info" href="javascript:void(0);">
+                                                <b>@customer.CustomerName.ToString()</b>
+                                            </a>
+                                        }
+                                        [@customer.CustomerId]
+                                        <div class="customer-info" style="display: none; font-size: 12px; padding: 10px 5px;">
+                                            <div style="float: left; width: 500px;">
+                                                <b>Address: </b>@customer.Address.ToString()
+                                            </div>
+                                            <div style="float: left; width: 500px; margin: 10px 0px; clear: both;">
+                                                <span style="float: left; width: 280px;"><b>Email:</b> @customer.Email</span> <span style="float: right; width: 200px;"><b>Phone:</b>@customer.Phone</span>
+                                            </div>
+                                            <div style="float: left; width: 500px; padding: 10px 0px 5px 0px; border-top: solid 1px;">
+                                                <b>Screened For:</b> @customer.OrderPurchased
+                                            </div>
+                                            @if (customer.AssignedPhysicians != null)
+                                            {
+                                                <div style="float: left; width: 500px; padding: 5px 0px;">
+                                                    <b>Assigned Physicians @(customer.AssignedPhysicians.IsDefaultAssignment ? "(Default)" : ""):</b>
+                                                    @(customer.AssignedPhysicians.Primary != null ? customer.AssignedPhysicians.Primary.Name : "")
+                                                    @(customer.AssignedPhysicians.Overread != null ? ", " + customer.AssignedPhysicians.Overread.Name : "")
+                                                </div>
+                                            }
+                                        </div>
+                                       
+                                        <div class="clearfix top-buffer-3">
+                                            <div>
+                                                <a> ACES Id: @(string.IsNullOrWhiteSpace(customer.AcesId) ? "Not Available" : customer.AcesId) </a>
+                                            </div>
+                                                
+                                            
+                                            @if (Model.CaptureHaf)
+                                            {
+                                                linkCount++;
+                                                <a href="javascript:OpenMedicalHistory(@customer.CustomerId, @Model.EventId); void(0);">
+                                                    Health Assesment Form
+                                                </a>
+                                            }
+                                            @if (Model.PrintCheckList)
+                                            {
+                                                linkCount++;                                           
+                                                <div>
+                                                    <a href="javascript:OpenCheckListForm(@customer.CustomerId, @Model.EventId); void(0);">
+                                                        Check List Form
+                                                    </a>
+                                                </div>
+                                            }  
+                                            @if (gotOneTest)
+                                            {
+                                                bool canDoPreaudit = false;
+                                                if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.Technician))
+                                                {
+                                                    var technician = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Users.ITechnicianRepository>().GetTechnician(currentUser.CurrentOrganizationRole.OrganizationRoleUserId);
+                                                    if (technician != null)
+                                                    {
+                                                        canDoPreaudit = technician.CanDoPreAudit;
+                                                    }
+                                                }
+
+                                                if ((minStatus <= (int)TestResultStateNumber.ManualEntry && maxStatus <= (int)TestResultStateNumber.ManualEntry) || (isNewResultFlow && minStatus <= (int)NewTestResultStateNumber.ResultEntryCompleted && maxStatus <= (int)NewTestResultStateNumber.ResultEntryCompleted))
+                                                {
+                                                    linkCount++;
+                                                    <div>
+                                                        <a href="/App/Franchisee/Technician/AuditResultEntry.aspx?EventId=@Model.EventId&CustomerId=@customer.CustomerId">
+                                                            Enter/Edit Results
+                                                        </a>
+                                                    </div>
+                                                    if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchiseeAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin) || canDoPreaudit)
+                                                    {
+                                                        if (!isNewResultFlow || customer.IsChartSigned)
+                                                        {
+                                                            linkCount++;
+                                                            <div>
+                                                                <a href="/App/Franchisee/Technician/AuditResultEntry.aspx?ModeAudit&EventId=@Model.EventId&CustomerId=@customer.CustomerId">
+                                                                    (Pre)Audit Results
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                                else if (minStatus == maxStatus && !(minStatus_Label == TestResultStateLabel.OverreadPending && maxStatus_Label == TestResultStateLabel.Evaluated))
+                                                {
+                                                    if (isNewResultFlow)
+                                                    {
+                                                        if (minStatus > (int)NewTestResultStateNumber.ResultEntryCompleted && !((currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchiseeAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin)) && minStatus == (int)NewTestResultStateNumber.Evaluated && !isPartial))
+                                                        {
+                                                            linkCount++;
+                                                            <div>
+                                                                <a href="/App/Common/Results.aspx?EventId=@Model.EventId&CustomerId=@customer.CustomerId" target="_blank">
+                                                                    View Results
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (minStatus > (int)TestResultStateNumber.ManualEntry && !((currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchiseeAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin)) && minStatus == (int)TestResultStateNumber.Evaluated && !isPartial))
+                                                        {
+                                                            linkCount++;
+                                                            <div>
+                                                                <a href="/App/Common/Results.aspx?EventId=@Model.EventId&CustomerId=@customer.CustomerId" target="_blank">
+                                                                    View Results
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    }
+
+
+                                                    if (minStatus == (int)TestResultStateNumber.PreAudit && !isPartial && currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin))
+                                                    {
+                                                        linkCount++;
+                                                        <div>
+                                                            <a href="javascript:undoPreaudit('@Model.EventId', '@customer.CustomerId'); void(0);" class="undo-pre-audit">
+                                                                (UNDO) Pre-Audit
+                                                            </a>
+                                                            <img src="/App/Images/loading_bar_wb.gif" style="display: none;" class="undo-pre-audit" />
+                                                        </div>
+                                                    }
+
+                                                    if (isNewResultFlow)
+                                                    {
+                                                        if (minStatus == (int)NewTestResultStateNumber.ArtifactSynced && (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchiseeAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin)))
+                                                        {
+                                                            linkCount++;
+                                                            <div>
+                                                                <a href="/App/Common/PostAudit.aspx?EventId=@Model.EventId&CustomerId=@customer.CustomerId">
+                                                                    (Post)Audit Results
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                        else if (isPartial && minStatus == (int)NewTestResultStateNumber.PreAudit && (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchiseeAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin)))
+                                                        {
+                                                            linkCount++;
+                                                            <div>
+                                                                <a class="correct-result" href="/App/Franchisee/Technician/AuditResultEntry.aspx?Correction=true&EventId=@Model.EventId&CustomerId=@customer.CustomerId">
+                                                                    Correct Results
+                                                                </a><span style="display: none; float: left; width: 300px;">
+                                                                        <b>
+                                                                            Comments
+                                                                            by Physician: @customer.PhysicianComments
+                                                                        </b>
+                                                                    </span>
+                                                            </div>
+                                                        }
+                                                        else if (!isPartial && minStatus >= (int)NewTestResultStateNumber.PostAuditNew)
+                                                        {
+                                                            if (customer.IsPremiumVersionPdfGenerated)
+                                                            {
+                                                                var premiummVersionLocation = mediaRepository.GetPremiumVersionResultPdfLocation(Model.EventId, customer.CustomerId);
+                                                                var customerReportFilePath = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForResultReport();
+                                                                var pcpResultFilePath = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForPcpResultReport();
+                                                                var eawvPreventionPlanReport = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForEawvPreventionPlanReport();
+                                                                var healthPlanResultFilePath = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForHealthPlanResultReport();
+                                                                if (File.Exists(customerReportFilePath))
+                                                                {
+                                                                    linkCount++;
+                                                                    <div>
+                                                                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.ResultPdf))" target="_blank">Result Report </a>
+                                                                    </div>
+                                                                }
+
+                                                                if (File.Exists(pcpResultFilePath))
+                                                                {
+                                                                    linkCount++;
+                                                                    <div>
+                                                                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.PcpResultReport))" target="_blank">
+                                                                            PCP Result Report
+                                                                        </a>
+                                                                    </div>
+                                                                }
+
+                                                                if (File.Exists(eawvPreventionPlanReport))
+                                                                {
+                                                                    linkCount++;
+                                                                    <div>
+                                                                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.EAwvPreventionPlanReport))" target="_blank">
+                                                                            EAWV Prevention Plan Report
+                                                                        </a>
+                                                                    </div>
+                                                                }
+
+                                                                if (File.Exists(healthPlanResultFilePath))
+                                                                {
+                                                                    linkCount++;
+                                                                    <div>
+                                                                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.HealthPlanReport))" target="_blank">
+                                                                            Health Plan Report
+                                                                        </a>
+                                                                    </div>
+                                                                }
+                                                            }
+
+                                                            if (customer.IsClinicalFormGenerated && currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin))
+                                                            {
+                                                                linkCount += 2;
+                                                                if (customer.IsAnyTestinHip)
+                                                                { 
+                                                                  <div>
+                                                                      <a href="javascript:regenerate('@Model.EventId', '@customer.CustomerId'); void(0);" class="regenrated-pdf">
+                                                                        (Re)Generate Packet
+                                                                      </a>
+                                                                      <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="regenrated-pdf" />
+                                                                 </div>
+                                                                }
+                                                               
+                                                                <div>
+                                                                    <a href="javascript:setGeneratedRecordtoPostAudit('@Model.EventId', '@customer.CustomerId'); void(0);" class="revert-generatedrecords-pdf">
+                                                                        (UNDO) Post-Audit
+                                                                    </a>
+                                                                    <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="revert-generatedrecords-pdf" />
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (minStatus == (int)TestResultStateNumber.Evaluated && (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchiseeAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin)))
+                                                        {
+                                                            if (!isPartial)
+                                                            {
+                                                                linkCount += 2;
+                                                                <div>
+                                                                    <a href="/App/Common/PostAudit.aspx?EventId=@Model.EventId&CustomerId=@customer.CustomerId">
+                                                                        (Post)Audit Results
+                                                                    </a>
+                                                                </div>
+                                                                <div>
+                                                                    <a href="/App/Common/EditResult.aspx?EventId=@Model.EventId&CustomerId=@customer.CustomerId">
+                                                                        Edit Results
+                                                                    </a>
+                                                                </div>
+                                                            }
+                                                            linkCount++;
+                                                            <div>
+                                                                <a href="javascript:undoEvaluation('@Model.EventId', '@customer.CustomerId'); void(0);" class="undo-evaluation">
+                                                                    (UNDO) Evaluation
+                                                                </a>
+                                                                <img src="/App/Images/loading_bar_wb.gif" style="display: none;" class="undo-evaluation" />
+                                                            </div>
+                                                        }
+                                                        else if (isPartial && minStatus == (int)TestResultStateNumber.PreAudit && (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchiseeAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin)))
+                                                        {
+                                                            linkCount++;
+                                                            <div>
+                                                                <a class="correct-result" href="/App/Franchisee/Technician/AuditResultEntry.aspx?Correction=true&EventId=@Model.EventId&CustomerId=@customer.CustomerId">
+                                                                    Correct Results
+                                                                </a><span style="display: none; float: left; width: 300px;">
+                                                                        <b>
+                                                                            Comments
+                                                                            by Physician: @customer.PhysicianComments
+                                                                        </b>
+                                                                    </span>
+                                                            </div>
+                                                        }
+                                                        else if (!isPartial && minStatus >= (int)TestResultStateNumber.PostAudit)
+                                                        {
+                                                            if (customer.IsPremiumVersionPdfGenerated)
+                                                            {
+                                                                var premiummVersionLocation = mediaRepository.GetPremiumVersionResultPdfLocation(Model.EventId, customer.CustomerId);
+                                                                var customerReportFilePath = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForResultReport();
+                                                                var pcpResultFilePath = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForPcpResultReport();
+                                                                var eawvPreventionPlanReport = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForEawvPreventionPlanReport();
+                                                                var healthPlanResultFilePath = premiummVersionLocation.PhysicalPath + mediaRepository.GetPdfFileNameForHealthPlanResultReport();
+                                                                if (File.Exists(customerReportFilePath))
+                                                                {
+                                                                    linkCount++;
+                                                                    <div>
+                                                                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.ResultPdf))" target="_blank">Result Report </a>
+                                                                    </div>
+                                                                }
+
+                                                                if (File.Exists(pcpResultFilePath))
+                                                                {
+                                                                    linkCount++;
+                                                                    <div>
+                                                                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.PcpResultReport))" target="_blank">
+                                                                            PCP Result Report
+                                                                        </a>
+                                                                    </div>
+                                                                }
+
+                                                                if (File.Exists(eawvPreventionPlanReport))
+                                                                {
+                                                                    linkCount++;
+                                                                    <div>
+                                                                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.EAwvPreventionPlanReport))" target="_blank">
+                                                                            EAWV Prevention Plan Report
+                                                                        </a>
+                                                                    </div>
+                                                                }
+
+                                                                if (File.Exists(healthPlanResultFilePath))
+                                                                {
+                                                                    linkCount++;
+                                                                    <div>
+                                                                        <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.HealthPlanReport))" target="_blank">
+                                                                            Health Plan Report
+                                                                        </a>
+                                                                    </div>
+                                                                }
+                                                            }
+
+                                                            if (customer.IsClinicalFormGenerated && currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin))
+                                                            {
+                                                                linkCount += 2;
+                                                                if (customer.IsAnyTestinHip)
+                                                                { 
+                                                                  <div>
+                                                                      <a href="javascript:regenerate('@Model.EventId', '@customer.CustomerId'); void(0);" class="regenrated-pdf">
+                                                                        (Re)Generate Packet
+                                                                      </a>
+                                                                      <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="regenrated-pdf" />
+                                                                 </div>
+                                                                }
+                                                                <div>
+                                                                    <a href="javascript:setGeneratedRecordtoEvaluatedRecords('@Model.EventId', '@customer.CustomerId'); void(0);" class="revert-generatedrecords-pdf">
+                                                                        Revert to Evaluated
+                                                                    </a>
+                                                                    <img src="/App/Images/loading_bar_wb.gif" style="display: none;" alt="" class="revert-generatedrecords-pdf" />
+                                                                </div>
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                                else if (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin))
+                                                {
+                                                    if (minStatus < (int)TestResultStateNumber.PreAudit && maxStatus == (int)TestResultStateNumber.PreAudit)
+                                                    {
+                                                        linkCount++;
+                                                        <div>
+                                                            <a href="javascript:undoPreaudit('@Model.EventId', '@customer.CustomerId'); void(0);" class="undo-pre-audit">
+                                                                (UNDO) Pre-Audit
+                                                            </a>
+                                                            <img src="/App/Images/loading_bar_wb.gif" alt="" style="display: none;" class="undo-pre-audit" />
+                                                        </div>
+                                                    }
+
+                                                    if ((minStatus_Label == TestResultStateLabel.OverreadPending && maxStatus_Label == TestResultStateLabel.Evaluated) ||
+                                                        (minStatus_Label == TestResultStateLabel.PreAudit && (maxStatus_Label == TestResultStateLabel.OverreadPending || maxStatus_Label == TestResultStateLabel.Evaluated)) ||
+                                                        (minStatus_Label == TestResultStateLabel.Evaluated && maxStatus_Label == TestResultStateLabel.PostAudit))
+                                                    {
+                                                        linkCount++;
+                                                        <div>
+                                                            <a href="javascript:rollback('@Model.EventId', '@customer.CustomerId', '@minStatus_Label'); void(0);" class="rollback-state">
+                                                                Rollback to Previous State
+                                                            </a>
+                                                            <img src="/App/Images/loading_bar_wb.gif" alt="" style="display: none;" class="rollback-state" />
+                                                        </div>
+                                                    }
+
+                                                }
+                                                if (Model.IsKynIntegrationEnabled && isLipidPurchased && !isKynPurchased)
+                                                {
+                                                    linkCount++;
+                                                    <div><a href="/Medical/Results/PrintLipid?eventCustomerId=@customer.EventCustomerId" target="_blank">Basic Biometric Sheet</a></div>
+                                                }
+                                                else if (Model.IsKynIntegrationEnabled && isKynPurchased)
+                                                {
+                                                    linkCount++;
+                                                    <div><a href="/Medical/Results/PrintKyn?eventCustomerId=@customer.EventCustomerId" target="_blank">Basic Biometric Sheet</a></div>
+                                                }
+
+                                                if (isAwvTestPurchased)
+                                                {
+                                                    linkCount++;
+                                                    <div><a onclick="OpenmedicareQuestionHistory(@customer.EventCustomerId)" href="javascript:void(0)">Medicare Questionnaire</a></div>
+                                                }
+                                                if (Model.AccountId > 0 && (Model.AccountId == _settings.MolinaAccountId || Model.AccountId == _settings.WellmedAccountId))
+                                                {
+                                                    if (currentOrgRole.CheckRole((long) Falcon.App.Core.Enum.Roles.FranchisorAdmin) || currentOrgRole.CheckRole((long) Falcon.App.Core.Enum.Roles.NursePractitioner))
+                                                    {
+                                                        if ((isNewResultFlow && minStatus < (int)NewTestResultStateNumber.Evaluated && maxStatus == (int)NewTestResultStateNumber.Evaluated) 
+                                                            || (!isNewResultFlow && minStatus == (int) TestResultStateNumber.Evaluated && maxStatus == (int) TestResultStateNumber.Evaluated))
+                                                        {
+                                                            linkCount++;
+                                                            <div><a href="/Medical/Attestation/Edit?eventCustomerResultId=@customer.EventCustomerId&accountId=@Model.AccountId&customerId=@customer.CustomerId&eventId=@Model.EventId">Edit Attestation Form</a></div>
+                                                        }
+
+                                                        if ((isNewResultFlow && minStatus < (int)NewTestResultStateNumber.PostAuditNew && maxStatus == (int)NewTestResultStateNumber.ResultDelivered) 
+                                                            || (!isNewResultFlow && minStatus >= (int)TestResultStateNumber.PostAudit && maxStatus <= (int)TestResultStateNumber.ResultDelivered))
+                                                        {
+                                                            linkCount++;
+                                                            <div><a href="/Medical/Attestation/View?eventCustomerResultId=@customer.EventCustomerId&accountId=@Model.AccountId&customerId=@customer.CustomerId&eventId=@Model.EventId" >View Attestation Form</a></div>
+                                                        }
+
+                                                    }
+                                                }
+                                                if ((Model.IsHealthPlan && isNewResultFlow && minStatus >= (int)NewTestResultStateNumber.ArtifactSynced && maxStatus < (int)NewTestResultStateNumber.ResultDelivered) && currentOrgRole.CheckRole((long) Falcon.App.Core.Enum.Roles.FranchisorAdmin))
+                                                {
+                                                    linkCount++;
+                                                    <div id="div-invoice_@customer.CustomerId">
+                                                        @if (customer.InvoicingDate.HasValue)
+                                                        {
+                                                            <text><input type="hidden" id="customerInvoice_@customer.CustomerId" value="@customer.InvoicingDate.Value.Date" /></text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <text><input type="hidden" id="customerInvoice_@customer.CustomerId" value="" /></text>
+                                                        }
+                                                        <a href="javascript:OpenPopupForInvoiceDate(@customer.CustomerId, @Model.EventId);void(0);">Invoice Date</a>
+                                                    </div>
+                                                }
+
+                                                if (isNewResultFlow && minStatus >= (int)NewTestResultStateNumber.PdfGenerated && (currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.FranchisorAdmin) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.Technician) || currentOrgRole.CheckRole((long)Falcon.App.Core.Enum.Roles.NursePractitioner)))
+                                                {
+                                                    var ipResultMediaLocation = mediaRepository.GetIpResultPdfLocation(Model.EventId, customer.CustomerId);
+                                                    var ipResultPdf = ipResultMediaLocation.PhysicalPath + mediaRepository.GetPdfFileNameForIpResultPdf(customer.CustomerId, customer.AcesId, customer.CustomerFirstName, customer.CustomerLastName, Model.EventDate.Year);
+                                                    if (customer.IsIpResultGenerated && File.Exists(ipResultPdf))
+                                                    {
+                                                        linkCount++;
+                                                        <div>
+                                                            <a href="/DigitalDelivery.aspx?key=@(cryptographyService.GetKey(Model.EventId, customer.CustomerId, Falcon.App.Core.Deprecated.Enum.EPDFType.IpResultPdf))" target="_blank">
+                                                                IP Result PDF
+                                                            </a>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                            
+                                        </div>
+                                        
+                                    </td>
+                                    
+                                    @if (customer.TestResults != null)
+                                    {
+
+                                        foreach (var test in Model.EventTests)
+                                        {
+                                            var customerTest = customer.TestResults.FirstOrDefault(t => t.TestId == test.Id);
+                                            if (customerTest == null)
+                                            {
+                                                <td>
+                                                    N/A
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>
+                                                    @if (isNewResultFlow)
+                                                    {
+                                                        <img src="/App/Images/NewResultState/@(customerTest.State.ToString()).png" alt="@customerTest.State.GetDescription()" class="result-state nrs_@(customer.CustomerId)_@(Model.EventId)" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/App/Images/ResultState/@(customerTest.State.ToString()).gif" alt="@customerTest.State.GetDescription()" class="result-state" />
+                                                    }
+                                                    <span style="display: none;" class="result-state-header">@customerTest.Label </span>
+                                                    <span style="display: none;" class="result-state-data">
+                                                        <b>
+                                                            <span class="nrsl_@(customer.CustomerId)_@(Model.EventId)">@customerTest.State.GetDescription()</span>
+                                                        </b>
+                                                        @if (!string.IsNullOrWhiteSpace(customerTest.ConductedBy))
+                                                        {
+                                                            <br />
+                                                            <b>Conducted by: </b> @customerTest.ConductedBy
+                                                        }
+                                                        @if (!string.IsNullOrWhiteSpace(customerTest.EvaluatedBy))
+                                                        {
+                                                            <br />
+                                                            <b>Physician: </b> @customerTest.EvaluatedBy
+                                                        }
+                                                    </span>
+                                                </td>
+
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td style="color: #D8000C; font-style:italic;" colspan="@Model.EventTests.Count()">
+                                            Some error occured while loading Test Results. Please contact System Admin!
+                                        </td>
+                                    }
+                                </tr>
+                                <tr style="border-bottom: solid 1px #000000;">
+                                    @{var colSpan = (colCount + 1) / 2;}
+                                    <td colspan="@(colCount)" class='@(linkCount >= 5 ? "links" + linkCount : "links5")'>
+                                        <div style="float: left; width: 290px;">
+                                            <div class="hipaa_@(customer.CustomerId)">
+                                                <b>HIPAA: </b>&nbsp;<br />
+                                                <input type="radio" name="hipaa_group_@(customer.CustomerId)" @((customer.HipaaStatus == RegulatoryState.Not_Signed) ? "checked=checked" : "")
+                                                       onclick="setHipaa('@Model.EventId', '@customer.CustomerId', '@((short)RegulatoryState.Not_Signed)');" />
+                                                @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                                <input type="radio" name="hipaa_group_@(customer.CustomerId)" @((customer.HipaaStatus == RegulatoryState.Signed) ? "checked=checked" : "")
+                                                       onclick="setHipaa('@Model.EventId', '@customer.CustomerId', '@((short)RegulatoryState.Signed)');" />
+                                                @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                                <input type="radio" name="hipaa_group_@(customer.CustomerId)" @((customer.HipaaStatus == RegulatoryState.Unknown) ? "checked=checked" : "")
+                                                       onclick="setHipaa('@Model.EventId', '@customer.CustomerId', '@((short)RegulatoryState.Unknown)');" />
+                                                @RegulatoryState.Unknown.ToString()
+                                            </div>
+                                            <div class="hipaa_@(customer.CustomerId)" style="display:none;">
+                                                <img src="/App/Images/loading.gif" alt="" />
+                                                Updating HIPAA State
+                                            </div>
+                                        </div>
+                                        @if (Model.IsHospitalPartnerEvent)
+                                        {
+                                            <div style="float: left; width: 290px;">
+                                                <div class="partnerrelease_@(customer.CustomerId)">
+                                                    <b>Partner Release: </b>&nbsp;
+                                                    <br />
+                                                    <input type="radio" name="partner_release_@(customer.CustomerId)" @(customer.PartnerRelease == RegulatoryState.Not_Signed ? "checked=checked" : "")
+                                                           onclick="setPartnerRelease('@Model.EventId', '@customer.CustomerId', '@((short)RegulatoryState.Not_Signed)');" />
+                                                    @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                                    <input type="radio" name="partner_release_@(customer.CustomerId)" @(customer.PartnerRelease == RegulatoryState.Signed ? "checked=checked" : "")
+                                                           onclick="setPartnerRelease('@Model.EventId', '@customer.CustomerId', '@((short)RegulatoryState.Signed)');" />
+                                                    @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                                    <input type="radio" name="partner_release_@(customer.CustomerId)" @(customer.PartnerRelease == RegulatoryState.Unknown ? "checked=checked" : "")
+                                                           onclick="setPartnerRelease('@Model.EventId', '@customer.CustomerId', '@((short)RegulatoryState.Unknown)');" />
+                                                    @RegulatoryState.Unknown.ToString()
+
+                                                </div>
+                                                <div class="partnerrelease_@(customer.CustomerId)" style="display:none;">
+                                                    <img src="/App/Images/loading.gif" alt="" />
+                                                    Updating Partner Release
+                                                </div>
+
+                                            </div>
+                                            if (Model.HospitalFacilities != null && Model.HospitalFacilities.Any())
+                                            {
+                                                <div style="float: left; width: 290px;">
+                                                    <b>Release Results To:</b><br />
+                                                    <select id="HospitalFacility_@(customer.CustomerId)" onchange="setHospitalFacility('@customer.EventCustomerId', this);" style="width: 99%; font-size: 13px;">
+                                                        <option value="-1">-- Select Hospital Facility --</option>
+                                                        @foreach (var hospitalFacility in Model.HospitalFacilities)
+                                                        {
+                                                            if (customer.HospitalFacilityId.HasValue && customer.HospitalFacilityId.Value == hospitalFacility.FirstValue)
+                                                            {
+                                                                <option value="@hospitalFacility.FirstValue" selected="selected">@hospitalFacility.SecondValue </option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@hospitalFacility.FirstValue">@hospitalFacility.SecondValue </option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                            }
+                                        }
+                                        @if (Model.IsHospitalPartnerEvent && (Model.CaptureAbnStatus || customer.CapturePcpConsent))
+                                        {
+                                            <hr style="float: left; width: 99%; border-top: solid 0.5px #cdcdcd;" />
+                                        }
+                                        @if (Model.CaptureAbnStatus)
+                                        {
+                                            <div style="float: left; width: 290px;">
+                                                <div class="abn_@(customer.CustomerId)">
+                                                    <b>ABN Status: </b>
+                                                    <br />
+                                                    <input type="radio" name="abn_group_@(customer.CustomerId)" @((customer.AbnStatus == RegulatoryState.Not_Signed) ? "checked=checked" : "")
+                                                           onclick="setAbnStatus('@customer.EventCustomerId', '@customer.CustomerId', '@((short)RegulatoryState.Not_Signed)');" />
+                                                    @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                                    <input type="radio" name="abn_group_@(customer.CustomerId)" @((customer.AbnStatus == RegulatoryState.Signed) ? "checked=checked" : "")
+                                                           onclick="setAbnStatus('@customer.EventCustomerId', '@customer.CustomerId', '@((short)RegulatoryState.Signed)');" />
+                                                    @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                                    <input type="radio" name="abn_group_@(customer.CustomerId)" @((customer.AbnStatus == RegulatoryState.Unknown) ? "checked=checked" : "")
+                                                           onclick="setAbnStatus('@customer.EventCustomerId', '@customer.CustomerId', '@((short)RegulatoryState.Unknown)'); " />
+                                                    @RegulatoryState.Unknown.ToString()
+                                                </div>
+                                                <div class="abn_@(customer.CustomerId)" style="display: none;">
+                                                    <img src="/App/Images/loading.gif" alt="" />
+                                                    Updating ABN Status
+                                                </div>
+                                            </div>
+                                        }
+                                        @if (customer.CapturePcpConsent)
+                                        {
+                                            <div style="float: left; width: 290px;">
+                                                <div class="pcpConsent_@(customer.CustomerId)">
+                                                    <b>PCP Consent Status: </b>
+                                                    <br />
+                                                    <input type="radio" name="pcpConsent_group_@(customer.CustomerId)" @((customer.PcpConsentStatus == RegulatoryState.Not_Signed) ? "checked=checked" : "")
+                                                           onclick="pcpConsentStatus('@customer.EventCustomerId', '@customer.CustomerId', '@((short)RegulatoryState.Not_Signed)');" />
+                                                    @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                                    <input type="radio" name="pcpConsent_group_@(customer.CustomerId)" @((customer.PcpConsentStatus == RegulatoryState.Signed) ? "checked=checked" : "")
+                                                           onclick="pcpConsentStatus('@customer.EventCustomerId', '@customer.CustomerId', '@((short)RegulatoryState.Signed)');" />
+                                                    @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                                    <input type="radio" name="pcpConsent_group_@(customer.CustomerId)" @((customer.PcpConsentStatus == RegulatoryState.Unknown) ? "checked=checked" : "")
+                                                           onclick="pcpConsentStatus('@customer.EventCustomerId', '@customer.CustomerId', '@((short)RegulatoryState.Unknown)');" />
+                                                    @RegulatoryState.Unknown.ToString()
+                                                </div>
+                                                <div class="pcpConsent_@(customer.CustomerId)" style="display:none;">
+                                                    <img src="/App/Images/loading.gif" alt="" />
+                                                    Updating PCP Consent Status
+                                                </div>
+                                            </div>
+                                        }
+                                        @if (isAwvTestPurchased)
+                                        {
+                                            <div style="float: left; width: 290px;">
+                                                <div class="insurancerelease_@(customer.CustomerId)">
+                                                    <b>Insurance Release Status</b><br />
+                                                    <input type="radio" name="insurancerelease_@(customer.CustomerId)" @((customer.InsuranceReleaseStatus == RegulatoryState.Not_Signed) ? "checked=checked" : "")
+                                                           onclick="setInsuranceReleaseStatus('@customer.EventCustomerId','@customer.CustomerId','@((short)RegulatoryState.Not_Signed)');" />
+                                                    @RegulatoryState.Not_Signed.ToString().Replace("_", " ") &nbsp; &nbsp;
+                                                    <input type="radio" name="insurancerelease_@(customer.CustomerId)" @((customer.InsuranceReleaseStatus == RegulatoryState.Signed) ? "checked=checked" : "")
+                                                           onclick="setInsuranceReleaseStatus('@customer.EventCustomerId','@customer.CustomerId','@((short)RegulatoryState.Signed)');" />
+                                                    @RegulatoryState.Signed.ToString() &nbsp; &nbsp;
+                                                    <input type="radio" name="insurancerelease_@(customer.CustomerId)" @((customer.InsuranceReleaseStatus == RegulatoryState.Unknown) ? "checked=checked" : "")
+                                                           onclick="setInsuranceReleaseStatus('@customer.EventCustomerId','@customer.CustomerId','@((short)RegulatoryState.Unknown)    ');" />
+                                                    @RegulatoryState.Unknown.ToString() &nbsp; &nbsp;
+                                                </div>
+                                            </div>
+                                            <div class="insurancerelease_@(customer.CustomerId)" style="display:none;">
+                                                <img src="/App/Images/loading.gif" alt="" />
+                                                Updating Insurance Release Status
+                                            </div>
+                                        }
+                                        @if ((minStatus > 0 || maxStatus > 0) && minStatus <= 5 && Model.RoleId != (long)Falcon.App.Core.Enum.Roles.Technician)
+                                        {
+                                            <div style="float: left; width: 290px;">
+                                                <div class="priorityinqueue_@(customer.EventCustomerId)">
+                                                    <b>Priority In Queue:</b>&nbsp; &nbsp;
+                                                    <input type="checkbox" id="PriorityInQueueCheckbox@(customer.EventCustomerId)" onclick="setPriorityInQueue('@customer.EventCustomerId', this, '@customer.CustomerId', '@Model.EventId')" @(customer.InQueuePriority.HasValue && customer.InQueuePriority.Value > 0 ? "checked='checked'" : "") />
+                                                </div>
+                                                <div class="priorityinqueue_@(customer.EventCustomerId)" style="display:none;">
+                                                    <img src="/App/Images/loading.gif" alt="" />
+                                                    Updating Priority In Queue
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+    <div style="clear: both; padding-top: 20px;">
+        <h2>No Customers found for this event!
+        </h2>
+    </div>
+    }
+
+    <div id="emr-notes-dialog" class="jdbox">
+        <div>
+            <textarea id="emr-notes" rows="5" cols="50"> @Model.EmrNotes </textarea>
+        </div>
+        <div class="emr-notes-buttons" style="text-align: right;">
+            <button id="save-emr-notes" style="width: 70px; height: 25px;" onclick="saveEmrNotes(); return false;">
+                Save
+            </button>
+        </div>
+        <div class="emr-notes-buttons" style="display: none; text-align: right;">
+            <img src="/App/Images/loading.gif" alt="" />
+            Updating
+        </div>
+    </div>
+}
+else
+{
+    <h2>Please provide a valid search options to get the event data!
+    </h2>
+}
+
+<div id="priorityInQueue-dialog" class="jdbox" style="display: none;">
+    @Html.Partial("PriorityInQueuePopup")
+</div>
+
+<div id="critical-question-dialog" style="display: none;">
+    <input type="hidden" id="eventCustomerId" value="" />
+    <div id="critical-question-div">
+        <div class="editor-row critical-question">
+            <span style="float: left; width: 280px;">
+                Did patient fast?
+                &nbsp;&nbsp;
+            </span>
+            <span questionid="1" style="float: left; width: 175px;">
+                <input type="radio" name="questionid-1" value="Yes" />Yes&nbsp;&nbsp;<input type="radio" name="questionid-1" value="No" />No
+            </span>
+            <textarea questionid="1" cols="25" rows="3" style="float: left; max-height: 100px; overflow-y: scroll; resize: none;"></textarea>
+        </div>
+        <div class="editor-row critical-question">
+            <span style="float: left; width: 280px;">
+                Is patient on a statin?
+                &nbsp;&nbsp;
+            </span>
+            <span questionid="2" style="float: left; width: 175px;">
+                <input type="radio" name="questionid-2" value="Yes" />Yes&nbsp;&nbsp;<input type="radio" name="questionid-2" value="No" />No
+            </span>
+            <textarea questionid="2" cols="25" rows="3" style="float: left; max-height: 100px; overflow-y: scroll; resize: none;"></textarea>
+        </div>
+        <div class="editor-row critical-question">
+            <span style="float: left; width: 280px;">
+                Is patient on cholesterol Med?
+                &nbsp;&nbsp;
+            </span>
+            <span questionid="3" style="float: left; width: 175px;">
+                <input type="radio" name="questionid-3" value="Yes" />Yes&nbsp;&nbsp;<input type="radio" name="questionid-3" value="No" />No
+            </span>
+            <textarea questionid="3" cols="25" rows="3" style="float: left; max-height: 100px; overflow-y: scroll; resize: none;"></textarea>
+        </div>
+        <div class="editor-row critical-question">
+            <span style="float: left; width: 280px;">
+                Was patient stable at time of transfer?
+                &nbsp;&nbsp;
+            </span>
+            <span questionid="4" style="float: left; width: 175px;">
+                <input type="radio" name="questionid-4" value="Yes" />Yes&nbsp;&nbsp;<input type="radio" name="questionid-4" value="No" />No
+            </span>
+            <textarea questionid="4" cols="25" rows="3" style="float: left; max-height: 100px; overflow-y: scroll; resize: none;"></textarea>
+        </div>
+        <div class="editor-row critical-question">
+            <span style="float: left; width: 280px;">
+                Was pcp contacted?
+                &nbsp;&nbsp;
+            </span>
+            <span questionid="5" style="float: left; width: 175px;">
+                <input type="radio" name="questionid-5" value="Yes" />Yes&nbsp;&nbsp;<input type="radio" name="questionid-5" value="No" />No
+            </span>
+            <textarea questionid="5" cols="25" rows="3" style="float: left; max-height: 100px; overflow-y: scroll; resize: none;"></textarea>
+        </div>
+        <div class="editor-row critical-question">
+            <span style="float: left; width: 280px;">
+                Was patient symptomatic?
+                &nbsp;&nbsp;
+            </span>
+            <span questionid="6" style="float: left; width: 175px;">
+                <input type="radio" name="questionid-6" value="Yes" />Yes&nbsp;&nbsp;<input type="radio" name="questionid-6" value="No" />No
+            </span>
+            <textarea questionid="6" cols="25" rows="3" style="float: left; max-height: 100px; overflow-y: scroll; resize: none;"></textarea>
+        </div>
+        <div class="editor-row critical-question">
+            <span style="float: left; width: 280px;">
+                Did patient refuse transfer?
+                &nbsp;&nbsp;
+            </span>
+            <span questionid="7" style="float: left; width: 175px;">
+                <input type="radio" name="questionid-7" value="Yes" />Yes&nbsp;&nbsp;<input type="radio" name="questionid-7" value="No" />No
+            </span>
+            <textarea questionid="7" cols="25" rows="3" style="float: left; max-height: 100px; overflow-y: scroll; resize: none;"></textarea>
+        </div>
+        <div class="editor-row critical-question">
+            <span style="float: left; width: 280px;">
+                Where was the patient sent?
+                &nbsp;&nbsp;
+            </span>
+            <span questionid="8" style="float: left; width: 175px;">
+                <input type="radio" name="questionid-8" value="ER Office" />ER Office&nbsp;&nbsp;<input type="radio" name="questionid-8" value="PCP Office" />PCP Office
+            </span>
+            <textarea questionid="8" cols="25" rows="3" style="float: left; max-height: 100px; overflow-y: scroll; resize: none;"></textarea>
+        </div>
+        <div style="float: right; margin-top: 10px;" class="editor-row">
+
+            <input type="button" value="Close" onclick="closeCriticalDataDialog();" class="save-critical-question" />&nbsp;&nbsp;
+            <input type="button" value="Save" class="save-critical-question" onclick="savePatientCriticalInfo();" />
+
+            <img src="/App/Images/loading.gif" class="save-critical-question" style="display: none;" />
+        </div>
+    </div>
+</div>
+
+<div id="result-Invoice-dialog" class="jdbox" style="display:none;" >
+    <div style="width:280px;clear: both;">
+        <div style="display: none;">
+            <input id="forfocusId" type="text" value="" tabindex="0" />    
+        </div>
+        
+        <input type="hidden" id="eventId" value="0" />
+        <input type="hidden" id="customerId" value="0" />
+        <div style="width:100px">Invoice Date:<sub style="color:red;">*</sub></div><input type="text" style="width:170px;" name="invoiceDate" id="invoiceDate" value=" " class="datePicker" />
+        <div class="jdbox-validation-button" style="float: right;padding-top: 20px;width: 100%;clear: both;margin-right: 10px;">
+            <input type="button" id="btncancel" class="button" style="margin-left:10px;float:right;" value="close" onclick='$("#result-Invoice-dialog").dialog("close");' />
+            <input type="button" id="btnOk" class="button" style="padding-left:10px;float:right;" value="Save" onclick='SaveInvoiceDetails();' />
+        </div>
+    </div>
+</div>
+@section css {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .borderclass-top {
+            border-top: 1px solid grey;
+            border-left: 1px solid grey;
+            border-right: 1px solid grey;
+            border-bottom: none;
+        }
+
+        .borderclass-bottom {
+            border-top: none;
+            border-bottom: 1px solid grey;
+            border-left: 1px solid grey;
+            border-right: 1px solid grey;
+        }
+
+        .jdbox {
+            float: left;
+            width: 450px;
+            margin-top: 5px;
+        }
+
+            .jdbox div {
+                float: left;
+                width: 450px;
+                margin-top: 3px;
+            }
+
+            .jdbox textarea {
+                width: 445px;
+            }
+    </style>
+    <style type="text/css">
+        .spactionlink_cdpage {
+            float: right;
+            padding-right: 10px;
+        }
+
+        .spaction_cdpage {
+            width: 180px;
+            position: absolute;
+            z-index: 100;
+            border: solid 1px #2A6E95;
+            background-color: White;
+        }
+
+        .spactioninner_cdpage {
+            width: 148px;
+        }
+
+        .spactionelement_cdpage {
+            width: 170px;
+            padding-left: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-bottom: solid 1px Gray;
+            float: left;
+        }
+
+        .critical-question {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+    </style>
+}
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script type="text/javascript" language="javascript">
+
+    var _submitFormAfterSavingPriorityInQueueData = false;
+
+    $(function () {
+        var rowCount = 0;
+        $("table#list-view tr:not(:has(th))").each(function () {
+            if ($(this).hasClass("tr-border")) return;
+
+            rowCount = rowCount + 1;
+            if ((rowCount % 2) != 0) return;
+            else if (((rowCount / 2) % 2) != 0) return;
+
+            $(this).addClass("alt-row");
+            $(this).prev().addClass("alt-row");
+            //$(this).prev().prev().addClass("alt-row");
+        });
+
+        $('#emr-notes-dialog').dialog({ width: 480, autoOpen: false, title: 'EMR Notes', resizable: false, draggable: true });
+        
+        $("#priorityInQueue-dialog").dialog({ width: 650, autoOpen: false, title: 'Priority in Queue Reason', modal: true, resizable: false, draggable: true, dialogClass: 'no-close' });
+        $("#priorityInQueue-dialog").bind('dialogclose', closePriorityInQueue);
+
+        $('#critical-question-dialog').dialog({ width: 700, autoOpen: false, title: 'Priority In Queue Patient Info', resizable: false, draggable: true, modal: true });
+    });
+    
+    
+    function setPriorityInQueue(eventCustomerId, ctrl, customerId, eventId) {
+        
+        if ($(ctrl).attr('checked') == true) {
+            $('#PriorityInQueueEventCustomerIdHidden').val(eventCustomerId);
+            $('#PriorityInQueueCustomerIdHidden').val(customerId);
+            $('#PriorityInQueueEventIdHidden').val(eventId);
+            
+            $("#priorityInQueue-dialog").dialog('open');
+
+        }
+        else {
+            savePriorityInQueue(eventCustomerId, ctrl,'');
+        }
+    }
+    
+    function savePriorityInQueue(eventCustomerId, ctrl,notes) {
+        var customerId = $('#PriorityInQueueCustomerIdHidden').val();
+        var eventId = $('#PriorityInQueueEventIdHidden').val();
+        
+        /*if ($(ctrl).attr('checked')) {
+            openCriticalQuestionDialog(eventCustomerId, ctrl, notes, customerId, eventId);
+        } else {*/
+        postData(eventCustomerId, ctrl, notes);
+        //}
+    }
+
+    function postData(eventCustomerId, ctrl, notes) {
+        $(".priorityinqueue_" + eventCustomerId).toggle();
+
+        notes = notes.replace(/\?\?+/gi, "?");
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/Results/SetPriorityInQueue",
+            data: "{'EventCustomerResultId' : '" + eventCustomerId + "', 'IsPriorityInQueue' : '" + $(ctrl).attr('checked') + "','Note':'" + notes + "'}",
+            success: function (result) {
+
+                $(".priorityinqueue_" + eventCustomerId).toggle();
+
+                if (!result.IsSuccess) {
+                    if (result.IsTestSaved) {
+                        $(ctrl).attr('checked', 'checked');
+                    }
+                    else {
+                        $(ctrl).attr('checked', 'checked');
+                    }
+                    alert(result.Message);
+                }
+                else {
+                    if ($(ctrl).is(":checked"))
+                        $("#PriorityInQueueDiv" + eventCustomerId).show();
+                    else {
+                        $("#PriorityInQueueDiv" + eventCustomerId).hide();
+                    }
+                }
+            },
+            error: function (a, b, c) {
+                alert("Some error occured while updating the Priority In Queue \nPlease try again or contact the support team!");
+                window.location.reload();
+            }
+        });
+    }
+    
+    function setHospitalFacility(eventCustomerId, ctrlRef) {
+        var hospitalfacilityId = $(ctrlRef).val();
+        
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdateHospitalFacilitily",
+            data: "{'eventCustomerId' : '" + eventCustomerId + "', 'hospitalFacilityId' : '" + hospitalfacilityId + "'}",
+            success: function (result) {
+            },
+            error: function (a, b, c) {
+                alert("Some error occured while updating the hospital facility! \nPlease try again or contact the support team!");
+            }
+        });
+    }
+    function setHipaa(eventId, customerId, state) {
+        $(".hipaa_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdateHippaStatusforEventIdCustomerId",
+            data: "{'eventId' : '" + eventId + "', 'customerId' : '" + customerId + "', 'hippaStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".hipaa_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating the HIPAA status!");
+                }
+                else
+                {
+                    alert("Some error occured while updating the HIPAA status! \nPlease try again or contact the support team!");
+                    window.location.reload();
+                }
+            }});
+
+    }
+
+
+    function setPartnerRelease(eventId, customerId, state) {
+        $(".partnerrelease_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdatePartnerReleaseStatusforEventIdCustomerId",
+            data: "{'eventId' : '" + eventId + "', 'customerId' : '" + customerId + "', 'partnerReleaseStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".partnerrelease_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating Partner Release status!");
+                }
+                else
+                    alert("Some error occured while updating the status for Partner Release! \nPlease try again or contact the support team!");
+                window.location.reload();
+            }
+        });
+
+    }
+    
+    function setAbnStatus(eventCustomerId, customerId, state) {
+        $(".abn_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdateAbnStatus",
+            data: "{'eventCustomerId' : '" + eventCustomerId + "', 'abnStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".abn_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                $(".abn_" + customerId).toggle();
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating Abn status!");
+                }
+                else 
+                    alert("Some error occured while updating the status for Partner Release! \nPlease try again or contact the support team!");
+            }
+        });
+
+    }
+
+    function pcpConsentStatus(eventCustomerId, customerId, state) {
+        $(".pcpConsent_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdatePcpConsentStatus",
+            data: "{'eventCustomerId' : '" + eventCustomerId + "', 'pcpConsentStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".pcpConsent_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                $(".pcpConsent_" + customerId).toggle();
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating Pcp Consent status!");
+                }
+                else
+                    alert("Some error occured while updating the status for Partner Release! \nPlease try again or contact the support team!");
+            }
+        });
+
+    }
+    
+    function setInsuranceReleaseStatus(eventCustomerId, customerId, state) {
+        $(".insurancerelease_" + customerId).toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/App/Controllers/EventCustomerController.asmx/UpdateInsuranceReleaseStatus",
+            data: "{'eventCustomerId' : '" + eventCustomerId + "', 'insuranceReleaseStatus' : '" + state + "'}",
+            success: function (result) {
+                $(".insurancerelease_" + customerId).toggle();
+            },
+            error: function (a, b, c) {
+                $(".insurancerelease_" + customerId).toggle();
+                if (a.status == 401) {
+                    alert("You do not have the permission for updating Insurance Release status!");
+                }
+                else 
+                    alert("Some error occured while updating the status for Partner Release! \nPlease try again or contact the support team!");
+            }
+        });
+
+    }
+
+    $('.result-state').qtip({
+        content: {
+            title: function (api) {
+                return $(this).parent().find('span.result-state-header').html();
+            },
+            text: function (api) {
+                return $(this).parent().find('span.result-state-data').html();
+            }
+        }
+    });
+
+    $('.correct-result').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            text: function (api) {
+                return $(this).parent().find('span').html();
+            }
+        },
+        style: {
+            width: '300px'
+        }
+    });
+
+    $('.customer-info').qtip({
+        position: {
+            my: 'left top'
+        },
+        content: {
+            title: function (api) {
+                return "<h4> Customer Info </h4>";
+            },
+            text: function (api) {
+                return $(this).parent().find('div.customer-info').html();
+            }
+        },
+        style: {
+            width: '520px'
+        }
+    });
+
+    function rollback(eventid, customerid, stateLabel) {
+        var result = confirm("Are you sure you want to Rollback to previous state?");
+        if (!result) {
+            return false;
+        }
+
+        $(".rollback-state").toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/Results/RollbackToPreviousState?eventId=" + eventid + "&customerId=" + customerid + "&stateToRevertAt=" + stateLabel,
+            data: "{}",
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for Rollback!");
+                }
+                else
+                    alert("Some error occured while doing the Rollback! \nPlease contact the support team!");
+                window.location.reload();
+            }
+        });
+
+        return false;
+    }
+
+
+    function undoPreaudit(eventid, customerid) {
+        var result = confirm("Are you sure you want to UNDO the Pre-Audit?");
+        if (!result) {
+            return false;
+        }
+
+        $(".undo-pre-audit").toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/Results/UndoPreAudit?eventId=" + eventid + "&customerId=" + customerid + "&isNewResultFlow=@isNewResultFlow",
+            data: "{}",
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for Undo PreAudit!");
+                }
+                else
+                    alert("Some error occured while doing the undo for PreAudit! \nPlease contact the support team!");
+                window.location.reload();
+            }
+        });
+
+        return false;
+    }
+
+    function undoEvaluation(eventid, customerid) {
+        var result = confirm("Are you sure you want to UNDO the Physician's Evaluation?");
+        if (!result) {
+            return false;
+        }
+
+        $(".undo-evaluation").toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/Results/UndoEvaluation?eventId=" + eventid + "&customerId=" + customerid,
+            data: "{}",
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for Undo Evaluation!");
+                }
+                else
+                    alert("Some error occured while doing the undo for Evaluation! \nPlease contact the support team!");
+                window.location.reload();
+            }
+        });
+
+        return false;
+    }
+
+    function revertToCoding(eventid, customerid) {
+        var result = confirm("Are you sure you want to UNDO the Physician's Evaluation?");
+        if (!result) {
+            return false;
+        }
+
+        $(".revert-to-coding").toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/Results/RevertToCoding?eventId=" + eventid + "&customerId=" + customerid,
+            data: "{}",
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission to revert to Coding!");
+                }
+                else
+                    alert("Some error occured while reverting to Coding! \nPlease contact the support team!");
+                window.location.reload();
+            }
+        });
+
+        return false;
+    }
+
+    function regenerate(eventid, customerid) {
+        var result = confirm("Are you sure you want to Regenerate the Result packet?");
+        if (!result) {
+            return false;
+        }
+
+        $(".regenrated-pdf").toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/Results/RegeneratePacket?eventId=" + eventid + "&customerId=" + customerid,
+            data: "{}",
+            success: function (result) {
+                alert("Record queued up for regeneration! Please wait till the batch is processed.");
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for Regeneration!");
+                }
+                else
+                    alert("Some error occured while issuing command for Regeneration! \nPlease contact the support team!");
+                window.location.reload();
+            }
+        });
+
+        return false;
+    }
+
+    //SetGeneratedRecordtoEvaluatedRecords
+    function setGeneratedRecordtoEvaluatedRecords(eventid, customerid) {
+        var result = confirm("Are you sure you want to revert the Result status for Generated Records?");
+        if (!result) {
+            return false;
+        }
+
+        $(".revert-generatedrecords-pdf").toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/Results/SetGeneratedRecordtoEvaluatedRecords?eventId=" + eventid + "&customerId=" + customerid,
+            data: "{}",
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for issuing command for Status Revert!");
+                }
+                else
+                    alert("Some error occured while issuing command for Status Revert! \nPlease contact the support team!");
+                window.location.reload();
+            }
+        });
+
+        return false;
+    }
+
+    //setGeneratedRecordtoPostAudit
+    function setGeneratedRecordtoPostAudit(eventid, customerid) {
+        var result = confirm("Are you sure you want to revert the Result status for Generated Records?");
+        if (!result) {
+            return false;
+        }
+
+        $(".revert-generatedrecords-pdf").toggle();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/Results/SetGeneratedRecordtoPostAudit?eventId=" + eventid + "&customerId=" + customerid,
+            data: "{}",
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for issuing command for Status Revert!");
+                }
+                else
+                    alert("Some error occured while issuing command for Status Revert! \nPlease contact the support team!");
+                window.location.reload();
+            }
+        });
+
+        return false;
+    }
+
+    function OpenMedicalHistory(customerId, eventId) {
+        winmedicalhistory = window.open("/App/Common/MedicalHistory.aspx?ReloadParent=false&ReturnPage=ecrl&Edit=true&CustomerID=" + customerId + "&EventId=" + eventId + "&showkyn=true", "MedicalHistory", "toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,resizable=yes,width=820,height=500");
+    }
+
+    function OpenCheckListForm(customerId, eventId) {
+        winmedicalhistory = window.open("/Scheduling/EventCustomerList/CheckListForm?customerId=" + customerId + "&eventId=" + eventId + "", "CustomerCheckListForm", "toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,resizable=yes,width=980,height=500");
+    }
+    function OpenmedicareQuestionHistory(eventcustomerid) {
+        window.open("/medical/medicareQuestion/Update?eventcustomerid=" + eventcustomerid, "medicareQuestionHistory", "toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,resizable=yes,width=820,height=500");
+    }
+    function validateDownloadResultPacket(eventId, fileUrl) {
+        $(".download-allresultpdf-toggle").toggle();
+        $.ajax({ type: "GET",
+            dataType: "json", url: "/Scheduling/Event/IsResultPacketDownloadable?eventId=" + eventId, data: "{}",
+            success: function (result) {
+                if (result) {
+                    window.open(fileUrl, "DownloadResultPacket", "width=200, height=200");
+                    $(".download-allresultpdf-toggle").toggle();
+                }
+                else {
+                    alert("This event is in queue for result packet generation. Please wait for few minutes");
+                    window.location.reload();
+                }
+            }, error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission!");
+                }
+                else
+                    alert("Some error occured while processing your request. Please try again");
+                $(".download-allresultpdf-toggle").toggle();
+            }
+        });
+    }
+
+
+</script>
+<script type="text/javascript" language="javascript">
+    function GetTopLeft(elm) {
+
+        var x, y = 0;
+        x = elm.offsetLeft;
+        y = elm.offsetTop;
+        elm = elm.offsetParent;
+        while (elm != null) {
+
+            x = parseInt(x) + parseInt(elm.offsetLeft);
+            y = parseInt(y) + parseInt(elm.offsetTop);
+            elm = elm.offsetParent;
+        }
+        return { Top: y, Left: x };
+    }
+
+    function HideActionLinksITSELF(plinks, evt) {
+        plinks.parentNode.style.display = "none";
+    }
+
+    function DisplayCustomerActionLinks(ancAction) {
+        var divActionListID = document.getElementById("divDownloadLinks");
+        divActionListID.style.display = "block";
+
+        var dim = GetTopLeft(ancAction);
+
+        divActionListID.style.top = (parseInt(dim.Top) + 12) + 'px';
+        divActionListID.style.left = (parseInt(dim.Left) - 70) + 'px';
+    }
+
+    function HideCustomerActionLinks(ancAction, evt) {
+        var divActionListID = document.getElementById("divDownloadLinks");
+
+        var dom = (document.getElementById) ? true : false;
+        var ns5 = (!document.all && dom || window.opera) ? true : false;
+        var standardbody = (document.compatMode == "CSS1Compat") ? document.documentElement : document.body
+        var mouseX = (ns5) ? evt.pageX : window.event.clientX + standardbody.scrollLeft;
+        var mouseY = (ns5) ? evt.pageY : window.event.clientY + standardbody.scrollTop;
+
+        var topY, leftX, bottomY, rightX;
+        topY = divActionListID.offsetTop;
+        leftX = divActionListID.offsetLeft;
+        bottomY = divActionListID.offsetTop + divActionListID.clientHeight;
+        rightX = divActionListID.offsetLeft + divActionListID.clientWidth;
+
+        if (topY < mouseY && leftX < mouseX && bottomY > mouseY && rightX > mouseX) {
+            return;
+        }
+        divActionListID.style.display = "none";
+    }
+    
+    function windowRefresthonChecklistSave() {
+        window.close();
+    }
+    function alertFunc() {
+        window.location.reload();
+    }
+
+    
+    function openCriticalQuestionDialog(eventCustomerId, ctrl, note, customerId, eventId) {
+        $.ajax({
+            type: "GET",
+            url: "/Medical/CustomerEventCriticalData/GetCriticalPatientData?eventId=" + eventId + "&customerId=" + customerId,
+            success: function (result) {
+                $("#critical-question-dialog").dialog("open");
+                _submitFormAfterSavingPriorityInQueueData = false;
+                $("#critical-question-dialog").bind("dialogclose", function () {
+                    clearCriticalAnswers();
+                    $(".save-button-container").toggle();
+                    $("#critical-question-dialog").unbind("dialogclose");
+
+                    if (!_submitFormAfterSavingPriorityInQueueData) {
+                        $(ctrl).attr("checked", false);
+                        return false;
+                    }
+
+                    postData(eventCustomerId, ctrl, note);
+                });
+                if (result != null) {
+                    $("#critical-question-dialog #eventCustomerId").val(result.EventCustomerId);
+                    if (result.Answers != null && result.Answers.length > 0) {
+                        setAnswers(result.Answers);
+                    }
+                }
+            },
+            error: function () {
+                alert("Some error occurred while getting critical patient data.");
+            }
+        });
+    }
+
+    function closeCriticalDataDialog() {
+        $("#critical-question-dialog").dialog("close");
+    }
+
+    function savePatientCriticalInfo() {
+        if (isCriticalDataValid()) {
+            var answers = new Array();
+            $('span[questionid]:visible').each(function (spanIndex, spanElement) {
+                $(spanElement).find('input').each(function (inputIndex, inputElement) {
+                    if ($(inputElement).is(':radio') && $(inputElement).is(':checked')) {
+                        var questionId = $(spanElement).attr('questionid');
+                        var note = $("textarea[questionid=" + questionId + "]").val();
+                        answers.push({ QuestionId: questionId, Answer: $(inputElement).val(), Note: note });
+                    }
+                });
+            });
+            if (answers.length <= 0) {
+                alert('Please answer all the questions.');
+                return;
+            }
+
+            var model = {
+                EventCustomerId: $("#critical-question-dialog #eventCustomerId").val(),
+                Answers: answers
+            };
+
+            $("#critical-question-dialog .save-critical-question").toggle();
+
+            $.ajax({
+                type: "POST",
+                data: model,
+                url: "/Medical/CustomerEventCriticalData/SaveCriticalPatientData",
+                success: function (result) {
+                    $("#critical-question-dialog .save-critical-question").toggle();
+                    if (result.toLowerCase() == '@Boolean.TrueString.ToLower()') {
+                        _submitFormAfterSavingPriorityInQueueData = true;
+                        closeCriticalDataDialog();
+                    } else {
+                        alert("Some error occurred while saving critical patient data.");
+                    }
+                }, error: function () {
+                    alert("Some error occurred while saving critical patient data.");
+                }
+            });
+        } else {
+            alert('Please answer all the questions.');
+        }
+    }
+
+    function isCriticalDataValid() {
+        var allQuestionsAnswered = true;
+
+        var radios = $("#critical-question-div").find(':radio');
+        var radioNames = {};
+        radios.each(function () {
+            radioNames[this.name] = true;
+        });
+
+        for (name in radioNames) {
+            var radioGroup = $("#critical-question-div").find('[name=' + name + ']');
+            if (!radioGroup.filter(':checked').length) {
+                allQuestionsAnswered = false;
+            }
+        }
+        return allQuestionsAnswered;
+    }
+
+    function setAnswers(questionAnswers) {
+
+        $.each(questionAnswers, function (index, qa) {
+            var span = $("span[questionId='" + qa.QuestionId + "']");
+
+            if (qa.Answer !== '') {
+                var values = qa.Answer;
+                var radio = $(span).find("input[name='questionid-" + qa.QuestionId + "'][value='" + values + "']");
+                $(radio).attr("checked", true);
+            }
+
+            if (qa.Note !== '') {
+                var textarea = $("textarea[questionid='" + qa.QuestionId + "']");
+                $(textarea).val(qa.Note);
+            }
+        });
+    }
+
+    function clearCriticalAnswers() {
+        var radios = $("#critical-question-div").find(':radio');
+        $(radios).attr("checked", false);
+
+        var textareas = $("#critical-question-div").find('textarea');
+        $(textareas).val("");
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var element = $("#result-Invoice-dialog");
+        element.dialog({ width: 300, autoOpen: false, title: 'Invoice Date', modal: true, resizable: false, draggable: true });
+        element.bind('dialogclose', closeInvoicePopup);
+    });
+    function closeInvoicePopup() {
+        var element = $("#result-Invoice-dialog");
+        element.find("#eventId").val(0);
+        element.find("#customerId").val(0);
+        element.find("#invoiceDate").val('');
+        element.find("#forfocusId").val('');
+    }
+
+    function OpenPopupForInvoiceDate(customerId, eventId) {
+        var element = $("#result-Invoice-dialog");
+        element.find("#eventId").val(eventId);
+        element.find("#customerId").val(customerId);
+
+        element.find("#invoiceDate").datepicker("setDate", new Date($("#customerInvoice_" + customerId).val()));
+        //element.find("#invoiceDate").val($("#customerInvoice_" + customerId).val());
+
+        element.dialog("open");
+    }
+
+    function SaveInvoiceDetails() {
+
+        var element = $("#result-Invoice-dialog");
+        var invoiceDate = element.find("#invoiceDate").val();
+
+        if (invoiceDate == "") {
+            alert("Please Provide Invoice Date");
+        } else {
+            var obj = {
+                EventId: element.find("#eventId").val(),
+                CustomerId: element.find("#customerId").val(),
+                InvoiceDate: invoiceDate
+            };
+            var invoiceingElement = $("#customerInvoice_" + obj.CustomerId);
+            var parameter = "{'resultInvoice' : " + JSON.stringify(obj) + "}";
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/Medical/Results/ResultInvoice",
+                data: parameter,
+                success: function (result) {
+                    if (result.SyncedSuccess) {
+                        alert("Invoicing information updated successfully");
+                        $("#result-Invoice-dialog").dialog("close");
+                        invoiceingElement.val(invoiceDate);
+                        if (result.CurrentResultState === '@NewTestResultStateNumber.ResultDelivered') {
+                            $(".nrs_" + result.CustomerId + "_" + result.EventId).attr("src", "/App/Images/NewResultState/" + result.CurrentResultState + ".png");
+                            $(".nrsl_" + result.CustomerId + "_" + result.EventId).text(result.CurrentResultStateDescription);
+                            $("#div-invoice_" + result.CustomerId).hide();
+                        }
+                    }
+                },
+                error: function (a, b, c) {
+                    alert("Some error occured at time of saving invoice.");
+                    //errorMethod();
+                }
+
+            });
+        }
+
+    }
+
+
+</script>

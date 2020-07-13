@@ -1,0 +1,30 @@
+@model Falcon.App.Core.Operations.ViewModels.EventCdContentStatusViewModel
+@{
+    Layout = null;
+}
+
+@if (Model != null)
+{
+    <div>
+        <table>
+            <tr>
+                <td>Generated</td>
+                <td>@Model.Generated</td>
+            </tr>
+            <tr>
+                <td>In Queue</td>
+                <td>@Model.InQueue</td>
+            </tr>
+            <tr>
+                <td>Result Not Generated</td>
+                <td>@Model.ResultNotGenerated</td>
+            </tr>
+        </table>
+    </div>
+}
+else
+{
+    <h2>
+        No Images has been purchased.
+    </h2>
+}

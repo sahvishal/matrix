@@ -1,0 +1,63 @@
+﻿<div>
+    <div id="MedicalVendorPaymentRepeaterDiv" runat="server">
+        <table id="MedicalVendorPaymentTable" class="divgrid_clnew" cellspacing="3" width="100%" style="font-size: smaller"> 
+            <tr>
+                <th style="white-space:nowrap;">
+                    <b>Medical Vendor</b>
+                </th>
+                <th style="white-space:nowrap;">
+                    <b>Pay Period</b> 
+                </th>                        
+                <th style="white-space:nowrap;">
+                    <b>Evaluations #</b>
+                </th>
+                <th style="white-space:nowrap;">
+                    <b>Amount Owed</b>
+                </th>              
+                <th style="white-space:nowrap;">
+                    <b>Invoice</b>
+                </th>
+                <th style="white-space:nowrap;">
+                    <b>Action</b>
+                </th>
+            </tr>
+            {#foreach $T as MedicalVendorInvoiceStatistic}
+            <tr>
+                <td style="white-space:nowrap;">
+                   {$T.MedicalVendorInvoiceStatistic.MedicalVendorName}<br />
+                    {$T.MedicalVendorInvoiceStatistic.PhysicianName}
+                </td>                        
+                <td style="white-space:nowrap;">
+                    {DateDeserialize($T.MedicalVendorInvoiceStatistic.PayPeriodStartDate).format("shortDate")} -
+                    {DateDeserialize($T.MedicalVendorInvoiceStatistic.PayPeriodEndDate).format("shortDate")}
+                </td>
+                <td style="white-space:nowrap;">
+                    {$T.MedicalVendorInvoiceStatistic.NumberOfEvaluations}
+                </td>
+                <td style="white-space:nowrap;" class="amt">
+                    {FormatCurrency($T.MedicalVendorInvoiceStatistic.InvoiceAmount)}
+                </td>                    
+                <td style="white-space:nowrap;">
+                    <a href="#" class="SmallLinks" onclick="ShowInvoiceDialog({$T.MedicalVendorInvoiceStatistic.Id})">View Invoice</a><br />
+                    [{$T.MedicalVendorInvoiceStatistic.ApprovalStatusName}]
+                </td>
+                <td style="white-space:nowrap;">
+                    {#if $T.MedicalVendorInvoiceStatistic.PaymentStatusName == 'Unpaid'}
+                        {#if $T.MedicalVendorInvoiceStatistic.ApprovalStatusName == 'Approved'}
+                        <a href="#" class="SmallLinks" onclick="ShowRecordPaymentDialog({$T.MedicalVendorInvoiceStatistic.Id}, 
+                            '{$T.MedicalVendorInvoiceStatistic.MedicalVendorName}', '{$T.MedicalVendorInvoiceStatistic.PhysicianName}')">
+                            Record Payment</a>
+                        {#else}
+                            N/A
+                            <!--<a href="#" class="SmallLinks" onclick="ShowResendInvoiceDialog({$T.MedicalVendorInvoiceStatistic.Id})">Resend (Pending)</a>-->
+                        {#/if}
+                    {#else}
+                        <a href="#" class="SmallLinks" onclick="ShowPaymentDetailsDialog({$T.MedicalVendorInvoiceStatistic.Id})">View Payment Details</a><br />
+                        <a href="#" class="SmallLinks" onclick="ShowPodPerformanceDialog({$T.MedicalVendorInvoiceStatistic.Id})">View Pod Performance</a>
+                    {#/if}
+                </td>
+            </tr>  
+            {#/for}                                              
+        </table>
+    </div>
+</div>

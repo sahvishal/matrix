@@ -1,0 +1,302 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Extensions
+
+@model CustomerEventCriticalDataListModel
+
+@{
+    ViewBag.Title = "Critical/Urgent Management";
+}
+
+<h1>Critical/Urgent Management</h1>
+<div id="list-filter">
+    @{Html.BeginForm("GetCustomerEventCriticalData", "CustomerEventCriticalData", FormMethod.Get);}
+    @Html.Partial("CustomerEventCriticalDataListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Medical/ExportableReports/GetCustomerEventCriticalData?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV </a>
+    </div>
+    
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Customer Info
+            </th>
+            <th>
+                Event
+            </th>                   
+            <th>
+                Critical Test(s)
+            </th>
+            <th>
+                Urgent Test(s)
+            </th>
+            <th>
+            </th>
+        </tr>
+        @foreach (var item in Model.Collection)
+        {
+            <tr>
+                <td style="width: 250px;">
+                    <a class="customer-info" href="javascript:void(0);"><b>@item.CustomerName</b></a>[ID: @item.CustomerId]
+                    <br />
+                    <br />
+                    <b>Phone:</b>@item.Phone
+                    <br />
+                    <b>Primary Care Physician:</b>@(!string.IsNullOrWhiteSpace(item.PrimaryCarePhysician) ? item.PrimaryCarePhysician : "N/A")  
+                    <br />
+                    <b>Evaluating Physician:</b> @(!string.IsNullOrWhiteSpace(item.PrimaryPhysician) ? item.PrimaryPhysician : "N/A")
+                    <br />
+                    <b>Overread Physician:</b> @(!string.IsNullOrWhiteSpace(item.OverReadPhysician) ? item.OverReadPhysician : "N/A")                  
+                    <div class="customer-info-tip" style="display: none;">
+                        <div style="float: left; width: 500px;">
+                            <b>Address: </b>@item.Address.ToString()
+                        </div>
+                        <div style="float: left; width: 500px; margin: 10px 0px; clear: both;">
+                            <span style="float: left; width: 280px;"><b>Email:</b> @item.Email</span> <span style="float: right;
+                                width: 200px;"><b>Phone:</b> @item.Phone</span>
+                        </div>
+                        <div style="float: left; width: 500px; padding: 10px 0px 5px 0px; border-top: solid 1px;">
+                            <b>Screened For:</b> @item.CustomerOrder
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    @item.EventName [ID: @item.EventId]
+                    <br />
+                    Event Date: @item.EventDate.ToShortDateString()
+                    <br />
+                    Pod: @item.Pod
+                    <br />
+                    Hospital Sponsor: @item.HospitalSponsor
+                </td>                                
+                <td>
+                    @{var criticalTests = item.Tests.Where(t => t.IsCritical);}
+                    @if (criticalTests != null && criticalTests.Count() > 0)
+                    {
+                        foreach (var test in criticalTests)
+                        {                        
+                            <div>
+                                <span class="test-stats">
+                                    <a><b>@test.TestName </b></a>
+                                </span>
+                                <span class="test-stats-tip" style="display: none;"><b>@test.TestName </b>
+                                    <br />
+                                    <br />
+                                    <b>Date of Submission:</b>@(test.DateOfSubmission.HasValue ? test.DateOfSubmission.Value.ToShortDateString() : "N/A")
+                                    <br />
+                                    <b>Technician: </b>@test.TechnicianName                                
+                                    <br />
+                                    <b>Validating Technician: </b>@test.ValidatingTechnicianName                                
+                                    <br />
+                                    <b>Physician: </b>@test.PrimaryPhysicianName                                
+                                    <br />
+                                    <b>Technician Notes: </b>@test.TechnicianNotes
+                                    <br />
+                                    <b>Physician notes for Customer:</b>@test.TechnicianNotesForPhysician
+                                </span>
+                            </div>                        
+                        }
+                    }
+                    else
+                    {
+                        <div>N/A</div>
+                    }
+                </td>
+                <td>
+                    @{var urgentTests = item.Tests.Where(t => !t.IsCritical && t.IsUrgent);}
+                    @if (urgentTests != null && urgentTests.Count() > 0)
+                    {
+                        foreach (var test in urgentTests)
+                        {                        
+                            <div>
+                                <span class="test-stats">
+                                    <a><b>@test.TestName </b></a>
+                                </span>
+                                <span class="test-stats-tip" style="display: none;"><b>@test.TestName </b>
+                                    <br />                                                           
+                                    <br />
+                                    <b>Physician: </b>@test.PrimaryPhysicianName
+                                    <br />
+                                    <b>Physician notes for Customer:</b>@test.TechnicianNotesForPhysician
+                                </span>
+                            </div>                        
+                        }
+                    }
+                    else
+                    {
+                        <div>N/A</div>
+                    }
+                </td>
+                <td style="width:70px;">
+                    @{var hasNotes = item.Notes != null && item.Notes.Count() > 0 ? true : false;}
+                    
+                    <a id="Id_@(item.EventCustomerResultId)" href="javascript:void(0)" class="notes-detail" style='display:@(hasNotes?"block":"none")'><b>Notes</b></a>
+                    <div class="notes-div" style="display:none;">
+                        @if(hasNotes)
+                        {
+                            foreach (var note in item.Notes)
+                            {
+                            <div style='border-bottom: solid 1px; padding-bottom:2px;'> On [ @note.DataRecorderMetaData.DateCreated.ToShortDateString() ]:</div>
+                            <div>@note.Text</div> <br />
+                            }
+                        }
+                    </div>
+                    <br />
+                    <a href="javascript:void(0);" onclick="addNotes(@item.EventCustomerResultId);">Add Notes</a>                    
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+<div id="critical-notes-dialog" title="Add Notes">
+    <div>
+        <textarea id="critical-notes" rows="5" cols="50"></textarea>
+    </div>
+    <div class="critical-notes-buttons" style="text-align: right;">
+        <button id="save-critical-notes" style="width: 70px; height: 25px;" onclick="saveCriticalNotes(); return false;">
+            Save
+        </button>
+    </div>
+    <div class="critical-notes-buttons" style="display: none; text-align: right;">
+        <img src="/App/Images/loading.gif" alt="" />
+        Updating
+    </div>
+</div>
+
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+    $('.customer-info').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            title: function (api) {
+                return $(this).html();
+            },
+            text: function (api) {
+                return $(this).parent().find('.customer-info-tip').html();
+            }
+        },
+        style: {
+            width: '520px'
+        }
+    });
+
+    $('.test-stats').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            text: function (api) {
+                return $(this).parent().find('.test-stats-tip').html();
+            }
+        },
+        style: {
+            width: '400px'
+        }
+    });
+
+    $('.notes-detail').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            title: "Notes",
+            text: function (api) {
+                return $(this).parent().find('.notes-div').html();
+            }
+        },
+        style: {
+            width: '400px'
+        }
+    });
+
+</script>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#critical-notes-dialog').dialog({ width: 480, autoOpen: false, title: 'Add Notes', resizable: false, draggable: true });
+    });
+
+    var customerResultId = 0;
+
+    function addNotes(eventCustomerResultId) {
+        customerResultId = eventCustomerResultId;
+        $("#critical-notes").val('');
+        $('#critical-notes-dialog').dialog('open');
+    }
+    function saveCriticalNotes() {
+        $(".critical-notes-buttons").toggle();
+        if (customerResultId > 0) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                url: "/Medical/CustomerEventCriticalData/SaveNotes",
+                data: "{'eventCustomerResultId' : '" + customerResultId + "', 'text' : '" + $("#critical-notes").val().replace(/'/gi, "\\\'").replace(/\\\"/gi, "\\\\\"") + "'}",
+                success: function (result) {
+                    alert("Updated!");
+                    $(".critical-notes-buttons").toggle();
+                    $('#critical-notes-dialog').dialog('close');
+                    loadNotes(customerResultId);
+                },
+                error: function (a, b, c) {
+                    if (a.status == 401) {
+                        alert("You do not have permission to save notes!");
+                    }
+                    else
+                    alert("Some error occured while saving Notes! \nPlease try again or contact the support team!");
+                    $(".critical-notes-buttons").toggle();
+                    $('#critical-notes-dialog').dialog('close');
+                }
+            });
+        }
+    }
+</script>
+<script src="/App/JavascriptFiles/JSonHelper.js" type="text/javascript"></script>
+<script type="text/javascript" language="javascript">
+    function loadNotes(eventCustomerResultId) {
+        if (eventCustomerResultId > 0) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/Medical/CustomerEventCriticalData/GetNotes",
+                data: "{'eventCustomerResultId' : '" + eventCustomerResultId + "'}",
+                success: function (result) {
+                    var notesString = "";
+                    if (result.length > 0) {                        
+                        for (var i = 0; i < result.length; i++) {
+                            notesString += "<div style='border-bottom: solid 1px; padding-bottom:2px;'> On [" + (correctDateExpression(result[i].DataRecorderMetaData.DateCreated).getMonth() + 1) + "/" + correctDateExpression(result[i].DataRecorderMetaData.DateCreated).getDate() + "/" + correctDateExpression(result[i].DataRecorderMetaData.DateCreated).getFullYear() + "]:</div>";
+                            notesString += "<div>" + result[i].Text + "</div> <br />";
+                        }
+                    }
+                    $("#Id_" + eventCustomerResultId).parent().find('.notes-div').html(notesString);
+                    if (notesString != "") {
+                        $("#Id_" + eventCustomerResultId).show();
+                    }
+                },
+                error: function (a, b, c) {
+                    if (a.status == 401) {
+                        alert("You do not have permission to get notes!");
+                    } 
+                }
+            });
+        }
+    }
+</script>
+

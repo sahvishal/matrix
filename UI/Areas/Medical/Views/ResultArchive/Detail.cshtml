@@ -1,0 +1,191 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model ResultArchiveUploadLogListModel
+@{
+    ViewBag.Title = "Result Archive Detail";
+}
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<h2>
+    Result Archive Detail - Event: @Model.ResultArchive.EventId</h2>
+<div class="div-with-roundborder" style="padding: 0px; margin-top: 10px; margin-bottom: 10px;">
+    <div style="float: left; padding: 5px; width: 25%; height: 70px; border-right: solid 1px #72BDDB;">
+        @{var filePath = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IMediaRepository>().GetResultArchiveMediaFileLocation(Model.ResultArchive.EventId).Url + Model.ResultArchive.File.Path;}
+        File: <a href="@filePath" target="_blank">@Model.ResultArchive.File.Path </a>
+        <br />
+        @{
+            var fileSize = Model.ResultArchive.File.FileSize;
+            if (fileSize > 1024 * 1024)
+            {
+                fileSize = (decimal)fileSize / (1024 * 1024);
+                fileSize = decimal.Round(fileSize, 2);
+            <span style="float: left; padding-top: 3px;">Size: @fileSize MB </span>
+            }
+            else if (fileSize > 1024)
+            {
+                fileSize = (decimal)fileSize / 1024;
+                fileSize = decimal.Round(fileSize, 2);
+            <span style="float: left; padding-top: 3px;">Size: @fileSize KB </span>
+            }
+            else
+            {
+                fileSize = decimal.Round(fileSize, 2);
+            <span style="float: left; padding-top: 3px;">Size: @fileSize Bytes </span>
+            }
+        }
+    </div>
+    <div style="float: left; width: 72%; padding: 5px; height: 70px;">
+        <div class="event-row" style="border-bottom: solid 1px #72BDDB; padding-bottom: 5px;
+            width: 100%; float: left;">
+            <span class="summary-data" style="width: 20%;"><b>EventId:</b> @Model.ResultArchive.EventId
+            </span><span class="summary-data" style="width: 50%;"><b>Event:</b> @Model.ResultArchive.EventName
+            </span><span class="summary-data" style="width: 20%;"><b>Date:</b> @Model.ResultArchive.EventDate.ToShortDateString()
+            </span>
+        </div>
+        <div class="event-row" style="clear: both; padding-top: 8px;">
+            <span class="summary-data" style="width: 45%;"><b>Upload Time:</b>
+                @{var uploadTime = (Model.ResultArchive.UploadEndTime.Value - Model.ResultArchive.UploadStartTime);
+                  if (uploadTime.Hours > 0)
+                  {
+                    <span>
+                        @uploadTime.Hours h @uploadTime.Minutes mins</span>
+                  }
+                  else if (uploadTime.Minutes > 0)
+                  {
+                    <span>
+                        @uploadTime.Minutes mins @uploadTime.Seconds secs</span>
+                  }
+                  else if (uploadTime.Seconds > 0)
+                  {
+                    <span>
+                        @uploadTime.Seconds secs</span>
+                  }}
+            </span><span class="summary-data" style="width: 45%; text-align: right; float: right;">
+                <b>Uploaded by:</b> @Model.ResultArchive.UploadedBy </span>
+        </div>
+        <div class="event-row" style="clear: both; padding-top: 8px;">
+            <span class="summary-data"><b>Parse Time:</b>
+                @{var parseTime = (Model.ResultArchive.ParseEndTime.Value - Model.ResultArchive.ParseStartTime.Value);
+                  if (parseTime.Hours > 0)
+                  {
+                    <span>
+                        @parseTime.Hours h @parseTime.Minutes mins</span>
+                  }
+                  else if (parseTime.Minutes > 0)
+                  {
+                    <span>
+                        @parseTime.Minutes mins @parseTime.Seconds secs</span>
+                  }
+                  else if (parseTime.Seconds > 0)
+                  {
+                    <span>
+                        @parseTime.Seconds secs</span>
+                  }
+                }
+            </span>
+            @{
+                var mediaLocation = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IMediaRepository>().GetLogFolderLocation();
+                if (File.Exists(mediaLocation.PhysicalPath + "File_" + Model.ResultArchive.Id + ".txt"))
+                {
+                    <span class="summary-data" style="float: right; width: 45%;"><a style="float: right;" target="_blank"
+                    href="@(mediaLocation.Url + "File_" + Model.ResultArchive.Id + ".txt")">(Raw logs)</a></span>
+                }
+                else
+                {
+                <span class="summary-data" style="float: right; width: 45%;"><a style="float: right;"
+                    href="javascript:alert('Log not generated!');">(Raw logs)</a></span>
+                }
+            }
+        </div>
+    </div>
+</div>
+@if (Model.ResultArchiveLogRecords != null && Model.ResultArchiveLogRecords.Count() > 0)
+{
+    <table id="list-view" style="padding-top: 20px; width: 98%;">
+        <tr>
+            <th>
+                Customer Id
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Test
+            </th>
+            <th>
+                Notes
+            </th>
+            <th>
+                Recorded Date
+            </th>
+            <th>
+                Status
+            </th>
+        </tr>
+        @foreach (var logRecord in Model.ResultArchiveLogRecords)
+        {
+            <tr>
+                <td>
+                    @logRecord.CustomerId
+                </td>
+                <td>
+                    @logRecord.CustomerName
+                </td>
+                <td>
+                    @logRecord.TestName
+                </td>
+                <td>
+                    <a href="javascript:void(0);" class="notes-log">@(logRecord.Notes.Length > 30 ? logRecord.Notes.Substring(0, 27) + "..." : logRecord.Notes)</a>
+                    <span style="display: none">
+                        @logRecord.Notes
+                    </span>
+                </td>
+                <td>
+                    @Model.ResultArchive.ParseStartTime.Value.ToShortDateString()
+                </td>
+                <td>
+                    @if (logRecord.IsSuccessful)
+                    {
+                        <span>Success </span>
+                    }
+                    else
+                    {
+                        <span>Failed </span>
+                    }
+                </td>
+            </tr>    
+        }
+    </table>
+    
+    <script type="text/javascript" language="javascript">
+
+        $('.notes-log').qtip({
+            content: {
+                title: 'Notes',
+                text: function (api) {
+                    return $(this).parent().find('span').html();
+                },
+                style: {
+                    width: '300px'
+                }
+            }
+        });
+
+
+        $("table#list-view tr:even").addClass("alt-row");
+
+        $("tr:not(:has(th))").hover(function () {
+            $(this).addClass('row-hover');
+        },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+
+
+    </script>
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}

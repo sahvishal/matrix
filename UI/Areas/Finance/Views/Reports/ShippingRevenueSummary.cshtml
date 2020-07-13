@@ -1,0 +1,102 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Finance.ViewModels
+@model ShippingRevenueSummaryListModel
+
+@{
+    ViewBag.Title = "Shipping Revenue Summary";
+}
+
+<h1>
+    Shipping Revenue Summary    
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("ShippingRevenueSummary", "Reports", FormMethod.Get);}
+    @Html.Partial("ShippingRevenueListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/ShippingRevenueSummary?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export To CSV</a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().EventId)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().EventDate)
+            </th>
+            <th style="width:400px;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().EventAddress)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Vehicle)
+            </th>
+            <th style="text-align: center;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().ShippingCount)
+            </th>            
+            <th style="text-align: right;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Revenue)
+            </th>
+            <th style="text-align: center;">
+                Action
+            </th>
+        </tr>
+        @foreach (var eventData in Model.Collection)
+        {
+            <tr>
+                <td>@eventData.EventId</td>
+                <td>
+                    @eventData.EventDate.ToShortDateString()
+                </td>
+                <td style="width:400px;">
+                    @eventData.EventName
+                    <br />
+                    @eventData.EventAddress.ToString()
+                </td>
+                <td>
+                    @eventData.Vehicle
+                </td>
+                <td style="text-align: center;">
+                    @eventData.ShippingCount
+                </td>                
+                <td style="text-align: right;">
+                    $@eventData.Revenue.ToString("0.00")
+                </td>
+                <td style="text-align: center;">
+                    <a class="action-link" href="/Finance/Reports/ShippingRevenueDetail?EventId=@eventData.EventId">Detail</a>                    
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found!</h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+        
+    </script>
+}
+

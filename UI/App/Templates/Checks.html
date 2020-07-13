@@ -1,0 +1,40 @@
+﻿<div id="CheckRepeaterDiv" style="overflow: hidden" runat="server">
+    <table id="CheckTable" class="divgrid_clnew" cellspacing="3" width="100%" style="font-size: smaller"> 
+        <tr>
+            <th style="white-space:nowrap;">
+                <b>Check #</b>
+            </th>
+            <th style="white-space:nowrap;">
+                <b>Payable To</b> 
+            </th>
+            <th style="white-space:nowrap;">
+                <b>Check Date</b> 
+            </th>                        
+            <th class="amt" style="white-space:nowrap;">
+                <b>Amount</b>
+            </th>
+            <th style="white-space:nowrap;">
+                <b>Memo</b>
+            </th>              
+        </tr>
+        {#foreach $T as Check}
+        <tr>
+            <td style="white-space:nowrap;">
+               {$T.Check.CheckNumber}
+            </td>                        
+            <td style="white-space:nowrap;">
+                {$T.Check.PayableTo}
+            </td>
+            <td style="white-space:nowrap;">
+                {DateDeserialize($T.Check.CheckDate).format("shortDate")}
+            </td>
+            <td style="white-space:nowrap;" class="amt">
+                {FormatCurrency($T.Check.Amount)}
+            </td>                    
+            <td style="white-space:nowrap;">
+                {$T.Check.Memo}
+            </td>
+        </tr>
+        {#/for}
+    </table>
+</div>

@@ -1,0 +1,178 @@
+@using System.Web
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.Application.Impl
+@using Falcon.App.Core.Enum
+@using Falcon.App.DependencyResolution
+
+@model Falcon.App.Core.CallQueues.ViewModels.CallQueueListModel
+@{
+    var userSession = IoC.Resolve<ISessionContext>().UserSession;
+    var setting = IoC.Resolve<ISettings>();
+    var moduleUrl = setting.AngularAppUrl + userSession.CurrentOrganizationRole.RoleAlias;
+
+    var txtIncomingPhLineText = string.Empty;
+    var txtCallersPhNumberText = string.Empty;
+
+    if (Request.QueryString["dn"] != null)
+    {
+        txtIncomingPhLineText = Request.QueryString["dn"];
+    }
+
+    if (Request.QueryString["cn"] != null)
+    {
+        txtCallersPhNumberText = Request.QueryString["cn"];
+    }
+    else if (Request.QueryString["amp;cn"] != null)
+    {
+        txtCallersPhNumberText = Request.QueryString["amp;cn"];
+    }
+
+    if (!string.IsNullOrWhiteSpace(txtCallersPhNumberText) && txtCallersPhNumberText.Length > 3 && txtCallersPhNumberText.IndexOf("000", 0, 3) >= 0)
+    {
+        var configurationSettingRe = IoC.Resolve<IConfigurationSettingRepository>();
+        var areaCode = Convert.ToString(configurationSettingRe.GetConfigurationValue(ConfigurationSettingName.AreaCode));
+        if (!string.IsNullOrWhiteSpace(areaCode))
+        {
+            txtCallersPhNumberText = txtCallersPhNumberText.Replace(txtCallersPhNumberText, areaCode + txtCallersPhNumberText.Substring(3));
+        }
+    }
+
+    var version = IoC.Resolve<ISystemInformationRepository>().GetBuildNumber();
+    
+    ViewBag.Title = "Call Center Dashboard";
+    
+}
+
+<link href="~/App/StyleSheets/CallCentre.css" rel="stylesheet" />
+
+<style type="text/css">
+    .mainrow1_ccrep_dboard {
+        float: left;
+        clear: both;
+        width: 950px;
+    }
+
+    #dvStartCall {
+        float: left;
+        clear: both;
+    }
+
+        #dvStartCall fieldset {
+            width: 100%;
+            padding: 10px;
+            float: left;
+        }
+
+    .callcenter-callpanel {
+        float: left;
+        /*padding-left: 17px;*/
+        width: 915px;
+        height: 60px;
+    }
+</style>
+
+<div id="dvStartCall">
+    <div class="mainrow1_ccrep_dboard">
+        <fieldset style="border:1px solid #e5e5e5;">
+            <legend style="color: #F37C00; font: bold 16px arial;">Inbound/Outbound Call</legend>
+            <div style="float: left; margin-top: 6px; padding-left: 10px; height: 75px;">
+                <div class="callcenter-callpanel">
+                    <div class="phonerecordbox_ccrep" style="margin-right: 10px; height: 50px; float: left;">
+                        <div class="phonerecordboxrownew_ccrep" style="float: left; width: 570px;">
+                            <div class="titletextwidth_ccrep" style="float: left; padding: 0px; width: 49%">
+                                Incoming Phone Line:
+                                <input type="text" id="txtIncomingPhLine" style="width: 110px;" value="@txtIncomingPhLineText" class="inputf_pbox_ccrep" readonly />
+                            </div>
+                            <div class="titletextwidth_ccrep" style="float: left; width:49%">
+                                Caller’s Phone Number:
+                                <input type="text" id="txtCallersPhNumber" style="width: 110px;" value="@txtCallersPhNumberText" class="inputf_pbox_ccrep" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="startbtn_ccrep_dboard" style="padding-top: 5px; margin-left: 15px;float: left;">
+                        <div>
+                            <input type="image" id="ibtnStartOutboundCall" title="Please click this for Outbound Call" src="/App/Images/CCRep/start-outbound-call-btn.png" onclick=" return StartOutboundCallClick(); " style="border-width: 0px;">
+                        </div>
+                    </div>
+                    <div class="startbtn_ccrep_dboard" style="padding-top: 0px; margin-right: 5px;float: right;">
+                        <div style="margin-top: 5px;">
+                            <input type="image" id="ibtnStartInboundCall" title="Please click this for Inbound Call" src="/App/Images/CCRep/start-inbound-call-btn.png" style="border-width: 0px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<div style="float: left; clear: both; width:99%">
+    <div id="callQueueAngular">
+        <!--<img src="~/Content/Images/spinner.gif" style="position: fixed; height: 100px; width: 100px; top: 40%; left: 50%; margin: -30px 0px 0px -30px;" /> -->
+    </div>
+</div>
+
+<input type="hidden" value="@((Session.SessionID + "_" + userSession.UserId +"_" + userSession.CurrentOrganizationRole.RoleId + "_" + userSession.CurrentOrganizationRole.OrganizationId).Encrypt())" id="tokenText" />
+
+@*for the medicare penguin*@
+<link href="/Content/colorbox/colorbox.css" rel="stylesheet" />
+<script type="text/javascript" src="/App/JavascriptFiles/HttpRequest.js"></script>
+<script type="text/javascript" src="/App/JavascriptFiles/HraQuestionnaire.js?q=@version"></script>
+<script type="text/javascript" src="/Content/JavaScript/PreQualifiedQuestionRules.js?q=@version"></script>
+
+<script type="text/javascript" language="javascript">
+    //window.localStorage.setItem('previousToken' ,window.localStorage.token);
+    //window.localStorage.setItem('hpIsFirstTime',false);
+    window.localStorage.setItem('token', '@((Session.SessionID + "_" + userSession.UserId + "_" + userSession.CurrentOrganizationRole.RoleId + "_" + userSession.CurrentOrganizationRole.OrganizationId).Encrypt())');
+    window.localStorage.setItem('hraEncryptedToken', '@(HttpUtility.UrlEncode((Session.SessionID + "_" + userSession.UserId + "_" + userSession.CurrentOrganizationRole.RoleId + "_" + userSession.CurrentOrganizationRole.OrganizationId).Encrypt()))');
+
+
+    ////logic to execute this only on first time load
+    //debugger;
+    //if (window.localStorage.previousToken !== window.localStorage.token) {
+    //    window.localStorage.setItem('hpIsFirstTime',true);
+    //}
+    //if (window.localStorage.hpIsFirstTime=== 'true') {
+    //    window.localStorage.removeItem('hpCallQueueId');
+    //    window.localStorage.removeItem('hpHealthPlanId');
+    //    window.localStorage.removeItem('hpEventId');
+    //    window.localStorage.removeItem('hpFillEventZipCode');
+    //    window.localStorage.removeItem('hpCampaignId');
+    //    window.localStorage.setItem('hpIsFirstTime', false);
+    //}
+
+    var target = $('#callQueueAngular');
+    $.ajax({
+        url: '@(moduleUrl)',
+        type: 'GET'
+
+    }).success(function (result) {
+
+        target.html(result);
+    });
+
+    //logic to Hide MVC'c DIV on clicking startcall on angular
+    $(document).ready(function () {
+        $('.startCallingButton').live("click", (function () {
+            $('#dvStartCall').hide();
+            $('#assignedCallQueue').hide();
+        }));
+
+        if (window.sessionStorage.showCallPanel == 'false') {
+            $('#dvStartCall').hide();
+            $('#assignedCallQueue').hide();
+        }
+    });
+
+    function RemoveSingleTest() {
+
+    }
+</script>
+
+<script type="text/javascript">
+    $("#ibtnStartOutboundCall").click(function () {
+        window.location.href = "/CallCenter/CallCenterRepDashboard/StartCall?cn=@txtCallersPhNumberText&dn=@txtIncomingPhLineText&isInbound=false";
+    });
+
+    $("#ibtnStartInboundCall").click(function () {
+        window.location.href = "/CallCenter/CallCenterRepDashboard/StartCall?cn=@txtCallersPhNumberText&dn=@txtIncomingPhLineText&isInbound=true";
+    });
+</script>

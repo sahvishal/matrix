@@ -1,0 +1,161 @@
+﻿<main class="main" ng-controller="UpsellTestController" us-spinner spinner-key="online-spinner">
+    <quantcast name1="Healthfair" name2="UpsellTest"></quantcast>
+    <div class="container no-padding bg-default">
+        <div class="sub-header bg-success relative">
+            <div class="header-right">
+                <progressbar-view></progressbar-view>
+                <order-summary></order-summary>
+            </div>
+            <div class="header-left">
+                <h2 class="no-margin">Recommended Test(s)</h2>
+            </div>
+        </div>
+        <div class="main-container border-default">
+            <div class="no-padding">
+                <div class="col-md-9 bottom-buffer-16 test-block-wrap no-padding">
+                    <div class="col-md-12">
+                        <h4>Based on your personal risk factors you may benefit from the following screenings/tests:</h4>
+                        <div ng-repeat="testdetail in EventTestOrderItemList" class="row">
+                            <div ng-if="!testdetail.NotAvailable" class="col-md-12">
+                                <div class="upsale-block border-default clearfix spec-pac  bottom-buffer-10">
+                                    <div class="col-md-12">
+                                        <div class="col-md-1 small-block no-padding-small" ng-if="testdetail.TestId !=TestTypes.Echocardiogram && testdetail.TestId != MensBloodPanelTestId && testdetail.TestId != WomensBloodPanelTestId && testdetail.TestId!=TestTypes.KYN">
+                                            <a class="test-block-add pull-left" href="javascript:void(0)">&nbsp;</a>
+                                        </div>
+                                        <div class="table-cell small-block col-md-1 no-padding-left" ng-if="testdetail.TestId===TestTypes.Echocardiogram">
+                                            <img class="echo-image" src="Images/small-ultrasound.gif" />
+                                        </div>
+                                        <div class="table-cell small-block col-md-1 no-padding-left" ng-if="testdetail.TestId === MensBloodPanelTestId || testdetail.TestId === WomensBloodPanelTestId">
+                                            <img class="img-height-width" src="Images/bloodpanal_test.jpg" />
+                                        </div>
+                                        <div class="table-cell small-block col-md-1 no-padding-left" ng-if="testdetail.TestId===TestTypes.KYN">
+                                            <img class="img-height-width" src="Images/kyn_test.jpg" />
+                                        </div>
+                                        <div class="col-md-11 no-padding-small">
+                                            <h4 class="semibold no-margin">
+                                                {{testdetail.Name}}
+                                            </h4>
+                                        </div>
+                                        <div class="no-padding-small col-md-11 clearfix top-buffer-6">
+                                            <p class="text-justify clearfix word-wrap:break-word;" ng-if="testdetail.TestId===TestTypes.Echocardiogram">
+                                                {{ testdetail.Description | limitTo: 355 }}
+                                                <a href="javascript:void(0);" class="text-danger text-underline left-buffer-10" ng-click="learnMore(testdetail)">Learn More</a>
+                                            </p>
+                                            <p class="text-justify clearfix word-wrap:break-word;" ng-if="testdetail.TestId!==TestTypes.Echocardiogram">
+                                                {{ ::testdetail.Description | limitTo: 355 }} {{testdetail.Description.length < 355 ? '' : '...'}}
+                                                <a href="javascript:void(0);" class="text-danger text-underline left-buffer-30" ng-click="learnMore(testdetail)" ng-hide="testdetail.Description.length < 355">Learn More</a>
+                                            </p>
+                                            <div ng-if="testdetail.TestId == MensBloodPanelTestId || testdetail.TestId == WomensBloodPanelTestId">
+                                                <div class="table-look">
+                                                    <div class="table-row">
+                                                        <div class="table-cell package-info">
+                                                            <div class="pull-left col-md-6" ng-repeat="prop in testdetail.Tests">
+                                                                <ul>
+                                                                    <li><a href="javascript:void(0);" ng-click="learnMore(prop)">{{ prop.Name }}</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <strong>
+                                                    Price: <span class="price-text">&nbsp;{{testdetail.WithPackageprice | currency }}</span>
+                                                </strong>
+                                                <div class="pull-right">
+                                                    <input type="checkbox" ng-checked="testdetail.isSeletected===true" ng-model="testdetail.isSeletected" class="checkbox-size" ng-value="true" id="test_{{test.TestId}}" /> 
+                                                    <div class="add-to-cart"><b>Add to Cart</b></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-12 bottom-buffer-10">
+                                        <div class="top-buffer-10 no-padding-x" ng-if="testdetail.TestId===TestTypes.Echocardiogram"><a href="https://www.youtube.com/watch?v=UAQ0-bNUcGQ&feature=youtu.be" target="_blank" class="text-danger text-underline">Click here to watch video</a></div>
+                                    </div>
+
+                                    <div class="col-md-12 bottom-buffer-10">
+                                        <div class="top-buffer-10 no-padding-x" ng-if="testdetail.TestId===TestTypes.KYN"><a href="javascript:void(0);" class="text-danger text-underline" ng-click="openKynSampleReport()">Show Sample Report</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 hidden-xs hidden-md hidden-sm no-padding-right">
+                    <order-summary-right-pannel></order-summary-right-pannel>
+                </div>
+
+                <!--up-sale single block begins-->
+                <!--<div class="upsale-block clearfix" ng-repeat="test in EventTestOrderItemList">
+            <span class="upscale-image">&nbsp;</span>
+            <div class="delivery-option-info">
+                <h4>
+                    {{test.Name}} &nbsp;
+                    <span ng-if="test.TestId != MensBloodPanelTestId && test.TestId != WoMensBloodPanelTestId" class="text-danger">
+                        <span ng-show="test.Price > test.WithPackageprice">(<span class="strike"> {{test.Price | currency}} </span>)</span> &nbsp; {{test.WithPackageprice | currency}}
+                    </span>
+                </h4>
+                <span ng-if="test.TestId == MensBloodPanelTestId || test.TestId == WoMensBloodPanelTestId">
+                    <i>
+                        (price marked down from
+
+                        <span class="text-danger upsell-price" ng-show="GetTestTotalPrice(test.Tests) > test.WithPackageprice">(<span class="strike"> {{GetTestTotalPrice(test.Tests) | currency}} </span>)</span>
+
+                        , now
+
+                        <span class="text-danger upsell-price">
+                            {{test.WithPackageprice | currency}}
+                        </span>
+
+                        Receive three health screenings for the price of two.)
+                    </i>
+                </span>&nbsp;
+
+                <p ng-bind="test.Description"></p>
+                <p ng-bind="test.DescriptionPara2"></p>
+
+                <div class="table-look">
+                    <div class="table-row">
+                        <div class="table-cell package-info">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="table-look">
+                    <div class="table-row">
+                        <div class="table-cell package-info">
+                            <ul class="pull-left">
+                                <li ng-repeat="prop in test.Tests" ng-if="$index % 2 == 0"><a href="javascript:void(0);" ng-click="learnMoreAboutTest(prop)">{{ prop.Name }}</a></li>
+                            </ul>
+                            <ul class="pull-left">
+                                <li ng-repeat="prop in test.Tests" ng-if="$index % 2 == 1"><a href="javascript:void(0);" ng-click="learnMoreAboutTest(prop)">{{ prop.Name }}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <a ng-if="test.TestId===TestTypes.KYN" href="javascript:void(0);" ng-click="openKynSampleReport()" class="text-danger text-underline">Show Sample Report</a>
+
+                <a href="https://www.youtube.com/watch?v=UAQ0-bNUcGQ&feature=youtu.be" ng-if="test.TestId===TestTypes.Echocardiogram" target="_blank" class="text-danger text-underline">Click here to watch video</a>
+
+            </div>
+            <div class="delivery-option-axn">
+                <div>
+                    <input type="checkbox" ng-checked="test.isSeletected===true" ng-model="test.isSeletected" ng-value="true" class="big-check" id="test_{{test.TestId}}" /> <label for="test_{{test.TestId}}">Select</label>
+                </div>
+            </div>
+        </div>-->
+               
+                </div>
+            </div>
+                </div>
+                <div class="clearfix lower-btns">
+                    <div class="col-sm-12">
+                        <button class="btn btn-primary pull-left" ng-click="goToPackagePage()" ng-disabled="isPosted"><span ng-hide="loader_back">&#60;</span> Back <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_back"></i></button>
+                        <button class="btn btn-primary btn-solid pull-right" ng-click="goToTestPage()" ng-disabled="isPosted">Continue <span ng-hide="loader_next">&#62;</span><i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_next"></i></button>
+                    </div>
+                </div>
+            <!--</div>
+            </div>-->
+</main>

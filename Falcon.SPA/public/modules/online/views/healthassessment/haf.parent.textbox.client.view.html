@@ -1,0 +1,8 @@
+﻿<div ng-if="question.ControlType == displayControlTypes.TextBox">
+    <div class="single-question-text-full pull-left">
+        <span ng-bind="question.Question"></span>
+    </div>
+    <div class="single-question-opt clearfix pull-right">
+        <input type="text" ng-blur="SaveSelectedObject(question,'')" ng-model="question.Answer" ng-disabled="question.disable" class="form-control" />
+    </div>
+</div>

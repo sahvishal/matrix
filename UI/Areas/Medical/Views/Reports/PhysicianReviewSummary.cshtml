@@ -1,0 +1,127 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+@model PhysicianReviewSummaryListModel
+@{
+    ViewBag.Title = "Physician Review Summary";
+}
+<h2>
+    Physician Review Summary
+    @if (Model != null && !Model.Collection.IsNullOrEmpty())
+    {
+        <span style="float: right; font-size: 11px;">
+            <a target="_blank" href="/Medical/ExportableReports/PhysicianReviewSummary?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+                Export To CSV
+            </a>
+        </span>
+    }
+</h2>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<div id="list-filter">
+    @{Html.BeginForm("PhysicianReviewSummary", "Reports", FormMethod.Get);}
+    @Html.Partial("PhysicianReviewSummaryListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th style="width: 15%;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().PhysicianName)
+            </th>
+            <th style="text-align: right; width: 15%;">
+                Reviews Done
+            </th>
+            <th style="text-align: right; width: 14%;">
+                Overreads Done
+            </th>
+            <th style="text-align: center; width: 13%;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().AverageReviewTime)
+            </th>
+            @*<th style="text-align:center;">
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().EstimatedEarning)
+                </th> *@
+            <th style="text-align: center; width: 14%;">
+                In Queue <br />(Review/Overread)
+            </th>
+            <th style="text-align: center; width: 14%;">
+                Priority In Queue <br />(Review/Overread)
+            </th>
+            <th style="width: 15%;">
+                Action
+            </th>
+        </tr>
+        @foreach (var physician in Model.Collection)
+        {
+            <tr>
+                <td>
+                    @physician.PhysicianName
+                </td>
+                <td style="text-align: right;">
+                    Total: @(physician.Reviews + physician.ReReviews)<br />
+                    Evaluations: @(physician.Reviews)<br />
+                    Re-Evaluations: @(physician.ReReviews)
+                </td>
+                <td style="text-align: right;">
+                    Total: @(physician.OverReads + physician.ReOverReads)<br />
+                    Evaluations: @(physician.OverReads)<br />
+                    Re-Evaluations: @(physician.ReOverReads)
+                </td>
+                <td style="text-align: center;">
+                    @physician.AverageReviewTime
+                </td>
+                @*<td style="text-align:center;">N/A</td>*@
+                <td style="text-align: center;">
+                    <span>@physician.PrimaryEvaluationInQueue</span>/<span>@physician.OverReadEvaluationInQueue</span>
+                </td>
+                <td style="text-align: center;">
+                    <span>@physician.PrimaryEvaluationPriorityInQueue</span>/<span>@physician.OverReadEvaluationPriorityInQueue</span>
+                </td>
+                <td>
+                    @{
+                        var queryString = System.Web.HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                        queryString.Remove("pageNumber");
+                    }
+                    <a class="action-link" href="/Medical/Reports/PhysicianTestReview?PhysicianId=@physician.PhysicianId&@queryString">Test(s) Reviewed</a>
+                    <br />
+                    <a class="action-link" href="/Medical/Reports/PhysicianReview?PhysicianId=@physician.PhysicianId&@queryString">Reviews Done</a>
+                    <br />
+                    <a class="action-link" href="/Medical/Reports/PhysicianEventQueue?PhysicianId=@physician.PhysicianId&@queryString">In Queue(Event)</a>
+                    <br />
+                    <a class="action-link" href="/Medical/Reports/PhysicianQueue?PhysicianId=@physician.PhysicianId&@queryString">In Queue(Customer)</a>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found!
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+    </script>
+}

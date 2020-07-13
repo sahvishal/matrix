@@ -1,0 +1,359 @@
+﻿@using Falcon.App.Core.Enum;
+@using Falcon.App.Core.Users.Enum
+@model Falcon.App.Core.Medical.ViewModels.SurveyFormEditModel
+
+@{
+    ViewBag.Title = "TESTING EXPERIENCE SURVEY";
+    Layout = null;
+    bool htmlPageBreakBox = ViewData["IsPrintable"] != null && Convert.ToBoolean(ViewData["IsPrintable"]) == true ? true : false;
+}
+
+<style type="text/css">
+    #surveyForm-container .full-width-ccl {
+        width: 891px;
+        margin-top: 5px;
+        font-size: 14px;
+    }
+
+    #surveyForm-container input[type="checkbox"] {
+        margin-right: 5px;
+    }
+
+    #surveyForm-container input[type = "text"], textarea {
+        font-size: inherit;
+    }
+    #surveyForm-container .bottom-border {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    #surveyForm-container .full-width-ccl td, th {
+        padding: 5px;
+    }
+
+    #surveyForm-container .colorStrip {
+        width: 100%;
+        height: 50px;
+        background-color: #f1b759;
+        float: left;
+    }
+
+    #surveyForm-container .survey-question-label-block, .front-radio-block {
+        float: left;
+    }
+    #surveyForm-container .survey-question-label-block {
+        margin-right: 20px;
+    }
+    #surveyForm-container .sequence-block {
+        margin-top: 20px;
+        float: left;
+    }
+
+    #surveyForm-container .notes {
+        background-attachment: local;
+        background-image: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 30px, #ccc 30px, #ccc 31px, white 31px);
+        line-height: 31px;
+        padding: 8px 10px;
+    }
+</style>
+
+<script src="/App/JavascriptFiles/validations.js?v=@DateTime.Now.Ticks"></script>
+<script src="/Content/JavaScript/surveyQuestionRules.js?v=@DateTime.Now.Ticks"></script>
+
+<div id="surveyForm-container" class="full-width-ccl" style="line-height: 2em; font-size: 12px; margin:0 auto;">
+    <div class="colorStrip">
+    </div>
+
+    <div class="full-width-ccl">
+        <div style="width:800px;margin:0 auto; padding:10px">
+            <div style="font-size: 25px; color: #f1b759; margin-top:90px">
+                TESTING EXPERIENCE SURVEY
+            </div>
+            <div class="sequence-block">
+                <div class="survey-question-label-block">
+                    Did you find it easy to book your appointment?
+                </div>
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-1" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-1" />
+                        No
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="1" />
+                <input type="text" style="display: none" class="survey-default-answer" value="" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block">
+                <div class="survey-question-label-block">
+                    Was the appointment scheduler kind, courteous, and professional?
+                </div>
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-2" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-2" />
+                        No
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="2" />
+                <input type="text" style="display: none" class="survey-default-answer" value="" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block">
+                <div class="survey-question-label-block">
+                    Were you able to get an appointment time that fit your needs?
+                </div>
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-3" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-3" />
+                        No
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="3" />
+                <input type="text" style="display: none" class="survey-default-answer" value="" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block">
+                <div class="survey-question-label-block">
+                    When you arrived at your appointment were you greeted and welcomed in a timely manner?
+                </div>
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-4" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-4" />
+                        No
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="4" />
+                <input type="text" style="display: none" class="survey-default-answer" value="" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block ">
+                <div class="survey-question-label-block">
+                    <span style="margin-right:20px">Please rate your Clinician on a scale of 1-5?</span>
+                    <span>
+                        <input type="text" style="width: 50px;" class="bottom-border text-question" />
+                    </span>
+                    <br />
+                    (1 = Did not meet your expectations, 5 = Exceeded your expectations)
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="5" />
+                <input type="text" style="display: none" class="survey-default-answer" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block">
+                <div class="survey-question-label-block">
+                    <span style="margin-right:20px">How would you rate your overall experience on a scale of 1-5?</span>
+                    <span>
+                        <input type="text" style="width: 50px;" class="bottom-border text-question" />
+                    </span>
+                    <br />
+                    (1 = Did not meet your expectations, 5 = Exceeded you expectations)
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="6" />
+                <input type="text" style="display: none" class="survey-default-answer" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block">
+                <div class="survey-question-label-block">
+                    Are there any services we did not provide to you that you would like to see in the future?
+                </div>
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-7" onclick="EnableServiceProvided(true)" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-7" onclick="EnableServiceProvided(false)" />
+                        No
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="7" />
+                <input type="text" style="display: none" class="survey-default-answer" value="" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block validate-child-text" style="margin-top:5px">
+                <div class="survey-question-label-block">
+                    <span>If yes, describe:</span>
+                    <span>
+                        <textarea class="notes text-question" rows="3" style="border: none; width: 780px;"> </textarea>
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="8" />
+                <input type="text" style="display: none" class="survey-default-answer" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block">
+                <div class="survey-question-label-block">
+                    Would you recommend our services to your friends and family?
+                </div>
+                <div class="front-radio-block">
+                    <span>
+                        <input type="radio" ctrl_answer="Yes" name="question-9" />
+                        Yes
+                    </span>
+                    <span>
+                        <input type="radio" ctrl_answer="No" name="question-9" />
+                        No
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="9" />
+                <input type="text" style="display: none" class="survey-default-answer" value="" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div class="sequence-block">
+                <div class="survey-question-label-block">
+                    <span>Additional comments:</span>
+                    <span>
+                        <textarea class="notes" rows="3" style="border:none; width:780px;"> </textarea>
+                    </span>
+                </div>
+                <input type="text" style="display: none" class="survey-questionid" value="10" />
+                <input type="text" style="display: none" class="survey-default-answer" />
+                <input type="text" style="display: none" class="survey-control-type" value="" />
+            </div>
+            <div style="margin-top: 30px; font-weight: bold; font-size: 16px; font-style: italic; color: #4e4e4e; float: left">
+                We would like to thank you for sharing your feedback, thoughts and experiences. They help
+                us continue to deliver a world class service. Thank you for your time and for choosing
+                HealthFair.
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="colorStrip" style="margin-top:30px">
+    </div>
+</div>
+
+
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+    var selectedSurveyRecords = new Object();
+    var surveyQuestionrecord = new Object();
+    //var key_haf = 1;
+    var setSurveyQuestionDefaultAnswer = false;
+
+    $(document).ready(function () {
+
+        $(".survey-questionid").closest(".sequence-block").hide();
+
+        @{
+            foreach (var item in Model.SurveyQuestion)
+            {
+                if (item.QuestionId == 100 && Model.Gender != Falcon.App.Core.Users.Enum.Gender.Female && Model.CustomerId > 0)
+                {
+                    continue;
+                }
+                var answer = !string.IsNullOrEmpty(item.Answer) ? item.Answer.Replace("'", "\\\'").Replace("\"", "\\\"").Replace("\r", " ").Replace("\n", "{newlinefeed}") : "";
+
+                if ((item.Type == DisplayControlType.Radio || item.Type == DisplayControlType.CheckBox))
+                {
+                    answer = !string.IsNullOrEmpty(item.Answer) ? item.Answer.Replace("'", "\\\\\'").Replace("\"", "\\\"").Replace("\r", " ").Replace("\n", "{newlinefeed}") : "";
+                }
+
+                <text>
+        setSurveyQuestionControlType('@item.QuestionId', "@Html.Raw(answer)", '', '@item.Type');
+        addSurveyObject('@item.QuestionId', "@Html.Raw(answer)", '', '@item.Type');
+        </text>
+            }
+
+			if(!htmlPageBreakBox)
+			{
+				<text>
+        //renderTemplate();
+        setSurveyQuestionDependency();
+        </text>
+            }
+        }
+
+    });
+
+    function setSurveyQuestionControlType(questionId, answer, defAnswer, controlType) {//debugger;
+        var parentDiv = $("input[type=text].survey-questionid[value='" + questionId + "']").closest(".sequence-block");
+        if (parentDiv.length < 1) return;
+
+        var defanswer_input = parentDiv.find("input[type=text].survey-default-answer");
+        var controltype_input = parentDiv.find("input[type=text].survey-control-type");
+
+        defanswer_input.val(defAnswer);
+        controltype_input.val(controlType);
+
+
+        if (answer != null && $.trim(answer).length > 0) {
+            setSurveyAnswerToControl(parentDiv, controlType, answer);
+        }
+        else if (setSurveyQuestionDefaultAnswer == true) {
+            setSurveyAnswerToControl(parentDiv, controlType, defAnswer);
+        }
+    }
+
+    function setSurveyAnswerToControl(parentDiv, controltype, answer) {//debugger;
+        if (controltype == '@(DisplayControlType.Radio)') {
+            parentDiv.find("input[type='radio'][ctrl_answer='" + answer + "']").attr("checked", true);
+        }
+        else if (controltype == '@(DisplayControlType.CheckBox)') {
+            parentDiv.find("input[type='checkbox'][ctrl_answer='" + answer + "']").attr("checked", true);
+        }
+        else if (controltype == '@(DisplayControlType.TextBox)') {
+            parentDiv.find("input[type='text'].text-question").val(answer);
+        }
+        else if (controltype == '@(DisplayControlType.TextArea)') {
+            parentDiv.find("textarea").val(answer.replace(/{newlinefeed}/gi, "\n"));
+        }
+    }
+
+    function addSurveyObject(questionId, answer, defAnswer, controlType) {
+
+        var parentDiv = $("input[type=text].survey-questionid[value='" + questionId + "']").closest(".sequence-block");
+        parentDiv.show();
+
+        var key = searchCollectionInSurveyTemplate(questionId);
+
+        if ((controlType == '@(DisplayControlType.TextBox)' || controlType == '@(DisplayControlType.TextArea)') && (answer != null || $.trim(answer).length > 1)) {
+            answer = answer.replace(/\?\?+/gi, "?");
+        }
+
+        if (key >= 0) {
+            surveyQuestionrecord = selectedSurveyRecords[key];
+        }
+        else {
+            surveyQuestionrecord = new Object();
+        }
+
+        if (answer == null || $.trim(answer).length < 1 || $.trim(answer) == defAnswer) {
+            if (key >= 0) {
+                removeSurveyQuestionObject(key);
+            }
+            return;
+        }
+
+        surveyQuestionrecord.QuestionId = questionId;
+        surveyQuestionrecord.Answer = answer;
+        surveyQuestionrecord.DefaultAnswer = defAnswer;
+        surveyQuestionrecord.ControlType = controlType;
+
+        //if (key >= 0) {
+        //    selectedSurveyRecords[key] = surveyQuestionrecord;
+        //}
+        //else {
+        //    surveyQuestionrecord.Key = key_haf;
+        //    selectedSurveyRecords[key_haf] = surveyQuestionrecord;
+        //    key_haf = key_haf + 1;
+        //}
+
+    }
+</script>
+

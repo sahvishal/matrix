@@ -1,0 +1,522 @@
+﻿@model Falcon.App.Core.CallCenter.ViewModels.CustomerContactViewModel
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.UI.HtmlHelpers;
+
+@{
+    ViewBag.Title = "Patient Information";
+}
+<fieldset>
+    <legend>Patient Info</legend>
+    <div id="dvPatientInfoView">
+        <div class="clearfix small-section-inner">
+            <div class="info-row">
+                <div class="info-text-col-25">
+
+                    <b>Customer ID: </b>
+
+                    @if (Model.PatientInfomation.CustomerId == null || Model.PatientInfomation.CustomerId <= 0)
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        <b id="patientInfoCustomerId">@Model.PatientInfomation.CustomerId</b>
+                    }
+                </div>
+                <div class="info-text-col-25">
+
+                    <b>Name: </b>
+
+                    <span>@Model.PatientInfomation.FirstName</span> <span>@Model.PatientInfomation.LastName</span>
+
+                </div>
+                @if (Model.PatientInfomation.IsEligible == null)
+                {
+                    <div class="info-text-col-25" style="padding-left:2%; width:15%; border: solid 1px black; background-color: yellow">
+                        <b>Is Eligible: </b>
+                        <span>N/A</span>
+                    </div>
+                }
+                else if (Model.PatientInfomation.IsEligible.Value == true)
+                {
+                    <div class="info-text-col-25" style="padding-left: 2%; width: 15%; border: solid 1px black; background-color: green; ">
+                        <b>Is Eligible: </b>
+                        <span>Yes</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="info-text-col-25" style="padding-left: 2%; width: 15%; border: solid 1px black; background-color: red; ">
+                        <b>Is Eligible: </b>
+                        <span>No</span>
+                    </div>
+                }
+            </div>
+            <div class="info-row">
+                <div class="info-text-col-25">
+                    <b>DOB: </b>
+                    @if (Model.PatientInfomation.DateOfBirth == null)
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        <span>@Model.PatientInfomation.DateOfBirth.Value.ToShortDateString()</span>
+                    }
+
+                </div>
+                <div class="info-text-col-25">
+                    <b>Gender: </b>
+                    @if (Model.PatientInfomation.Gender == Gender.Unspecified)
+                    {<span>N/A</span> }
+                    else if (Model.PatientInfomation.Gender == Gender.Male)
+                    {
+                        <span>Male</span>}
+                    else if (Model.PatientInfomation.Gender == Gender.Female)
+                    {
+                        <span>Female</span>
+                    }
+                </div>
+                <div class="info-text-col-25">
+                    <b>Email: </b>
+                    @if (Model.PatientInfomation.Email == "")
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        <span>@Model.PatientInfomation.Email</span>
+                    }
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-text-col-25">
+                    <b>HICN Number: </b>
+                    @if (string.IsNullOrEmpty(Model.PatientInfomation.HicnNumber))
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        <span>@Model.PatientInfomation.HicnNumber</span>
+                    }
+                </div>
+                <div class="info-text-col-25">
+                    <b>Member Id: </b>
+                    @if (string.IsNullOrEmpty(Model.PatientInfomation.MemberId))
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        <span>
+                            @Model.PatientInfomation.MemberId
+                        </span>
+                    }
+                </div>
+                <div class="info-text-col-25">
+                    <b>MBI Number: </b>
+                    @if (string.IsNullOrEmpty(Model.PatientInfomation.MbiNumber))
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        <span>
+                            @Model.PatientInfomation.MbiNumber
+                        </span>
+                    }
+                </div>
+                <div class="info-text-col-50">
+                    <b>Address: </b>
+                    @if (Model.PatientInfomation.AddressViewModel != null)
+                    {
+                        if (Model.PatientInfomation.AddressViewModel.StreetAddressLine1 != "")
+                        { <span>@Model.PatientInfomation.AddressViewModel.StreetAddressLine1,</span> }
+                        if (Model.PatientInfomation.AddressViewModel.StreetAddressLine2 != "")
+                        { <span>@Model.PatientInfomation.AddressViewModel.StreetAddressLine2, </span>}
+                        if (Model.PatientInfomation.AddressViewModel.City != "")
+                        {<span>@Model.PatientInfomation.AddressViewModel.City,</span>    }
+                        if (Model.PatientInfomation.AddressViewModel.State != "")
+                        {<span>@Model.PatientInfomation.AddressViewModel.State,</span>    }
+                        if (Model.PatientInfomation.AddressViewModel.Country != null)
+                        {<span>@Model.PatientInfomation.AddressViewModel.Country -</span>  }
+                        if (Model.PatientInfomation.AddressViewModel.ZipCode != "")
+                        {<span>@Model.PatientInfomation.AddressViewModel.ZipCode </span>    }
+                    }
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-text-col-25" id="divHomePhoneNumber">
+                    <b>Phone Home: </b>
+                    @if (Model.PatientInfomation.CallBackPhoneNumber == null || Model.PatientInfomation.CallBackPhoneNumber.FormatPhoneNumber == "")
+                    {
+                        <span>N/A</span>
+                    }
+                    else if (Model.PatientInfomation.CallBackPhoneNumber != null && !string.IsNullOrEmpty(Model.PatientInfomation.CallBackPhoneNumberUrl))
+                    {
+                        <a href="javascript:void(0);" onclick="startOutboundCall('@Model.PatientInfomation.CallBackPhoneNumberUrl', '@Model.PatientInfomation.CallBackPhoneNumber.FormatPhoneNumber')">@Model.PatientInfomation.CallBackPhoneNumber.FormatPhoneNumber</a>
+                    }
+                    else
+                    {
+                        <span>@Model.PatientInfomation.CallBackPhoneNumber.FormatPhoneNumber</span>
+                    }
+                </div>
+                <div class="info-text-col-25" id="divOfficePhoneNumber">
+                    <b>Phone Office: </b>
+                    @if (Model.PatientInfomation.OfficePhoneNumber == null || Model.PatientInfomation.OfficePhoneNumber.FormatPhoneNumber == "")
+                    {
+                        <span>N/A</span>
+                    }
+                    else if (Model.PatientInfomation.OfficePhoneNumber != null && !string.IsNullOrEmpty(Model.PatientInfomation.OfficePhoneNumberUrl))
+                    {
+                        <a href="javascript:void(0);" onclick="startOutboundCall('@Model.PatientInfomation.OfficePhoneNumberUrl', '@Model.PatientInfomation.OfficePhoneNumber.FormatPhoneNumber')">@Model.PatientInfomation.OfficePhoneNumber.FormatPhoneNumber</a>
+                    }
+                    else
+                    {
+                        <span>@Model.PatientInfomation.OfficePhoneNumber.FormatPhoneNumber</span>
+                    }
+                </div>
+                <div class="info-text-col-50" id="divMobilePhoneNumber">
+                    <b>Phone Mobile: </b>
+                    @if (Model.PatientInfomation.MobilePhoneNumber == null || Model.PatientInfomation.MobilePhoneNumber.FormatPhoneNumber == "")
+                    {
+                        <span>N/A</span>
+                    }
+                    else if (Model.PatientInfomation.MobilePhoneNumber != null && !string.IsNullOrEmpty(Model.PatientInfomation.MobilePhoneNumberUrl))
+                    {
+                        <a href="javascript:void(0);" onclick="startOutboundCall('@Model.PatientInfomation.MobilePhoneNumberUrl', '@Model.PatientInfomation.MobilePhoneNumber.FormatPhoneNumber')">@Model.PatientInfomation.MobilePhoneNumber.FormatPhoneNumber</a>
+                    }
+                    else
+                    {
+                        <span>@Model.PatientInfomation.MobilePhoneNumber.FormatPhoneNumber</span>
+                    }
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-text-col-100">
+                    <b>Aces Id: </b>
+                    @if (string.IsNullOrWhiteSpace(Model.PatientInfomation.AcesId))
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        <span>@Model.PatientInfomation.AcesId</span>
+                    }
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-text-col-100">
+                    <b>Custom Tags: </b>
+                    @if (string.IsNullOrEmpty(Model.PatientInfomation.CustomCorporateTags))
+                    {
+                        <span>N/A</span>
+                    }
+                    else
+                    {
+                        <span>@Model.PatientInfomation.CustomCorporateTags</span>
+                    }
+                </div>
+            </div>
+
+            @if (Model.PatientInfomation.PrimaryCarePhysician != null)
+            {
+                <div class="info-row">
+                    <strong class="info-heading">PCP Details</strong>
+                </div>
+                <div class="info-row">
+                    <div class="info-text-col-25">
+                        <b>PCP Name: </b>
+                        @if (Model.PatientInfomation.PrimaryCarePhysician != null)
+                        {
+                            <span>@Model.PatientInfomation.PrimaryCarePhysician.FullName.FirstName</span> <span>@Model.PatientInfomation.PrimaryCarePhysician.FullName.LastName</span>
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+                    <div class="info-text-col-25">
+                        <b>PCP Email: </b>
+                        @if (Model.PatientInfomation.PrimaryCarePhysician != null && !string.IsNullOrEmpty(Model.PatientInfomation.PrimaryCarePhysician.Email))
+                        {
+                            <span>@Model.PatientInfomation.PrimaryCarePhysician.Email</span>
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+                    <div class="info-text-col-50">
+                        <b>PCP Phone Number: </b>
+                        @if (Model.PatientInfomation.PrimaryCarePhysician != null && Model.PatientInfomation.PrimaryCarePhysician.PhoneNumber != null && !string.IsNullOrEmpty(Model.PatientInfomation.PrimaryCarePhysician.PhoneNumber.FormatPhoneNumber))
+                        {
+                            <span>@Model.PatientInfomation.PrimaryCarePhysician.PhoneNumber.FormatPhoneNumber</span>
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-text-col-100">
+                        <b>PCP Address: </b>
+                        @if (Model.PatientInfomation.PrimaryCarePhysician != null && Model.PatientInfomation.PrimaryCarePhysician.Address != null)
+                        {
+                            if (!string.IsNullOrEmpty(Model.PatientInfomation.PrimaryCarePhysician.Address.StreetAddressLine1))
+                            { <span> @Model.PatientInfomation.PrimaryCarePhysician.Address.StreetAddressLine1,</span>}
+                            if (!string.IsNullOrEmpty(Model.PatientInfomation.PrimaryCarePhysician.Address.StreetAddressLine2))
+                            {<span> @Model.PatientInfomation.PrimaryCarePhysician.Address.StreetAddressLine2,</span>}
+                            if (!string.IsNullOrEmpty(Model.PatientInfomation.PrimaryCarePhysician.Address.City))
+                            { <span> @Model.PatientInfomation.PrimaryCarePhysician.Address.City,</span>}
+                            if (!string.IsNullOrEmpty(Model.PatientInfomation.PrimaryCarePhysician.Address.State))
+                            {<span> @Model.PatientInfomation.PrimaryCarePhysician.Address.State,</span>}
+                            if (!string.IsNullOrEmpty(Model.PatientInfomation.PrimaryCarePhysician.Address.Country))
+                            {<span> @Model.PatientInfomation.PrimaryCarePhysician.Address.Country -</span>}
+                            if (!string.IsNullOrEmpty(Model.PatientInfomation.PrimaryCarePhysician.Address.ZipCode))
+                            {<span> @Model.PatientInfomation.PrimaryCarePhysician.Address.ZipCode</span>}
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </div>
+                </div>
+            }
+            
+            <div class="info-row">
+                <div class="info-text-col-50">
+                    <b>Pre-Approved Test :</b>
+                    @if (Model.PreApprovedTests != null)
+                    {
+                        <span>@string.Join(", ", Model.PreApprovedTests.Select(x => "\"" + x + "\""))</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </div>
+                <div class="info-text-col-50">
+                    <b>Pre-Approved Package :</b>
+                    @if (Model.PreApprovedPackages != null)
+                    {
+                        <span>@string.Join(", ", Model.PreApprovedPackages.Select(x => "\"" + x + "\""))</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </div>
+            </div>
+            @*<div class="info-row">
+                <div class="info-text-col-50">
+                    <b>Required Test :</b>
+                    @if (Model.RequiredTests != null)
+                    {
+                        <span>@string.Join(", ", Model.RequiredTests.Select(x => "\"" + x + "\""))</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </div>
+              
+            </div>*@
+
+
+            <div class="info-row">
+                <div class="info-text-col-25">
+                    <b>Activity :</b>
+                    @if (!string.IsNullOrEmpty(Model.PatientInfomation.Activity))
+                    {
+                        <span>@Model.PatientInfomation.Activity</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </div>
+                <div class="info-text-col-50">
+                    <b>Group Name: </b>
+                    @if (!string.IsNullOrEmpty(Model.PatientInfomation.GroupName))
+                    {
+                        <span>@Model.PatientInfomation.GroupName</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </div>
+            </div>
+            <div class="info-row">
+                @if (Model.AdditionalFields != null)
+                {
+                    foreach (var field in Model.AdditionalFields)
+                    {
+                        <div class="info-text-col-50">
+                            <b>@field.FirstValue :</b><span>@field.SecondValue </span>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="info-row">
+                <div class="info-text-col-50">
+                    <b>Product :</b>
+                    @if (Model.PatientInfomation.Product != null)
+                    {
+                        <span>@Model.PatientInfomation.Product</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </div>
+
+            </div>
+            <div class="info-row" style="margin-top: 20px;" id="dvUpdateCustomerInfo">
+                <div class="info-text-col-100">
+                    <button type="button" class="pull-right" id="btnUpdateCustomerInfo" onclick="UpdatePatientInfo(true)">Update <i class="spin spin-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dvPatientInfoUpdate" style="display:none">
+        @using (Ajax.BeginForm("SavePatientInfoAppointmentConfirmation", "ContactCustomer", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvPatientInfo", OnBegin = "onBeginPatientInfo", OnSuccess = "onSuccessPatientInfo", OnFailure = "onFailurePatientInfo", }))
+        {
+            @Html.Partial("PatientInfoEditModelAppointmentConfirmation", Model.PatientInfoEditModel)
+        }
+    </div>
+</fieldset>
+
+<script>
+    function onBeginPatientInfo() {
+        function onSuccess(response) {
+            $("#dvPatientInfo").html(response);
+        }
+    }
+
+    function onSuccessPatientInfo(response) {
+        $("#dvPatientInfo").html(response);
+        $("#Filter_CustomerZipCode").val($("#CustomerZipcodeHiddenField").val());
+        UpdatePhoneNumberOnConsent();
+    }
+
+    function onFailurePatientInfo(response) {
+        var newTitle = $(response.responseText).filter('title').text();
+        alert(newTitle);
+    }
+
+    $(document).ready(function () {
+        $('.mask-phone').mask('(999)-999-9999');
+        setDatePicker();
+
+        var hasModelError = '@Model.HasError';
+        if (hasModelError == "true" || hasModelError == "True") {
+            UpdatePatientInfo(true);
+        }
+    });
+
+
+</script>
+
+<script type="text/javascript">
+    var customerInfo = new Object();
+
+    customerInfo.FirstName = '@Model.PatientInfoEditViewModel.FirstName';
+    customerInfo.LastName = '@Model.PatientInfoEditViewModel.LastName';
+    customerInfo.Gender = '@Model.PatientInfoEditViewModel.Gender';
+    customerInfo.DateOfBirth = '@(Model.PatientInfoEditViewModel.DateOfBirth.HasValue ? Model.PatientInfoEditViewModel.DateOfBirth.Value.ToString("MM/dd/yyyy") : "")';
+    customerInfo.Email = '@Model.PatientInfoEditViewModel.Email';
+    customerInfo.AlternateEmail = '@Model.PatientInfoEditViewModel.AlternateEmail';
+    customerInfo.CallBackPhoneNumber = '@Model.PatientInfoEditViewModel.CallBackPhoneNumber';
+    customerInfo.OfficePhoneNumber = '@Model.PatientInfoEditViewModel.OfficePhoneNumber';
+    customerInfo.MobilePhoneNumber = '@Model.PatientInfoEditViewModel.MobilePhoneNumber';
+    customerInfo.StreetAddressLine1 = '@Model.PatientInfoEditViewModel.Address.StreetAddressLine1';
+    customerInfo.StreetAddressLine2 = '@Model.PatientInfoEditViewModel.Address.StreetAddressLine2';
+    customerInfo.City = '@Model.PatientInfoEditViewModel.Address.City';
+    customerInfo.StateId = '@Model.PatientInfoEditViewModel.Address.StateId';
+    customerInfo.ZipCode = '@Model.PatientInfoEditViewModel.Address.ZipCode';
+    customerInfo.Hicn = '@Model.PatientInfoEditViewModel.Hicn';
+    customerInfo.MemberId = '@Model.PatientInfoEditViewModel.MemberId';
+    customerInfo.Mbi = '@Model.PatientInfoEditViewModel.Mbi';
+    customerInfo.EnableEmail = '@Model.PatientInfoEditViewModel.EnableEmail';
+
+    @if (Model.PatientInfoEditViewModel.PrimaryCarePhysician != null)
+    {
+<text>
+    customerInfo.PCPFirstName = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.FullName.FirstName';
+    customerInfo.PCPLastName = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.FullName.LastName';
+    customerInfo.PCPEmail = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.Email';
+    customerInfo.PCPPhone = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.Phone';
+    customerInfo.PCPStreetAddressLine1 = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.Address.StreetAddressLine1';
+    customerInfo.PCPStreetAddressLine2 = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.Address.StreetAddressLine2';
+    customerInfo.PCPCity = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.Address.City';
+    customerInfo.PCPStateId = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.Address.StateId';
+    customerInfo.PCPZipCode = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.Address.ZipCode';
+    customerInfo.PCPHasSameAddress = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.HasSameAddress';
+    customerInfo.PCPMailingAddressStreetAddressLine1 = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.MailingAddress.StreetAddressLine1';
+    customerInfo.PCPMailingAddressStreetAddressLine2 = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.MailingAddress.StreetAddressLine2';
+    customerInfo.PCPMailingAddressCity = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.MailingAddress.City';
+    customerInfo.PCPMailingAddressStateId = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.MailingAddress.StateId';
+    customerInfo.PCPMailingAddressZipCode = '@Model.PatientInfoEditViewModel.PrimaryCarePhysician.MailingAddress.ZipCode';
+    </text>
+    }
+
+    function fillPatientDataOnCancel() {
+        $("#txtFirstName").val(customerInfo.FirstName);
+        $("#txtLastName").val(customerInfo.LastName);
+        $("#ddlGender").val(customerInfo.Gender);
+        $("#txtDOB").val(customerInfo.DateOfBirth);
+        $("#txtEmail").val(customerInfo.Email);
+        $("#txtAlternateEmail").val(customerInfo.AlternateEmail);
+        $("#txtHICN").val(customerInfo.Hicn);
+        $("#txtMBI").val(customerInfo.Mbi);
+        $("#txtMemberId").val(customerInfo.MemberId);
+        $("#txtHome").val(customerInfo.CallBackPhoneNumber);
+        $("#txtOffice").val(customerInfo.OfficePhoneNumber);
+        $("#txtMobile").val(customerInfo.MobilePhoneNumber);
+        $("#txtAddressLine1").val(customerInfo.StreetAddressLine1);
+        $("#txtAddressLine2").val(customerInfo.StreetAddressLine2);
+        $("#txtCity").val(customerInfo.City);
+        $("#ddlState").val(customerInfo.StateId);
+        $("#txtZip").val(customerInfo.ZipCode);
+
+        if (customerInfo.EnableEmail == 'True')
+            $("input:radio[name$='EnableEmail'][value='true']").attr('checked', true);
+        else
+            $("input:radio[name$='EnableEmail'][value='false']").attr('checked', true);
+
+        @if (Model.PatientInfoEditViewModel.PrimaryCarePhysician != null)
+        {
+            <text>
+        $("#txtPCPFirstName").val(customerInfo.PCPFirstName);
+        $("#txtPCPLastName").val(customerInfo.PCPLastName);
+        $("#txtPCPEmail").val(customerInfo.PCPEmail);
+        $("#txtPCPPhone").val(customerInfo.PCPPhone);
+        $("#txtPCPAddressLine1").val(customerInfo.PCPStreetAddressLine1);
+        $("#txtPCPAddressLine2").val(customerInfo.PCPStreetAddressLine2);
+        $("#txtPCPCity").val(customerInfo.PCPCity);
+        $("#ddlPCPState").val(customerInfo.PCPStateId);
+        $("#txtPCPZip").val(customerInfo.PCPZipCode);
+        $("#chkHasSameAddress").attr("checked", customerInfo.PCPHasSameAddress);
+        $("#txtPCPMailingAddressLine1").val(customerInfo.PCPMailingAddressStreetAddressLine1);
+        $("#txtPCPMailingAddressLine2").val(customerInfo.PCPMailingAddressStreetAddressLine2);
+        $("#txtPCPMailingCity").val(customerInfo.PCPMailingAddressCity);
+        $("#ddlPCPMailingState").val(customerInfo.PCPMailingAddressStateId);
+        $("#txtPCPMailingZip").val(customerInfo.PCPMailingAddressZipCode);
+        </text>
+        }
+
+        $(".field-validation-error").text('');
+        $(".input-validation-error").removeClass("input-validation-error");
+
+    }
+
+    function UpdatePhoneNumberOnConsent() {
+        $("#PhoneHome").val($("#txtHome").val());
+        $("#PhoneOffice").val($("#txtOffice").val());
+        $('#PhoneCell').val($("#txtMobile").val());
+    }
+</script>

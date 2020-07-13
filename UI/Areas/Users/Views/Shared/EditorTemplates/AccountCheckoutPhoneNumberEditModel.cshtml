@@ -1,0 +1,26 @@
+﻿@using Falcon.App.Core.Users.ViewModels;
+@using Falcon.App.Core.Extensions
+
+
+@model AccountCheckoutPhoneNumberEditModel
+@{
+    string divName = "miniContainer" + Model.StateID.ToString();
+}
+
+<div class='mini-container' id="@divName" style="border: 1px solid gray !important;">
+    <div style="float: left; margin-right: 20px; white-space:nowrap">
+        <div style="float:left">
+            <h4>@Html.DisplayFor(m => m.StateName)</h4>
+        </div>
+        <div style="float:left; margin-left:20px">
+            @Html.TextBoxFor(m => m.CheckoutPhoneNumber, new { @class = "mask-phone", @onblur = "updateCheckoutPhoneNumber(this)", }) &nbsp; [<a href="javascript:void(0)" data-key="@Model.AccountCheckoutPhoneNumberID" onclick="RemoveCheckOutPhoneNumber(this);">Remove</a>]
+            @Html.ValidationMessageFor(m => m.CheckoutPhoneNumber)
+        </div>
+    </div>
+
+    <div style="display:none;">
+        @Html.HiddenFor(m => m.StateID)
+        @Html.HiddenFor(m => m.StateName)
+        @Html.HiddenFor(m => m.AccountCheckoutPhoneNumberID)
+    </div>
+</div>

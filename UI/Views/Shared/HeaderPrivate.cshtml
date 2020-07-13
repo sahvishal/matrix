@@ -1,0 +1,40 @@
+﻿@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.Users
+<div>
+    @{var logoExists = false;}
+    @if (Request.QueryString["urlsuffix"] != null)
+    {
+        var corporateAccountRepository = IoC.Resolve<ICorporateAccountRepository>();
+        var corporateAccount = corporateAccountRepository.GetByUrlSiffix(Request.QueryString["urlsuffix"]);
+        if (corporateAccount != null)
+        {
+            var organizationRepository = IoC.Resolve<IOrganizationRepository>();
+            var organization = organizationRepository.GetOrganizationbyId(corporateAccount.Id);
+            if (organization != null && organization.LogoImageId > 0)
+            {
+                var fileRepository = IoC.Resolve<IUniqueItemRepository<Falcon.App.Core.Application.Domain.File>>();
+                var file = fileRepository.GetById(organization.LogoImageId);
+
+                var mediaLocation = IoC.Resolve<IMediaRepository>().GetOrganizationLogoImageFolderLocation();
+                logoExists = true;
+                <div style="margin: 10px; padding: 10px; float: left ;">
+                    <img src="@(mediaLocation.Url + file.Path)" alt="Cororate Logo" />
+                </div>
+            }
+        }
+        @*<div style="margin: 10px; padding: 10px; float: left ;">
+            <img src="/Config/Content/Images/@(Request.QueryString["urlsuffix"])_logo.jpg" alt="Cororate Logo" /></div>*@
+    }
+    @if(!logoExists)
+    {
+        <div style="margin: 10px; padding: 10px; float: left ;Height:75px ;width:45%">
+            <h1>
+               
+            </h1>
+        </div>
+    }
+    <div style="margin: 10px; padding: 10px; float: right;">
+            <img src="@(IoC.Resolve<ISettings>().LargeLogo)" alt="@(IoC.Resolve<ISettings>().CompanyName)" /></div>
+</div>
+

@@ -1,0 +1,7 @@
+﻿@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+<div>    
+    <div style="margin: 10px; padding: 10px; float: left;">
+        <a href="/">
+            <img src="@(IoC.Resolve<ISettings>().LargeLogo)" alt="@(IoC.Resolve<ISettings>().CompanyName)" /></a></div>
+</div>

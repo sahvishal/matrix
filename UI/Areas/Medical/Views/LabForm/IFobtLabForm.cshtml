@@ -1,0 +1,14 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model LabFormViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "IFOBT Lab Form";    
+}
+
+<div style="float:left;width:98%;">
+    @if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/IFOBTLabForm.cshtml")))
+    {
+        @Html.Partial("/Config/Content/Views/Shared/IFOBTLabForm.cshtml", Model)
+    }
+</div>

@@ -1,0 +1,125 @@
+﻿@model Falcon.App.Core.Marketing.ViewModels.MarketingSourceListModel
+@{
+    ViewBag.Title = "Manage Marketing Source";
+}
+@section css{
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+}
+<h1>
+    Manage Marketing Source</h1>
+<div class="option-links">
+    <a href="/Marketing/MarketingSource/Create">+ Add New Source </a>
+</div>
+<div id="list-filter">
+    @{ Html.BeginForm(); }
+        @Html.Partial("MarketingSourceListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model.MarketingSourceBasicModels != null && Model.MarketingSourceBasicModels.Count() > 0)
+{
+    
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Territories
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var source in Model.MarketingSourceBasicModels)
+        {
+            <tr>
+                <td>@source.Name
+                </td>
+                <td>@source.Description
+                </td>
+                <td>
+                    <a href="#" id='@("Territories_" + source.Id)' >Mapped Territories </a><div style="display: none;">
+                        @if (source.Territories != null)
+                        {
+                            <ul>
+                                @foreach (var territory in source.Territories)
+                                {
+                                    <li><b>@territory </b></li>   
+                                }
+                            </ul>
+                        }</div>
+                </td>
+                <td>
+                    <a href="/Marketing/MarketingSource/Edit?id=@source.Id">Edit</a> | <a href="javascript:Delete(@source.Id)">
+                        Delete</a>
+                </td>
+            </tr>
+        }
+    </table>
+    
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+@section scripts {
+    <script type="text/javascript" src="/Scripts/jquery.qtip.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function() {
+            $("tr:not(:has(th))").hover(function() {
+                    $(this).addClass('row-hover');
+                },
+                function() {
+                    $(this).removeClass('row-hover');
+                });
+        });
+
+        @if (Model.MarketingSourceBasicModels != null && Model.MarketingSourceBasicModels.Count() > 0)
+        {
+            foreach (var source in Model.MarketingSourceBasicModels)
+            {
+                <text>
+                    $("#Territories_" + @source.Id).qtip({content : { text : $("#Territories_" + @source.Id).parent().find("div") } });
+                </text>
+            }
+        }
+        
+        function Delete(id) {
+            var result = confirm("Are you sure you want to delete this source?");
+            if (result) {
+                var url = '/Marketing/MarketingSource/Delete?id=' + id;
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: '{}',
+                    success: function(res) { 
+                            alert(res);
+                            window.location.reload(); 
+                    },
+                    error: function(a) {
+                        if (a.status == 401)
+                            alert("You do not have the permission to delete the Marketing Source!");
+                    },
+                     
+                });
+                //$.post(url, '{}', function(result) {
+                //        alert(result);
+                //        window.location.reload();
+                //});
+            }
+        }
+    </script>
+}

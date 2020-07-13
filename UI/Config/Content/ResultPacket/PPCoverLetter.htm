@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="Stylesheet" type="text/css" href="content/FinalPdf.css" />
+    <script type="text/javascript" src="content/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="content/jquery-ui-1.8.12.custom.min.js"></script>
+    <style type="text/css">
+        .padding-t-medium {
+            padding-top: 40px;
+        }
+
+        .padding-t-small {
+            padding-top: 20px;
+        }
+
+        .margin-v-large {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .pp-header {
+            font-size: 36px;
+            font-weight: 600;
+            color: black;
+            text-align: center;
+        }
+
+        .margin-t-medium {
+            margin-top: 50px;
+        }
+
+        .margin-t-small {
+            margin-top: 25px;
+        }
+
+        .pp-padding-l-large {
+            padding-left: 70px;
+        }
+
+        .pp-body-font {
+            font-size: 22px;
+            line-height: 1.3;
+        }
+
+        .margin-h-large {
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+
+        .pp-coverletter ul, li {
+            margin: 0 0 0 23px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mainContainer-wopb" style="padding-right: 30px;">
+        <div class="margin-h-large pp-body-font pp-coverletter">
+            <div class="padding-t-medium pp-header">IMPORTANT & ACTION REQUIRED</div>
+            <div class="margin-t-medium ">
+                <div style="margin-bottom:5px;">
+                    <div style="float:left;">To:&nbsp;</div><div style="clear:right;">
+                        <span id="ppName"></span>
+                        <div style="margin-left:40px;" id="pcp-addressLine"></div>
+                    </div>
+                </div>                   
+                <div><span>Fax:&nbsp;</span><span id="ppFax"></span></div>
+                <div><span>Phone:&nbsp;</span><span id="ppPhone"></span></div>
+                <div><span>Re:&nbsp;</span><b><span class="patientName"></span>&nbsp;DOB:&nbsp;<span class="dob"></span></b><br />Diagnostic Test(s) Report</div>
+            </div>
+            <div class="margin-t-small">
+                <div><span>From:&nbsp;</span><span>In-Office Diagnostic Testing Services&nbsp;/&nbsp;Physician Partners</span></div>
+                <div><span>Pages:&nbsp;</span><span id="ppPages"></span></div>
+                <div><span>Date:&nbsp;</span><span id="ppDateSent"></span></div>
+            </div>
+
+            <hr class="margin-v-large" />
+            <div class="pp-body-font">Your patient, <span class="patientName"></span> DOB <span class="dob"></span>, underwent diagnostic testing <span id="eventDate"></span>. The test results are enclosed in this fax.</div>
+
+            <div class="margin-v-large" style="font-weight:600">Please complete the following:</div>
+
+            <div>
+                1)&nbsp;Please call your patient in for a face-to-face office visit&nbsp;<u><b>BEFORE 12/31/2014</b></u>.
+            </div>
+            <div class="padding-t-small">
+                2)&nbsp;Please review the attached results with your patient during the office visit.  Please be sure to document in progress note with assessment and treatment plan.
+            </div>
+            <div class="padding-t-small">
+                3)&nbsp;Please bill the claim for the office visit to health plan with ALL appropriate diagnosis codes using your routine billing process.
+            </div>
+
+            <div class="padding-t-small">Note:</div>
+            <ul>
+                <li>
+                    A Quick Diagnosis Guide is attached.
+                </li>
+                <li>
+                    If you have any questions, please contact your Physician Partners representative
+                </li>
+                <li>
+                    If you did not receive all of the pages of this fax, please call (800)-392-8378
+                </li>
+            </ul>
+        </div>
+        <div style="page-break-before:always;text-align:center;padding-top:50px;">
+            <img style="width:700px;" src="content/Step-Checkout.JPG" />
+        </div>
+    </div>
+
+</body>
+</html>

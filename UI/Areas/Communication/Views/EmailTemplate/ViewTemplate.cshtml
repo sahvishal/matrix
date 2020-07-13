@@ -1,0 +1,30 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@{
+    ViewBag.Title = Request.QueryString["emailSubject"];
+}
+<h1>
+    @Request.QueryString["emailSubject"].ToString()
+</h1>
+<div id="DivViewTemplate">
+    <div style="width: 70%; margin: 0 auto 0 auto;">
+        <img src="/App/Images/loading.gif" alt="Loading Template" />
+        Loading Template
+    </div>
+</div>
+<div style="clear: both; float: right; width: 90%; font-weight: bold; text-align: right;">
+    <a href="/App/Franchisor/Admin/ManageEmailTemplate.aspx">Close </a>&nbsp; &nbsp;
+</div>
+<input type="hidden" id="querystring" value="@Request.QueryString" />
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: 'Html', url: '/Communication/EmailTemplate/LoadTemplate?emailTemplateAlias=@Request.QueryString["emailTemplateAlias"]&notificationTypeId=@TempData["notificationTypeId"]',
+            data: '{}',
+            success: function (result) { $("#DivViewTemplate div").html(result); }
+        });
+
+    })
+</script>

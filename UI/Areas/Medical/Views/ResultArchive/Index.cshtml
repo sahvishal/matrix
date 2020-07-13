@@ -1,0 +1,197 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Extensions
+@model ResultArchiveUploadListModel
+@{
+    ViewBag.Title = "Results Archive Uploads";
+}
+<h1>
+    Results Archive Uploads</h1>
+<div id="list-filter">
+    @{Html.BeginForm("Index", "ResultArchive", FormMethod.Get);}
+    @Html.Partial("ResultArchiveUploadListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.ResultUploads != null && Model.ResultUploads.Count() > 0)
+{
+
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th>
+                Event Id
+            </th>
+            <th>
+                Event
+            </th>
+            <th>
+                Archive Name
+            </th>
+            <th>
+                Upload Date
+            </th>
+            <th>
+                Upload Time
+            </th>
+            <th>
+                Parsing Info
+            </th>
+            <th>
+                Uploaded By
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @{var mediaRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IMediaRepository>();}
+        @foreach (var upload in Model.ResultUploads)
+        {
+            <tr>
+                <td>
+                    @upload.EventId
+                </td>
+                <td>
+                    <b>At</b> @upload.EventName
+                    <br />
+                    <span style="float: left; padding-top: 3px; width:99%;"><b>On</b> @upload.EventDate.ToShortDateString()</span>
+                    <br />
+                    <span style="float: left; padding-top: 3px;"><b>Pod:</b> @upload.PodName</span>
+                </td>
+                @if (upload.File != null && !string.IsNullOrEmpty(upload.File.Path))
+                {
+                    <td>
+                        @{var filePath = mediaRepository.GetResultArchiveMediaFileLocation(upload.EventId).Url + upload.File.Path;}
+                        @if(upload.File.IsArchived){
+                            @(upload.File.Path + " - ") <i> (Archived) </i>
+                        }
+                        else
+                        {
+                            <a href="@filePath" target="_blank">@upload.File.Path </a>    
+                        }
+                        
+                        <br />
+                        @{
+                        var fileSize = upload.File.FileSize;
+                        if (fileSize > 1024 * 1024)
+                        {
+                            fileSize = (decimal)fileSize / (1024 * 1024);
+                            fileSize = decimal.Round(fileSize, 2);
+                            <span style="float: left; padding-top: 3px;">@fileSize MB </span>
+                        }
+                        else if (fileSize > 1024)
+                        {
+                            fileSize = (decimal)fileSize / 1024;
+                            fileSize = decimal.Round(fileSize, 2);
+                            <span style="float: left; padding-top: 3px;">@fileSize KB </span>
+                        }
+                        else
+                        {
+                            fileSize = decimal.Round(fileSize, 2);
+                            <span style="float: left; padding-top: 3px;">@fileSize Bytes </span>
+                        }
+                        }
+                    </td>                
+                    <td>
+                        @upload.UploadStartTime.ToShortDateString()<br />
+                        @{
+                        var uploadandEventTimeGap = upload.File.UploadedOn - upload.EventDate;
+                        if (uploadandEventTimeGap.Days > 1)
+                        {                                   
+                            <span style="float: left; padding-top: 3px;">(@uploadandEventTimeGap.Days days
+                                @uploadandEventTimeGap.Hours hrs after the event)</span>
+                        }
+                        else if (uploadandEventTimeGap.Days == 1)
+                        {                                   
+                            <span style="float: left; padding-top: 3px;">(@Math.Round((decimal)uploadandEventTimeGap.TotalHours) hrs
+                                after the event)</span>
+                        }
+                        else
+                        {                                   
+                            <span style="float: left; padding-top: 3px;">(@Math.Round((decimal)uploadandEventTimeGap.TotalHours) hrs
+                                after the event)</span>
+                        }
+                        }
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        N/A
+                    </td>
+                    <td>
+                        @upload.UploadStartTime.ToShortDateString()
+                    </td>
+                }
+                <td>
+                    @if (upload.UploadEndTime.HasValue)
+                    {
+                        var uploadTime = (upload.UploadEndTime.Value - upload.UploadStartTime);
+                        if (uploadTime.Hours > 0)
+                        {
+                        <span>
+                            @uploadTime.Hours h @uploadTime.Minutes mins</span>
+                        }
+                        else if (uploadTime.Minutes > 0)
+                        {
+                        <span>
+                            @uploadTime.Minutes mins @uploadTime.Seconds secs</span>
+                        }
+                        else if (uploadTime.Seconds > 0)
+                        {
+                        <span>
+                            @uploadTime.Seconds secs</span>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (upload.Status == Falcon.App.Core.Medical.Enum.ResultArchiveUploadStatus.Parsed)
+                    {
+                        <span>@upload.CustomerRecordsFound records</span>                                                     
+                    }
+                </td>
+                <td>
+                    @upload.UploadedBy
+                </td>
+                <td>
+                    @upload.Status.GetDescription()
+                </td>
+                <td>
+                    @if (upload.Status == Falcon.App.Core.Medical.Enum.ResultArchiveUploadStatus.Parsed)
+                    {
+                        <a href="/Medical/ResultArchive/Detail?id=@upload.Id">Details </a>
+                        <br />
+                    }
+                    <a href="/Medical/Results/ResultStatusList?EventId=@upload.EventId">Results </a>
+                </td>
+            </tr>    
+        }
+    </table>
+    
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records found!
+    </h2>   
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

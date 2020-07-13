@@ -1,0 +1,17 @@
+﻿@using Falcon.App.Core.Finance.ViewModels;
+@model HealthPlanRevenueByPackageModel
+@{
+    string packageName = Model.PackageName;
+    string divName = "miniContainer" + Model.PackageId.ToString();
+}
+<div class='mini-container'  id="@divName" style="border: 1px solid gray !important;">
+    <div style="float: left; margin-right: 20px; white-space:nowrap">
+        @Html.Label("", packageName) &nbsp;  @Html.TextBoxFor(m => m.Price, new { @class = "packageclass", @onblur = "updatePackage(this)", @onkeydown = "return KeyPress_DecimalAllowedOnly(event);", @maxlength = "10" }) $&nbsp; [<a href="javascript:void(0)" data-key="@Model.PackageId" onclick="RemovePackage(this);" >Remove</a>]
+        @Html.ValidationMessageFor(m => m.Price)
+    </div>
+
+    <div style="display:none;">
+        @Html.HiddenFor(m => m.PackageId)
+        @Html.HiddenFor(m => m.PackageName)
+    </div>
+</div>

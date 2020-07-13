@@ -1,0 +1,36 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.GapsClosureModelFilter
+
+<h2>Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 180px;">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 180px;">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 200px;">
+        <div class="small-text">
+            Healthplan
+        </div>
+        @Html.DropDownListFor(m => m.AccountId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 350px;">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllHealthPlansCustomTags(), new { @class = "tokenizer", @multiple = "multiple", @style = "width: 99%;height:100px;" })
+        </div>
+    </div>
+    <div class="editor-column" style="padding-top: 10px; float:right; text-align:right;">
+        @Html.ActionLink("Clear", "GapClosure", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+

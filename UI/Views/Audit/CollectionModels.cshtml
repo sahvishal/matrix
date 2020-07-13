@@ -1,0 +1,31 @@
+﻿@using Falcon.App.Core.Audit.ViewModel
+@model IEnumerable<ActivityLoggedModelViewModel>
+    <style>
+        table.list-table-audit td {
+            height: 12px !important;
+            line-height: 12px !important;
+        }
+    </style>
+    <div class="editor-row">
+        @{
+            var collection = Model.ToArray();
+
+            foreach (var item in collection)
+            {
+                <div class="well" style="font-size: 11px;">
+                    @if (item.Simple.ToList().Any())
+                    {
+                        @Html.Partial("SimpleModelTabular", item.Simple)
+                    }
+
+                    @if (item.Complex.ToList().Any())
+                    {
+                        @Html.Partial("ComplexModelTabular", item.Complex)
+                    }
+
+                </div>
+            }
+        }
+
+    </div>
+

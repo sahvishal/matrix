@@ -1,0 +1,101 @@
+﻿<div class="dashboardCallCenterRepAngular" ng-controller="healthplanDashboardController" us-spinner spinner-key="online-spinner">
+    <p id="assignedCallQueue" style="color: #F37C00; font: bold 15px arial; clear: both; padding-top: 8px; padding-bottom: 1px; width: 168px; margin-right: 0px">Assigned Call Queues</p>
+
+    <div id="list-filter" style="margin-top: 15px">
+        <form name="dashboardForm" novalidate autocomplete="off" ng-submit="filterAssignedCallQueues(dashboardForm)">
+            <h2> Filter Assigned Call Queues</h2>
+            <div style="padding-left: 5px; overflow: hidden; float: left; clear: both; width: 100%;">
+                <div style="padding: 15px; float: left; width: 83%;">
+                    <div class="editor-column" style="width: 49%; float: left;">
+                        <div class="small-text">Health Plan</div>
+                        <select ng-model="sHealthPlanId">
+                            <option ng-repeat="option in HealthPlans" ng-selected="sHealthPlanId==option.Id" value="{{option.Id}}">{{option.HealthPlanName}}</option>
+                        </select>
+
+                        <!-- <select data-ng-options="option.HealthPlanName for option in HealthPlans" data-ng-model="sHealthPlanId" value="option.Id" ng-selected="sHealthPlanId==option.Id"></select>-->
+                    </div>
+                    <div class="editor-column" style="width: 40%; float: left;">
+                        <div class="small-text">Call Queue</div>
+                        <select ng-model="sCallQueueId">
+                            <option ng-repeat="option in CallQueues" ng-selected="sCallQueueId==option.CallQueueId" value="{{option.CallQueueId}}">{{option.Name}}</option>
+                        </select>
+                        <!-- <select data-ng-options="option.Name for option in CallQueues" data-ng-model="sCallQueueId" value="option.CallQueueId" ng-selected="sCallQueueId==option.CallQueueId"></select>-->
+                    </div>
+                </div>
+                <div class="editor-column" style="padding-top: 30px; width: 15%; float: right; text-align: right;">
+                    <!--<a href="" ng-disabled="isPosted" ng-click="ManageCategory()">Change Category</a> |--> <a href="" ng-disabled="isPosted" ng-click="clearFilter()">Clear</a>
+                    | <button type="submit" ng-disabled="isPosted">Search<i class="spin spin-right" ng-show="loader_filter"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div ng-show="!noRecordsFound">
+        <paging-model model="PagingModel" url="GetAssignedCallQueuesByPageNumber(number)"></paging-model>
+    </div>
+
+    <table id="list-view" style="margin-top: 5px; margin-bottom: 5px; width: 100%;">
+        <thead>
+            <tr>
+                <th>
+                    Assigned Queues
+                </th>
+                <th>
+                    Mail Dates
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Healthplan
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="data in CallCenterAgentDashBoardData">
+                <td>
+                    <strong>{{data.CriteriaName}}</strong>
+                    <br />
+                    <div ng-if="data.CallQueueName != 'Confirmation'">
+                        Start date : {{data.StartDate | date:'MMM dd, yyyy'}}<br />
+                    </div>
+                    <div ng-if="data.EndDate != null && data.CallQueueName != 'Confirmation'">
+                        End date : {{data.EndDate | date:'MMM dd, yyyy'}}
+                    </div>
+                    <div ng-if="data.EndDate == null && data.CallQueueName != 'Confirmation'">
+                        End date : N/A
+                    </div>
+                </td>
+                <td>
+                    <div ng-show="data.DirectMailDates != null && data.DirectMailDates.length > 0">
+                        <a href="javascript:void();" custom-tool-tip tool-tip-header="Mail Dates" tool-tip-container="direct-mail-date-div">
+                            View
+                        </a>
+                        <div class="direct-mail-date-div qtip" style="display: none; width: 300px; padding:5px;">
+                            <div ng-repeat="directMailDate in data.DirectMailDates track by $index" style="font-size: 12px; margin: 5px;">
+                                <span>{{directMailDate | date:'MM/dd/yyyy'}}</span><br />
+                            </div>
+                        </div>                        
+                    </div>
+                </td>
+                <td>
+                    {{data.CallQueueName}}
+                </td>
+                <td>
+                    {{data.HealthPlanName}}
+                </td>
+                <td>
+                    <button ng-disabled="isCallQueueSelected" type="button" ng-click="getSelectedCallQueuesType(data.CallQueueId,data.HealthPlanId,data.CriteriaName, data.CriteriaId, data.CapmaignId)" style="font-size: 14px; background-color: #ffa500; color: black; width: 110px;">{{data.CallQueueId === 147 ? 'View Events' : 'Start Call'}}</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div ng-show="!noRecordsFound">
+        <paging-model model="PagingModel" url="GetAssignedCallQueuesByPageNumber(number)"></paging-model>
+    </div>
+    <div ng-hide="!noRecordsFound">
+        <b>No Records Found</b>
+    </div>
+</div>

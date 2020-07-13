@@ -1,0 +1,320 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.EventHostListModel
+
+<style type="text/css">
+    .form-control {
+        display: block;
+        width: 100%;
+        height: 20px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    }
+
+    .contact-screen-eventlist-height {
+        overflow: auto;
+        height: 500px !important;
+    }
+
+    .small-section-inner .table > tbody > tr > td {
+        vertical-align: middle !important;
+    }
+
+    #list-view td {
+        font-size: 14px;
+    }
+
+    div .pager .record-count {
+        font-size: 14px;
+    }
+</style>
+
+<div class="small-section">
+    <h2>Event List</h2>
+    <div class="clearfix small-section-inner">
+        <div>
+            @using (Ajax.BeginForm("GetEventList", "ContactCustomer", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "dvEventList", OnSuccess = "onSuccess", OnFailure = "onFailure", }))
+            {
+                <div id="list-filter" style="padding: 5px 5px 10px 5px; border: none;">
+                    <div style="padding-left: 5px; overflow: hidden;">
+                        <div class="editor-column" style="width: 16%; float: left;">
+                            <div class="small-text">
+                                Zip Code
+                            </div>
+                            @Html.TextBoxFor(m => m.Filter.ZipCode, new {@style = "width:75%;"})
+                        </div>
+                        <div class="editor-column" style="width: 16%; float: left;">
+                            <div class="small-text">
+                                Radius
+                            </div>
+                            @if (Model.Filter.Radius.HasValue)
+                            {
+                                @Html.DropDownListFor(m => m.Filter.Radius, DropDownHelper.RadiusForCallQueue((long)Model.Filter.Radius.Value), new { @style = "width:75%;" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(m => m.Filter.Radius, DropDownHelper.RadiusForCallQueue(), new { @style = "width:75%;" })
+                            }
+                        </div>
+                        <div class="editor-column" style="width: 16%; float: left;">
+                            <div class="small-text">
+                                State
+                            </div>
+                            @Html.DropDownListFor(m => m.Filter.State, DropDownHelper.StateNames(Model.Filter.State), new {@style = "width:75%;"})
+                        </div>
+                        <div class="editor-column" style="width: 16%; float: left;">
+                            <div class="small-text">
+                                City
+                            </div>
+                            @Html.TextBoxFor(m => m.Filter.City, new {@class = "auto-search-city", @style = "width:75%;", @id="txtSearchCity"})
+                        </div>
+                        <div class="editor-column" id="showAllCheckbox" style="width: 16%; float: left; display: none;">
+                            <input type="checkbox" id="chkShowAll" onchange=" showAllEvents(this); "/> Show All Events
+                            @Html.HiddenFor(x => x.Filter.HealthPlanId)
+                            @Html.HiddenFor(x => x.Filter.SearchMammoEvents)
+                            @Html.HiddenFor(x => x.Filter.SearchAllEvents)
+                        </div>
+                        <div class="editor-column" style="width: 16%; float: left; margin-top: 22px;">
+                            @*@Html.SubmitButton("Search")*@
+                            <input type="submit" value="Search" onclick="return onBegin();"/>
+                        </div>
+                    </div>
+                </div>
+                <span>
+                    <b><i>If you don't see an event of patient's choice, try searching by changing the radius.</i></b>
+                </span><br />
+                if (Model.Filter.SearchMammoEvents)
+                {
+                    <span id="mammo-message-text"><b><i>Only events with Mammography test are appearing. To view all events click on Show All Events and hit Search.</i></b></span>
+                }
+                @Html.HiddenFor(x=>x.Filter.CustomerZipCode)
+                @Html.HiddenFor(x => x.Filter.CustomerId)
+            }
+            <div>
+                @Html.HiddenFor(x => x.Filter.SortByOrder)
+                @Html.HiddenFor(x => x.Filter.SortOrderType)
+                @if (!Model.Events.IsNullOrEmpty())
+                {
+                    <div class="contact-screen-eventlist-height">
+                        <table id="list-view" class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 260px;"><a href="javascript:void(0);" onclick="sortEventsBy('@CallQueueSortOrderBy.EventName')">EVENT INFO</a></th>
+                                    <th style="width: 150px; text-align:center;"><a href="javascript:void(0);" onclick="sortEventsBy('@CallQueueSortOrderBy.EventDate')">DATE</a></th>
+                                    <th style="width: 150px; text-align:center;"><a href="javascript:void(0);" onclick="sortEventsBy('@CallQueueSortOrderBy.Distance')">DISTANCE</a></th>
+                                    <th style="width: 180px; text-align:center;"><a href="javascript:void(0);" onclick="sortEventsBy('@CallQueueSortOrderBy.AvailableAppointmentSlots')">AVAILABLE SLOTS</a></th>
+                                    <th>PODS</th>
+                                    <th style="width: 190px; text-align:center;">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var theEvent in Model.Events)
+                                {
+                                    <tr>
+                                        <td class="event-list-location" style="vertical-align: middle;">
+                                            <b>Id: </b><span>@theEvent.EventId</span>
+                                            @if (theEvent.IsFemaleOnly)
+                                            {
+                                                <img src="/Content/Images/female-sign.png" />
+                                            }
+                                            @if (theEvent.HasBreastCancerTest.HasValue && theEvent.HasBreastCancerTest.Value)
+                                            {
+                                                <img src="/Content/Images/bca.gif" title="This event has mammography test" />
+                                            }
+                                            <br />
+                                            <span><b>Location: </b> <span>@theEvent.Name</span></span> <br />
+
+                                            <span class="location-address no-margin">
+                                                <span>@theEvent.StreetAddressLine1</span>
+                                                @if (!string.IsNullOrEmpty(theEvent.StreetAddressLine2))
+                                                {
+                                                    <span>, @theEvent.StreetAddressLine2</span>
+                                                }
+                                                <br />
+                                                <span>@theEvent.City</span>,<span>@theEvent.State</span> - <span>@theEvent.Zip</span>
+                                                <br />
+                                                @if (!string.IsNullOrEmpty(theEvent.EventType))
+                                                {
+                                                    if (theEvent.EventType == "Public")
+                                                    {
+                                                        <img src="/App/Images/public-icon.gif" alt="Public" />
+                                                    }
+                                                    if (theEvent.EventType == "Private")
+                                                    {
+                                                        <img src="/App/Images/private-icon.gif" alt="Private" />
+                                                    }
+                                                }
+                                            </span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <span>@theEvent.EventDate.ToString("MMMM dd,yyyy")</span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <span>@theEvent.DistanceFromZip Miles</span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            @if (theEvent.IsDynamicScheduling.HasValue && theEvent.IsDynamicScheduling.Value)
+                                            {
+                                                <p>
+                                                    <span>Dynamic Scheduling</span>
+                                                    <br />
+                                                    <a href="javascript:void(0)" onclick="viewAll('@theEvent.EventId')">View All</a>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <span>@(theEvent.TotalAppointmentSlots - theEvent.BookedSlots)</span>
+                                            }
+                                        </td>
+                                        <td style="text-align: center;">
+                                            @theEvent.PodNames()
+                                        </td>
+                                        <td style="text-align: center;">
+                                            @if (theEvent.BookedSlots >= theEvent.TotalAppointmentSlots)
+                                            {
+                                                <img src="/App/Images/no-slots-available-icongif.gif" />
+                                            }
+                                            else
+                                            {
+                                                <button onclick="registerCustomer('@theEvent.EventId','@(theEvent.HasBreastCancerTest.HasValue && theEvent.HasBreastCancerTest.Value?"True":"False")','@(theEvent.AllowNonMammoPatients ? "True":"False")')">
+                                                    Book Now
+                                                </button>
+                                            }
+
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pager">
+                        <div class="record-count">
+                            Total Record(s) : @Model.PagingModel.NumberOfItems
+                        </div>
+                        @if (Model.PagingModel.PageCount > 1)
+                        {
+                            <div class="page-nav">
+                                Pages:
+                                @if (Model.PagingModel.CurrentPage > 1)
+                                {
+                                    <a href="javascript:void(0);" onclick="setPage(1)" class="first">&laquo; First</a>
+                                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.CurrentPage - 1)')" class="previous">&lsaquo; Previous</a>
+                                }
+
+                                @foreach (int pageNumber in Model.PagingModel.GetPages())
+                                {
+                                    if (pageNumber > 1 && !Model.PagingModel.IsPageIncluded(pageNumber - 1))
+                                    {
+                                        <span class="elide">...</span>
+                                    }
+                                    <a href="javascript:void(0);" onclick="setPage('@pageNumber')" class="page @(Model.PagingModel.CurrentPage == pageNumber ? "current" : "") ">@pageNumber</a>
+                                }
+
+                                @if (Model.PagingModel.CurrentPage < Model.PagingModel.PageCount)
+                                {
+                                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.CurrentPage + 1)')" class="next">Next &rsaquo;</a>
+                                    <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.PageCount)')" class="last">Last &raquo;</a>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="row" style="">
+                        <h2>No Record Found</h2>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+   
+    function showAllEvents(ctrlref) {
+        if ($(ctrlref).is(":checked")) {
+            $("input[type='hidden'][name*='SearchMammoEvents']").val(false);
+            $("input[type='hidden'][name*='SearchAllEvents']").val(true);
+        } else {
+            $("input[type='hidden'][name*='SearchMammoEvents']").val(true);
+            $("input[type='hidden'][name*='SearchAllEvents']").val(false);
+        }
+    }
+
+    function onBegin() {
+        if ($("input[name='Filter.ZipCode']").val() == "" && ($("#Filter_State").find("option:selected").val() == "" || $("#Filter_State").find("option:selected").val() == null) && $("input[name='Filter.City']").val() == "") {
+            alert("Please provide zipcode or city or state.");
+            return false;
+        }
+        $("#hfPreviousEventId").val(0);
+        return true;
+    }
+
+    function onSuccess(response) {
+        $("#dvEventList").html(response);
+        
+        if (hasMammo == '@Boolean.TrueString') {
+            $('#showAllCheckbox').show();
+            @*if ('@Model.Filter.SearchMammoEvents' == '@Boolean.FalseString')
+                $('#chkShowAll').attr("checked", true);
+            else {
+                $('#chkShowAll').attr("checked", false);
+            }*@
+        }
+    }
+
+    function onFailure(response) {
+        var newTitle = $(response.responseText).filter('title').text();
+        alert(newTitle);
+    }
+
+    function sortEventsBy(sortBy) {
+        
+        if ($("input[type='hidden'][name*='SortByOrder']").val() == sortBy) {
+            if ($("input[type='hidden'][name*='SortOrderType']").val() == '@SortOrderType.Ascending') {
+                $("input[type='hidden'][name*='SortOrderType']").val('@SortOrderType.Descending');
+            } else {
+                $("input[type='hidden'][name*='SortOrderType']").val('@SortOrderType.Ascending');
+            }
+        } else {
+            $("input[type='hidden'][name*='SortByOrder']").val(sortBy);
+            $("input[type='hidden'][name*='SortOrderType']").val('@SortOrderType.Ascending');
+        }
+        setPage(1);
+    }
+    $(document).ready(function () {
+        $(".auto-search-city").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("GetCityByPrefixText", "ContactCustomer")',
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        text: $("#txtSearchCity").val()
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                $("#txtSearchCity").val(ui.item.label);
+            }
+        });
+    });
+</script>

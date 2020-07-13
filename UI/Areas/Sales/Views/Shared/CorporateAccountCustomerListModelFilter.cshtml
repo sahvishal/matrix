@@ -1,0 +1,69 @@
+﻿@using Falcon.App.Core.Sales.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model CorporateAccountCustomerListModelFilter
+
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<h2>
+    Search Records
+</h2>
+
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 12%">
+        <div class="small-text">
+            <b>DoB</b> From
+        </div>
+        @Html.TextBoxFor(m => m.DateOfBirthFrom, new { @class = "date", @style = "width:87%;" }) -
+    </div>
+    <div class="editor-column" style="width: 10%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.DateOfBirthTo, new { @class = "date", @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Customer Name
+        </div>
+        @Html.TextBoxFor(m => m.CustomerName, new { @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 15%;">
+        <div class="small-text">
+            Customer Id
+        </div>
+        @Html.TextBoxFor(m => m.CustomerId, new { @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 15%">
+        <div class="small-text">
+            Member Id
+        </div>
+        @Html.TextBoxFor(m => m.MemberId, new { @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 15%;">
+        <div class="small-text">
+            HICN
+        </div>
+        @Html.TextBoxFor(m => m.HICN, new { @style = "width:90%;" })
+    </div>
+</div>
+<div style="padding-left: 5px; padding-top: 10px; overflow: hidden;">
+   
+</div>
+<div class="editor-column" style="padding-top: 10px; float:right; text-align:right;">
+    @Html.ActionLink("Clear", "MemberResultSummary", "CorporateAccount", new { Model.EventId }, null) | @Html.SubmitButton("Search")
+</div>
+@Html.HiddenFor(m => m.EventId)
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        var currentDate = new Date();
+        $(".date").val(function (index, value) { return value.substr(0, value.indexOf(" ")); }).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: ("1900:" + (currentDate.getFullYear() + 20)),
+            defaultDate: currentDate,
+            minDate: new Date("01/01/1900")
+        });
+    });
+
+</script>

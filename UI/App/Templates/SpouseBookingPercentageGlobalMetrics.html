@@ -1,0 +1,54 @@
+﻿{#param name=rank value=1}
+{#param name=callCenterCallCenterUserId}
+<h4 id="SpouseBookingPercentageGlobalMetricsHeader" title="Spouse Booking Percentage|Percentage of customers that you booked which also booked a spousal appointment [customers booked with spouse/total customers booked = spousal booking percentage].This metric demonstrates your effectiveness of selling a booked customer on the idea of booking their spouse a screening appointment.">&nbsp; Spouse Booking Percentage (<a href="#">?</a>)</h4>
+<table id="SpouseBookingPercentageGlobalMetricsTable" class="divgrid_clnew" cellspacing="0" cellpadding="0" style="font-size: xx-small;">
+    <tr class="trhead">
+        <th>
+            <b>Call Center Rep</b>
+        </th>
+        <th>
+            <b>Rank</b>
+        </th>
+        <th style="text-align:right;width:50px">
+            <b>Booking %</b>
+        </th>
+    </tr>
+    {#foreach $T as CallCenterRepMetricPair}
+    {#if $T.CallCenterRepMetricPair.FirstValue.CallCenterCallCenterUserId == $P.callCenterCallCenterUserId}
+    <tr style="color: Red;font-weight: bold;" class="trheight">
+    {#else}
+    <tr class="trheight">
+    {#/if}
+        <td>
+            {$T.CallCenterRepMetricPair.FirstValue.NameAsString}
+        </td>
+        <td>
+            {$P.rank}
+            {#param name=rank value=$P.rank+1}
+        </td>
+        <td style="text-align: right">
+            <span style="float:right; text-align: right;" class="ccrep-amount"> {($T.CallCenterRepMetricPair.SecondValue.SpouseBookingPercentage * 100).toFixed(2)}% </span>
+            <span style="float:right; display:none; text-align: right;" class="ccrep-amount">
+                <a href="#" class="detail-anchor"> {($T.CallCenterRepMetricPair.SecondValue.SpouseBookingPercentage * 100).toFixed(2)}%  </a>
+                <input type="hidden" class='ccrepid-input-hidden' value={$T.CallCenterRepMetricPair.FirstValue.CallCenterCallCenterUserId} />
+            </span> 
+            <br />
+            <span style="float:right; text-align: right;"><i>{$T.CallCenterRepMetricPair.SecondValue.SpouseBookingCallCount} / {$T.CallCenterRepMetricPair.SecondValue.BookingCallCount}</i></span>
+        </td>
+    </tr>
+    {#/for}
+</table>
+
+{#literal}
+<script type="text/javascript">
+    $(function()
+    {
+        $('#SpouseBookingPercentageGlobalMetricsHeader').cluetip(
+        {
+            splitTitle: '|',
+            positionBy: 'mouse',
+            tracking: true
+        });
+    });
+</script>
+{#/literal}

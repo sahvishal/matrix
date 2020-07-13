@@ -1,0 +1,207 @@
+﻿@using Falcon.App.Core.Marketing.Enum
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Marketing.ViewModels.SourceCodeListModel
+@{
+    ViewBag.Title = "Index";
+}
+<style type="text/css">
+    #list-view a:hover
+    {
+        font-weight: bold;
+    }
+</style>
+<h2>
+    Index <span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New", "Create")
+    </span>
+</h2>
+<div id="list-filter">
+    @{Html.BeginForm("Index", "SourceCode", FormMethod.Get);}
+    @Html.Partial("SourceCodeListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.SourceCodes != null && Model.SourceCodes.Count() > 0)
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Coupon Code
+            </th>
+            <th>
+                Type
+            </th>
+            <th style="width: 60px;">
+                Value
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Start Date
+            </th>
+            <th>
+                Expiry Date
+            </th>
+            <th style="width: 80px;">
+            </th>
+        </tr>
+        @foreach (var item in Model.SourceCodes)
+        {
+            <tr>
+                <td>
+                    @if (item.IsActive)
+                    { 
+                        <a href="/Marketing/SourceCode/Edit?id=@item.Id" style="text-decoration:none;">@item.CouponCode
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="javascript:void(0);" style="text-decoration: none;">@item.CouponCode
+                        </a>
+                    }
+                </td>
+                <td>
+                    @item.DiscountType.GetDescription()
+                </td>
+                <td style="width: 60px;">
+                    @if (item.DiscountType == DiscountType.PerOrder)
+                    {
+                        if (item.DiscountValueType == DiscountValueType.Money)
+                        {
+                        <b>$@item.CouponValue.ToString("0.00")</b>
+                        }
+                        else if (item.DiscountValueType == DiscountValueType.Percent)
+                        {
+                        <b>@Math.Round(item.CouponValue, 2) %</b>
+                        }
+                    }
+                    else
+                    {
+                        var itemDiscounts = ((item.PackageDiscounts ?? item.TestDiscounts) ?? item.ShippingDiscounts) ?? item.ProductDiscounts;
+                        <a href="javascript:void(0);" class="itemwise-discount" style="text-decoration: none;">
+                            <i>(Place Pointer to View) </i></a> 
+                        if (itemDiscounts != null)
+                        {
+                        <div class="content-itemwise-discount" style="display: none;">
+                            <table cellpadding="1" style="width: 98%;">
+                                @foreach (var itemDiscount in itemDiscounts)
+                                {                                 
+                                    <tr>
+                                        <td>
+                                            @itemDiscount.Name
+                                        </td>
+                                        <td>
+                                            @if (itemDiscount.DiscountValueType == DiscountValueType.Money)
+                                            {
+                                                <b>$@itemDiscount.DiscountAmount.ToString("0.00")</b>
+                                            }
+                                            else if (itemDiscount.DiscountValueType == DiscountValueType.Percent)
+                                            {
+                                                <b>@Math.Round(itemDiscount.DiscountAmount, 2) %</b>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div> 
+                        }
+                    }
+                </td>
+                <td>
+                    @item.CouponDescription
+                </td>
+                <td>
+                    @item.ValidityStartDate.ToShortDateString()
+                </td>
+                <td>
+                    @(item.ValidityEndDate.HasValue ? item.ValidityEndDate.Value.ToShortDateString() : "Lifetime")
+                </td>
+                <td style="width: 80px;">
+                    @if (item.IsActive)
+                    {
+                        <a href="/Marketing/SourceCode/Edit?id=@item.Id">Edit</a>
+                        <br />
+                        <a href="javascript:setIsActiveState(@item.Id, false); void(0);">Deactivate </a>
+                    }
+                    else
+                    {
+                        <a href="javascript:setIsActiveState(@item.Id, true); void(0);">Activate </a>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $("table#list-view tr:even").addClass("alt-row");
+    });
+
+    $(function () {
+        $("tr:not(:has(th))").hover(function () {
+            $(this).addClass('row-hover');
+        },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+    });
+
+    function setIsActiveState(sourceCodeId, isActive) {
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Marketing/SourceCode/SetSourceCodeIsActiveStatus?id=" + sourceCodeId + "&isActive=" + isActive,
+            data: "{}",
+            success: function (result) {
+                if (result.Result) {
+                    window.location.reload();
+                }
+                else {
+                    alert(result.Message);
+                }
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for the action!");
+                }
+                else {
+                    if (isActive)
+                    alert("Some error occured while activating the Source Code! \nPlease contact the support team!");
+                    else
+                    alert("Some error occured while de-activating the Source Code! \nPlease contact the support team!");
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
+
+    $('.itemwise-discount').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            title: function (api) {
+                return "<h4>  </h4>";
+            },
+            text: function (api) {
+                return $(this).parent().find('div.content-itemwise-discount').html();
+            }
+        },
+        style: {
+            width: '400px'
+        }
+    });
+</script>

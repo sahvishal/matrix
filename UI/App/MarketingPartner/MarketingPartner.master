@@ -1,0 +1,156 @@
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="App_MarketingPartner_MarketingPartner"
+    CodeBehind="MarketingPartner.master.cs" %>
+
+<%@ Import Namespace="Falcon.App.Core.Application" %>
+
+<%@ Import Namespace="Falcon.App.Core.Interfaces" %>
+<%@ Import Namespace="Falcon.App.DependencyResolution" %>
+<%@ Register Src="~/App/UCCommon/ucmenucontrol.ascx" TagName="ucmenucontrol" TagPrefix="uc1" %>
+<%@ Register Src="../UCCommon/ucwelcomebox.ascx" TagName="ucwelcomebox" TagPrefix="uc2" %>
+<%@ Register Src="~/App/Franchisor/ucsearchbox.ascx" TagName="ucsearchbox" TagPrefix="uc3" %>
+<%@ Register Src="~/App/Franchisor/ucleftpanel.ascx" TagName="ucleftpanel" TagPrefix="uc4" %>
+<%@ Register Src="~/App/Franchisor/ucleftpanelcalander.ascx" TagName="ucleftpanel"
+    TagPrefix="uc5" %>
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
+<%@ Register Assembly="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+    Namespace="System.Web.UI" TagPrefix="asp" %>
+<%@ Register Src="~/App/UCCommon/ucQADiv.ascx" TagName="ucQaDiv" TagPrefix="ucQaDiv" %>
+<%@ Register Src="~/App/UCCommon/Footer.ascx" TagName="Footer" TagPrefix="FooterControl" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Untitled Page</title>
+    <link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon" />
+    <link href="../StyleSheets/MarketingPartner.css" rel="stylesheet" type="text/css" />
+    <link href="../StyleSheets/Commonstyle.css" rel="Stylesheet" type="text/css" />
+    <link href="../StyleSheets/UC.css" rel="stylesheet" type="text/css" />
+    <link href="../StyleSheets/Coupon.css" rel="stylesheet" type="text/css" />
+    <script src="/scripts/jquery-1.5.2.min.js" type="text/javascript"></script>
+    <asp:ContentPlaceHolder runat="server" ID="head">
+        <script src="/App/JavascriptFiles/validations.js" language="javascript" type="text/javascript"></script>
+        <script src="/App/JavascriptFiles/gridcommon.js" language="javascript" type="text/javascript"></script>
+        <script type="text/javascript" language="javascript">
+            function setframesrc(srcname)
+            {
+                document.getElementById('myframe1').setAttribute('src',srcname + '.aspx');
+                document.getElementById('spsearchtype').innerHTML = srcname;
+                document.getElementById('spchildname').innerHTML = srcname;
+                document.getElementById('txtsearch').value='';
+            }
+            
+    //        function LTrim( value ) 
+    //        {
+    //	        var re = /\s*((\S+\s*)*)/;
+    //	        return value.replace(re, "$1");
+    //        }
+
+    //        function RTrim( value ) 
+    //        {
+    //	        var re = /((\s*\S+)*)\s*/;
+    //	        return value.replace(re, "$1");
+    //        }
+
+    //        function trim( value ) 
+    //        {
+    //	        return LTrim(RTrim(value));
+    //        }
+
+            function searchquery()
+            {
+                ////debugger
+                if(document.getElementById('txtsearch').value == '')
+                {
+                    alert('Please enter some text to search.');
+                    return;
+                }
+                if(trim(document.getElementById('txtsearch').value) == '')
+                {
+                    alert('Please enter some text to search.');
+                    return;
+                }
+                //<%= this.FindControl("spsearchtype") %>
+                //var valpage = document.getElementById(<%= this.FindControl("spsearchtype") %>).innerHTML;
+                window.location = window.location.pathname + '?searchtext=' + document.getElementById('txtsearch').value;
+                
+                //document.getElementById('myframe1').setAttribute('src','' + valpage + '.aspx?searchtext=' + document.getElementById('txtsearch').value);
+                
+            }
+            
+            function onsearchtextkeypress(evt)
+            {
+             
+                var key = evt.which?evt.which:((evt.charCode)?evt.charCode:((evt.keyCode)?evt.keyCode:0));
+
+		        if(key=="13") 
+		        {
+		            searchquery();
+		            return false;
+		        }
+
+            }
+            
+        </script>
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server" autocomplete="off">
+    <cc1:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server">
+        <Services>
+            <asp:ServiceReference Path="/App/AutoCompleteService.asmx" InlineScript="true" />
+        </Services>
+    </cc1:ToolkitScriptManager>
+    <div class="defaultdiv_masterpage">
+        <ucQaDiv:ucQaDiv ID="QaDiv" runat="server" />
+    </div>
+    <div class="maintopcontainer">
+        <div class="topintercontainer">
+            <%--* Date Panel *--%>
+            <div class="datepanelmain">
+                <div>
+                    Today is: <span id="spcurdate" runat="server"></span>
+                </div>
+            </div>
+            <%-- **Logo Row * --%>
+            <div class="logoside" style="background: url(<%= IoC.Resolve<ISettings>().SmallLogo %>) no-repeat">
+            </div>
+            <uc2:ucwelcomebox ID="Ucwelcomebox2" runat="server" />
+            <%-- ** --%>
+            <%-- Menu Row  --%>
+            <div class="mainnav">
+                <uc1:ucmenucontrol ID="Ucmenucontrol2" runat="server" />
+            </div>
+            <%-- ** --%>
+        </div>
+        <div class="mainbodyouter">
+            <div class="searchtab">
+                <div class="rgtprt">
+                    <div class="searchtabtxt">
+                        <span id="spnRoot" runat="server"></span>> <span id="spchildname" runat="server">
+                        </span>
+                    </div>
+                    <div class="searchtroleboxright">
+                        <uc3:ucsearchbox ID="Ucsearchbox1" runat="server" />
+                    </div>
+                </div>
+            </div>
+            <!------------------------Left Pannel------------------------------------->
+            <%--******************* left panel starts *************--%>
+            <div runat="server" id="divleftcontainer" class="leftcontainer_main">
+                <uc4:ucleftpanel ID="Ucleftpanel1" runat="server" />
+                <uc5:ucleftpanel ID="UcleftCalendar" runat="server" Visible="false" />
+            </div>
+            <%-- ********************************************* --%>
+            <%-- *********** Content PlaceHolder here ********** --%>
+            <div class="bodycontnr">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+            <%-- *********************************************** --%>
+        </div>
+        <%--  Footer starts here  --%>
+        <FooterControl:Footer ID="FooterControl" runat="server" />
+        <%-- ** --%>
+    </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,13 @@
+﻿<div class="row-flat">
+    <div class="pad-o-8">
+        <div ng-hide="model==null || typeof(model)=='undefined'|| model.CreateNewCriteria">
+            Showing list of all customers have zip code <span>{{model.ZipCode}}</span> in <span ng-bind="RadiusText(model)"></span>.
+        </div>
+        <div ng-show="model==null || typeof(model)=='undefined'|| model.CreateNewCriteria">
+            No Criteria has been defined, please define criteria.
+        </div>
+    </div>
+</div>
+<div class="row">
+
+</div>

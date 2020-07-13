@@ -1,0 +1,134 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="Stylesheet" type="text/css" href="content/FinalPdf.css" />
+    <script type="text/javascript" src="content/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="content/jquery-ui-1.8.12.custom.min.js"></script>
+</head>
+<body>
+    <div id="AwvAaa-rpp-section" style="display: none;" class="mainContainer-wopb rpp-pagebreak">
+        <div class="centeralignimgtitlediv test-header-image">
+            <img src="content/yourabdominalaorticscreening.jpg" alt="" />
+        </div>
+        <div class="centeralignimgtitlediv test-header-text" style="display: none">
+            ABDOMINAL AORTA ANEURYSM (AAA) RESULTS
+        </div>
+        <div class="divtestsection-withborder">
+            <div class="section">
+                <div class="section-left font-description">
+                    <div class="testsection-header">
+                        ABDOMINAL AORTIC ANEURYSM (AAA)
+                    </div>
+                    The aorta is the body’s largest blood vessel, carrying oxygen-rich blood from the
+                    heart to the rest of the body. A healthy aorta has a diameter of less than 3cm and
+                    has walls that are strong and flexible. The abdominal aortic aneurysm ultrasound
+                    checks for enlarged areas of the aorta known as aneurysms. The danger from unknown
+                    aneurysms is that they can rupture without warning; this is a common cause of death
+                    among mature adults.
+                </div>
+                <div class="section-right">
+                    <img src="content/yourabdominalaorticimage.jpg" alt="" />
+                </div>
+            </div>
+            <div class="section">
+                <span class="testsection-header">RESULTS:</span><span id="AwvAaa-rpp-resultspan" class="test-resultspan-font"></span>
+            </div>
+            <div class="section">
+                <div id="AwvAaaTestResultDiv">
+                    <div class="resultContent">
+                        <div id="AwvAaaFindingDiv">
+                            <table cellspacing="0" cellpadding="0" id="AwvAaaFinding"></table>
+
+                        </div>
+                        <div id="AwvAaaReadingDiv">
+                            <div class="AwvAaaReadingwidth">
+                                Largest Measurement (Sagittal View):
+                                <input type="text" id="AwvAaaAortaSizeInputText" style="width: 20%;" />cm
+                            </div>
+                            <div class="AwvAaaReadingwidth" id="AwvAaaSagitalViewDiv">
+                                <table cellspacing="0" cellpadding="0" id="AwvAaaSagitalView"></table>
+                            </div>
+                            <div class="AwvAaaReadingwidth">
+                                Largest Measurement (Transverse View):
+                                <input type="text" id="AwvAaaTVDatapointOneTextbox" style="width: 10%;" />cm X
+                                <input type="text" id="AwvAaaTVDatapointTwoTextbox" style="width: 10%;" />cm
+                            </div>
+                            <div class="AwvAaaReadingwidth" id="AwvAaaTransverseViewDiv">
+                                <table cellspacing="0" cellpadding="0" id="AwvAaaTransverseView"></table>
+                            </div>
+                            <div class="AwvAaaReadingwidth">
+                                Peak Systolic Velocity:
+                                <input type="text" id="AwvAaaPeakSystolicVelocityTextbox" style="width: 10%;" />
+                            </div>
+                            <div class="AwvAaaReadingwidth" id="AwvAaaTransverseViewDiv">
+                                <table cellspacing="0" cellpadding="0" id="AwvAaaPeakSystolicVelocityStandardFindings"></table>
+                            </div>
+                            <div class="AwvAaaReadingwidth">
+                                Residual Lumen(Transverse View):
+                                <input type="text" id="AwvAaaResidualLumenTVDatapointOneTextbox" style="width: 10%;" />cm X
+                                <input type="text" id="AwvAaaResidualLumenTVDatapointTwoTextbox" style="width: 10%;" />cm
+                            </div>
+                            <div class="AwvAaaReadingwidth">
+                                <span style="float: left; padding-right: 10px;">
+                                    <input type="checkbox" id="AwvAaaAorticDissectionCheckbox" />Aortic Dissection
+                                </span>
+                                <span style="float: left; padding-right: 10px;">
+                                    <input type="checkbox" id="AwvAaaPlaqueCheckbox" />Plaque/Atherosclerosis
+                                </span>
+                                <span style="float: left; padding-right: 5px;">
+                                    <input type="checkbox" id="AwvAaaThrombusCheckbox" />Thrombus
+                                </span>
+                                <div style="clear: both; margin-left: -2px;">
+                                    <table id="AwvAaaIncidenatlFindings"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="resultSection">
+                            <div class="rsleft" style="display: none; width: 40%;" id="AwvAaaUnableToScreenDiv">
+                                <table cellspacing="0" cellpadding="0" id="AwvAaaUnableToScreen"></table>
+                            </div>
+                            <div class="rsright" style="width: 55%;">
+                                <input type="checkbox" id="TechnicallyLimitedbutReadableAwvAaaInputCheck" />&nbsp;Technically limited&nbsp;&nbsp;&nbsp;
+                                <input type="checkbox" id="RepeatStudyAwvAaaInputCheck" />&nbsp;Repeat Study/Unreadable
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section top-border">
+                <div class="section">
+                    <span class="testsection-header">REMARKS: </span><span id="physicianRemarksAwvAaa"></span>
+                </div>
+                <div class="section">
+                    <b>Technician: </b>
+                    <input type="text" id="techAwvAaa" style="width: 400px; border: none;" readonly="readonly" />
+                </div>
+                <div class="section">
+                    <div class="section" style="width: 20%;">
+                        <b>Physician Signature: </b>
+                        <div style="padding-top: 50px;">Electronically signed</div>
+                    </div>
+                    <div class="section" style="width: 75%;">
+                        <table cellspacing="13" class="physician-signature">
+                            <tr>
+                                <td id="AwvAaa-primaryEvalPhysicianSign" class="primaryEvalPhysicianSign" style="text-align: center;"></td>
+                                <td id="AwvAaa-overreadEvalPhysicianSign" class="overreadEvalPhysicianSign" style="text-align: center;"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="section top-border" id="AwvAaa-longdescription-div">
+                <span class="testsection-header">FOLLOW-UP: </span>
+                <p id="long-description-AwvAaa" class="test-textcontent-rpp">
+                    <i>
+                        You have purchased the test, however due to technical reasons we could not perform
+                        this test on you. If you have any questions please feel free to call us.
+                    </i>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

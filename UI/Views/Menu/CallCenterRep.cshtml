@@ -1,0 +1,29 @@
+﻿<script type="text/javascript">
+    function ClearLocalStorageAndRedirect() {
+        window.location='/CallCenter/CallCenterRepDashBoard/Index#/dashboard';
+    }
+</script>
+<div class="menu-container">
+    <ul id="topnav">
+        <li><a href="javascript:void(0)" onclick="ClearLocalStorageAndRedirect()" class="no-arrow">Home</a></li>
+        <li><a href="#">Off Call Service </a>
+            <div class="sub">
+                <ul>
+                    <li><a href="/Scheduling/Event/Index?showUpcoming=true">Events Service</a></li>
+                    <li><a href="/App/CallCenter/CallCenterRep/CallCenterRepCustomerList.aspx?Call=No">Customer Service</a></li>
+                </ul>
+            </div>
+        </li>    
+         <li><a href="#">Operations </a>
+            <div class="sub operation-nav">
+                <ul>
+                    <li>
+                        <h2>
+                            <a href="#" class="home">Manage</a></h2>
+                    </li>
+                    <li><a href="/Marketing/Reports/ProspectCustomerAbandonedReport">Customer / Prospect List</a></li>
+                </ul>
+            </div>
+        </li>     
+    </ul>
+</div>

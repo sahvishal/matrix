@@ -1,0 +1,13 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@model EnableTextingEditModel
+@{
+    Layout = null;
+}
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+
+@using (Ajax.BeginForm("UpdateEnableTexting", "EventCustomerList", new AjaxOptions { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "updateEnableTextingDiv" }))
+{
+    <div id="updateEnableTextingDiv">
+        @Html.Partial("UpdateEnableTexting",Model)
+    </div>
+ }

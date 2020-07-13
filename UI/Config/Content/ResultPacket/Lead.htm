@@ -1,0 +1,216 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="Stylesheet" type="text/css" href="content/FinalPdf.css" />
+    <script type="text/javascript" src="content/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="content/jquery-ui-1.8.12.custom.min.js"></script>
+</head>
+<body>
+    <div id="lead-rpp-section" style="display: none;" class="mainContainer-wopb rpp-pagebreak">
+        <div class="centeralignimgtitlediv test-header-image">
+            <img src="content/yourleadscreening.jpg" alt="" />
+        </div>
+        <div class="centeralignimgtitlediv test-header-text" style="display:none">
+            LEAD RESULTS
+        </div>
+        <div class="divtestsection-withborder">
+            <div class="section" id="ppLead-patient-detail" style="display:none;">
+                <div style="float: left; margin-right: 1px;" class="ppCustomername"></div><div style="float: left; margin-right: 1px;">|</div>
+                <div style="float: left;">[Member ID:</div>
+                <div style="float: left;" class="ppMemberId"></div>
+                <div style="float: left;margin-right: 1px">]</div><div style="float: left; margin-right: 1px;">|</div>
+                <div style="float: left;">DOB:</div>
+                <div style="float: left;" class="ppCustomerDob"></div><div style="float: left; margin-right: 1px;">|</div>
+                <div style="float: left; margin-right: 1px;">DOS:</div>
+                <div style="float: left;" class="ppCustomerDos"></div>
+            </div>
+            <div class="section">
+                <div class="section-left font-description">
+                    <div class="testsection-header">
+                        LOWER EXTREMITY ARTERIAL DUPLEX (LEAD)
+                    </div>
+                    <div style="display: none;">
+                        The LEAD ultrasound evaluates the two major arteries in the neck that
+                        supply blood to the brain. Studies have shown that those with excess plaque in the
+                        arteries are at higher risk for stroke and coronary heart disease. As fatty
+                        plaque builds up in these blood vessels, clots have the potential to break off,
+                        causing strokes. This ultrasound test is used to identify plaque build-up, and other
+                        obstructions that increase the risk for stroke.
+                    </div>
+                </div>
+                <div class="section-right" style="display: none;">
+                    <img src="content/yourperipheralarterialimage.jpg" alt="" />
+                </div>
+            </div>
+            <div class="section">
+                <span class="testsection-header">RESULTS:</span>
+                <span id="lead-rpp-resultspan" class="test-resultspan-font"></span>
+            </div>
+            <div class="section">
+                <div id="leadFindingDiv">
+                    <table cellspacing="0" cellpadding="0" id="leadFinding" style="display: none;">
+                        <tr>
+                            <th>
+                                Right
+                            </th>
+                            <th style="padding-left: 3px;">
+                                Left
+                            </th>
+                            <th></th>
+                        </tr>
+                    </table>
+                    <table cellspacing="0" cellpadding="0" id="leadFinding-CheckBox" style="display: none;">
+                        <tr>
+                            <th>
+                                Right
+                            </th>
+                            <th style="padding-left: 3px;">
+                                Left
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="rightNoVisualPlaque" type="checkbox" />
+                            </td>
+                            <td>
+                                <input id="leftNoVisualPlaque" type="checkbox" />
+                            </td>
+                            <td> No visual plaque shown </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="rightVisuallyDemonstratedPlaque" type="checkbox" />
+                            </td>
+                            <td>
+                                <input id="leftVisuallyDemonstratedPlaque" type="checkbox" />
+                            </td>
+                            <td> Visually demonstrated plaque/calcification </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="rightModerateStenosis" type="checkbox" />
+                            </td>
+                            <td>
+                                <input id="leftModerateStenosis" type="checkbox" />
+                            </td>
+                            <td> Moderate stenosis or greater(PSV Greater than 200cm/s) </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="rightPossibleOcclusion" type="checkbox" />
+                            </td>
+                            <td>
+                                <input id="leftPossibleOcclusion" type="checkbox" />
+                            </td>
+                            <td> Possible Occlusion </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div id="leadReadingDiv">
+                    <div>
+                        <div class="blockLeft" style="width: 295px;">
+                            Right:
+                        </div>
+                        <div class="blockRight" style="width: 295px; margin-left: 10px;">
+                            <div style="float: left;">
+                                <span style="width: 200px; float: left; padding-top: 4px;">CFA (Common femoral artery) PSV</span>
+                                <span style="float: left;">
+                                    <input type="text" id="RightCFAPSVInputText" />&nbsp;cm/sec
+                                </span>
+                            </div>
+                            <div style="float: left;">
+                                <span style="width: 200px; float: left; padding-top: 4px;">PSFA (Proximal femoral artery) PSV</span>
+                                <span style="float: left;">
+                                    <input type="text" id="RightPSFAPSVInputText" />&nbsp;cm/sec
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="clear: both; margin-left: 10px;">
+                        <input type="checkbox" id="LowVelocityRightCheckbox" />
+                        <span id="LowVelocityRightLabel"></span>
+                    </div>
+                    <div>
+                        <div class="blockLeft" style="width: 295px;">
+                            Left:
+                        </div>
+                        <div class="blockRight" style="width: 295px; margin-left: 10px;">
+                            <div style="float: left;">
+                                <span style="width: 200px; float: left; padding-top: 4px;">CFA (Common femoral artery) PSV</span>
+                                <span style="float: left;">
+                                    <input type="text" id="LeftCFAPSVInputText" />&nbsp;cm/sec
+                                </span>
+                            </div>
+                            <div style="float: left;">
+                                <span style="width: 200px; float: left; padding-top: 4px;">PSFA (Proximal femoral artery) PSV</span>
+                                <span style="float: left;">
+                                    <input type="text" id="LeftPSFAPSVInputText" />&nbsp;cm/sec
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="clear: both; margin-left: 10px;">
+                        <input type="checkbox" id="LowVelocityLeftCheckbox" />
+                        <span id="LowVelocityLeftLabel"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div class="rsleft" id="leadUnableToScreenDiv">
+                    <div style="display: none;" class="margin-small">
+                        <table cellspacing="0" cellpadding="0" id="leadUnableToScreen"></table>
+                    </div>
+                </div>
+                <div class="rsright" style="text-align: left;">
+                    <input type="checkbox" id="TechnicallyLimitedbutReadableLeadInputCheck" />&nbsp;Technically
+                    limited, but readable&nbsp;&nbsp;&nbsp;<input type="checkbox" id="RepeatStudyLeadInputCheck" />&nbsp;Unreadable
+                </div>
+            </div>
+            <div class="section top-border">
+                <div class="section">
+                    <span class="testsection-header">REMARKS: </span>
+                    <span id="physicianRemarksLead"></span>
+                </div>
+                <div class="section" id="diagnosisCodeLeadContainer">
+                    <span class="testsection-header">Possible Diagnosis Code(s):</span>
+                    <span id="diagnosisCodeLead"></span>
+                </div>
+                <div class="section" style="display: none;">
+                    <b>Technician Notes: </b>
+                    <input type="text" id="technoteslead" style="width: 680px; border: none;" readonly="readonly" />
+                </div>
+                <div class="section">
+                    <b>Technician: </b>
+                    <input type="text" id="techlead" style="width: 400px; border: none;" readonly="readonly" />
+                </div>
+                <div class="section">
+                    <div class="section" style="width: 20%;">
+                        <b>Physician Signature: </b>
+                        <div style="padding-top: 50px;">Electronically signed</div>
+                    </div>
+                    <div class="section" style="width: 75%;">
+                        <table cellspacing="13" class="physician-signature">
+                            <tr>
+                                <td id="lead-primaryEvalPhysicianSign" class="primaryEvalPhysicianSign" style="text-align: center;"></td>
+                                <td id="lead-overreadEvalPhysicianSign" class="overreadEvalPhysicianSign" style="text-align: center;"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="section top-border" id="lead-longdescription-div" style="display: none;">
+                <span class="testsection-header">FOLLOW-UP: </span>
+                <p class="test-textcontent-rpp" id="long-description-lead">
+                    <i>
+                        You have purchased the test, however due to technical reasons we could not perform
+                        this test on you. If you have any questions please feel free to call us.
+                    </i>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

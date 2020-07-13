@@ -1,0 +1,36 @@
+/* Circular Content Carousel Style */
+.ca-container{
+	position:relative;
+	/*width:910px;*/
+	height:560px;
+	margin: 20px auto;
+}
+.ca-wrapper{
+	width: 910px;
+	height:100%;
+	margin: 0 auto;
+	position:relative;
+}
+.ca-nav span.ca-nav-prev, .ca-nav span.ca-nav-next{
+	width:52px;
+	height:69px;
+	background:transparent url(../Images/sprite.png) no-repeat 12px -150px;
+	position:absolute;
+	top:40%;
+	margin-top:-35px;
+	left: 45px;
+	text-indent:-9000px;
+	opacity:0.7;
+	cursor:pointer;
+	z-index:100;
+	border: 2px solid #6ca769;
+	border-radius: 4px;
+}
+.ca-nav span.ca-nav-next{
+	background-position: -46px -150px;
+	left:auto;
+	right: 45px;
+}
+.ca-nav span:hover{
+	opacity:1.0;
+}

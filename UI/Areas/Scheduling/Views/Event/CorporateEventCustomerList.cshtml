@@ -1,0 +1,136 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels;
+@model CorporateEventCustomerViewModel
+@{
+    ViewBag.Title = "Event Customers";
+}
+<h2>
+    Event Customers
+</h2>
+<div class="exportcsvlink">
+    @if (Model != null && Model.EventData != null)
+    {
+        <a target="_blank" href="/Scheduling/ExportableReports/CorporateEventCustomerList?id=@Guid.NewGuid().ToString()&eventId=@Model.EventData.EventId">Export CSV</a>
+    }
+</div>
+<fieldset>
+    @if (Model != null && Model.EventData != null)
+    {
+        <legend>
+            <b>Event Id:</b>
+            @Model.EventData.EventId
+        </legend>
+        <div>
+            <div class="eventdetail-row">
+                <div class="fieldLabelValue" style="width: 18%;">
+                    <label>
+                        Date:
+                    </label>
+                    @Model.EventData.EventDate.ToShortDateString()
+                </div>
+                <div class="fieldLabelValue" style="width: 50%;">
+                    <label>
+                        Host:
+                    </label>
+                    @Model.EventData.Location, @Model.EventData.Address.ToString()
+                </div>
+                <div class="fieldLabelValue" style="width: 12%;">
+                    <label>
+                        Pod:
+                    </label>
+                    @Model.EventData.Pod
+                </div>
+                <div class="fieldLabelValue" style="float: right; width: 15%;">
+                    <label>
+                        Customer Count:
+                    </label>
+                    @Model.EventData.CustomerCount
+                </div>
+            </div>
+        </div>
+        <div style="clear: both; padding-top: 5px;">
+            @if (Model.CorporateEventCustomerListModel != null && Model.CorporateEventCustomerListModel.Collection != null && Model.CorporateEventCustomerListModel.Collection.Count() > 0)
+            {
+                <table id="list-view">
+                    <tr>
+                        <th>
+                            @Html.LabelFor(m => m.CorporateEventCustomerListModel.Collection.FirstOrDefault().AppointmentTime)
+                        </th>
+                        <th>
+                            @Html.LabelFor(m => m.CorporateEventCustomerListModel.Collection.FirstOrDefault().CustomerId)
+                        </th>
+                        <th>
+                            @Html.LabelFor(m => m.CorporateEventCustomerListModel.Collection.FirstOrDefault().MemberId)
+                        </th>
+                        <th>
+                            @Html.LabelFor(m => m.CorporateEventCustomerListModel.Collection.FirstOrDefault().Package)
+                        </th>
+                        <th>
+                            @Html.LabelFor(m => m.CorporateEventCustomerListModel.Collection.FirstOrDefault().PhoneHome)
+                        </th>
+                        <th>
+                            @Html.LabelFor(m => m.CorporateEventCustomerListModel.Collection.FirstOrDefault().PhoneCell)
+                        </th>
+                        <th>
+                            @Html.LabelFor(m => m.CorporateEventCustomerListModel.Collection.FirstOrDefault().PhoneBusiness)
+                        </th>
+                    </tr>
+                    @foreach (var customer in Model.CorporateEventCustomerListModel.Collection)
+                    {
+                        <tr>
+                            <td style="width: 70px;">
+                                @customer.AppointmentTime.ToShortTimeString()
+                            </td>
+                            <td>
+                                @customer.CustomerId
+                            </td>
+                            <td>
+                                @customer.MemberId
+                            </td>
+                            <td>
+                                @customer.Package
+                            </td>
+                            <td>
+                                @customer.PhoneHome
+                            </td>
+                            <td>
+                                @customer.PhoneCell
+                            </td>
+                            <td>
+                                @customer.PhoneBusiness
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <h2>
+                    No Customers Found
+                </h2>
+            }
+        </div>
+    }
+    else
+    {
+        <h2>
+            No Customers Found
+        </h2>
+    }
+</fieldset>
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

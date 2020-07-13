@@ -1,0 +1,226 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model HospitalFacilityEditModel
+
+<style type="text/css">
+    textarea
+    {
+        width: 98%;
+    }
+</style>
+<div style="float: left; width: 63%; margin-right: 5px;">
+    <fieldset>
+        <legend>Hospital Facility Details</legend>
+        <div class="editor-label">
+            @Html.LabelFor(m => m.ContractId) @Html.ValidationMessageFor(m => m.ContractId)
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(m => m.ContractId, DropDownHelper.Contracts())
+        </div>
+        @Html.EditorFor(m => m.OrganizationEditModel)
+        <div class="editor-row">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.CannedMessage) 
+            </div>
+            <div class="editor-field" style="float:left; width:500px;">
+                @Html.TextAreaFor(m => m.CannedMessage, new { @rows = "10", @cols = "20", @class = "myTextEditor" })
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div style="float: left; width: 35%;">
+    <div class="content-side-column" style="width: 98%; margin: 10px 0px;">
+        <div class="editor-row">
+            <div class="small-text">
+                <b>Organization Logo</b>
+            </div>
+            <table cellpadding="2" cellspacing="2" style="width: 100%;">
+                <tr>
+                    <td style="width: 70%;">
+                        <input type="file" name="organization_logo" />
+                    </td>
+                    @if (Model.OrganizationEditModel.LogoImage != null && Model.OrganizationEditModel.LogoImage.Id > 0)
+                    {
+                        var mediaLocation = IoC.Resolve<IMediaRepository>().GetOrganizationLogoImageFolderLocation();
+                        <td style="text-align: right;">
+                            <a href="@(mediaLocation.Url + Model.OrganizationEditModel.LogoImage.Path)" id="view_logoimage" target="_blank">
+                                View </a>
+                        </td> <td>
+                                  <a href="javascript:void(0);" onclick="removeFileLink($(this), 'LogoImage', $('#view_logoimage'));"
+                                     style="padding-top: 5px;">Remove </a>
+                              </td>
+                        @Html.HiddenFor(m => m.OrganizationEditModel.LogoImage.Id)
+                    }
+                    else
+                    {
+                        <td>
+                        </td> <td>
+                              </td> 
+                    }
+                </tr>
+            </table>
+        </div>
+        <div class="editor-row" style="font-size: 8pt;">
+            *<i> Upload only images (best resolution: 200 X 60) </i>
+        </div>
+        <hr />
+        <div class="editor-row" style="margin-top: 10px;">
+            <div class="small-text">
+                <b>Result Letter</b>
+            </div>
+            <table cellpadding="2" cellspacing="2" style="width: 100%;">
+                <tr>
+                    <td style="width: 70%;">
+                        <input type="file" name="result_letter" />
+                    </td>
+                    @if (Model.ResultLetterFile != null && Model.ResultLetterFile.Id > 0)
+                    {
+                        var mediaLocation = IoC.Resolve<IMediaRepository>().GetOrganizationResultLetterFolderLocation();
+                        <td style="text-align: right;">
+                            <a href="@(mediaLocation.Url + Model.ResultLetterFile.Path)" id="view_document_resultletter" target="_blank">
+                                View </a>
+                        </td> <td style="text-align: left;">
+                                  <a href="javascript:void(0);" onclick="removeFileLink($(this), 'ResultLetterCoBrandingFile', $('#view_document_resultletter'));"
+                                     style="padding-top: 5px;">Remove </a>
+                              </td>
+                        @Html.HiddenFor(m => m.ResultLetterFile.Id)
+                    }
+                    else
+                    {
+                        <td>
+                        </td> <td>
+                              </td> 
+                    }
+                </tr>
+            </table>
+        </div>
+        <div class="editor-row" style="font-size: 8pt;">
+            *<i> Upload only PDF files </i>
+        </div>
+        <hr />
+        <h4>Parent Hospital Partner</h4>@Html.ValidationMessageFor(m=>m.HospitalPartnerId)
+        <div class="editor-row" style="width: 99%;">
+            <div class="editor-field">                        
+                @Html.DropDownListFor(m => m.HospitalPartnerId, DropDownHelper.HospitalPartners(Model.HospitalPartnerId,true), new {@style="width: 97%;"})
+            </div>                        
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+
+        $("#OrganizationEditModel_OrganizationType , label[for=OrganizationEditModel_OrganizationType]").hide();
+    });
+
+    function removeFileLink(ctrlRef, controlIdString, viewLinkControlElement) {
+        ctrlRef.hide();
+        $("input[type=hidden][id*='" + controlIdString + "']").val(0);
+        viewLinkControlElement.hide();
+    }
+
+</script>
+<script type="text/javascript" language="javascript">
+
+    function checkValidImage(){
+        var fileName = $("input[name='organization_logo']").val();
+        var fileExpression = /^.+(.gif|.GIF|.jpg|.JPG|.jpeg|.JPEG|.bmp|.BMP|.png|.PNG)$/;
+        if ($.trim(fileName).length > 0 && fileExpression.exec(fileName) == null) {
+            alert('Only valid Image file types (gif, bmp, png, jpg or jpeg) are allowed!');
+            return false;
+        }
+            
+        return true;
+    }
+
+    function checkValidPdf(){
+        var fileName = $("input[name='result_letter']").val();
+        var fileExpression = /^.+(.pdf|.PDF)$/;
+        if ($.trim(fileName).length > 0 && fileExpression.exec(fileName) == null) {
+            alert('Only Pdf file types are allowed!');
+            return false;
+        }
+
+        return true;
+    }
+
+
+    function ValidateFileType(){            
+        var result = checkValidImage();
+        if(!result) return false;
+
+        result = checkValidPdf();
+        if(!result) return false;
+
+        return true;
+    }
+
+    $(document).ready(function() {
+        $("input[type=submit]").click(ValidateFileType);
+        @if (Model.OrganizationEditModel.LogoImage != null && Model.OrganizationEditModel.LogoImage.Id > 0)
+        {
+            <text>
+            $("input[type='hidden'][name*='LogoImage']").val('@Model.OrganizationEditModel.LogoImage.Id');
+            </text>
+        }
+        @if (Model.ResultLetterFile != null && Model.ResultLetterFile.Id > 0)
+        {
+            <text>
+            $("input[type='hidden'][name*='ResultLetterFile']").val('@Model.ResultLetterFile.Id');
+            </text>
+        }
+    });
+
+</script>
+
+<script type="text/javascript" src="/App/JavascriptFiles/tiny_mce/tiny_mce.js"></script>
+<script language="javascript" type="text/javascript">
+    tinyMCE.init({
+        // General options
+        //mode: "textareas",
+        mode: "specific_textareas",
+        editor_selector: "myTextEditor",
+        theme: "advanced",
+        height: "300",
+        plugins: "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+
+        // Theme options
+        theme_advanced_buttons1: "newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,cleanup,code", //anchor,image //,help
+        theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,advhr,|,ltr,rtl", //iespell,media,//,|,print,|,ltr,rtl,|,fullscreen
+        theme_advanced_buttons4: "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak,restoredraft,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+        theme_advanced_toolbar_location: "top",
+        theme_advanced_toolbar_align: "left",
+        theme_advanced_statusbar_location: "bottom",
+        theme_advanced_resizing: false,
+        theme_advanced_resizing_min_width: 200,
+
+        // Example content CSS (should be your site CSS)
+        content_css: "/App/JavascriptFiles/tiny_mce/css/content.css",
+
+        // Drop lists for link/image/media/template dialogs
+        template_external_list_url: "/App/JavascriptFiles/tiny_mce/lists/template_list.js",
+        external_link_list_url: "/App/JavascriptFiles/tiny_mce/lists/link_list.js",
+        external_image_list_url: "/App/JavascriptFiles/tiny_mce/lists/image_list.js",
+        media_external_list_url: "/App/JavascriptFiles/tiny_mce/lists/media_list.js",
+
+        // Style formats
+        style_formats: [
+			{ title: 'Bold text', inline: 'b' },
+			{ title: 'Red text', inline: 'span', styles: { color: '#ff0000' } },
+			{ title: 'Red header', block: 'h1', styles: { color: '#ff0000' } },
+			{ title: 'Example 1', inline: 'span', classes: 'example1' },
+			{ title: 'Example 2', inline: 'span', classes: 'example2' },
+			{ title: 'Table styles' },
+			{ title: 'Table row 1', selector: 'tr', classes: 'tablerow1' }
+        ],
+
+        // Replace values for the template plugin
+        template_replace_values: {
+            username: "Some User",
+            staffid: "991234"
+        }
+    });
+</script>

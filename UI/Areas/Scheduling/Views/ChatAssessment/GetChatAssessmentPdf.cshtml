@@ -1,0 +1,11 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model ChatAssessmentPdfViewModel
+
+@{
+    Layout = null;
+}
+
+<iframe src="@Model.PdfUrl" style="width: 850px; height: 650px; "></iframe>
+@*<div style="margin-top:10px">
+    <input type="checkbox" id="chkAssessmentVerified" /> Have you verified this Assessment PDF?
+</div>*@

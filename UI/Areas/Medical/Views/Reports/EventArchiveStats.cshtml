@@ -1,0 +1,139 @@
+﻿@using System.Linq
+@using Falcon.App.Core.Medical.ViewModels
+@model EventArchiveStatsListModel
+@{
+    ViewBag.Title = "Event Archive Stats";
+}
+
+<script src="/Scripts/reportexportqueue.js"></script>
+
+<h1>Event Archive Stats</h1>
+
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+
+<div id="list-filter">
+    @{Html.BeginForm("EventArchiveStats", "Reports", FormMethod.Get);}
+    @Html.Partial("EventArchiveStatsFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Collection != null && Model.Collection.Any())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 5000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/Medical/ReportsQueue/EventArchiveStats?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                Export CSV
+            </a>
+        }
+        else
+        {
+            <a target="_blank" href="/Medical/ExportableReports/EventArchiveStats?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th>
+                Event Id
+            </th>
+            <th>
+                Event
+            </th>
+            <th>
+                Archive Name
+            </th>
+            <th>
+                Upload Start
+            </th>
+            <th>
+                Upload End
+            </th>
+            <th>
+                Time Taken
+            </th>
+            <th>
+                Uploaded By
+            </th>
+            <th>
+                Upload Status
+            </th>
+        </tr>
+        @foreach (var upload in Model.Collection)
+        {
+            <tr>
+                <td>
+                    @upload.EventId
+                </td>
+                <td>
+                    <b>At</b> @upload.EventName
+                    <br />
+                    <b>On</b> @upload.EventDate.ToShortDateString()
+                    <br />
+                    <b>Pod</b> @upload.PodName
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(upload.ArchiveName))
+                    {
+                        <span>@upload.ArchiveName</span><br />
+                        <span style="float: left; padding-top: 3px; font-weight: bold;">@upload.FileSize</span>
+                    }
+                    else
+                    {
+                        <span>NA</span>
+                    }
+                </td>
+                <td>
+                    @upload.UploadStartTime.ToString("M/d/yyyy HH:mm:ss")
+                </td>
+                @if (upload.UploadEndTime.HasValue)
+                {
+                    <td>
+                        @upload.UploadEndTime.Value.ToString("M/d/yyyy HH:mm:ss")
+                    </td>
+                    <td>
+                        @upload.TimeTaken
+                    </td>
+                }
+                else
+                {
+                    <td>NA</td>
+
+                    <td>NA</td>
+                }
+                <td>
+                    @upload.UploadedBy
+                </td>
+                <td>
+                    @upload.UploadStatus
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records found!
+    </h2>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

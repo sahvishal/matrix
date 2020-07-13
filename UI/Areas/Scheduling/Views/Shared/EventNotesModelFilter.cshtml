@@ -1,0 +1,33 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@using System
+
+@model EventNotesModelFilter
+
+<h2>Search Records</h2>
+
+<div style="padding-left: 5px; overflow: hidden; padding-bottom:10px;">
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Health Plan:
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 17%">
+        <div class="small-text"><b>Event</b> From: </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">To: </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 12%">
+        <div class="small-text">
+            Pod:
+        </div>
+        @Html.DropDownListFor(m => m.PodId, DropDownHelper.Pods(), new { @style = "width:80%;" })
+    </div>
+    <div class="editor-column" style="width:18%; float: right; padding-top:12px; text-align: right;">
+        @Html.ActionLink("Clear", "ManageEventNotes", "Event") | @Html.SubmitButton("Search")
+    </div>
+</div>

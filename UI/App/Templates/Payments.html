@@ -1,0 +1,58 @@
+﻿{#param name=PaymentTotal}
+<h3>
+    Payment History</h3>
+<table id="PaymentViewDataTemplateTable" class="divgrid_cl">
+    <thead>
+        <tr class="row1" style="text-align: center; font-size: 11px">
+            <th>
+                Mode
+            </th>
+            <th>
+                Transaction Date
+            </th>
+            <th class="executed-by-role">
+                Received By/Role
+            </th>
+            <th class="amt">
+                Amount
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {#foreach $T as PaymentViewData}
+        <tr class="smalltxt11">
+            <td>
+                {#if $T.PaymentViewData.PaymentInstrumentName == 'Cash'} {$T.PaymentViewData.PaymentInstrumentName}{#/if}
+                {#if $T.PaymentViewData.PaymentInstrumentName == 'Credit Card'} {$T.PaymentViewData.PaymentInstrumentName}
+                ({$T.PaymentViewData.InstrumentNumber}, Exp:{$T.PaymentViewData.InstrumentDate}{#if
+                $P.RoleId == '1'}, <br /> Request Id: {$T.PaymentViewData.ProcessorResponse}{#/if}){#/if}
+                {#if $T.PaymentViewData.PaymentInstrumentName == 'Check'} {$T.PaymentViewData.PaymentInstrumentName}(Check
+                Number: {#if $T.PaymentViewData.InstrumentNumber == ''}No Check # {#else}{$T.PaymentViewData.InstrumentNumber}{#/if}){#/if}
+                {#if $T.PaymentViewData.PaymentInstrumentName == 'eCheck'} {$T.PaymentViewData.PaymentInstrumentName}(Check
+                Number: {$T.PaymentViewData.InstrumentNumber}{#if $P.RoleId == '1'}, <br /> Request Id:
+                {$T.PaymentViewData.ProcessorResponse}{#/if}){#/if} {#if $T.PaymentViewData.PaymentInstrumentName
+                == 'Gift Certificate'} {$T.PaymentViewData.PaymentInstrumentName}{#/if}
+                {#if $T.PaymentViewData.PaymentInstrumentName == 'Insurance'} 
+                {$T.PaymentViewData.PaymentInstrumentName} ({$T.PaymentViewData.ProcessorResponse})
+                {#/if}
+            </td>
+            <td class="amt">
+                {#if $T.PaymentViewData.DateCreated != null}{$T.PaymentViewData.DateCreated}{#else}N/A{#/if}
+            </td>
+            <td class="amt executed-by-role">
+                {#if $T.PaymentViewData.CreatorRoleName == 'Customer'} Self {#else} {$T.PaymentViewData.CreatorUserName}
+                / {$T.PaymentViewData.CreatorRoleName}{#/if}
+            </td>
+            <td class="amt">
+                {#if $T.PaymentViewData.Amount >= 0} {FormatCurrency($T.PaymentViewData.Amount)}
+                {#else} ({FormatCurrency((-1)*$T.PaymentViewData.Amount)}){#/if}
+            </td>
+        </tr>
+        {#/for}
+        <tr>
+            <td colspan="4" style="text-align: right">
+                <strong>Payment Total: ${$P.PaymentTotal} </strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

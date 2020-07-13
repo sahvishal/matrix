@@ -1,0 +1,16 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+<div>
+    <div class="editor-row">                
+        <div style="float:left; width:30%">State :</div>
+        <div style="float:left; width:60%">@Html.DropDownList("StateId", DropDownHelper.States())</div>
+    </div>
+    <div class="editor-row">                
+        <div style="float:left; width:30%">License Number :</div>
+        <div style="float:left; width:60%">@Html.TextBox("LicenseNumber")</div>
+    </div>
+    <div class="editor-row">
+        <div style="float:left; width:30%">Expiry date:</div>
+        <div style="float:left; width:60%">@Html.TextBox("Expirydate", String.Format("{0:yyyy-MM-dd}", ""), new { @class = "datePicker" })</div>
+    </div>
+    <input type="hidden" id="LicenseKey" />
+</div>

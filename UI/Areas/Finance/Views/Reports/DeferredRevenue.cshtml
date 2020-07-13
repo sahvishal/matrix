@@ -1,0 +1,201 @@
+@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.Core.Extensions
+@model DeferredRevenueListModel
+@{
+    ViewBag.Title = "Deferred Revenue";
+}
+<h1>
+    Deferred Revenue</h1>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<div id="list-filter">
+    @{Html.BeginForm("DeferredRevenue", "Reports", FormMethod.Get);}
+    @Html.Partial("DeferredRevenueListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/DeferredRevenue?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel);
+                                        
+    <table style="width: 100%;">
+        @foreach (var eventData in Model.Collection)
+        {    
+            <tr>
+                <td style="padding-bottom: 15px;">
+                    <fieldset>
+                        <legend><b>Event Id:</b>
+                            @eventData.EventId</legend>
+                        <div>
+                            <div style="float: left; width: 65%; padding-bottom:10px;">
+                                <div class="eventdetail-row">
+                                    <div class="fieldLabelValue" style="width: 90%">
+                                        <label>
+                                            Name:
+                                        </label>
+                                        @eventData.EventName
+                                    </div>
+                                </div>
+                                <div class="eventdetail-row">
+                                    <div class="fieldLabelValue" style="width: 100%;">
+                                        <label>
+                                            Location:
+                                        </label>
+                                        @eventData.EventAddress.ToString()
+                                    </div>
+                                </div>
+                                <div class="eventdetail-row">
+                                    <div class="fieldLabelValue">
+                                        <label>
+                                            Date:
+                                        </label>
+                                        @eventData.EventDate.ToShortDateString()
+                                    </div>
+                                    <div class="fieldLabelValue" style="float: right;">
+                                        <label>
+                                            Pod:
+                                        </label>
+                                        @eventData.Pod
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="float: right; width: 30%;">
+                                <table cellspacing="5" cellpadding="1">
+                                    <tr style="font-weight: bold; text-align: center;">
+                                        <td style="width: 33%; border-bottom: 1px solid;">
+                                            Revenue
+                                        </td>
+                                        <td style="width: 33%; border-bottom: 1px solid;">
+                                            Liabilty
+                                        </td>
+                                        <td style="width: 33%; border-bottom: 1px solid;">
+                                            Amount Due
+                                        </td>
+                                    </tr>
+                                    <tr style="text-align: center;">
+                                        <td>
+                                            @(eventData.TotalRevenue > 0 ? "$" + eventData.TotalRevenue.ToString("00.00") : "-")
+                                        </td>
+                                        <td>
+                                            @(eventData.TotalLiability > 0 ? "$" + eventData.TotalLiability.ToString("00.00") : "-")
+                                        </td>
+                                        <td>
+                                            @(eventData.TotalAmountDue > 0 ? "$" + eventData.TotalAmountDue.ToString("00.00") : "-")
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="clear: both; margin-top: 5px;">
+                            @if (eventData.Customers != null && eventData.Customers.Count() > 0)
+                            {
+                                <table id="list-view" style="width: 99%;">
+                                    <tr>
+                                        <th style="width: 300px;">
+                                            Customer Info
+                                        </th>
+                                        <th style="text-align: right">
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().RegistrationDate)
+                                        </th>
+                                        <th style="width: 200px;">
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().CustomerOrder)
+                                        </th>
+                                        <th style="text-align: right">
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().DiscountedTotal)
+                                        </th>
+                                        <th style="text-align: right">
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().TotalPayment)
+                                        </th>
+                                        <th style="text-align: right">
+                                            @Html.LabelFor(m => m.Collection.FirstOrDefault().Customers.FirstOrDefault().UnPaid)
+                                        </th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                    @foreach (var customer in eventData.Customers)
+                                    {
+                                        <tr>
+                                            <td style="width: 300px;">
+                                                <b>Name:</b> @customer.CustomerName [ @customer.CustomerId]
+                                                <div style="margin-top: 5px;">
+                                                    <b>Address:</b> @customer.CustomerAddress.ToString()
+                                                    <br />
+                                                    <b>Phone:</b> @customer.CustomerPhone
+                                                    <br />
+                                                    <b>Email:</b> @customer.Email
+                                                </div>
+                                            </td>
+                                            <td style="text-align: right">
+                                                @customer.RegistrationDate.ToShortDateString()
+                                            </td>
+                                            <td style="width: 200px;">
+                                                @customer.CustomerOrder
+                                            </td>
+                                            <td style="text-align: right">
+                                                $@customer.DiscountedTotal.ToString("00.00")
+                                            </td>
+                                            <td style="text-align: right">
+                                                $@customer.TotalPayment.ToString("00.00")
+                                            </td>
+                                            <td style="text-align: right">
+                                                $@customer.UnPaid.ToString("00.00")
+                                            </td>
+                                            <td style="text-align: right">
+                                                @{decimal amountDue = customer.DiscountedTotal - customer.TotalPayment;}
+                                                <a href="javascript:void(0);" onclick='return ShowOrderDetails("@customer.OrderId","@customer.CustomerId","@customer.CustomerName")'>
+                                                    View Order</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {
+                                <h2>
+                                    No Customers Found
+                                </h2>
+                                <br /> 
+                            }
+                        </div>
+                    </fieldset>
+                </td>
+            </tr>    
+        }
+    </table>  
+                                     
+    @Html.DisplayFor(m => m.PagingModel);
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function ShowOrderDetails(orderId, customerId, customerName) {
+            window.open("/App/Common/OrderSummary.aspx?OrderId=" + orderId + "&CustomerName=" + customerName + "&CustomerId=" + customerId, "OrderSummary", "width=750, height=400, menubar=0, toolbar=0, status=0, location=0, resizable=0, dependent=1, scrollbars=1");
+            return false;
+        }
+    </script>
+}

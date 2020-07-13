@@ -1,0 +1,42 @@
+﻿<div data-ng-controller="ConfirmationController" class="container no-padding bg-default" us-spinner spinner-key="online-spinner">
+    <quantcast name1="Healthfair" name2="Confirmation"></quantcast>
+    <div class="sub-header bg-success relative">
+        <!--<div class="header-right">
+            <progressbar-view></progressbar-view>
+            <order-summary></order-summary>
+        </div>-->
+        <div class="header-left">
+            <h2 class="no-margin">Confirmation</h2>
+        </div>
+    </div>
+
+    <div class="main-container border-default">
+        <div class="col-sm-12 top-buffer-10 print-wrap">
+            
+            <a href="javascript:void(0)" ng-click="signupAnotherCustomer()" ng-show="showsignupbtn" ng-disabled="isPosted" class="sign-up-another">Sign up another person</a>
+            <a href="javascript:void(0)" ng-click="printConfirmation()" ng-disabled="isPosted" class="print-this">Print Confirmation Receipt</a>
+
+            <!--<a class="pull-right host-name-transfrom" href="javascript:void(0)" ng-click="signupAnotherCustomer()" ng-show="showsignupbtn" ng-disabled="isPosted">Sign up another person</a>
+            <span class="pull-right pipe-seperator" ng-show="showsignupbtn">&nbsp;&nbsp;|&nbsp;&nbsp;</span>-->
+            <!--<a class="pull-right " ng-href="{{printHealthAssessmentForm()}}" ng-show="showPrintHafForm" ng-disabled="isPosted" target="_blank">Print Health Assessment Form</a>
+            <span class="pull-right pipe-seperator" ng-show="showPrintHafForm">&nbsp;&nbsp;|&nbsp;&nbsp;</span>-->
+            <!--<div class="pull-right"><a href="javascript:void(0)" class="host-name-transfrom" ng-click="printConfirmation()" ng-disabled="isPosted"><em class="print-button-Icon"></em>Print Confirmation Receipt</a></div>-->
+        </div>
+        <div class="event-search-wrap conclusion-wrap">
+            <h4 class="text-center no-margin">Your Check-in Process is Successfully</h4>
+            <h4 class="text-center no-margin"><span>Completed.</span></h4>
+            <p class="text-center top-buffer-10">You can login to your account any time using your username and password to make changes to the reservation you made. Thank you for putting your trust on us. We ensure that you have a good health care service. </p>
+            <p class="top-buffer-20 big-text text-center">Share your appointment details</p>
+            <div class="clearfix text-center">
+                <a href="https://twitter.com/healthfairusa" class="social-media twitter" target="_blank">&nbsp;</a>
+                <a href="http://facebook.com/healthfairusa" class="social-media facebook" target="_blank">&nbsp;</a>
+                <a href="https://www.linkedin.com/company/healthfair" class="social-media linkedin" target="_blank">&nbsp;</a>
+            </div>
+        </div>
+        <div class="clearfix lower-btns">
+            <div class="col-sm-12">
+                <button class="btn btn-primary btn-solid pull-right" ng-click="finish()">Finish</button>
+            </div>
+        </div>
+    </div>
+</div>

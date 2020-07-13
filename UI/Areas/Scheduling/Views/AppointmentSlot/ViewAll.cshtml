@@ -1,0 +1,22 @@
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.EventAppointmentListModel
+@{
+    ViewBag.Title = "View Appointment Slot";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml";
+}
+<link href="/App/jquery/css/JQuery-Selectable/Selectable.css" rel="stylesheet" type="text/css" />
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<div style="float: left; width: 500px;" id="container-div">
+    @Html.Partial("ViewAppointment", Model)
+</div>
+
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function () {
+        //debugger;
+        $('.delete-area').hide();
+        $('.appointment-container-div').css({ "background": "#FFFFFF", "width": "350px" });
+        $('.appointment-container-div').children().css({ "width": "350px" });
+    });
+</script>

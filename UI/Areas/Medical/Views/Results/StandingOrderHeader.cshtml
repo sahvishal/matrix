@@ -1,0 +1,12 @@
+﻿@model Falcon.App.Core.Scheduling.ViewModels.StandingOrderFormHeaderEditModel
+
+@{
+    Layout = null;
+}
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/StandingOrderFormHeader.cshtml")))
+{
+    <div style="font: normal 13px Arial">
+        @Html.Partial("/Config/Content/Views/Shared/StandingOrderFormHeader.cshtml", Model)
+    </div>
+
+}

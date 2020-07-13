@@ -1,0 +1,14 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Finance.ViewModels.HealthPlanRevenueListModelFilter
+
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 24%">
+        <div class="small-text">
+            Health plan
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(Model.HealthPlanId), new { @style = "width:100%;" })
+    </div>
+    <div class="editor-column" style="padding-top: 10px; text-align: right; float: right;">
+        @Html.ActionLink("Clear","index", "HealthPlanRevenue") | @Html.SubmitButton("Search")
+    </div>
+</div>

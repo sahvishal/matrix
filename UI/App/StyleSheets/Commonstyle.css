@@ -1,0 +1,550 @@
+﻿@import url("footer.css");
+html,body{background:#e5ecf3;font:normal 12px Arial,;margin:0;color:#000;line-height:1.5em;height:101%}
+/* Basic styles added by Yasir =- July 09 -*/
+h1 {font:bold 20px arial; margin:0px; padding:0px; color:#F47E1C;}
+h2 {font:bold 16px arial; margin:0px; padding:0px; color:#F47E1C}
+h3 {font:bold 15px arial; margin:0px; padding:0px; color:#F47E1C}
+h4 {font:bold 13px arial;margin:0px; padding:5px 0;color:#000}
+input[type=text]{ border:1px solid #7F9DB9;Background-color:#fff;z-index:-5;font:normal 12px arial;color:#333;padding:2px;}
+.button{background:#5996b5 url(/App/Images/btn-bg.gif) repeat-x top;height:25px;color:#fff;font:bold 12px arial;border:0;padding:0 5px;cursor:pointer}
+.defaultdiv_masterpage{float: left; width:100%;}
+.customerheader_botbg{float:left; width:980px; height:7px;}
+.btextblu{font:bold 12px arial; color:#287AA8;} 
+div.hr{width:100%;height:1px;background:#ccc;line-height:1px;margin:5px 0 5px 0}
+.bold{font-weight:bold;}
+.mpo{margin:0;padding:0}
+.mt_img{margin-top:3px;}
+.mt_medium{margin-top:10px;}
+.ml_medium{margin-left:10px;}
+.both{clear:both;}
+/* picked from the other CSS its used common */
+.grid { BORDER: #e5e5e5 1px solid; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: #F7F7F7; width:100%; }
+.grid TD { BORDER: #e5e5e5 1px solid; PADDING: 4px;  color:#000;}
+.grid TH { BORDER: #e5e5e5 1px solid; text-align:left; PADDING: 4px; color:#000;}
+.grid .row1 { background-color: #CEE1F4; font: bold 12px arial; color:#000; }
+.grid .row1 a:link {color:#000; text-decoration:none;}
+.grid .row1 a:visited {color:#000; text-decoration:none;}
+.grid .row1 a:hover {color:#000; text-decoration:none;}
+.grid .row2 { background-color: #EBEBEB; font: normal 12px arial;}
+.grid .row3 { background-color: #F7F7F7; font: normal 12px arial;}
+.grid td input{border:none;}
+/*********************************************************************************************/
+.gridnew { BORDER:none; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: #fff; width:100%; }
+.gridnew TD { border-bottom:1px solid #D7DDD3;border-left:1px solid #fff; border-right:1px solid #fff; PADDING: 4px; color:#000; }
+.gridnew TH {  text-align:left; PADDING: border-left:1px solid #fff; border-right:1px solid #fff; PADDING: 4px; color:#000;}
+.gridnew .row1 { background-color: #6C8CB3; vertical-align:top; font: bold 12px arial; color:#ffffff; }
+.gridnew .row1a { background-color: #CEE1F4; vertical-align:top; font: bold 12px arial; color:#000; }
+.gridnew .row1a a:link {font: bold 12px arial; color:#000; text-decoration:none; }
+.gridnew .row1a a:visited {font: bold 12px arial; color:#000; text-decoration:none;  }
+.gridnew .row1a a:hover {font: bold 12px arial; color:#000; text-decoration:none;  }
+.gridnew .row2 {  background-color:#F4F8F9; font: normal 12px arial;}
+.gridnew .row2a {  background-color:#EBEBEB; font: normal 12px arial;}
+.gridnew .row3 {  background-color:#FFFFFF; font: normal 12px arial;}
+.main_area_bdr{ float:left; width:751px; border:1px solid #E5E5E5; margin-top:5px;}
+.main_area_bdrnone{ float:left; width:100%;}
+.orngheadtxt_heading{float:left; font:bold 20px arial; color:#F37C00;}
+.headingbox_top_body{float:left;padding:0px 5px 0px 0px;width:100%;}
+.watermarktxt{Color:#ccc; font-style:italic;}
+.graylinefull_common{float:left; width:750px; height:1px;background-color:#CCCCCC;display:block}
+.buttonrow_bottom_common{ float:right; width:753px; Padding-top:5px; Padding-bottom:5px;  }
+.pgnosymbol_common{float:left; width:38px; height:39px;}
+.pgnosymbolvsmall_common{float:left; width:26px; height:27px; margin-top:4px;}
+.orngheadtxt16_common{float:left; font:bold 16px arial; color:#F47E1C; padding:10px 0px 0px 5px;}
+.graylinemidium_common{float:left; width:600px; height:1px; background-color:#CCCCCC;}
+.watermarktxtinput_default{border: 1px solid #7F9DB9; background:url(../images/searchwatermark.gif) no-repeat; Background-color:#fff; z-index:-5; font: normal 12px arial; color:#fff; padding:2px;}
+.watermark_mecss { font-style:italic; color:gray; }
+/*********************************** Default Classes   *********************************************************************** */
+.main_container_row_default{ float:left; width:734px; padding:3px 5px 3px 10px;}
+.titletext_default{ float:left; width:110px; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+.titletext1a_default{ float:left; width:120px; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+.titletext1b_default{ float:left; width:100px; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+.titletextlarge_default{ float:left; width:140px; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+.titletextsmall_default{ float:left; width:80px; margin-right:5px; padding-top:5px; color:#000; font-weight:normal;}
+.titletextsmallbld_default{ float:left; width:70px; margin-right:5px; padding-top:3px; color:#000; font-weight:bold;}
+.titletextsmallbld1_default{ float:left; width:80px; margin-right:5px; padding-top:3px; color:#000; font-weight:bold;}
+.titletextnowidth_default{ float:left; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+.ttxtnowidthnormal_default{ float:left; margin-right:5px; padding-top:3px; font-weight:normal; color:#000;}
+.ttxtwidthnormal_default{ float:left; width:250px; margin-right:5px; padding-top:3px; font-weight:normal;}
+.ttxtwidthnormalsmall_default{ float:left; width:150px; margin-right:5px; padding-top:3px; font-weight:normal;}
+.ttxtwidthbold_default{ float:left; width:140px; margin-right:5px; padding-top:3px; font-weight:bold;}
+.inputfieldconleft_default{ float:left; width:180px; margin-right:85px; padding-top:0px;}
+.inputfieldright_default{ float:left; width:180px; }
+.inputfielddate_default{ float:left; width:85px; }
+.inputfldnowidth_default{ float:left; margin:0px; padding:0px;}
+.inputfldnowidth1_default{ float:left; margin:0px; margin-top:2px;}
+.inputf_def{ border:1px solid #7F9DB9; Background-color:#fff; z-index:-5; font: normal 12px arial; color:#333; padding:2px;}
+.inputfsmall_def{ border: 1px solid #7F9DB9; Background-color:#fff; z-index:-5; font: normal 11px arial; color:#333;}
+.inputlist_def{ border: 1px solid #7F9DB9; Background-color:#fff; font: normal 12px arial; color:#333;}
+.calendarcntrl_default{float:left; width:15px; padding:5px 5px 0px 5px; }
+.scripticon_default{float:left; width:20px; padding-top:3px; }
+.button_con_savencancel{  float:right; width:138px; margin-bottom:10px; padding-right:5px; }
+.headbg2_box_default{ float:left; width:753px; Padding-top:5px; Padding-bottom:10px;}
+.buttoncon_default{float:right; width:57px; height:32px; padding-right:5px;}
+.buttoncon2_default{float:right; width:97px; height:32px; margin-bottom:5px; padding-right:5px;}
+.buttoncon3_default{float:right; width:68px; height:32px; margin-bottom:5px; padding-right:5px;}
+.button_con_nowidth{  float:left; padding-left:5px; }
+.dgdefault{float:left; width:753px;}
+.defaultgrid{float:left; width:751px; border-left:1px solid #D7DDD3; border-right:1px solid #D7DDD3;}
+.divbtnright{float:left; width:695px;}
+.btncellright{float:right; width:650px;}
+.buttonconleft3_default{float:left; width:68px; height:25px; padding-left:5px;}
+.buttonconleft_default{float:left; width:61px; height:25px; padding-left:5px;}
+.buttoncon4_default{float:right; width:110px; height:32px; padding-right:5px;}
+.maindivblutab_def{float:left; font-weight:bold; font-size:13px;}
+.blutxt12{font:bold 12px arial; color:#009fc3;}
+.orngbold12_default{font:bold 12px arial; color:#F37C00;}
+.orngbold14_default{font:bold 14px arial; color:#F37C00;}
+.orngbold16_default{font:bold 16px arial; color:#F37C00;}
+.orngbold18_default{font:bold 18px arial; color:#F37C00;}
+.graybold14_default{font:bold 14px arial; color:#666;line-height:20px}
+.graybold12_default{font:bold 12px arial; color:#666;}
+.graydarkbold12_default{font:bold 12px arial; color:#333;}
+.whitebold20_default{font:bold 20px arial; color:#fff;}
+.whitetxt12{color:#fff;font-size:12px;}
+.blkbold12_default{font:bold 12px arial; color:#000;}
+.blacknormal16_default{font:normal 18px arial; color:#000;}
+.graysmalltxt_default{font:normal 11px arial; color:#333;}
+.blktextbig_default{font:bold 16px arial; color:#000;}
+.blktext14px_default{font:bold 14px arial; color:#000;}
+.blktext13px_default{font:bold 13px arial; color:#000;}
+.lgtgraytxt_default{color:#999999;}
+.greentxt_default{color:#617A2C;}
+.orngtxt_default{color:#E46C0A;}
+.redtxt_default{color:#FF0000;}
+.graytxtnormal{float:left; color:#666;}
+.graytxtbold{float:left; color:#666; font-weight:bold; padding-right:5px;}
+.btextblu14{font:bold 14px arial; color:#287AA8;}
+.btextblu12{font:bold 12px arial; color:#287AA8;}
+.maindivblutab_def a:link{text-decoration:none;}
+.maindivblutab_def a:visited{text-decoration:none;}
+.maindivblutab_def a:hover{text-decoration:none;}
+.maindivblutab_def .left{float:left; background:url(../Images/tabimages/blubtnleftbg-mdetails.gif) no-repeat; height:28px; width:8px;}
+.maindivblutab_def .mid{float:left; background:url(../Images/tabimages/blubtnmidbg-mdetails.gif) repeat-x; height:28px; padding:4px 15px 0px 15px;}
+.maindivblutab_def .mid a:link{color:black; text-decoration:none;}
+.maindivblutab_def .right{float:left; background:url(../Images/tabimages/blubtnrgtbg-mdetails.gif) no-repeat; height:28px; width:8px;}
+.main_cont_rowlesspad_default{ float:left; width:734px; padding-left:10px; padding-top:1px; padding-right:5px; padding-bottom:1px;}
+.orngheadtxt_default{ float:left; font:bold 18px arial; color:#F37C00;}
+.fline_defult{float:left; width:690px; background:url(../Images/fadeline-hzbig-copy.gif) no-repeat;height:1px; margin:5px 0px 5px 0px;}
+.normaltextnowidth_default{ float:left; margin-right:5px; padding-top:3px; font-weight:normal; color:#000;}
+.notificationtxt_default{float:left; color:#999; font-style:italic;}
+.headingright_default{float:right; padding-top:3px;}
+.linkright_default{float:right; padding-right:10px;}
+.inputfieldconleftbig_default{ float:left; width:260px; margin-right:5px; padding-top:0px;}
+.inputfieldrightsmall_default{ float:left; width:120px; }
+.main_container_row_default1{ float:left; width:715px; padding:3px 0px 3px 32px;}
+.titletextnowidth11px_default{ float:left; margin-right:5px; padding-top:3px; font:bold 11px arial; color:#000;}
+.smalltxtblu{font:normal 11px arial; color:#287AA8;}
+.grayb{font:bold 11px arial; color:#666;}
+.blu{color:#287AA8;}
+/************************ Added on 25-july-2008 by rakesh ******************************************************/
+.cevalution_butt_results{ float:right; width:135px; height:32px; padding-right:5px; margin-bottom:10px; }
+/************************************************************************************************************ */
+.dgeventhistory_common{float:left; width:743px; margin:0px; padding:0px}
+.dgheadeventhistory_common{ background:url(../Images/CCRep/grid-header-bg-CCRep.gif) no-repeat;}
+.grideventhistorycommon { border-left: #B0B3B8 1px solid; border-right: #B0B3B8 1px solid; border-bottom: #B0B3B8 1px solid; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: #FFFFFF; width:100%; }
+.grideventhistorycommon TD { border-bottom: #E4E4E4 1px solid; PADDING: 4px; vertical-align:top; color:#000; }
+.grideventhistorycommon TH { border-bottom: #E4E4E4 1px solid; text-align:left; PADDING: 4px; vertical-align:top; color:#000;}
+.grideventhistorycommon .row1 { background-color: #DBE2FF; font: bold 11px arial; padding:0px 4px 4px 4px; }
+.grideventhistorycommon .row1 a:link {font: bold 11px arial; color:#000; text-decoration:none; }
+.grideventhistorycommon .row1 a:visited {font: bold 11px arial; color:#000; text-decoration:none; }
+.grideventhistorycommon .row1 a:hover {font: bold 11px arial; color:#000; text-decoration:none; }
+.grideventhistorycommon .row2 { background-color: #FFFFFF; font: normal 11px arial; color:#666;}
+.grideventhistorycommon .row2 a:link {font: normal 11px arial;}
+.grideventhistorycommon .row2 a:visited {font: normal 11px arial;}
+.grideventhistorycommon .row2 a:hover {font: normal 11px arial;}
+.dgselecttime_common{float:left; width:744px; }
+.divtimeslotactive_common{float:left; width:66px; background-color:#C9E1ED; border-left:1px solid #fff; border-right:1px solid #fff; height:53px; padding-top:5px; }
+.nextpre_btncon_common{float:left; width:32px; height:61px; }
+.dgtimeslot_common{float:left; width:680px; background-color:#F2F2F2; height:58px; margin-top:2px;}
+.divtimeslotdef_common{float:left; width:66px; height:53px; background-color:#F2F2F2; border-left:1px solid #fff; border-right:1px solid #fff; padding-top:5px; }
+.radiotimeslot_common{float:left; width:66px; text-align:center; font:normal 11px arial; color:#000; padding:4px 2px 4px 2px;}
+.centertxtfieldcon_common{float:left; width:200px; padding-left:160px;}
+.radiotimeslot_common{float:left; width:66px; text-align:center; font:normal 11px arial; color:#000; padding:4px 2px 4px 2px;}
+.inputblue_common{border:1px solid #A1D2F0; background-color:#CEEAF6; text-align:center; font: normal 12px arial; color:#333; padding:2px; margin-top:4px; }
+.gridtimetblrc_common{ float:left; width:450px; border-style:none; height:58px; margin-top:2px; background-color:#F2F2F2; }
+.ccdiv_common{float:left; width:680px; padding:3px 0 3px 0;}
+.ccdiv1_common{float:left; width:650px; padding:3px 0 3px 0;}
+.ccdiv_common_customer{float:left; width:650px; padding:3px 0 3px 0;}
+/* ************************** Common Classes Top Detail Box ************************************************* */
+.divtoptxtbox_common{float:left; width:730px; padding:5px 10px 5px 10px; border:solid 1px #B4C9E1; background-color:#F6F9FC;}
+.divtopboxrow_common{float:left; width:730px; margin:0px; padding:0px;}
+.divtopboxttext_common{ float:left; width:110px; margin-right:5px; font-weight:bold; color:#000;}
+.divtopboxttextnowidth_common{ float:left; margin-right:5px; font-weight:bold; color:#000;}
+.inputfieldconleftnowidth_common{ float:left;  margin-right:50px; padding-top:0px;}
+/* ********************************************************************************************************* */
+/* ******************************************** Block Days ************************************************* */
+.headerblockdays_common{float:left; width:620px; background-color:#CEE1F4;}
+.headtxtblockdays_common{float:left; font-weight:bold; color:#000000; padding:5px 0px 5px 5px;}
+.maindivblockdays_common{float:left; width:600px; padding:10px;}
+.innerdivblockdays_common{float:left; width:598px; border:solid 1px #999;}
+.mainrowblockdays_common{float:left; width:583px; padding:5px 0px 0px 5px;}
+/********************************************Print Reciept Small******************************************* */
+.maindiv_prsmall{float:left; width:280px; background-color:#ffffff; border:dotted 1px #ccc; margin-left:5px; }
+.maindivnone_prsmall{float:left; width:282px; background-color:#ffffff; padding:0px; margin:0px;}
+.maindivnonenew_prsmall{float:left; width:620px; background-color:#ffffff;}
+.thankumsgrow_prsmall{float:left; width:452px; margin-left:40px; font:normal 18px arial; color:#ff6600; padding:0px; margin:0px;}
+.thankumsgrownew_prsmall{float:left; width:452px; margin:10px 0px 0px 10px; font:normal 18px arial; color:#ff6600;}
+.headerrow_prsmall{}
+.contentrow_prsmall{float:left; width:282px; padding:0px; margin:0px;}
+.grayline_prsmall{float:left; width:282px; height:1px; background-color:#666666; padding:0px; margin:0px;}
+.graylinedotted_prsmall{float:left; width:332px; height:1px; border-bottom:solid 1px #666666; margin:4px 0px 4px 0px;}
+.headerbg_prsmall{float:left; width:282px; padding:0px; margin:0px;}
+.headerbgbig_prsmall{float:left; width:348px; text-align:center; background-color:#666666; font:bold 16px arial; color:#ffffff; padding:2px 0px 2px 4px; }
+.grayheaderbg_prsmall{float:left; width:352px; background-color:#CCCCCC; }
+.graytxtleft_prsmall{float:left; font:normal 11px arial; color:#333333; padding:2px 0px 2px 4px;}
+.graytxtright_prsmall{float:right; font:normal 11px arial; color:#333333; padding:2px 0px 2px 4px;}
+.graytxtrightblue_prsmall{float:right; font:normal 12px arial; color:#333333; padding-right:10px;}
+.graytxtrightblue_prsmall a:link{ font-weight:normal; color:#00A5E6; text-decoration:none;}
+.graytxtrightblue_prsmall a:visited{ font-weight:normal; color:#00A5E6; text-decoration:none;}
+.graytxtrightblue_prsmall a:hover{ font-weight:normal; color:#00A5E6; text-decoration:underline;}
+.txtrow_prsmall{float:left; width:295px; padding:3px 0px 3px 4px; margin:0px;}
+.txtrow_prsmallnew{float:left; width:272px; padding:3px 0px 3px 4px; margin:0px;}
+.bldtxt_prsmall{float:left; width:90px; font:bold 11px arial; padding-right:5px;}
+.smallbldtxt_prsmall{float:left; width:105px; font:bold 11px arial; color:#666; padding-right:5px;}
+.lbltxt_prsmall{float:left; width:175px; height:16px; font:normal 11px arial; border-bottom:1px dotted #666;}
+.chkboxcon_prsmall{float:left; width:18px; margin-right:3px;}
+.bulletboxcon_prsmall{float:left; width:10px; margin:3px 2px 0px 0px;}
+.normaltxt_prsmall{float:left; font:normal 11px arial; padding-top:4px;}
+.bigtxtrow_prsmall{float:left; width:318px; padding:4px 0px 4px 4px; text-align:center;}
+.bigfont_prsmall{font:bold 22px arial;}
+.bigfont2_prsmall{font:normal 22px times; color:#666666;}
+.smallbldtxt_prsmall{font:bold 11px arial;}
+.arrowicontest_prsmall{float:left; width:8px; height:7px; padding:6px 5px 0px 0px; margin-left:10px;}
+.txttestlist_prsmall{float:left; color:#666; font-size:11px;}
+.chkboxtxt_prsmall{font:normal 11px arial; color:#333; float:left;}
+.addtest{font:bold 12px arial; color:#666; float:left;}
+.spnnewtest{font:normal 11px arial; color:#333; float:left;padding-left:90px;margin-right:5px;}
+/* ********************************** Franchisee customer Result List ****************** */
+.maindiv_inner_crlist{float:left; width:550px; border: solid 1px #b8b8b8; z-index:100;}
+.mainbody_inner_crlist{float:left; width:550px; background-color:#fff;}
+.grayboxheader_crlist{float:left; width:550px; background-color:#EAEAEA;}
+.headertxt_crlist{ float:left; padding:3px 0px 0px 10px; font-weight:bold; font-size:14px; color:#333; }
+.rightclosebtn_crlist{float:right; width:20px; padding:2px 5px 2px 0px;}
+.lgtgraybox_crlist{float:left; width:550px; background-color:#F5F5F5;}
+.lgtgrayboxrow_crlist{float:left; width:535px; padding: 3px 0px 0px 10px;}
+.blkheadtxt_crlist{float:left; font:bold 16px arial; color:#000; padding-left:10px;}
+.blueheadtxt_crlist{ font:bold 16px arial; color:#0799D4;}
+.graylinefull_crlist{float:left; width:550px; height:1px; background-color:#CCCCCC;}
+.inputfldnowidth_crlist{ float:left; padding-right:5px; color:#333;}
+.grayboxheader_crlist_am{float:left; width:748px; background-color:#EAEAEA;}
+/* ********************************** Add Seminar ****************** */
+.inputcondtsmall_as{float:left; width:80px;}
+.calendarcntrl_as{float:left; width:15px; padding:5px 5px 0px 5px; }
+/* ********************************** TOOL TIP CSS****************** */
+
+/*---------- bubble tooltip -----------*/
+        a.tt{
+            position:relative;
+            z-index:24;
+            color:#287aa8;
+            text-decoration:none;
+        }
+        a.tt span{ display: none; }
+        /*background:; ie hack, something must be changed in a for ie to execute it*/
+        a.tt:hover{ z-index:25; color: #aaaaff; }
+        a.tt:hover span.tooltip{
+            display:block;
+            position:absolute;
+            top:0px; left:0;
+              padding: 15px 0 0 0;
+              width:200px;
+              color: #993300;
+            text-align: left;
+              filter: alpha(opacity:90);
+              KHTMLOpacity: 0.90;
+              MozOpacity: 0.90;
+              opacity: 0.90;
+        }
+
+        a.tt:hover span.top{
+              display: block;
+              padding: 30px 8px 0;
+            background: url(/App/Images/bubble.gif) no-repeat top;
+        }
+
+        a.tt:hover span.middle{ /* different middle bg for stretch */
+              display: block;
+              padding: 0 8px;
+              background: url(/App/Images/bubble_filler.gif) repeat bottom;
+        }
+
+        a.tt:hover span.bottom{
+              display: block;
+              padding:3px 8px 10px;
+              color: #548912;
+            background: url(/App/Images/bubble.gif) no-repeat bottom;
+        }
+
+
+/********************************************  Wellness Dashboard **************************************** */
+
+.divnoitemfound_custdbrd{float:left; width:703px; margin-left:20px; height:198px; background:url(../Images/Customer/no-found-cdbrd.gif) no-repeat;}
+.divnoitemtxt_custdbrd{float:left; width:703px; padding:92px 0px 0px 0px; text-align:center;}
+.main_row_custdbrd{float:left; width:748px; margin:0px; padding:0px;}
+.divnoitemfound1_custdbrd{float:left; width:703px; height:198px; background:url(../Images/Customer/no-found-cdbrd.gif) no-repeat;}
+/******************************************** View Events ******************************************************** */
+
+.headingright_vevents{float:right; padding-right:5px;}
+.calendarcntrl_vevents{float:right; width:15px; padding:3px 5px 0px 5px; }
+
+/******************************************** Campaign ******************************************************** */
+.campaign_maintitles {font-weight: bold; color: #EF810E; font-size: 16px; border-bottom: 1px solid #E8E8E8; margin-left: 10px; padding-bottom: 5px; width: 720px;}
+
+/******************************************** Franchisor ******************************************************** */
+.input_area_fcr{  width:700px;  margin-top:5px; margin-bottom:10px;  margin-left:10px; border: 1px solid #7F9DB9; Background-color:#fff; font: normal 12px arial; color:#333; padding:2px; }
+
+/********************************************** Affiliate Classes ******************************************** */
+.main_container_row_affiliate{ float:left; width:711px; padding:3px 5px 3px 32px;}
+.inputfieldconleft_affiliate{ float:left; width:180px; margin-right:62px; padding-top:0px;}
+.titletext_affiliate{ float:left; width:110px; margin-right:5px; padding-top:2px; font-weight:bold; color:#666;}
+.inputfieldright_affiliate{ float:left; width:180px; }
+.inputfldnowidth_affiliate{ float:left; margin:0px; padding:0px;}
+.detailbox_affiliate{ float:left; background:url(../images/MarketingPartner/detailbox-Affiliate.gif) no-repeat; height:34px; font:bold 16px arial; width:73px; text-align:center; padding-top:15px;}
+.detailboxnew_affiliate{ float:left; background:url(../images/MarketingPartner/detailboxnew-Affiliate.gif) no-repeat; height:30px; font:bold 14px arial; width:67px; text-align:center; padding-top:10px;}
+.bigtitletext_affiliate{ float:left; width:180px; margin-right:5px; padding-top:2px; font:bold 14px arial;  color:#666;}
+.graph_ontop_affiliate{float: left; width: 740px; margin-bottom: 0px; background:url(../images/MarketingPartner/blubg-affdbrd.gif) repeat-x; padding: 2px;}
+/**********************************************************  FAQ ***********************************************/
+.maindivinner_faq{float:left; width:696px; margin-bottom:10px;}
+.maindivinnerrow_faq{float:left; width:696px;}
+.divboxes_faq{float:left; width:746px; margin-bottom:5px;}
+.bodytopbg_faq{float:left; width:746px; background:url(../images/bodytopbg-faq.gif) no-repeat; }
+.grayheadingbox_faq{float:left; width:746px; background-color:#F0F0F0;}
+.lgtgray_ansbox_faq{float:left; width:746px; background-color:#F8F8F8;}
+.qicon_faq{float:left; width:33px; padding:4px 0px 4px 15px;}
+.qheadtxt_faq{float:left; width:670px; font:bold 14px arial; color:#0B7396; padding:4px 10px 8px 11px;}
+.anstxt_faq{float:left; color:#666; padding:10px 15px 10px 20px; line-height:18px;}
+.backtotop_faq{float:left; width:675px; padding:10px 0px 10px 20px; }
+.bluetopbg_faq{float:left; width:746px; background:url(../images/topbluebg-faq.gif) no-repeat; }
+.blueheadingbox_faq{float:left; width:746px; background-color:#E7F0F5;}
+.lgtblue_ansbox_faq{float:left; width:746px; background-color:#F5F9FB;}
+.leftlnkbox_faq{float:left; width:215px; padding:10px;}
+.headingbox_faq{float:left; padding:0px 5px 0px 0px;}
+.searchbox_faq{float:right; padding:0px 5px 0px 5px;}
+/******************************** Error Div added by rakesh on 1-dec-08 ******************************************************************/
+.maindiv_errormsgyellow{float:left; width:521px; margin-left:15px; margin-top:5px;}
+.topbg_errormsgyellow{float:left; width:521px; height:7px; background:url(../images/topbg-errormsgyellow.gif) no-repeat; margin:0px; padding:0px;}
+.midbg_errormsgyellow{float:left; width:521px; background:url(../images/midbg-errormsgyellow.gif) repeat-y;}
+.botbg_errormsgyellow{float:left; width:521px; height:7px; background:url(../images/botbg-errormsgyellow.gif) no-repeat; margin:0px; padding:0px;}
+.txt_errormsgyellow{float:left; font:bold 12px arial; color:#D80000; padding-top:2px;}
+/******************************** Qa bar added class by rakesh on 7-01-09 ******************************************************************/
+.qaredbar_common{ width:980px; margin: 0px 0px 0px 0px; background-color:red; text-align:center; font:bold 15px arial; color:White;}
+.maintopcontainerqa { width:980px; margin: 0 auto 0 auto; background-color: #fff;}
+.detailbox_advmanager{float:left; height:32px; background:url(../images/MarketingPartner/bigboxdata-advmanager.gif) no-repeat; font:bold 14px arial; width:95px; text-align:center; padding-top:8px;}
+/******************************** class added by rakesh on 24-02-09 ******************************************************************/
+.legendhead_default{font:bold 12px arial; color:#F37C00; margin:0px; padding:0px 5px 0px 5px;}
+.legendrow_default{ float:left; width:734px; padding:3px 5px 3px 5px;}
+.legendrowsmall_default{ float:left; width:704px; padding:3px 5px 3px 5px;color:#000;}
+.legendrowsmall_default .lrow{ float:left; width:660px; padding-left:8px;}
+.legendrowsmall_default .lrow label{float:left;width:110px;font-weight:bold;}
+.legendrowsmall_default .lrow .chkboxlist{float:left;}
+.legendrowsmall_default .lrow .chkboxlist input{float:left;}
+.legendrowsmall_default .lrow .chkboxlist label{float:left;width:auto;padding:0;margin-right:20px;font-weight:normal}
+.legendrowsmall_default .lrow .chkboxlist1{float:left;}
+.legendrowsmall_default .lrow .chkboxlist1 input{float:left;}
+.legendrowsmall_default .lrow .chkboxlist1 label{float:left;width:200px;padding:0;margin-right:5px;font-weight:normal;display:block}
+/***************************************** Upload Results added on 20-june-2008 by Rakesh ****************************** */
+.blueboxtopbg_ur{float:left; width:746px; background:url(../images/Customer/topbglightbluebox.gif) no-repeat;}
+.instructiontxt_ur{float:left; width:746px; background-color:#F0F9FF;}
+.instructiontxt_ur ol{ padding-left:15px; margin-left:10px;}
+.instructiontxt_ur ol li{ padding-left:15px; margin-left:10px;}
+.uploadbuttrow_ur{float:left; width:610px; text-align:right; margin-top:10px;}
+/***************************************** Create New Event Activity added on 23-March-2009 by Rakesh ****************************** */
+.rgtboxchkbox_cnea{float:left; width:238px; border:solid 1px #7F9DB9; padding:5px; height:90px; overflow-y:scroll; margin-right:10px;}
+.rgttxtchkbox_cnea{float:left; width:348px; border:solid 1px #e5e5e5; padding:5px; background-color:#f5f5f5; color:#666}
+.main_row_cnea{ float:left; width:740px; padding:3px 0px 3px 10px;}
+.addnewactivity_cnea{float:left; width:550px; padding:10px;}
+.innerdiv_cnea{float:left; width:530px; padding:10px; border:solid 1px #97B4D8; background-color:#EAF0F7;}
+.innerdiv_cnea .headingrow{float:left; width:528px;}
+.innerdiv_cnea .row{float:left; width:528px; padding-top:10px;}
+.rgtboxaddna_cnea{float:left; width:338px; border:solid 1px #7F9DB9; background-color:#fff; padding:5px; height:100px;}
+
+
+.whtisthis_payment1{float:left; padding:5px 1px 0px 0px; font:normal 12px arial; color:#666666; }
+.whtisthis_payment1 a:link{font:normal 12px arial; color:#00A5E6; text-decoration:none;}
+.whtisthis_payment1 a:visited{font:normal 12px arial; color:#00A5E6; text-decoration:none;}
+.whtisthis_payment1 a:hover{font:normal 12px arial; color:#FF6600; text-decoration:none;}
+
+.divnoitemfound_mvpe{float:left; width:703px; margin-left:140px; height:198px; background:url(../Images/Customer/no-found-cdbrd.gif) no-repeat;}
+.divnoitemtxt_mvpe{float:left; width:703px; padding:92px 0px 0px 0px; text-align:center;}
+
+.griddivnew_default{float:left; width:746px;}
+.greytxt10px_default{font:normal 10px arial; color:#666;}
+
+.loading
+{
+    min-height: 50px;
+    background-image: url(../Images/indicatorbig.gif);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: Transparent;
+}
+
+/* add by Scott on July 09 */
+.NavigationTab
+{
+    display: block;
+    float: left;
+    border: 1px solid #F7C48F;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    font-weight: bold;
+    margin-right: 2px;
+    padding: 5px;
+    text-decoration: none !important;
+}
+
+.SelectedTab
+{
+    background-color: #DDF0F7;
+    border-color: #DDF0F7;
+}
+
+.SmallLinks
+{
+    font-size: 11px !important;
+}
+
+/*Masters classes picked from the other CSS */
+/* header Date Pannel*/
+.maintopcontainer { width:980px; margin: 0 auto 0 auto;}
+.topintercontainer { width:980px; float:left;background:#fff }
+.datepanelmain{float:left;width:960px;background:url(../Images/datepannel-leftbg.gif) no-repeat;margin:0 10px 0 10px}
+.datepanelmain div{float:right;width:951px;margin:0;background:url(../Images/datepannel-rightbg.gif) 100% 0 no-repeat;text-align:right;font:bold 12px Arial;color:#000; padding:5px 5px 4px 0}
+.datepanelmain div img{float:right;padding:0px 5px 2px 0}
+/* Logo Pannel */
+.logoside{float:left;width:260px;height:60px;margin: 3px 30px 0 0;}
+.rolesdropdown_container{float: left; width:250px; padding-left:42px; padding-top:27px; height:25px;}
+/* Main Navigation Pannel */
+.mainnav{float:left;width:980px;margin:5px 0 0 0}
+.mainnav .rgtprt{float:right;width:966px;background:url('../Images/main_nav_rightbg.gif') 100% 0 no-repeat;padding:0 0 0 12px;height:34px; font-weight:bold;}
+/* Main Body */
+.mainbodyouter{float:left;width:980px;padding:7px 0 5px 0; margin:8px 0 0 0;background:#fff url('../Images/body-top-bg.gif') no-repeat;}
+.searchtab{float:left;width:960px;background:url('../Images/search_tab_left.gif') no-repeat;margin:0 10px 0 10px}
+.searchtab .rgtprt{float:right;width:954px;background: url('../Images/search_tab_right.gif') 100% 0 no-repeat;height:37px}
+.searchtabtxt{  float:left; font: normal 11px arial; color:#333; text-decoration:none; padding:10px 0 0 8px; width:350px;}
+.searchtabtxt a:link{font: bold 11px arial; color:#498AAD; text-decoration:none;}
+.searchtabtxt a:visited{font: bold 11px arial; color:#498AAD; text-decoration:none;}
+.searchtabtxt a:hover{font: bold 11px arial; color:#333; text-decoration:none;}
+.searchtrolebox{ float:left; width:200px;}
+.searchtroleboxright{ float:right; width:460px;}
+.searchtabtxt2{float:left;font:bold 11px arial;color:#000;text-decoration:none;text-align:right;padding:10px 0 0 0;width:210px}
+.searchtabinputf{ border: 1px solid #7F9DB9; Background-color:#fff; font: normal 11px tahoma; color:#000; text-decoration:none;}
+.searchtabgobutton{float:left;width:124px; Padding:7px 0 0 0;}
+.searchtabright{ float:left; background-image: url('../Images/search_tab_right.gif'); width:13px; height:37px}
+.searchtabinput{ float:left; padding:8px 0 0 10px; width:100px;}
+.bodycontnr{ float:right; width:777px;}
+.bodycontnrfull{float:left; padding:5px;}
+.container_bdr{ float:left;width:731px;border:1px solid #E5E5E5;margin-top:5px;padding:10px;}
+.rgt{float:right}
+.left{float:left}
+/* Left Pannel */
+.wrapper_leftnpad{float:left;width:186px;padding:0 0 0 17px;}
+.wrapper_left{float:left;width:186px;padding:0 0 0 17px;margin:5px 0 0 0}
+.wrapperleft_cstmr{float:left;width:186px;padding:0;margin:5px 0 0 0}
+.leftheader{float:left;width:186px;background:url('../Images/quick-links-left.gif') no-repeat;margin-top:5px;}
+.leftheader div{float:right;width:177px;background:url('../Images/leftnav-right.gif') 100% 0 no-repeat;font-weight:bold;color:#000;padding:5px 0 5px 5px}
+.lftpnlserchbox{background:url(/App/images/left-searchboxbg.gif) repeat-x bottom;float:left;width:164px;border:1px solid #E5E5E5;margin-top:5px;padding:10px}
+.lftpnlbox{float:left;width:184px;border:1px solid #E5E5E5;margin-top:5px;}
+.lftpnlboxscroll{float:left;width:184px;height:180px;border:1px solid #E5E5E5;margin-top:5px;overflow-y:auto;overflow-x:hidden}
+.lftpnlboxbg{float:left;width:174px;border:1px solid #E5E5E5;background:#F5F5F5;margin-top:5px;padding:5px;}
+.lftpnlboxbg .hrow{float:left;width:100%;margin-top:5px}
+.lftpnlboxbg .hrow label{float:left;width:105px;padding:4px 0 0 10px}
+.lftpnlserchbox .chkbx{float:left;margin:10px 0 0 0}
+.lftpnlserchbox .srchbtn{float:left;margin:10px 0 0 0}
+.grdlnk_lftpnl{float:left;width:100%}
+.leftnav{float:left;width:184px;height:21px;background:url(/App/images/left-nav-bg.gif) repeat-x;padding-top:5px;}
+.leftnav img{float:left;padding:2px 5px 0;}
+.leftnav a:link{float:left;text-decoration:none;width:150px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;}
+.leftnav a:visited{float:left;text-decoration:none;width:150px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;}
+.leftnav a:hover{float:left;text-decoration:none;width:150px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;}
+.wrapper_left2{ float:left; width:184px;margin-top:5px;}
+.lftpnlnavnew a:link{ float:left;width:178px; font-weight:bold;padding:6px 0px 4px 8px; color:#287AA8; text-decoration:none; background-color:#DFF0FA; margin-bottom:1px;}
+.lftpnlnavnew a:visited{ float:left;width:178px; font-weight:bold;padding:6px 0px 4px 8px; color:#287AA8; text-decoration:none; background-color:#DFF0FA; margin-bottom:1px;}
+.lftpnlnavnew a:hover{ float:left;width:178px;font-weight:bold;padding:6px 0px 4px 8px; color:#ffffff; text-decoration:none; background-color:#F79938; margin-bottom:1px;}
+.lftpnlcust_midbg{float:left;width:170px;background:#D7D7D7 url(../images/Customer/cust-photopnlmid-bg.gif) repeat-x; padding:5px 8px;}
+.lftpnlcust_midbg img{float:left;padding:5px 0 0 20px}
+.lftpnlcust_midbg .cdetails{float:left;width:100%;color:#000;padding:5px 0 0 5px;}
+.lftpnlcust_midbg .cdetails .htxt{font:bold 16px arial; color:#000;}
+.lftpnlcust_midbg .cdetails div{float:left;width:100%;}
+.referfriendbox{float:left;width:170px;border:solid 1px #C0D4DE;background-color:#E4EFF5;padding:5px 4px 5px 8px;margin-top:5px}
+.referfriendbox p{float:left;width:100%;padding-top:5px}
+.referfriend{float:left;width:100%;font-weight:bold; color:#034984;}
+.needhlpbox{float:left;width:170px;border:solid 1px #C1D8C7;background-color:#E4F5E8;padding:5px 5px 5px 8px;font-weight:bold;margin-top:5px}
+.greentxt_lft{color:#1B4726;width:100%;font-size:14px;}
+.wrapper_lftnmargin{float:left;width:186px;padding:0 0 0 17px;margin:0}
+.hdrcreplft{float:left;width:753px;background:url('../Images/quick-links-left.gif') no-repeat;margin-top:5px;}
+.hdrcreplft div{float:right;width:748px;background:url('../Images/leftnav-right.gif') 100% 0 no-repeat;font-weight:bold;color:#000;padding:5px 0 5px 5px}
+/*ITEMSTYLE FOR CALLCENTER SCRIPT*/
+.scrpttxt{float:left; width:150px;overflow-x:auto;overflow-y:hidden;}
+/*COMMON CLASSES FOR INNER PAGES*/
+.wrapper_inpg{float:left;width:750px;margin:7px 0 0 14px;padding-bottom:5px;}
+.wrapcrep_inpg{float:left;width:750px;margin-left:14px;padding-bottom:5px;}
+.wrapper_inpg .prow{float:left;width:750px}
+.wrapper_inpg .prowtopad{float:left;width:750px;padding-top:5px;}
+.wrapbtn{float:right; padding-right:5px;}
+.hbotborder{float:left;width:750px;height:1px;background-color:#CCCCCC;display:block;margin:5px 0;}
+.box_corner{background:#efefef;float:left;width:730px;padding:10px;color:#000;margin-bottom:5px}
+.box_corner sup{color:red}
+.box_corner .labelgbx{float:left;font-weight:bold;margin-right:10px;width:100px;}
+.box_corner .labelgbx1{float:left;font-weight:bold;margin-right:10px;width:140px;}
+.greycornrbox{background:#eaeaea;float:left;width:730px;padding:8px 8px 8px 10px;margin-top:5px;font:bold 14px arial}
+.greycornrbdy{float:left;width:730px;background:#f5f5f5;margin-top:1px;padding:0 8px 8px 10px;}
+.greycornrbdy .hzrow{float:left;width:712px;padding-top:5px;}
+.inrpg_mbdr{float:left;width:735px; border:1px solid #E5E5E5;margin-top:5px;padding:5px 8px;}
+/* LAST LOGIN BOX */
+.wrapper_llb{float:right;width:340px;}
+.wrapperin_llb{float:left;width:340px;background:url('/App/Images/leftroundlastlogin.gif') no-repeat;}
+.wrapperin_llb div{float:right;width:333px;background:url('/App/Images/rightroundlastloginn.gif') no-repeat;text-align:center;padding:2px 0}
+ /* CALENDAR JTIP */
+.lbljtip{float:left;width:80px;font-weight:bold}
+.lbljtip1{float:left;width:80px;font-weight:bold}
+.dtlsjtip{float:left;width:200px;font-weight:normal}
+.dtlsjtip1{float:left;width:300px;font-weight:normal}
+.custcauntjtp{float:left;width:267px;padding:4px 8px;background:#eef7ff;border:solid 1px #9ec4e6}
+.custcauntjtp .ttxt{font:bold 11px arial;color:#246ea1;float:left;width:135px}
+.custcauntjtp .dtxt{font-size:11px;color:#246ea1;float:left;}
+.jtprowtop{float:left;width:290px;}
+.jtprow{float:left; margin-top:7px; width:290px;}
+.jtprow_ew{float:left;width:400px;}
+.MiniWarningMessage { color: Red; }
+ /* SHIPPING DETAILS */
+.jtpsd_row{float:left;width:270px;}
+.jtp_sd{float:left;margin-top:7px; width:270px;}
+.jtp_sd .lbln{float:left;width:160px;font-weight:bold}
+.jtp_sd .txtdtls{float:left;width:110px;font-weight:normal}
+/* MARKETTING PORTAL */
+.contenr_mp{margin:5px 10px;width:98%;font:normal 12px arial;}
+.toprlnk{float:right;Padding:30px 10px 0 0}
+.contenr_mp a:link,a:visited,a:hover{font:12px arial;text-decoration:underline}
+.contenr_mp a:link,a:visited{color:#287aa8}
+.contenr_mp a:hover{color:#f60}
+.inrrow_top{width:98%;margin:0 5px;}
+.inrrow{width:98%;margin:0 5px;display:block}
+.inrrow_main{width:99%;border:solid 1px #ccc;background:#fff;padding:5px;margin-top:5px}
+.fldrow{width:100%;display:inline-block;padding-top:5px}
+.fldrow .lftchk{float:left;width:265px;margin-top:10px}
+.fldrow .upldbtn{float:left;margin-top:10px}
+.fldrow .ml5{margin-left:5px}
+.grd_container{width:895px;display:inline-block;padding-top:5px;overflow-x:scroll;}
+.inrrow_po{width:500px;margin:0 5px;float:left;}
+/*JDIALOG DESIGN */
+div.jdrow{width:320px;display:inline-block;margin-top:8px;}
+.ccountico{width:21px;text-align:center;height:14px;color:#fff;font-size:11px;background:url(/App/Images/call-count-bg.png) no-repeat;vertical-align:top;padding:0 7px 2px 8px;font-weight:bold;margin-left:5px}
+
+/* PAGE LOADING */
+#divloading{position:fixed;top:20px;left:10px;}
+#divloading .divload{font:bold 14px arial;background:url(/App/Images/loading.gif) no-repeat right;width:90px;height:18px}
+
+
+/*Error Message for CCRep Event Registration */
+.maindiv_ccreperrormsg{float:left; width:420px; margin-top:5px;}
+.topbg_ccreperrormsg{float:left; width:420px; height:7px; background:url(../images/ccrep-topbg-errormsg.gif) no-repeat; margin:0px; padding:0px;}
+.midbg_ccreperrormsg{float:left; width:420px; background:url(../images/ccrep-midbg-errormsg.gif) repeat-y;}
+.botbg_ccreperrormsg{float:left; width:420px; height:7px; background:url(../images/ccrep-botbg-errormsg.gif) no-repeat; margin:0px; padding:0px;}
+.txt_ccreperrormsg{float:left; font:bold 12px arial; color:#D80000; padding-top:2px;}
+
+
+/*SourceCode*/
+.sourcecode {width: 235px;float:right;margin-top:10px;margin-left:5px;padding:10px 10px;border:1px solid #CCC;}
+
+.sourcecode_cc {width: 96%;float:right;margin-top:10px;margin-left:5px;margin-bottom:15px;padding:10px 10px;border:1px solid #CCC;}

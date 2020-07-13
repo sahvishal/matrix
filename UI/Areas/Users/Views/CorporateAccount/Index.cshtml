@@ -1,0 +1,123 @@
+﻿@model Falcon.App.Core.Users.ViewModels.CorporateAccountListModel
+@{
+    ViewBag.Title = "Manage Corporate Accounts";
+}
+<h1>
+    Manage Corporate Accounts</h1>
+@section css {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="option-links">
+    <a href="/Users/CorporateAccount/Create">+ Add Account </a>
+</div>
+<div id="list-filter">
+    @Html.Partial("CorporateAccountListModelFilter", new ViewDataDictionary(Model.Filter))
+</div>
+@if (Model != null && Model.CorporateAccounts != null)
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Business Address
+            </th>
+            <th>
+                Phone
+            </th>
+            <th>
+                Contract
+            </th>
+            <th>
+                Default Packages
+            </th>
+            @*<th>
+            </th>*@
+            <th>
+            </th>
+        </tr>
+        @foreach (var corporateAccount in Model.CorporateAccounts)
+        {
+            <tr>
+                <td>
+                    @corporateAccount.OrganizationBasicInfoModel.Name
+                </td>
+                <td>@corporateAccount.OrganizationBasicInfoModel.Description
+                </td>
+                <td>@corporateAccount.OrganizationBasicInfoModel.Address.ToString()
+                </td>
+                <td>@corporateAccount.OrganizationBasicInfoModel.PhoneNumber.ToString()
+                </td>
+                <td>@corporateAccount.ContractNotes
+                </td>
+                <td>
+                    <a href="#" class="packages">Packages </a><span style="display: none;">
+                                                                  <ul>
+                                                                      @if (corporateAccount.DefaultPackages != null)
+                                                                      {
+                                                                          foreach (var package in corporateAccount.DefaultPackages)
+                                                                          {
+                                                                              <li>
+                                                                                  @package
+                                                                              </li>
+                                                                          }
+                                                                      }
+                                                                  </ul>
+                                                              </span>
+                </td>
+                @*<td>
+                    @if (corporateAccount.IsHealthPlan)
+                    {
+                        <a href="/Users/CorporateAccount/Cpt?id=@corporateAccount.OrganizationBasicInfoModel.Id">
+                            CPT
+                        </a>
+                    }
+                </td>*@
+                <td>
+                    <a href="/Users/CorporateAccount/Edit?id=@corporateAccount.OrganizationBasicInfoModel.Id">
+                        Edit</a>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+@section scripts {
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $('.packages').qtip({
+            content: {
+                title: 'Packages',
+                text: function (api) {
+                    //from the selector to a child element.
+                    return $(this).parent().find('ul').html();
+                }
+            }
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

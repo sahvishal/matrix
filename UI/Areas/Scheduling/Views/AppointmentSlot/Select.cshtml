@@ -1,0 +1,236 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model Falcon.App.Core.Scheduling.ViewModels.AppointmentSelectionEditModel
+@Html.HiddenFor(m => m.EventId)
+@Html.HiddenFor(m => m.ScreeningTime)
+@{
+   
+    var sessionContext = IoC.Resolve<ISessionContext>();
+    Falcon.App.Core.Enum.Roles loggedInRole;
+
+    if (sessionContext == null || sessionContext.UserSession == null) { loggedInRole = Falcon.App.Core.Enum.Roles.Customer; }
+    else { loggedInRole = (Falcon.App.Core.Enum.Roles)sessionContext.UserSession.CurrentOrganizationRole.GetSystemRoleId; }
+}
+@if (loggedInRole != Falcon.App.Core.Enum.Roles.Customer)
+{
+    <link type="text/css" rel="Stylesheet" href="/Content/Styles/SelectAppointmentSystemUser.css" />
+}
+@if (!Model.SelectedAppointmentIds.IsNullOrEmpty())
+{
+    <div id="selectedappointmentdiv">
+        @if (Model.RoomAppointments != null && Model.RoomAppointments.Any() && (Model.RoomAppointments.Count() > 1 || Model.TotalWaitingTime > 0))
+        {
+            var roomIndex = 0;
+            <span><b>Your Appointment:</b></span><br/>
+            foreach (var roomAppointment in Model.RoomAppointments)
+            {
+                <div style="margin-top: 5px;">
+                    <fieldset>
+                        <legend>Room @roomAppointment.RoomNo</legend>
+                        <div style="margin-bottom: 15px;">
+                            <span>
+                                <b>Appointment Time: </b>
+                                @{
+                                    var tempSlots = roomAppointment.Slots.ToArray();
+
+                                    <span class="selected-time-span">@Html.DisplayFor(m => roomAppointment.AppointmentTime)</span>
+                                    for (int i = 0; i < tempSlots.Length - 1; i++)
+                                    {
+                                        if ((tempSlots[i + 1].StartTime - tempSlots[i].EndTime).TotalMinutes > 0)
+                                        {
+                                            <span class="selected-time-span">@tempSlots[i + 1].StartTime.ToString("h:mm tt")</span>
+                                        }
+                                    }
+                                }
+                                
+                            </span>
+                        </div>
+                        @if (roomAppointment.TotalWaitingTime > 0 && roomIndex > 0)
+                        {
+                            <div>
+                                <span><b>Waiting time between test(s): </b>
+                                <span class="selected-time-span">
+                                    @if (roomAppointment.Hours > 0)
+                                    {
+                                        <span>@roomAppointment.Hours hr</span>
+                                    }
+                                    @if (roomAppointment.Minutes > 0)
+                                    {
+                                        <span>@roomAppointment.Minutes min</span>
+                                    }
+                                </span>
+                                </span>
+                            </div>
+                        }                        
+                        <div style="margin-top: 5px;">
+                            <span><b>Test(s): </b><span><i>@roomAppointment.ScreeningTests</i></span></span>
+                        </div>
+                    </fieldset>
+                </div>
+                roomIndex++;
+            }
+            <div style="text-align: right;">
+                <span class="change-appointment-link-span"></span><a href="javascript:void(0);" onclick="changeAppointment();">Change Appointment </a>
+            </div>
+        }
+        else
+        {
+            <span><b>You Selected </b><span class="selected-time-span">@Html.DisplayFor(m => m.AppointmentTime)</span></span>
+            <span class="change-appointment-link-span"></span><a href="javascript:void(0);" onclick="changeAppointment();">Change Appointment </a>
+        }
+        
+    </div>
+        var index = 0;
+        foreach (var slotId in Model.SelectedAppointmentIds)
+        {
+    <input type="hidden" name="SelectedAppointmentIds[@(index++)]" value="@slotId" />
+        }
+}
+else
+{
+    if (!Model.TimeFrames.IsNullOrEmpty())
+    {
+    <div class="editor-row">
+        <b>Please select the preferable hour of day:</b>&nbsp;<select id="appointmenttime-select"><option>-- Select --</option>
+            @foreach (var item in Model.TimeFrames)
+            {
+                <option @(item.IsSelected ? "selected" : "") fromtime="@Html.DisplayTextFor(m => item.FromTime)" totime="@Html.DisplayTextFor(m => item.ToTime)">@item.ToString()
+                </option>
+            }
+        </select>&nbsp;
+        @if (loggedInRole != Falcon.App.Core.Enum.Roles.Customer)
+        {
+            <a href="javascript:window.open('/Scheduling/AppointmentSlot/ViewAll?eventId=@Model.EventId', 'View_Appointment', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=550,height=500'); void(0);">View All</a>
+        }
+    </div>
+    <div class="div-with-roundborder">
+        <div id="slots-div">
+        </div>
+    </div>
+    }
+    else
+    {
+    <div class="div-with-roundborder" style="text-align: center;">
+        <b>No Slots Available</b>
+    </div>
+    }
+}
+@*@if (loggedInRole == Falcon.App.Core.Enum.Roles.Customer)
+{
+    <br />
+    <br />
+    <i>If you don’t see a time that is convenient to you, please call <span class="font-large">@settings.PhoneTollFree</span></i>
+}*@
+
+<script language="javascript" type="text/javascript">
+
+    var _methodReffromParentForSuccessonChangeAppointment;
+    var _methodReffromParentForSuccessonSelectAppointment;
+    var _methodReffromParentForFailureonSelectAppointment;
+
+    var _methodReffromParentForSlotRangeSelection;
+    var _bookedSlotIds = null;
+    var _isChangePackage = false;
+    function getSlots(numberOfSlotstoShow) {
+        //debugger;
+
+        if ($("#appointmenttime-select option:first").is(":selected")) {
+            $("#slots-div").html("");
+            return;
+        }
+
+        if ('@((long)loggedInRole)' == '@((long)Falcon.App.Core.Enum.Roles.Customer)' && numberOfSlotstoShow == null) {
+            numberOfSlotstoShow = 2;
+        }
+        else if (numberOfSlotstoShow == null)
+            numberOfSlotstoShow = -1;
+
+        var selectedOption = $("#appointmenttime-select option:selected");
+
+        var fromTime = selectedOption.attr("fromtime");
+        var toTime = selectedOption.attr("totime");
+
+        var testIds = null;
+        @if (!Model.AddOnTestIds.IsNullOrEmpty())
+        {
+            <text>
+                eval('testIds = [@(string.Join(",", Model.AddOnTestIds))]');
+            </text>
+        }
+        
+        var jsonobject = {
+            eventId: '@Model.EventId',
+            fromTime: fromTime,
+            toTime: toTime,
+            screeningTime: '@Model.ScreeningTime',
+            numberOfSlotstoShow: numberOfSlotstoShow,
+            packageId: '@Model.PackageId',
+            testIds: JSON.stringify(testIds)
+        };
+        $.ajax({
+            url: '/Scheduling/AppointmentSlot/AvailableSlots',
+            type: 'Post',
+            contentType: "application/json; charset=utf-8",
+            cache: false,
+            dataType: 'html',
+            //data: jsonobject,
+            data: "{'eventId' : @Model.EventId, 'fromTime' : '" + fromTime + "', 'toTime' : '" + toTime + "', 'screeningTime' : @Model.ScreeningTime, 'numberOfSlotstoShow' : " + numberOfSlotstoShow + ", 'packageId' : @Model.PackageId, 'testIds' : " + JSON.stringify(testIds) + ", 'bookedSlotIds' : " + JSON.stringify(_bookedSlotIds) + "}",
+            success: function (result) {
+                $("#slots-div").html(result);
+               // debugger;
+                setOnCompleteSelectAppointment(_methodReffromParentForSuccessonSelectAppointment, onFailureSelectAppointment);
+                setGetSlotsMethodRef(getSlots, _bookedSlotIds,_isChangePackage);
+            },
+            error: function (arg1, arg2) {
+                if (_methodReffromParentForFailureonSelectAppointment != null) {
+                    _methodReffromParentForFailureonSelectAppointment();
+                }
+            }
+        });
+    }
+
+    function onFailureSelectAppointment() {
+        getSlots();
+    }
+
+    $("#appointmenttime-select").change(function () {
+        getSlots();
+
+        if (_methodReffromParentForSlotRangeSelection != null) {
+            if ($("#appointmenttime-select option:first").is(":selected")) {
+                _methodReffromParentForSlotRangeSelection(null);
+            }
+            else {
+                var selectedOption = $("#appointmenttime-select option:selected");
+                var fromTime = selectedOption.attr("fromtime");
+                _methodReffromParentForSlotRangeSelection(fromTime);
+            }
+        }
+    });
+
+    @if (!Model.SelectedAppointmentIds.IsNullOrEmpty())
+    {
+    <text>
+    function changeAppointment() {
+        var arr = null;
+        eval('arr = [@(string.Join(",", Model.SelectedAppointmentIds))]');
+
+        $.ajax({
+            url: '/Scheduling/AppointmentSlot/ReleaseAppointment',
+            type: 'Post',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'html',
+            data: "{'selectedSlotIds' : " + JSON.stringify(arr) + "}",
+            success: function (result) {
+                _methodReffromParentForSuccessonChangeAppointment();
+            },
+            error: function (arg1, arg2) {
+                alert("Some error occured while processing the request! Please try again.");
+            }
+        });
+    }
+    </text>
+    }
+
+</script>

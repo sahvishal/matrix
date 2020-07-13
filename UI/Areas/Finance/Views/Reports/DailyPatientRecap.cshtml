@@ -1,0 +1,135 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Finance.ViewModels
+
+@model DailyPatientRecapListModel
+@{
+    ViewBag.Title = "Daily Recap (Customer)";
+}
+
+<h1>
+    Daily Recap (Customer)
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("DailyPatientRecap", "Reports", FormMethod.Get);}
+    @Html.Partial("DailyPatientRecapModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/ExportableDailyPatientRecap?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <div style="float: left;clear: both;width: 975px;overflow-x: auto;padding-right: 10px;">
+        <table id="list-view" style="width:150%;">
+            <tr>
+                <th width="12%">
+                    Customer
+                </th>
+                <th width="12%">
+                    Event
+                </th>
+                <th width="5%">
+                    Payment Summary
+                </th>
+                <th width="5%">
+                    Sponsor
+                </th>
+                <th width="6%">
+                    Check In/Check Out
+                </th>
+                <th width="3%">
+                    GC Delivered
+                </th>
+                <th width="5%">
+                    Gift Code
+                </th>
+                <th width="5%">
+                    Reason
+                </th>
+            </tr>
+            @foreach (var selectedModel in Model.Collection)
+            {
+                <tr>
+                    <td>
+                        <b>Name:</b> @selectedModel.Name.ToString()<br />
+                        <b>Customer Id:</b> @selectedModel.CustomerId<br />
+                        <b>Address:</b> @selectedModel.Address.ToString()<br />
+                        <b>DoB:</b> @(selectedModel.DateOfBirth.HasValue ? selectedModel.DateOfBirth.Value.ToString("MM/dd/yyyy") : string.Empty)<br />
+                        <b>Phone:</b> @selectedModel.Phone.ToString()<br />
+                        <b>Email:</b> @selectedModel.Email.ToString()<br />
+                        <b>Member Id:</b> @selectedModel.MemeberId<br />
+                        <b>Gender:</b> @selectedModel.Gender
+                    </td>
+                    <td>
+                        <b>EventId:</b> @selectedModel.EventId.ToString()<br />
+                        <b>Event Date:</b> @selectedModel.EventDate.ToString("MM/dd/yyyy")<br />
+                        <b>Pod:</b> @selectedModel.Pod <br />
+                        <b>Package:</b> @selectedModel.Package<br />
+                        <b>Test(s):</b> @selectedModel.Tests<br />
+                        <b>Images:</b> @selectedModel.IsCdPurchased<br />
+                        <b>Shipping:</b> @selectedModel.IsShippingPurchased<br />
+                    </td>
+                    <td>
+                        <b>Discount:</b>&nbsp;@(selectedModel.Discount > 0 ? "$" + selectedModel.Discount.ToString("00.00") : "0")<br />
+                        <b>Total Amount:</b>&nbsp;@(selectedModel.TotalAmount > 0 ? "$" + selectedModel.TotalAmount.ToString("00.00") : "0")<br />
+                        <b>Paid Amount:</b>&nbsp;@(selectedModel.AmountCollected > 0 ? "$" + selectedModel.AmountCollected.ToString("00.00") : "0")
+                    </td>
+                    <td>
+                        <b>Corporate:</b>&nbsp;@selectedModel.CorporatePartner<br />
+                        <b>Hospital Partner:</b>&nbsp;@selectedModel.HospitalPartner
+                    </td>
+                    <td style="text-align: center;">
+                        @if (selectedModel.CheckedIn.HasValue && selectedModel.CheckedOut.HasValue)
+                        {
+                            <text>@selectedModel.CheckedIn.Value.ToString("hh:mm tt")/@selectedModel.CheckedOut.Value.ToString("hh:mm tt")</text>
+                        }
+                        else
+                        {
+                            <text>N/A</text>
+                        }
+                    </td>
+                    <td style="text-align: center;">
+                        <span>@(selectedModel.IsGiftCertificateDeleievred)</span>
+                    </td>
+                    <td>
+                        <span>@(selectedModel.GiftCode)</span>
+                    </td>
+                    <td>
+                        <span>@(string.IsNullOrEmpty(selectedModel.GcNotGivenReason) ? "N/A" : selectedModel.GcNotGivenReason)</span>
+                    </td>
+
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}
+

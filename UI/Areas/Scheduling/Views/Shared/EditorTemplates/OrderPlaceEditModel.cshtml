@@ -1,0 +1,486 @@
+﻿@model Falcon.App.Core.Marketing.ViewModels.OrderPlaceEditModel
+@if (Model.AllEventPackages != null && Model.AllEventPackages.Count() > 0)
+{
+    <div class="side-container-childdiv">
+        <fieldset>
+            <legend>
+                <h2>
+                    Select a Package
+                </h2>
+            </legend>
+            <div class="row">
+                <div id="package-container" style="float: left; width: 100%;">
+                    @{var index = 0;
+                      foreach (var item in Model.AllEventPackages)
+                      {
+                          index++;
+                        <div class="package-block">
+                            <div class="header">
+                                <h4>
+                                    @item.Name</h4>
+                            </div>
+                            <div class="list-test">
+                                @{ 
+                          var tests = item.Tests.OrderBy(t => t.Name).Select(t => t.Name).ToArray();
+                          var testString = string.Join(", ", tests);
+
+                          foreach (var test in item.Tests)
+                          {                                            
+                                    <div style="display: none;">
+                                        <input type="text" value="@test.EventTestId" />
+                                        <input type="text" value="@test.Name" class="package-test-name" />
+                                    </div>                                   
+                          }
+                                }
+                                @(testString.Length > 170 ? testString.Substring(0, 167) + "..." : testString)
+                            </div>
+                            <div class="select-package-div">
+                                <span style="float: left">Price: $@item.Price.ToString("0.00")
+                                </span><span class="select-remove-package" style="float: right"><a href="javascript:void(0);"
+                                    onclick="selectPackage($(this));">Select </a></span><span class="select-remove-package"
+                                        style="float: right; display: none;"><a href="javascript:void(0);" onclick="removePackage($(this));">
+                                            Remove </a></span>
+                                <input type="hidden" value="@item.EventPackageId" />
+                                <input type="text" class="package-id" style="display:none" value="@item.PackageId" />
+                                <input type="text" class="package-name" style="display:none" value="@item.Name" />
+                                <input type="text" class="package-price" style="display:none" value="@item.Price" />
+                            </div>
+                        </div>
+                      }}
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+@if (Model.AllEventTests != null && Model.AllEventTests.Count() > 0)
+{
+    <div class="side-container-childdiv">
+        <fieldset>
+            <legend>
+                <h2>
+                    Select a Test
+                </h2>
+            </legend>
+            <div class="item-data">
+                @foreach (var item in Model.AllEventTests)
+                {
+                    <div class="item-data-row test-row" @(Model.AllEventTests.Count() < 2 ? "style=border-bottom:0;" : "")>
+                        <div class="item-label">
+                            <h4>@item.Name
+                            </h4>
+                            @item.Description
+                        </div>
+                        <div class="item-price">
+                            $@item.Price.ToString("0.00")</div>
+                        <div class="item-select-div">
+                            <input type="checkbox" onclick="onClickSelectTestBox($(this));" />
+                            <input type="hidden" value="@item.TestId" />
+                        </div>
+                    </div>   
+                }
+            </div>
+        </fieldset>
+    </div>
+}
+@if (Model.AllProducts != null && Model.AllProducts.Count() > 0)
+{
+    <div class="side-container-childdiv">
+        <fieldset>
+            <legend>
+                <h2>
+                    Additional Product
+                </h2>
+            </legend>
+            <div class="item-data">
+                @foreach (var item in Model.AllProducts)
+                {
+                    <div class="item-data-row product-row" @(Model.AllProducts.Count() < 2 ? "style=border-bottom:0;" : "")>
+                        <div class="item-label">
+                            <h4>@item.Name
+                            </h4>
+                            @item.Description
+                        </div>
+                        <div class="item-price">
+                            $@item.Price.ToString("0.00")</div>
+                        <div class="item-select-div">
+                            <input type="checkbox" onclick="onClickSelectProductBox($(this));" />
+                            <input type="hidden" value="@item.ProductId" />
+                        </div>
+                    </div>   
+                }
+            </div>
+        </fieldset>
+    </div>
+}
+@if (Model.AllShippingOptions != null && Model.AllShippingOptions.Count() > 0)
+{
+    <div class="side-container-childdiv">
+        <fieldset>
+            <legend>
+                <h2>
+                    How do you want your results?
+                </h2>
+            </legend>
+            <div class="item-data">
+                @foreach (var item in Model.AllShippingOptions)
+                {
+                    <div class="item-data-row shippingoption-row">
+                        <div class="item-label">
+                            <h4>@item.Name
+                            </h4>
+                            @(item.Description.Length > 150 ? item.Description.Substring(0, 147) + "..." : item.Description)
+                        </div>
+                        <div class="item-price">
+                            $@item.Price.ToString("0.00")</div>
+                        <div class="item-select-div">
+                            <input type="radio" name="shippingOption" onclick="onClick_SelectShippingOption($(this));" /><input type="hidden" value="@item.ShippingOptionId" />
+                        </div>
+                    </div>   
+                }
+            </div>
+        </fieldset>
+    </div>
+}
+<div id="select-order-div" style="display: none;">
+    @Html.HiddenFor(m => m.SelectedPackageId)
+    @Html.HiddenFor(m => m.SelectedShippingOptionId)
+    <div id="selectedtest-div">
+    </div>
+    <div id='selectedproduct-div'>
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+    var firstBlock = null;
+    var lastBlock = null;
+
+    var toggleOption = 'blind';
+
+    var pos = 0;
+
+
+    function navigatePrev() {
+        if (pos == 0) return;
+        pos = pos - 10;
+        $("#package-container").scrollTop(pos);
+        return;
+        if (firstBlock == null && $(".package-block").length < 3) return;
+
+        if (firstBlock == null) {
+            firstBlock = $(".package-block:first");
+            lastBlock = $(".package-block:nth-child(3)");
+        }
+
+        if (!firstBlock.prev().hasClass("package-block")) return;
+
+
+        var newBlock = firstBlock.prev();
+        var nextContender = lastBlock.prev();
+
+        firstBlock = firstBlock.prev();
+
+        var options = {};
+        lastBlock.toggle(toggleOption, options, 500, function () { newBlock.toggle(toggleOption, options, 500); });
+
+        lastBlock = nextContender;
+        firstBlock = newBlock;
+    }
+
+    function navigateNext() {
+        var height = $("#package-container").attr("scrollHeight");
+        if (pos > height) return;
+        pos = pos + 10;
+        $("#package-container").scrollTop(pos);
+        return;
+        if (lastBlock == null && $(".package-block").length < 3) return;
+        if (lastBlock == null) {
+            firstBlock = $(".package-block:first");
+            lastBlock = $(".package-block:nth-child(3)");
+        }
+
+        if (!lastBlock.next().hasClass("package-block")) return;
+
+        var newBlock = lastBlock.next();
+        var nextContender = firstBlock.next();
+
+        var options = {};
+
+        firstBlock.toggle(toggleOption, options, 500, function () { newBlock.toggle(toggleOption, options, 500); });
+
+        firstBlock = nextContender;
+        lastBlock = newBlock;
+    }
+
+</script>
+<script type="text/javascript" language="javascript">
+
+    var _editOrder = null; // To be set from the parent
+    var getSelectedPackage = null;
+    var getSelectedShipping = null;
+    var getSelectedProduct = null;
+    var getSelectedTest = null;
+
+    function selectPackage(selectTagReference) {
+        var parent = selectTagReference.parents(".select-package-div:first");
+
+        var selectedPackageInput = $("input[type=hidden][id*='SelectedPackageId']");
+        var previousPackageId = selectedPackageInput.val();
+        if ($.trim(previousPackageId).length > 0 && Number(previousPackageId) > 0) {
+            selectUnselectPackage(previousPackageId, false);
+        }
+
+        var packageId = parent.find("input[type=hidden]").val();
+        selectUnselectPackage(packageId, true);
+    }
+
+    function removePackage(selectTagReference) {
+        var selectedPackageInput = $("input[type=hidden][id*='SelectedPackageId']");
+        selectUnselectPackage(selectedPackageInput.val(), false);
+    }
+
+    function selectUnselectPackage(packageId, markSelect) {
+        var selectedPackageDiv = null;
+        $(".package-block .select-package-div").each(function () {
+            if ($(this).find("input[type=hidden]").val() == packageId) {
+                selectedPackageDiv = $(this);
+                return false;
+            }
+        });
+
+        selectedPackageDiv.find(".select-remove-package").toggle();
+        var selectedPackageInput = $("input[type=hidden][id*='SelectedPackageId']");
+        var packageBlock = selectedPackageDiv.parents("div.package-block:first");
+
+        if (markSelect) {
+            selectedPackageInput.val(packageId);
+            packageBlock.addClass("selected-package-bg");
+
+            var packageTests = new Array();
+            packageBlock.find(".package-test-name").each(function(){
+                packageTests.push($(this).val());
+            });
+
+            getSelectedPackage = function () {
+                return { 'EventPackageId': packageId,
+                    'PackageId': packageBlock.find(".package-id").val(),
+                    'Name': packageBlock.find(".package-name").val(),
+                    'Price': packageBlock.find(".package-price").val(),
+                    'PackageTests' : packageTests
+                };
+            };
+        }
+        else {
+            getSelectedPackage = null;
+            selectedPackageInput.val(0);
+            packageBlock.removeClass("selected-package-bg");
+        }
+        _editOrder();
+    }
+
+
+
+    function onClick_SelectShippingOption(selectOptionRadioBox) {
+
+        var selectedShippingOptionInput = $("input[type=hidden][id*='SelectedShippingOptionId']");
+
+        var shippingOptionId = selectOptionRadioBox.parent().find("input[type=hidden]").val();
+        selectedShippingOptionInput.val(shippingOptionId);
+
+        var previousShippingOptionId = selectedShippingOptionInput.val();
+        if ($.trim(previousShippingOptionId).length > 0 && Number(previousShippingOptionId) > 0) {
+            $(".shippingoption-row").each(function () {
+
+            });
+        }
+    }
+
+    function selectUnselectShippingOption(shippingOptionId, markSelect) {
+
+        $(".shippingoption-row input[type=radio]").each(function () {
+            $(this).attr("checked", false);
+        });
+
+        var previousShippingOptionId = selectedShippingOptionInput.val();
+        if ($.trim(previousShippingOptionId).length > 0 && Number(previousShippingOptionId) > 0) {
+            $(".shippingoption-row").each(function () {
+                if ($(this).find("input[type=hidden]").val() == shippingOptionId) {
+                    $(this).find("input[type=radio]").attr("checked", markSelect);
+                }
+            });
+        }
+    }
+
+</script>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script language="javascript" type="text/javascript">
+    
+    var selectedTests = new Object();
+
+    var selectedTest = null;
+    var keyTest = 1;
+
+    function onStartProductSelection(){
+        
+        @if (Model.SelectedTestIds != null && Model.SelectedTestIds.Count() > 0)
+        {
+            foreach (var item in Model.SelectedTestIds)
+            {
+                <text>
+                    selectedTest = new Object();
+                    selectedTest.TestId = '@item';
+                    selectedTest.Key = keyTest;
+                    selectedTests[keyTest++] = selectedTest;
+
+                    selectUnselectTest(selectedTest.TestId, true);
+                </text>
+            }
+            <text>
+                renderTestHtmlTemplate();
+            </text>
+        }
+    }
+
+    function onClickSelectTestBox(checkBoxRef){
+    
+        var testId = checkBoxRef.parent.find("input[type=hidden]");
+        if(checkBoxRef.attr("checked")){
+            addTest(testId);
+        }
+        else
+        {
+            removeTest(testId);
+        }
+    }
+
+    function addTest(testId){
+        selectedTest = new Object();
+        selectedTest.TestId = testId;
+        selectedTest.Key = keyTest;
+        selectedTests[keyTest++] = selectedTest;
+
+        renderTestHtmlTemplate();
+    }
+
+    function removeTest(testId){
+        var key = null;
+        $('.selectedtest-value').each(function(){
+            if($(this).val() == testId){
+                key = $(this).parent().find(".selectedtest-key").val();
+                return false;
+            }
+        });
+
+        if(key == null) return;
+
+        delete selectedTests[key];
+
+        renderTestHtmlTemplate();
+    }
+
+    function selectUnselectTest(testId, isSelected){
+        $(".test-row input[type=hidden]").each(function(){
+            if($(this) == testId){
+                $(this).parent().find("input[type=checkbox]").attr("checked", true);
+                return false;
+            }
+        });
+    }
+
+    function renderTestHtmlTemplate(){
+        $("#selectedtest-div").empty();
+        $.each(selectedTests, function (key, test) {            
+            $("#selectedtest-div").append($("#selectedTestTemplate").tmpl(test));            
+        });
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+    var selectedProducts = new Object();
+
+    var selectedProduct = null;
+    var keyProduct = 1;
+
+    @if (Model.SelectedProductIds != null && Model.SelectedProductIds.Count() > 0)
+    {
+        foreach (var item in Model.SelectedProductIds)
+        {
+            <text>
+                selectedProduct = new Object();
+                selectedProduct.ProductId = '@item';
+                selectedProduct.Key = keyProduct;
+                selectedProducts[keyProduct++] = selectedProduct;
+                
+                selectUnselectProduct(selectedProduct.ProductId, true);
+            </text>
+        }
+        <text>
+            renderProductHtmlTemplate();
+        </text>
+    }
+    
+    function onClickSelectProductBox(checkBoxRef){
+    
+        var productId = checkBoxRef.parent.find("input[type=hidden]");
+        if(checkBoxRef.attr("checked")){
+            addProduct(productId);
+        }
+        else
+        {
+            removeProduct(productId);
+        }
+    }
+
+    function addProduct(productId){
+        selectedProduct = new Object();
+        selectedProduct.ProductId = productId;
+        selectedProduct.Key = keyProduct;
+        selectedProducts[keyProduct++] = selectedProduct;
+
+        renderProductHtmlTemplate();
+    }
+
+    function removeProduct(productId){
+        var key = null;
+        $('.selectedproduct-value').each(function(){
+            if($(this).val() == productId){
+                key = $(this).parent().find(".selectedproduct-key").val();
+                return false;
+            }
+        });
+
+        if(key == null) return;
+
+        delete selectedProducts[key];
+
+        renderTestHtmlTemplate();
+    }
+
+    
+    function selectUnselectProduct(productId, isSelected){
+        $(".product-row input[type=hidden]").each(function(){
+            if($(this) == productId){
+                $(this).parent().find("input[type=checkbox]").attr("checked", true);
+                return false;
+            }
+        });
+    }
+
+    function renderProductHtmlTemplate(){
+        $("#selectedproduct-div").empty();
+        $.each(selectedProducts, function (key, product) {            
+            $("#selectedproduct-div").append($("#selectedProductTemplate").tmpl(product));            
+        });
+    }
+
+</script>
+<script id="selectedTestTemplate" type="text/x-jquery-tmpl">
+    
+    <input type="hidden" name="SelectedTestIds.Index" class='selectedtest-key' value="${Key}" />
+    <input type="text" name="SelectedTestIds[${Key}]" class='selectedtest-value' value="${TestId}" />
+    
+</script>
+<script id="selectedProductTemplate" type="text/x-jquery-tmpl">    
+    
+    <input type="hidden" name="SelectedProductIds.Index" class='selectedproduct-key' value="${Key}" />
+    <input type="text" name="SelectedProductIds[${Key}]" class='selectedproduct-value' value="${ProductId}" />    
+    
+</script>

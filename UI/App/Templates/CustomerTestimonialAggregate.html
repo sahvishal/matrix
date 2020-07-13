@@ -1,0 +1,50 @@
+﻿{#param name=TestimonialType}
+<div class="inrrow_main" >
+<table cellpadding="0" cellspacing="0" border="0" class="divgrid_cl">
+    <tr class="age-header">
+        <td colspan="7"> <span class="orngbold12_default">Males <30</span> </td>
+    </tr>
+    <tr class="row1" style="font-size: 11px">
+        <th>Date</th>
+        <th>Name</th>
+        <th>Sex</th>
+        <th>Age</th>
+        <th>Location</th>
+        <th>Race</th>
+        <th class="col_action">Action</th>
+        <th class="col-disposition">Disposition</th>
+    </tr>
+    {#foreach $T as TestimonialViewData}
+    {#foreach $T.TestimonialViewData.Testimonials as Testimonial}
+    <tr class="smalltxt11" bgcolor="{#cycle values=['#EFF8FD','#F8FCFF']}">
+        <td>{DateDeserialize($T.Testimonial.DateCreated).format("shortDate")}</td>
+        <td>{$T.TestimonialViewData.Customer.Name.FullName}(ID:{$T.TestimonialViewData.Customer.Id})</td>
+        <td>{$T.TestimonialViewData.Gender}</td>
+        <td>{$T.TestimonialViewData.Age}</td>
+        <td>{$T.TestimonialViewData.Customer.Address.City}, {$T.TestimonialViewData.Customer.Address.State} {$T.TestimonialViewData.Customer.Address.ZipCode.Zip}</td>
+        <td>{$T.TestimonialViewData.Race}</td>
+        <td class="col_action">
+            {#if $T.Testimonial.TestimonialText!=""}
+            <a href="javascript:void(0);" onclick="ShowTestimonialText('{$T.Testimonial.Id}');">View</a>
+            {#else}
+            <a href="javascript:void(0);" onclick="DownloadTestimonialVideo('{$T.Testimonial.Id}');">Download</a>
+            {#/if}
+        </td>
+        <td class="col-disposition"> 
+            {#if $P.TestimonialType == "submitted"}
+            <a href="javascript:void(0)" onclick="javascript:ChangeTestimonialStatus('{$T.Testimonial.Id}','true')">Accept</a> &nbsp;|&nbsp; 
+            <a href="javascript:void(0)" onclick="javascript:ChangeTestimonialStatus('{$T.Testimonial.Id}','false')">Decline</a> 
+            {#/if}
+            {#if $P.TestimonialType == "accepted"}
+            Rank:<select name="Rank{$T.Testimonial.Id}" id="RankDropDown{$T.Testimonial.Id}"></select>
+            <a href="javascript:void(0)" onclick="javascript:UpdateTestimonialRank('{$T.Testimonial.Id}','RankDropDown{$T.Testimonial.Id}')">Update</a> 
+            <script type="text/javascript" language="javascript">
+                SetTestimonialRank('RankDropDown{$T.Testimonial.Id}','{$T.Testimonial.Rank}');
+            </script>
+            {#/if}
+        </td>
+    </tr>
+    {#/for}
+    {#/for}
+</table>
+</div>

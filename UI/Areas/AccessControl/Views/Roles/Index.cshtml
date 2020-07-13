@@ -1,0 +1,86 @@
+﻿@model Falcon.App.Core.Users.ViewModels.RoleListModel
+
+@using System.Web.Mvc.Ajax
+@using System.Web.Mvc.Html
+
+@{
+    ViewBag.Title = "Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+<h1>Access Control</h1>
+<div class="option-links">
+    <a style="float: right;" href="javascript:void(0)" onclick="setUpdateDialog(0)">Create New Role</a>
+</div>
+<div class="editor-row">
+    <div>
+        @using (Ajax.BeginForm("List", "Roles", new AjaxOptions { UpdateTargetId = "rolelist-container" }))
+        {
+            <div id="list-filter">
+                <div style="padding-left: 5px; padding-top:5px; overflow: hidden;">
+                    <div class="editor-column">
+                        <div class="editor-label">
+                            <label>Role</label>
+                        </div>
+                        @Html.TextBoxFor(m => m.Filter.Name, new { @class = "input-large" })
+                    </div>
+                    <div class="editor-column" style="padding-top: 10px; width: 40%; float: right; text-align: right;">
+                        <label></label>
+                        <div class="pull-right">
+                            
+                            <a href="/AccessControl/Roles">Reset</a>
+                            <button type="submit" class="btn btn-info">Search</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+        <br/>
+        <div id="rolelist-container">
+            @Html.Partial("List", Model)
+        </div>
+    </div>
+</div>
+<div id="updaterole-dialog-div">
+</div>
+<input type="hidden" id="isSaved" value="0" />
+<script language="javascript" type="text/javascript">
+
+   
+
+    $(function () {
+        $("table#list-view tr:even").addClass("alt-row");
+    });
+
+    $(document).ready(function () {
+        var updateRoleDialog = $("#updaterole-dialog-div");
+        updateRoleDialog.dialog({ autoOpen: false, modal: true, title: 'Create/Update Role', resizable: true, draggable: true, width: 450 });
+        updateRoleDialog.bind('dialogclose', function() {
+            if ($("#isSaved").val() == "1")
+                {
+                window.location.reload();
+            }
+        });
+    });
+
+    function setUpdateDialog(id) {
+        $("#updaterole-dialog-div").html('');
+        $.ajax({
+            type: "get", 
+            url: "/AccessControl/Roles/Edit?id=" + id, 
+            success: function (result) {
+
+                $("#updaterole-dialog-div").html(result);
+            },
+            error: function (a, b, c) {
+                alert("Some error occured while processing your request!");
+            }
+        });
+        $("#updaterole-dialog-div").dialog("open");
+        $("#isSaved").val(0);
+    }
+
+  
+
+</script>

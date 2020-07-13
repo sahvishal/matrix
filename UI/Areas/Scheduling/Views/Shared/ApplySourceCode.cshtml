@@ -1,0 +1,251 @@
+﻿@model Falcon.App.Core.Marketing.ViewModels.SourceCodeApplyEditModel
+@{
+    var configurationRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IConfigurationSettingRepository>();
+    var sourceCodelabel = configurationRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.SourceCodeLabel);
+    sourceCodelabel = string.IsNullOrEmpty(sourceCodelabel) ? "Coupon Code" : sourceCodelabel;
+}
+
+<script src="/App/jquery/js/json2.js" language="javascript" type="text/javascript"></script>
+
+
+<div class="txt-white">
+    <strong>@(sourceCodelabel.ToUpper())</strong> 
+    <a href="javascript:void(0);" class="txt-white discount-qtip">(What's this?)</a>
+    <div class="discount-qtip-div" style="display: none;">
+        @Html.Raw(Model.SourceCodeHelpDescription)
+    </div>
+</div>
+<div class="mt5" id="sourcecode-div">    
+    <input type="text" class="textbox" id="sourcecodeinput" value="@Model.SourceCode" />
+    <a href="javascript:void(0);" onclick="applySourceCode();" class="apply-source-code-btn-toggle"><img src="/Config/Content/Images/apply_btn.png" width="96" height="39" alt="" align="top" /></a>
+    <img src="/App/Images/loading.gif" alt="Loading ..." class="apply-source-code-btn-toggle" style="display: none;" />
+    @Html.HiddenFor(m => m.SourceCodeId)
+    @Html.HiddenFor(m => m.SourceCode)
+    @Html.HiddenFor(m => m.DiscountApplied)
+</div>
+
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+
+        $(".discount-qtip").qtip({
+            position: {
+                my: 'top right'
+            },
+            style: {
+                width: '400'
+            },
+            content: {
+                title: "@(sourceCodelabel)?",
+                text: function (api) {
+                    return $(this).parent().find(".discount-qtip-div").html();
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript" language="javascript">
+
+    var _couponSuccessMessageDispMethodRef = null;
+    var _couponFailureMessageDispMethodRef = null;
+
+    var _acEditOrder = null;
+    var model = null;
+    var getSourceCode = null;
+    eval("model = " + '@(Html.Raw((new System.Web.Script.Serialization.JavaScriptSerializer()).Serialize(Model)))');
+
+    var _acSelectedPackage = model.Package;
+    var _acSelectedTest = model.SelectedTests;
+    var _acSelectedProductPrice = model.ProductAmount;
+    var _acSelectedShippingPrice = model.ShippingAmount;
+    var _acTotalOrderPrice = model.OrderTotal;
+
+    function setRefMethodforApplySourceCodeSuccessandFailure(onSuccess, onFailure) {
+        _couponSuccessMessageDispMethodRef = onSuccess;
+        _couponFailureMessageDispMethodRef = onFailure;
+    }
+
+    function correctValues() {
+        if (_acSelectedPackage != null) {
+            _acSelectedPackage.SecondValue = parseFloat(_acSelectedPackage.SecondValue);
+        }
+
+        if (_acSelectedTest != null) {
+            $.each(_acSelectedTest, function () {
+                this.SecondValue = parseFloat(this.SecondValue);
+            });
+        }
+    }
+
+    function applySourceCode() {
+        var sourceCode = $.trim($("#sourcecodeinput").val());
+        if (sourceCode.length < 1) {
+            return;
+        }
+
+        if (_acSelectedPackage == null && _acSelectedTest.length < 1)
+            return;
+
+        correctValues();
+        getSourceCode = null;
+        $(".apply-source-code-btn-toggle").toggle();
+
+        model.SourceCodeId = 0;
+        model.SourceCode = sourceCode;
+        model.Package = _acSelectedPackage;
+        model.SelectedTests = _acSelectedTest;
+        model.ProductAmount = parseFloat(_acSelectedProductPrice).toFixed(2);
+        model.ShippingAmount = parseFloat(_acSelectedShippingPrice).toFixed(2);
+        model.OrderTotal = parseFloat(_acTotalOrderPrice).toFixed(2);
+        model.DiscountApplied = 0;
+
+        var guid = getGuid();
+
+        $.ajax({ type: "Post",
+            contentType: "application/json; charset=utf-8", url: "/Scheduling/Online/ApplySourceCode",
+            data: "{'model' : " + JSON.stringify(model) + ", 'guid' : '" + guid + "'}",
+            dataType: "json",
+            success: function (result) {                
+                $(".apply-source-code-btn-toggle").toggle();
+                model = result;
+                if (model.SourceCodeId < 1 && model.FeedbackMessage != null) {
+
+                    if (_couponFailureMessageDispMethodRef != null) {
+                        _couponFailureMessageDispMethodRef(model.FeedbackMessage.Message);
+                    }
+                    else {
+                        setCouponMessage(false, model.FeedbackMessage.Message);
+                    }
+
+                    getSourceCode = function () {
+                        return { 'Id': 0, 'SourceCode': null, 'Amount': 0 };
+                    };
+                    _acEditOrder();
+
+                    model.FeedbackMessage = null;
+                    return;
+                }
+
+                getSourceCode = function () {
+                    return { 'Id': model.SourceCodeId, 'SourceCode': model.SourceCode, 'Amount': model.DiscountApplied };
+                };
+
+                $("#sourcecode-div").find("input[type=hidden][id=SourceCodeId]").val(model.SourceCodeId);
+                $("#sourcecode-div").find("input[type=hidden][id=SourceCode]").val(model.SourceCode);
+                $("#sourcecode-div").find("input[type=hidden][id=DiscountApplied]").val(model.DiscountApplied);
+
+                _acEditOrder();
+
+                if (_couponSuccessMessageDispMethodRef != null) {
+                    _couponSuccessMessageDispMethodRef("@sourceCodelabel Applied Successfully!");
+                }
+                else {
+                    setCouponMessage(true, "@sourceCodelabel Applied Successfully!");
+                }
+
+                model.FeedbackMessage = null;
+            },
+            error: function (a, b, c) {
+                if (_couponFailureMessageDispMethodRef != null) {
+                    _couponFailureMessageDispMethodRef("System Failure! Please try again.");
+                }
+                else {
+                    setCouponMessage(false, "System Failure! Please try again.");
+                }
+                $(".apply-source-code-btn-toggle").toggle();
+            }
+        });
+    }
+
+    function setPackage(packageId, packagePrice) {
+        if (packageId < 1) {
+            _acSelectedPackage = null;
+            return;
+        }
+
+        _acSelectedPackage = { 'FirstValue': packageId, 'SecondValue': packagePrice };
+    }
+
+    function setSelectedTest(testId, testPrice) {
+        if (_acSelectedTest == null) {
+            _acSelectedTest = new Array();
+        }
+
+        _acSelectedTest.push({ 'FirstValue': testId, 'SecondValue': testPrice });
+    }
+
+    function resetAll() {
+        _acSelectedTest = new Array();
+        _acSelectedPackage = null;
+        _acSelectedProductPrice = 0;
+        _acSelectedShippingPrice = 0;
+    }
+
+    function setProductPrice(productPrice) {
+        _acSelectedProductPrice = productPrice;
+    }
+
+    function setShippingPrice(shippingPrice) {
+        _acSelectedShippingPrice = shippingPrice;
+    }
+
+
+    function setTotalOrderPrice() {
+        _acTotalOrderPrice = 0;
+        if (_acSelectedPackage != null) {
+            _acTotalOrderPrice += Number(_acSelectedPackage.SecondValue);
+        }
+
+        if (_acSelectedTest != null) {
+            for (var i = 0; i < _acSelectedTest.length; i++) {
+                _acTotalOrderPrice += Number(_acSelectedTest[i].SecondValue);
+            }
+        }
+
+        if (_acSelectedProductPrice > 0) {
+            _acTotalOrderPrice += Number(_acSelectedProductPrice);
+        }
+
+        if (_acSelectedShippingPrice > 0) {
+            _acTotalOrderPrice += Number(_acSelectedShippingPrice);
+        }
+    }
+
+    function setSourceCodeCustomerId(customerId) {
+        model.CustomerId = customerId;
+        applySourceCode();
+    }
+
+    function getTotalOrderPrice() {
+        return _acTotalOrderPrice;
+    }
+
+
+    $('#sourcecodeinput').keypress(function (evt) {
+        var key = (evt.which ? evt.which : ((evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : 0)));
+        if (key == 13) {
+            applySourceCode();
+            return false;
+        }
+    });
+
+
+    function setCouponMessage(isSuccess, message) {
+        if (message == null || message.length < 1) {
+            $("#coupon-messagebox").hide();
+            return;
+        }
+
+        if (isSuccess) {
+            $("#coupon-messagebox").addClass("success-message").removeClass("warning-message");
+        }
+        else {
+            $("#coupon-messagebox").addClass("warning-message").removeClass("success-message");
+        }
+
+        $("#coupon-messagebox").show('slow');
+        $("#coupon-messagebox").text(message);
+    }
+
+
+</script>

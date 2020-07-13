@@ -1,0 +1,353 @@
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.DependencyResolution
+@model KynHealthAssessmentEditModel
+@{
+    long RoleId = 0;
+    var currentSession = IoC.Resolve<ISessionContext>();
+    if (currentSession != null && currentSession.UserSession != null && currentSession.UserSession.CurrentOrganizationRole != null)
+    {
+        RoleId = currentSession.UserSession.CurrentOrganizationRole.RoleId;
+    }
+}
+@Html.HiddenFor(m => m.CustomerId)
+@Html.HiddenFor(m => m.EventId)
+<script language="javascript" type="text/javascript" src="/App/JavascriptFiles/CheckLipidValues.js"></script>
+<script language="javascript" type="text/javascript" src="/App/JavascriptFiles/BloodPressureValidation.js"></script>
+<style type="text/css">
+    .small-text-box {
+        width: 24px !important;
+    }
+
+    .xxlarge-text-box {
+        width: 90px !important;
+    }
+
+    .xlarge-text-box {
+        width: 65px !important;
+    }
+
+    #Notes {
+        width: 95%;
+    }
+</style>
+<div class='section-withborder kyn-info footer result-section' style='margin-bottom: 3px; padding: 0px;font-size: 12px;'>
+    <div style="float: left; width: 100%; border-bottom: solid 1px #000000; background-color: #000000; color: #ffffff;">
+        <div style="float: left; width: 36%;">
+            <span style="font-size: 10px; margin-left: 10px;">(office use only)</span>
+            <span style="margin-left: 20px;"><b>CLINICAL INFORMATION</b></span>
+        </div>
+        <div style="float: left; width: 34%;"><b>REQUIRED LAB VALUES</b></div>
+        <div style="float: left; width: 29%; text-align: center;"><b>OPTIONAL LAB VALUES</b></div>
+    </div>
+    <table cellpadding="0" cellspacing="0" style="float: left; width: 100%; margin: 0; padding: 0;">
+        <tr>
+            <td style="width: 117px;">Height</td>
+            <td style="width: 137px;">
+                <span style="float: left; width: 43%;">@Html.TextBoxFor(m => m.HeightInFeet, new { @class = "small-text-box isNumericOnly", @autocomplete = "off", tabindex = "1" })FEET</span>
+                <span style="width: 50%;">@Html.TextBoxFor(m => m.HeightInInches, new { @class = "small-text-box isNumericOnly", @autocomplete = "off", tabindex = "2" })INCHES</span>
+            </td>
+            <td style="width: 117px;">Fasting Status</td>
+            <td style="width: 284px; text-align: center;" class="food-consumption-type">
+                <input type="checkbox" tabindex="8" @(Model.FastingStatus == (long)FastingStatus.Fasting ? "checked=checked" : "") onclick="setFastingStatus(@((long)FastingStatus.Fasting), this)" />Fasting
+                <input type="checkbox" tabindex="9" @(Model.FastingStatus == (long)FastingStatus.NonFasting ? "checked=checked" : "") onclick="setFastingStatus(@((long)FastingStatus.NonFasting), this)" /> Non-Fasting
+                @if (Model.TestId != (long)TestType.HKYN)
+                {
+                    <text>
+                        <input type="checkbox" tabindex="10" @(Model.FastingStatus == (long)FastingStatus.Unknown ? "checked=checked" : "") onclick="setFastingStatus(@((long)FastingStatus.Unknown), this)" />Unknown
+                    </text>
+                }
+                @Html.HiddenFor(m => m.FastingStatus)
+            </td>
+            <td style="width: 105px;">Manual Blood Pressure</td>
+            <td style="width: 98px;">
+                <span style="float: left; width: 100%; margin-top: 15px; text-align: center;">@Html.TextBoxFor(m => m.ManualSystolic, new { @class = "small-text-box isNumericOnly minLength", @autocomplete = "off", @maxlength = 3, minlength = 2, tabindex = "23", @onchange = "onchangeSystolicbp(this)" })/@Html.TextBoxFor(m => m.ManualDiastolic, new { @class = "small-text-box isNumericOnly minLength", @autocomplete = "off", @maxlength = 3, minlength = 2, tabindex = "24", @onchange = "onchangeDiastolicbp(this)" })</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 117px;">Weight</td>
+            <td>@Html.TextBoxFor(m => m.KynWeight, new { @class = "xxlarge-text-box decimalonly", @autocomplete = "off", tabindex = "3" })LBS</td>
+            <td>
+                @if (Model.TestId == (long)TestType.Kyn)
+                {
+                    <text> Glucose</text>
+                }
+                else
+                {
+                    <text> A1C</text>
+                }
+            </td>
+
+            @if (Model.TestId == (long)TestType.Kyn)
+            {
+                <td style="text-align: left; width: 284px;">
+                    <div style="float: left; width: 85px; margin-left: 5px;">
+                        @Html.TextBoxFor(m => m.Glucose, new { @autocomplete = "off", @class = "isNumericOnly", @style = "width: 35px", tabindex = "11" })mg/dl
+                    </div>
+                    <div style="float: left; width: 90px; ">
+                        <input type="radio" name="kyn-glu" tabindex="12" value="19" />Glu < 20
+                    </div>
+                    <div style="float: left; width: 91px; ">
+                        <input type="radio" name="kyn-glu" tabindex="13" value="601" />Glu > 600
+                    </div>
+                </td>
+                <td colspan="2" rowspan="4" style="text-align: left">
+                    Notes:<br />
+                    @Html.TextAreaFor(m => m.Notes, new { @autocomplete = "off", tabindex = "25", rows = 3, @style = "text-aling:center;" })
+                </td>
+            }
+            else
+            {
+                <td style="text-align: left; width: 487px;" colspan="3">
+                    <div style="float: left; width: 40px; margin-left: 5px;">
+                        @Html.TextBoxFor(m => m.A1c, new { @autocomplete = "off", @class = "decimalonly", @style = "width: 35px; vertical-align: bottom;", tabindex = "11" })
+                    </div>
+                    <div style="float: left; width: 385px; margin-left: 5px;">
+                        <div style="float: left; width: 90px; ">
+                            <input type="radio" name="kyn-a1c" tabindex="12" value="5.6" />Nomal < 5.7
+                        </div>
+                        <div style="float: left; width: 180px; ">
+                            <input type="radio" name="kyn-a1c" tabindex="13" value="5.7" />Pre-Diabetes >= 5.7 & <= 6.5
+                        </div>
+                        <div style="float: left; width: 105px; ">
+                            <input type="radio" name="kyn-a1c" tabindex="13" value="6.6" />Diabetic > 6.5
+                        </div>
+                    </div>
+                </td>
+            }
+
+            @*<td style=""></td>*@
+        </tr>
+        <tr>
+            <td style="width: 117px;">Waist Measurement</td>
+            <td style="">@Html.TextBoxFor(m => m.WaistSize, new { @class = "xlarge-text-box decimalonly", @autocomplete = "off", tabindex = "4" })INCHES</td>
+            <td>Total Cholesterol</td>
+            <td style="text-align: left; width: 284px;">
+                <div style="float: left; width: 85px; margin-left: 5px; ">
+                    @Html.TextBoxFor(m => m.TotalCholesterol, new { @autocomplete = "off", @class = "isNumericOnly", @style = "width: 35px", tabindex = "14" })mg/dl
+                </div>
+                <div style="float: left; width: 90px; ">
+                    <input type="radio" name="kyn-tc" value="99" tabindex="15" />TC < 100
+                </div>
+                <div style="float: left; width: 91px; ">
+                    <input type="radio" name="kyn-tc" value="401" tabindex="16" />TC > 400
+                </div>
+            </td>
+            @if (Model.TestId == (long)TestType.HKYN)
+            {
+                <td colspan="2" rowspan="3" style="text-align: left">
+                    Notes:<br />
+                    @Html.TextAreaFor(m => m.Notes, new { @autocomplete = "off", tabindex = "25", rows = 3, @style = "text-aling:center;" })
+                </td>
+            }
+            @*<td colspan="2" rowspan="3" style="width: 207px;"></td>*@
+        </tr>
+        <tr>
+            <td style="width: 117px;">Pulse Rate</td>
+            <td style="">@Html.TextBoxFor(m => m.PulseRate, new { @class = "xxlarge-text-box decimalonly", @autocomplete = "off", tabindex = "5" })BPM</td>
+            <td>Triglycerides</td>
+            <td style=" text-align: left; width: 284px;">
+                <div style="float: left; width: 85px; margin-left: 5px; ">
+                    @Html.TextBoxFor(m => m.Triglycerides, new { @autocomplete = "off", @class = "isNumericOnly", @style = "width: 35px", tabindex = "17" })mg/dl
+                </div>
+                <div style="float: left; width: 90px; ">
+                    <input type="radio" name="kyn-trig" value="49" tabindex="18" />Trig < 50
+                </div>
+                <div style="float: left; width: 91px; ">
+                    <input type="radio" name="kyn-trig" value="501" tabindex="19" />Trig > 500
+                </div>
+            </td>
+            @*<td colspan="2" style="">&nbsp;</td>*@
+        </tr>
+        <tr>
+            <td style="width: 117px;">Blood Pressure</td>
+            <td style="">
+                <span style="float: left; width: 42%; text-align: center; margin-top: 12px;">@Html.TextBoxFor(m => m.SystolicPressure, new { @class = "small-text-box isNumericOnly minLength", @autocomplete = "off", @maxlength = 3, minlength = 2, tabindex = "6", @onchange = "onchangeSystolicbp(this)" })/@Html.TextBoxFor(m => m.DiastolicPressure, new { @class = "small-text-box isNumericOnly minLength", @autocomplete = "off", @maxlength = 3, minLength = 2, tabindex = "7", @onchange = "onchangeDiastolicbp(this)" })</span>
+                <span style="float: left; width: 55%; font-size: 8px; margin-top: 18px;">(systolic/diastolic)</span>
+            </td>
+            <td>HDL Cholesterol</td>
+            <td style="text-align: left; width: 284px;">
+                <div style="float: left; width: 85px; margin-top: 13px; margin-left: 5px; ">
+                    @Html.TextBoxFor(m => m.HDLCholesterol, new { @autocomplete = "off", @class = "isNumericOnly", @style = "width: 35px", tabindex = "20" })mg/dl
+                </div>
+                <div style="float: left; width: 90px; margin-top: 13px; ">
+                    <input type="radio" name="kyn-hdl" value="14" tabindex="21" />HDL < 15
+                </div>
+                <div style="float: left; width: 91px; margin-top: 13px; ">
+                    <input type="radio" name="kyn-hdl" value="101" tabindex="22" />HDL > 100
+                </div>
+            </td>
+            @*<td colspan="2" style="">&nbsp;</td>*@
+        </tr>
+    </table>
+</div>
+<script>
+    function setFastingStatus(fastingSattus, ctrlRef) {
+        var isChecked = $(ctrlRef).is(":checked");
+        $(".food-consumption-type input[type=checkbox]").attr("checked", false);
+        if (isChecked) {
+            $(ctrlRef).attr("checked", true);
+            $("#FastingStatus").val(fastingSattus);
+        } else {
+            $(ctrlRef).attr("checked", false);
+            $("#FastingStatus").val(0);
+        }
+    }
+
+    $(".minLength").blur(function () {
+        if ($(this).val() != "") {
+            if ($(this).val().length < $(this).attr("minlength")) {
+                alert("reading should be in two digits");
+                $(this).focus();
+            }
+        }
+    });
+
+    function SetKynGlucoseRadiobtnStatus() {
+        var val = $("#Glucose").val();
+        if (val == "") return;
+        $(":radio[name='kyn-glu']").attr("checked", false);
+
+        if (Number(val) < 20) {
+            $(":radio[name='kyn-glu'][value='19']").attr("checked", true);
+        }
+        if (Number(val) > 600) {
+            $(":radio[name='kyn-glu'][value='601']").attr("checked", true);
+        }
+    }
+
+    function SetKynTCRadiobtnStatus() {
+        var value = $("#TotalCholesterol").val();
+
+        if (value == "") return;
+        $(":radio[name='kyn-tc']").attr("checked", false);
+
+        if (Number(value) < 100) {
+            $(":radio[name='kyn-tc'][value='99']").attr("checked", true);
+        }
+        if (Number(value) > 400) {
+            $(":radio[name='kyn-tc'][value='401']").attr("checked", true);
+        }
+    }
+
+    function SetKynTrigRadiobtnStatus() {
+        var value = $("#Triglycerides").val();
+
+        if (value == "") return;
+
+        $(":radio[name='kyn-trig']").attr("checked", false);
+
+        if (Number(value) < 50) {
+            $(":radio[name='kyn-trig'][value='49']").attr("checked", true);
+        }
+        if (Number(value) > 500) {
+            $(":radio[name='kyn-trig'][value='501']").attr("checked", true);
+        }
+    }
+
+    function SetKynHDLRadiobtnStatus() {
+        var value = $("#HDLCholesterol").val();
+
+        if (value == "") return;
+        $(":radio[name='kyn-hdl']").attr("checked", false);
+
+        if (Number(value) < 15) {
+            $(":radio[name='kyn-hdl'][value='14']").attr("checked", true);
+        }
+        if (Number(value) > 100) {
+            $(":radio[name='kyn-hdl'][value='101']").attr("checked", true);
+        }
+    }
+
+    function SetKynA1cRadiobtnStatus() {
+        var val = $("#A1c").val();
+        if (val == "") return;
+        $(":radio[name='kyn-a1c']").attr("checked", false);
+
+        if (Number(val) < 5.7) {
+            $(":radio[name='kyn-a1c'][value='5.6']").attr("checked", true);
+        }
+        if (Number(val) > 6.5) {
+            $(":radio[name='kyn-a1c'][value='6.6']").attr("checked", true);
+        }
+        if (Number(val) >= 5.7 && Number(val) <= 6.5) {
+            $(":radio[name='kyn-a1c'][value='5.7']").attr("checked", true);
+        }
+    }
+
+    $(document).ready(function () {
+        SetKynGlucoseRadiobtnStatus();
+        SetKynTCRadiobtnStatus();
+        SetKynTrigRadiobtnStatus();
+        SetKynHDLRadiobtnStatus();
+        SetKynA1cRadiobtnStatus();
+    });
+
+    $("#Glucose").blur(function () {
+        SetKynGlucoseRadiobtnStatus();
+    });
+
+    $("#TotalCholesterol").blur(function () {
+        SetKynTCRadiobtnStatus();
+        checkKynTotalCholesterolMinMaxValue($(this).val());
+    });
+
+    $("#Triglycerides").blur(function () {
+        SetKynTrigRadiobtnStatus();
+        checkkynTriglyceridesMinMaxValue($(this).val());
+    });
+
+    $("#HDLCholesterol").blur(function () {
+        SetKynHDLRadiobtnStatus();
+        checkKynHDLMinMaxValue($(this).val());
+    });
+
+    $("#A1c").blur(function () {
+        SetKynA1cRadiobtnStatus();
+    });
+
+    $(":radio[name='kyn-glu']").change(function () {
+        $("#Glucose").val($(this).val());
+    });
+
+    $(":radio[name='kyn-tc']").change(function () {
+        var value = $(this).val();
+        $("#TotalCholesterol").val(value);
+        checkKynTotalCholesterolMinMaxValue(value);
+    });
+
+    $(":radio[name='kyn-trig']").change(function () {
+        var value = $(this).val();
+        $("#Triglycerides").val(value);
+        checkkynTriglyceridesMinMaxValue(value);
+    });
+
+    $(":radio[name='kyn-hdl']").change(function () {
+        var value = $(this).val();
+        $("#HDLCholesterol").val(value);
+        checkKynHDLMinMaxValue(value);
+    });
+
+    $(":radio[name='kyn-a1c']").change(function () {
+        $("#A1c").val($(this).val());
+    });
+
+
+    function checkKynTotalCholesterolMinMaxValue(tcValue) {
+        if ('@(RoleId)' == '@((long)Falcon.App.Core.Enum.Roles.Technician)') {
+            checkTotalCholesterolOutsidePossibleRange(tcValue);
+        }
+    }
+    function checkkynTriglyceridesMinMaxValue(tgValue) {
+        if ('@(RoleId)' == '@((long)Falcon.App.Core.Enum.Roles.Technician)') {
+            checkTriglyceridesOutsidePossibleRange(tgValue);
+        }
+    }
+    function checkKynHDLMinMaxValue(hdlValue) {
+        if ('@(RoleId)' == '@((long)Falcon.App.Core.Enum.Roles.Technician)') {
+            checkHDLOutsidePossibleRange(hdlValue);
+        }
+    }
+
+</script>

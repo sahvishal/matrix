@@ -1,0 +1,40 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model HealthAssessmentTemplateEditModel
+
+@using (Ajax.BeginForm("QuestionTemplate", "ClinicalQuestion", new AjaxOptions { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "basic-info", OnComplete = "toggle" }))
+{
+    <div style="margin:10px;">
+        @Html.HiddenFor(m => m.IsNewTemplate)
+        <div id="basic-info" style="clear: both;float: right">
+            @Html.Partial("QuestionTemplateEditModel", Model)
+        </div>
+
+        <div class="btnrow save-settigs-btn" style="clear: both;float: right">
+            <input type="submit" class="btn " style="float: right;margin-right: 50px;display: block" value="Save & Next" />
+            <a href="/Medical/ClinicalQuestion/Index" style="float: right;padding-right: 10px;padding-top: 6px">Close</a>
+        </div>
+        <div class="save-settigs-btn" style="display: none; text-align: right; float: right; margin-right: 50px; padding-top: 6px" >
+            <img src="/App/Images/loading.gif" alt="" />
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("input[type=submit]").click(function () {
+                toggle();
+            });
+        });
+        function toggle() {
+            $(".save-settigs-btn").toggle();
+        }
+    </script>
+
+
+}
+<style type="text/css">
+    .btnrow {
+        width: 97%;
+        height: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+</style>

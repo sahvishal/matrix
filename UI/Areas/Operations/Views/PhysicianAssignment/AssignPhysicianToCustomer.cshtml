@@ -1,0 +1,85 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Operations.ViewModels
+
+@model PhysicianCustomerAssignmentEditModel
+           
+@{
+    ViewBag.Title = "Assign/UnAssign Physician To Customer";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml";
+}
+
+<h1>Assign/UnAssign Physician</h1>
+@{Html.BeginForm();}    
+    <div style="float: left; width: 500px;">
+        @if(Model.FeedbackMessage!=null)
+        {
+            @Html.Partial("Message",new ViewDataDictionary(Model.FeedbackMessage))     
+        }
+        <fieldset>
+            <legend>Assign Physician</legend>        
+            <div class="editor-row">
+                <div style="float:left; width:30%">
+                    @Html.LabelFor(m=>m.PhysicianId):
+                </div>
+                <div style="float:left; width:65%">
+                    @Html.DropDownListFor(m => m.PhysicianId, DropDownHelper.PhysiciansForCustomer(Model.EventCustomerId)) @Html.ValidationMessageFor(m=>m.PhysicianId)
+                </div>
+            </div>
+            <div class="editor-row">
+                <div style="float:left; width:30%">
+                    @Html.LabelFor(m=>m.OverReadPhysicianId):
+                </div>
+                <div style="float:left; width:65%">
+                    @Html.DropDownListFor(m => m.OverReadPhysicianId, DropDownHelper.PhysiciansForCustomer(Model.EventCustomerId))
+                </div>
+            </div>
+            <div class="editor-row">
+                <div style="float:left; width:30%">
+                    @Html.LabelFor(m=>m.Notes):
+                </div>
+                <div style="float:left; width:65%">
+                    @Html.TextAreaFor(m=>m.Notes)
+                </div>
+            </div>
+            @Html.HiddenFor(m=>m.EventCustomerId)
+            <div class="submit-button-row">
+                <a href="javascript:void(0);" onclick="closeWindow();">Close </a> &nbsp;&nbsp; @Html.SubmitButton("Assign")
+            </div>
+        </fieldset>        
+        @if(Model.AssignedPhysicians!=null)
+        {
+            <h3>Current Physician Assignments</h3>
+            <table class="ui-widget ui-widget-content" style="width:100%">
+	            <thead>
+		            <tr class="ui-widget-header ">
+			            <th>Name</th>
+			            <th>Specialization</th>
+                        <th>Role</th>			            
+		            </tr>
+	            </thead>
+	            <tbody>
+                @foreach(var physician in Model.AssignedPhysicians)
+                {
+                    <tr class="data-row">
+                        <td>@physician.Name</td>
+                        <td>@physician.Specialization</td>
+                        <td>@(physician.IsOverReadPhysician?"Over Read Physician":"Primary Physician")</td>
+                    </tr>
+                }
+                </tbody>
+	        </table>     
+        }
+        else
+        {
+            <div class="info-box">
+                No physician have been assigned to this customer. Please assign the physician as needed.
+            </div>   
+        }
+    </div>    
+    <script type="text/javascript" language="javascript">
+        function closeWindow() {
+            window.close();
+        }
+    </script>   
+@{Html.EndForm();}
+

@@ -1,0 +1,137 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model CustomerEventCriticalTestDataViewModel
+@{
+    ViewBag.Title = "Preliminary Test Result";
+    Layout = null;
+}
+<style type="text/css">
+    *
+    {
+        font-family: arial,helvetica,tahoma;
+        font-size:13px;
+        margin: 0; 
+        padding: 0;
+    }
+    .row-div
+    {
+        float: left;
+        width: 95%;
+        margin-bottom: 10px;
+        margin-left: 40px;
+    }
+    .input-brdr
+    {
+        border: none;
+        border-bottom: 1px solid;
+    }
+    .input-data-width
+    {
+        width: 500px;
+    }
+    .labels
+    {
+        width: 150px;
+        float: left;
+        font-weight: bold;
+        padding-right: 5px;
+        margin-right: 5px;
+    }
+</style>
+<div style="width: 800px;margin:0 auto;padding-left:100px;padding-top:25px;">
+    <div>
+        <img src="@(IoC.Resolve<ISettings>().LargeLogo)" alt="@(IoC.Resolve<ISettings>().CompanyName)" />
+    </div>
+    <div style="font-size: 30px; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid black;">
+        PRELIMINARY TEST RESULT
+    </div>
+    <div class="row-div">
+        Date:<input type="text" style="width:100px;" class="input-brdr" value='@(Model.DateOfSubmission.HasValue ? Model.DateOfSubmission.Value.ToShortDateString() : "N/A")' />
+    </div>
+    <div class="row-div" style="margin-top: 20px;">
+        <span class="labels">Client Name:</span>
+        <input type="text" class="input-data-width input-brdr" value="@Model.CustomerName" />
+    </div>
+    <div class="row-div">
+        <span class="labels">Best Number to Contact Client:</span> &nbsp;<input type="text" style="width:440px;" class="input-brdr" value='@(Model.ContactNumber != null ? Model.ContactNumber.ToString() : "")' />
+    </div>
+    <div class="row-div">
+        <span class="labels">Patient has PCP?</span>
+        <input type="text" style="width:50px;" class="input-brdr" value='@(Model.HasPcp ? "Yes" : "No")' />
+        @if (!string.IsNullOrEmpty(Model.PrimaryCarePhysician))
+        {
+            <span class="labels" style="float: none;">Primary Care Physician:</span>
+            <input type="text" style="width: 270px;" class="input-brdr" value='@Model.PrimaryCarePhysician' />
+        }
+    </div>
+    <div class="row-div">
+        <span class="labels">Sonographer's Name:</span><input type="text" class="input-data-width input-brdr" value="@Model.TechnicianName" />
+    </div>
+    <div class="row-div">
+        <span class="labels">Validating Sonographer Name:</span><input type="text" class="input-data-width input-brdr" value="@Model.ValidatingTechnicianName" />
+    </div>
+    <div class="row-div">
+        <span class="labels">Physician Name:</span><input type="text" class="input-data-width input-brdr" value="@Model.PrimaryPhysicianName" />
+    </div>
+    @{
+        var inflateString = new Func<string, string>(a =>
+        {
+            if (a.Length > 300) return a;
+            var highIndex = (300 - a.Length);
+            for (int i = 0; i < highIndex; i++)
+            {
+                a += "&nbsp; ";
+            }
+            return a;
+        });
+    }
+    <div class="row-div" style="margin-top: 10px; text-align:center;">
+        <b><u>Notice to Client and Physician:</u></b>
+    </div>
+    <div class="row-div" style="margin-top: 5px;">
+        <b><u>Please be advised that this is only a screening and, as of today, has not yet been interpreted by a Matrix Medical Network Physician.  Please follow-up with additional confirmatory testing if deemed necessary.</u></b>
+    </div>
+    <div class="row-div" style="margin-top: 20px;">
+        On <u><b>@(Model.DateOfSubmission.HasValue ? Model.DateOfSubmission.Value.ToShortDateString() : "N/A")</b></u>
+        your patient, <u><b>@Model.CustomerName</b></u>, came to @(IoC.Resolve<ISettings>().CompanyName)
+        for a preventive health screening. During the course of the tests, we found a possible
+        abnormality with the <b>"@Model.TestName"</b> screening. We have advised your patient
+        to follow up with his/her physician for further evaluation as soon as possible.
+    </div>
+    <div class="row-div" style="margin-top: 20px;">
+        <b>Comments from Sonographer: </b><u>@Html.Raw(inflateString(Model.TechnicianNotes))</u>
+    </div>
+    <div class="row-div" style="margin-top: 10px;">
+        <b>Comments from Physician: </b><u>@Html.Raw(inflateString(Model.TechnicianNotesForPhysician))</u>
+    </div>
+    <div class="row-div" style="margin-top: 10px;">
+        <b>Symptoms: </b><u>@Html.Raw(inflateString(Model.Symptoms))</u>
+    </div>
+    <div class="row-div">
+        <span class="labels" style="width: 75px;">Follow-up:</span><input type="text" class="input-data-width input-brdr" style="width:570px;" value='@(Model.IsDefaultFollowup ? "Follow-up with a physician within 72 hours" : "Go to the nearest hospital emergency room immediately following your screening")' />
+    </div>
+    <div class="row-div" style="margin-top: 50px;">
+        <div style="float: left;">
+            Client Signature:
+            <input type="text" style="border: none; border-bottom: 1px solid; width: 400px;" />
+        </div>
+    </div>
+    <div class="row-div" style="margin-top: 40px;">
+        <div style="float: left;">
+            Sonographer Signature:
+            <input type="text" style="border: none; border-bottom: 1px solid; width: 400px;" />
+        </div>
+    </div>
+    <div class="row-div" style="margin-top: 40px;">
+        <div style="float: left;">
+            Validating Sonographer Signature:
+            <input type="text" style="border: none; border-bottom: 1px solid; width: 400px;" />
+        </div>
+    </div>
+    <div class="row-div" style="margin-top: 10px; font-weight:bold;">
+        <u>The results of this study are preliminary. They have not yet been read and interpreted
+        by a @(IoC.Resolve<ISettings>().CompanyName)
+        physician.</u>
+    </div>
+</div>

@@ -1,0 +1,164 @@
+﻿@using Falcon.App.Core.Extensions
+@using System.Linq
+@model Falcon.App.Core.CallQueues.ViewModels.CallCenterCallReportListModel
+
+@{
+    ViewBag.Title = "Call Center Call Report";
+}
+
+<h2>Call Center Call Report</h2>
+<style>
+    #list-view td {
+        width: 100px !important;
+    }
+</style>
+<script src="/Scripts/reportexportqueue.js"></script>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("CallCenterCallReport", "Reports", FormMethod.Get);}
+    @Html.Partial("CallCenterCallReportModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 5000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/CallCenter/ReportsQueue/CallCenterCallReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                Export CSV
+            </a>
+        }
+        else
+        {
+            <a target="_blank" href="/CallCenter/ExportableReports/CallCenterCallReport?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+
+    </div>
+    var itemList = Model.Collection.ToArray();
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="margin-bottom: 10px; overflow: auto;">
+        <table id="list-view">
+            <tr>
+                <th nowrap>Customer Id</th>
+                <th nowrap>Customer Name</th>
+                <th nowrap>Member Id</th>
+                <th nowrap>Medicare Id</th>
+                <th nowrap>DOB</th>
+                <th nowrap>Call Queue</th>
+                <th nowrap>Call Type</th>
+                <th nowrap>Call Date</th>
+                <th nowrap>Call Time</th>
+                <th nowrap>Outcome</th>
+                <th nowrap>Disposition</th>
+                <th nowrap>Reason</th>
+                <th nowrap>Event Date</th>
+                <th nowrap>Appointment Time</th>
+                <th nowrap>Event Id</th>
+                <th nowrap>Appointment Booked Date</th>
+                <th nowrap>Sponsored By</th>
+                <th nowrap>Tag</th>
+                <th nowrap>Custom Tag(s)</th>
+                <th nowrap>Called Custom Tag(s)</th>
+                <th nowrap>Agent Name</th>
+                <th nowrap>Member State</th>
+                <th nowrap>Zip Code</th>
+                <th nowrap>Is Eligible</th>
+                <th nowrap>Disposition Notes</th>
+            </tr>
+            @foreach (var item in itemList)
+            {
+                <tr>
+                    <td> @item.CustomerId </td>
+                    <td> @item.Name</td>
+                    <td> @item.MemberId</td>
+                    <td> @item.MedicareId</td>
+                    <td> @(item.DateOfBirth.HasValue ? item.DateOfBirth.Value.ToShortDateString() : "N/A") </td>
+                    <td> @(item.CallQueue) </td>
+                    <td> @(item.OutreachType)</td>
+                    <td> @(item.OutreachDate.HasValue ? item.OutreachDate.Value.ToShortDateString() : "N/A")</td>
+                    <td> @(item.OutreachTime) </td>
+                    <td> @item.Outcome</td>
+                    <td> @item.Disposition </td>
+                    <td> @item.Reason</td>
+                    <td> @(item.EventDate.HasValue ? item.EventDate.Value.ToShortDateString() : "N/A")</td>
+                    <td nowrap> @(item.AppointmentTime.HasValue ? item.AppointmentTime.Value.ToShortDateString() + " at " + item.AppointmentTime.Value.ToShortTimeString() : "N/A")</td>
+                    <td> @item.EventId</td>
+                    <td> @(item.AppointmentBookedDate.HasValue ? item.AppointmentBookedDate.Value.ToShortDateString() : "N/A")</td>
+                    <td> @item.SponsoredBy</td>
+                    <td> @item.Tag </td>
+                    <td> @item.CustomTags</td>
+                    <td> @item.CalledCustomTags</td>
+                    <td> @item.Agent</td>
+                    <td> @item.State</td>
+                    <td> @item.ZipCode</td>
+                    <td> @item.IsEligible</td>
+                    <td>
+                        @if (item.Notes != null && item.Notes.Any())
+                        {
+                            <a href="javascript:void(0)" class="notes-detail"><b>Notes</b></a>
+                            <div class="notes-div" style="display:none;">
+                                @foreach (var note in item.Notes)
+                                {
+                                    <div style='border-bottom: solid 1px; padding-bottom:2px;'> On [ @note.DateCreated.ToShortDateString() ]:</div>
+                                    <div>@Html.Raw(note.Notes)</div> <br />
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <text> N/A </text>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </table>
+
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+
+@section scripts {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+        $('.notes-detail').qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: "Notes",
+                text: function (api) {
+                    return $(this).parent().find('.notes-div').html();
+                }
+            },
+            style: {
+                width: '400px'
+            }
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,79 @@
+﻿<table id="EventBlurbTemplate" class="divgrid_cl">
+    <thead>
+        <tr class="row1">
+            <th>
+                Name
+            </th>
+            <th>
+                Phone Number
+            </th>
+            <th>
+                Code
+            </th>
+            <th class="signup" style="text-align:center">
+                Customers
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {#foreach $T as EventMarketingMaterial}
+        <tr class="row2">
+            <td>
+                {$T.EventMarketingMaterial.MarketingMaterial}
+            </td>
+            <td>
+                {$T.EventMarketingMaterial.PhoneNumber}
+            </td>
+            <td>
+                <a href="javascript:void(0)" class="jtipCampaign" title='Campaign Detail|{$T.EventMarketingMaterial.CampaignSummary}'>
+                    {$T.EventMarketingMaterial.SourceCode}</a>
+            </td>
+            <td class="signup" style="text-align:center">
+                {$T.EventMarketingMaterial.RegisteredCustomerCount}
+            </td>
+            <td>
+                <a href="javascript:void(0)" onclick="ViewBlurbText('{$T.EventMarketingMaterial.EventMarketingMaterialId}')"> View </a>| 
+                <a href="javascript:void(0)" onclick="EditBlurb('{$T.EventMarketingMaterial.EventMarketingMaterialId}','{$T.EventMarketingMaterial.MarketingMaterialId}')"> Change </a>|
+                <a href="javascript:void(0)" onclick="RemoveBlurb('{$T.EventMarketingMaterial.EventMarketingMaterialId}')"> Remove </a>|
+                <a href="javascript:void(0)" onclick="DownloadPdf('{$T.EventMarketingMaterial.EventMarketingMaterialId}');">Download PDF</a>
+            </td>
+        </tr>
+        {#/for}
+    </tbody>
+</table>
+{#literal}
+<script type="text/javascript">
+//    function BlurbSelect(RadioButtonId) {
+//        $('.blurbRadio').attr('checked', '');
+//        $('#' + RadioButtonId).attr('checked', true);
+//        $('#hdMMId').val(RadioButtonId);
+
+//    }
+//    function CloseBlurbView() {
+//        $('#_txtViewBlurbText').html('');
+//        $('#dvViewBlurb').dialog('close');
+//    }
+//    function CancelBlurb() {
+//        $('.blurbRadio').attr('checked', '');
+//        $('#hdMMId').val(0);
+//        $('#hdEventMarketingMaterialId').val(0);
+//        $('#dvBlurb').dialog('close');
+//    }
+//    function EditBlurb(EventMarketingMaterialId, MarketingMaterialId) {
+//        $('#hdEventMarketingMaterialId').val(EventMarketingMaterialId);
+//        $('#hdMMId').val(MarketingMaterialId);
+//        $('.blurbRadio').attr('checked', '');
+//        $('#_btnUpdate').attr('value', 'Update');
+//        $('#_btnUpdate').attr('title', 'Update');
+//        $('#dvBlurb').data('title.dialog', 'Edit Blurb');
+//        $('#dvBlurb').dialog('open');
+//        $('#' + MarketingMaterialId).attr('checked', true);
+
+//    }
+//    function CopyBlurbView() {
+//        ///$("#_txtViewBlurbText").copy();
+//    }
+</script> {#/literal}

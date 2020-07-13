@@ -1,0 +1,162 @@
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.CancelledCustomerListModel
+
+@{
+    ViewBag.Title = "Canceled Customers";
+}
+
+<h1>Canceled Customer</h1>
+<div id="list-filter">
+    @{Html.BeginForm("CancelledCustomer", "Reports", FormMethod.Get);}
+    @Html.Partial("CancelledCustomerModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Scheduling/ExportableReports/CancelledCustomer?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV
+        </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <table id="list-view" style="width:100%;">
+            <tr>
+                <th>
+                    Customer
+                </th>
+                <th>
+                    Event Info
+                </th>
+                <th style="width: 75px">
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().AdSource)
+                </th>
+                <th>
+                    Appointment Info
+                </th>
+                <th>
+                    Reason
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var cancelledCustomer in Model.Collection)
+            {
+                <tr>
+                    <td style="width: 250px;">
+                        <div>
+                            <b>@(cancelledCustomer.CustomerName)</b> [ID: @cancelledCustomer.CustomerId]
+                        </div>
+                        <div style="margin-top: 3px;">
+                            <b>Address</b> - @cancelledCustomer.Address.ToString()
+                            <br />
+                            <b>Email</b> - @cancelledCustomer.Email
+                            <br />
+                            <b>Phone(H)</b> - @cancelledCustomer.PhoneHome
+                            @*<br />
+                                <b>Phone(O)</b> - @(!string.IsNullOrEmpty(cancelledCustomer.PhoneOfficeExtension) ? cancelledCustomer.PhoneBusiness + "/" + cancelledCustomer.PhoneOfficeExtension : cancelledCustomer.PhoneBusiness)
+                                <br />
+                                <b>Phone(C)</b> - @cancelledCustomer.PhoneCell*@
+                            <br />
+                            <b>DOB</b> - @(cancelledCustomer.DateofBirth.HasValue ? cancelledCustomer.DateofBirth.Value.ToShortDateString() : "N/A")
+                            <br />
+                            <b>Gender</b> - @cancelledCustomer.Gender
+                        </div>
+                    </td>
+                    <td style="text-align: left; width: 250px;">
+                        <b>Date</b> - @cancelledCustomer.EventDate.ToShortDateString() [ID: @cancelledCustomer.EventId]
+                        <br />
+                        <b>Host</b> - @cancelledCustomer.Host
+                        <br />
+                        <b>Address</b> - @cancelledCustomer.HostAddress
+                        <br />
+                        <b>Pods</b> - @cancelledCustomer.Pod
+                        <br />
+                        <b>Sponsored By</b> - @(string.IsNullOrEmpty(cancelledCustomer.SponsoredBy) ? "N/A" : cancelledCustomer.SponsoredBy) 
+                    </td>
+                    <td>@cancelledCustomer.AdSource</td>
+                    <td style="text-align: left; width: 250px;">
+                        <b>Signup Method</b> - @cancelledCustomer.SignUpMethod
+                        <br />
+                        <b>Scheduled By</b> - @cancelledCustomer.ScheduledBy
+                        <br />
+                        <b>Canceled By</b> - @cancelledCustomer.CancelledBy
+                        <br />
+                        <b>Total Amount</b> - $@cancelledCustomer.TotalAmount.ToString("00.00")
+                        <br />
+                        <b>Canceled Date</b> - @cancelledCustomer.CanceledDate
+                    </td>
+                    <td>
+                        @cancelledCustomer.CancellationReason
+                        @if (!string.IsNullOrEmpty(cancelledCustomer.SubReason))
+                        {
+                            <br />
+                            <b>SubReason - </b>@cancelledCustomer.SubReason
+                        }
+                    </td>
+                    <td style="width:70px;">
+                        <a href="javascript:void(0)" class="notes-detail"><b>Notes</b></a>
+                        <div class="notes-div" style="display:none;">
+                            @foreach (var note in cancelledCustomer.Notes)
+                            {
+                                <div style='border-bottom: solid 1px; padding-bottom:2px;'> On [ @note.DataRecorderMetaData.DateCreated.ToShortDateString() ]:</div>
+                                <div>@Html.Raw(note.Notes)</div> <br />
+                            }
+                        </div>
+                        <br />
+                        <a href="javascript:void(0);" onclick='return ShowOrderDetails("@cancelledCustomer.OrderId","@cancelledCustomer.CustomerId","@cancelledCustomer.CustomerName")'>
+                            View Order
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $('.notes-detail').qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: "Notes",
+                text: function (api) {
+                    return $(this).parent().find('.notes-div').html();
+                }
+            },
+            style: {
+                width: '400px'
+            }
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function ShowOrderDetails(orderId, customerId, customerName) {
+            window.open("/App/Common/OrderSummary.aspx?OrderId=" + orderId + "&CustomerName=" + customerName + "&CustomerId=" + customerId, "OrderSummary", "width=750, height=400, menubar=0, toolbar=0, status=0, location=0, resizable=0, dependent=1, scrollbars=1");
+            return false;
+        }
+    </script>
+}

@@ -1,0 +1,140 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.AppointmentsBookedListModelFilter
+<h2>
+    Search Records <span style="float: right">Preset Searches: <a href="#" onclick="clickToday(); return false;">
+        Today </a>| <a href="#" onclick="clickThisWeek(); return false;">This Week </a>
+    </span>
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 17%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.EventFrom, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.EventTo, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Event Type:
+        </div>
+        <div>
+            <input type="checkbox" id="is-retail-event" @(Model.IsRetailEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsRetailEvent');" />Retail
+            <input type="checkbox" id="is-corporate-event" @(Model.IsCorporateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsCorporateEvent');" />Corporate<br />
+            <input type="checkbox" id="is-healthPlan-event" @(Model.IsHealthPlanEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsHealthPlanEvent');" />Health Plan
+        </div>
+        @Html.HiddenFor(m => m.IsRetailEvent)
+        @Html.HiddenFor(m => m.IsCorporateEvent)
+        @Html.HiddenFor(m => m.IsPublicEvent)
+        @Html.HiddenFor(m => m.IsPrivateEvent)
+        @Html.HiddenFor(m => m.IsHealthPlanEvent)
+    </div>
+    <div class="editor-column" style="width: 14%;padding-left: 4px;">
+        <div class="small-text">Event Status</div>
+        <div>
+            @Html.DropDownListFor(m => m.EventStatus, DropDownHelper.GetEventStatus(EventStatus.Active), new { @style = "width:90%;" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 15%; float: left;">
+        <div class="small-text">
+            Event Id
+        </div>
+        @Html.TextBoxFor(m => m.EventId)
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 17%">
+        <div class="small-text">
+            <b>Registration </b>From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            &nbsp;
+        </div>
+        <div>
+            <input type="checkbox" id="is-public-event" @(Model.IsPublicEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPublicEvent');" />Public
+            <input type="checkbox" id="is-private-event" @(Model.IsPrivateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPrivateEvent');" />Private
+        </div>
+    </div>
+    <div class="editor-column" style="width: 25%">
+        <div class="small-text">&nbsp;</div>
+        <div>
+            @Html.CheckBoxFor(m=>m.CancelledCustomer) Cancelled Customers
+        </div>
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden">
+    <div class="editor-column" style="width: 38%">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllCustomTags(), new { @multiple = "multiple", @style = "width: 340px" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Tag
+        </div>
+        @Html.TextBoxFor(m => m.Tag)
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Product
+        </div>
+        @Html.DropDownListFor(m => m.ProductTypeId, DropDownHelper.GetAllProductType(), new { @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 36%">
+        <div class="small-text">
+        Health Plan
+        </div>
+        @Html.DropDownListFor(m => m.AccountId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:90%;" })
+    </div>
+    
+</div>
+<div class="editor-column" style="padding-top: 10px; width: 20%; float: right; text-align: right;clear: both;">
+    @Html.ActionLink("Clear", "AppointmentsBooked", "Reports") | @Html.SubmitButton("Search")
+</div>
+<script language="javascript" type="text/javascript">
+
+    function clickToday() {
+        clearAll();
+        $("input#EventFrom").val('@DateTime.Now.ToShortDateString()');
+        $("input#EventTo").val('@DateTime.Now.ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clickThisWeek() {
+        clearAll();
+        $("input#EventFrom").val('@DateTime.Now.AddDays(-1 * (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("input#EventTo").val('@DateTime.Now.AddDays(6 - (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clearAll() {
+        $("input[type=text], input[type=checkbox]").val("");
+    }
+
+    function onCheckEventType(checkBox, hiddenBox) {
+        if ($(checkBox).attr("checked")) {
+            $("#" + hiddenBox).val('@Boolean.TrueString');
+        }
+        else {
+            $("#" + hiddenBox).val('@Boolean.FalseString');
+        }
+    }
+
+</script>

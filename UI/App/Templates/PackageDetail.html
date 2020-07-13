@@ -1,0 +1,15 @@
+﻿{#param name=PackageName}
+{#param name=PackageDescription}
+<div>
+<p class="MsoNormal_hd">{$P.PackageName}</p>
+
+<p class="MsoNormal">{$P.PackageDescription}</p>
+
+{#foreach $T as Test}
+    <p class="MsoNormal"><strong>{$T.Test.Name}</strong></p>
+
+    <p class="MsoNormal">{$T.Test.Description}</p>
+
+{#/for}
+
+</div>

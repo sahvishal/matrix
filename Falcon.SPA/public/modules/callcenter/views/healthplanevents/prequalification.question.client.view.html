@@ -1,0 +1,90 @@
+﻿<div class="prequalification" us-spinner spinner-key="online-spinner">
+    <div class="modal-header">
+        <h4 class="modal-title">Pre-Qualification Questions</h4>
+    </div>
+    <div class="content modal-body">
+        <table ng-if="model != null" id="tblPrequalificationQuestions" style="width:100%;">
+            <tbody>
+                <tr ng-repeat="item in model">
+                    <td>
+                        <div style="font-weight:bold; font-size: larger; margin-bottom: 20px;">Test : <span class="testName">{{item.TestName}}</span></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table style="width: 100%" id="tblQuestion">
+                            <tbody>
+
+                                <tr id="tr_5" class="form-group" style="display:block">
+                                    <td style="width:340px;">
+                                        Had the patient had "Double mastectomy"?
+                                        <input type="hidden" class="hdnQuestionId" value="5">
+                                        <input type="hidden" class="hdnTestId" value="29">
+                                        <input type="hidden" class="hdnControlType" value="124">
+                                    </td>
+                                    <td  >
+                                        <span class="radio" style="display: inline; ">
+                                            <input type="radio" value="Yes" class="radio" ng-click="radioChangeEvent(5,'Yes')" name="29_5" id="29_5_Yes" style="display: inline;">Yes
+                                        </span>
+                                        <span class="radio" style="display: inline; margin-left:35px;">
+                                            <input type="radio" value="No" class="radio" ng-click="radioChangeEvent(5,'No')" name="29_5" id="29_5_No" style="display: inline;">No
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr id="tr_6" class="form-group" style="display:none">
+                                    <td style="width:340px;">
+                                        Member Refused Mammogram?
+                                        <input type="hidden" class="hdnQuestionId" value="6">
+                                        <input type="hidden" class="hdnTestId" value="29">
+                                        <input type="hidden" class="hdnControlType" value="124">
+                                    </td>
+                                    <td >
+                                        <span class="radio" style="display: inline; ">
+                                            <input type="radio" value="Yes" class="radio" ng-click="radioChangeEvent(6,'Yes')" name="29_6" id="29_6_Yes" style="display: inline;">Yes
+                                        </span>
+                                        <span class="radio" style="display: inline; margin-left:35px;">
+                                            <input type="radio" value="No" class="radio" ng-click="radioChangeEvent(6,'No')" name="29_6" id="29_6_No" style="display: inline;">No
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr id="tr_7" class="form-group" style="display:none">
+                                    <td style="width: 340px; vertical-align:top;">
+                                        Date of operation
+                                        <input type="hidden" class="hdnQuestionId" value="7">
+                                        <input type="hidden" class="hdnTestId" value="29">
+                                        <input type="hidden" class="hdnControlType" value="124">
+                                    </td>
+                                    <td  style="vertical-align:top;">
+                                        <li class="radio">
+                                            <input type="radio" value="Date" class="radio" ng-click="radioChangeEvent(7,'Date')" name="29_7" id="29_7_Date">Date
+                                            <span id="tr_8" style="display: inline; margin-left:62px; margin-top:-30px" >
+                                                <input type="hidden" class="hdnQuestionId" value="8">
+                                                <input type="hidden" class="hdnTestId" value="29">
+                                                <input type="hidden" class="hdnControlType" value="126">
+                                            <input type="text" name="29_8" id="29_8" startdate="01/01/2019" date-picker-simple="" style="display: inline; width:100px;"></span> 
+                                        </li>
+                                        <li class="radio">
+                                            <input type="radio" value="Unknown" class="radio" ng-click="radioChangeEvent(7,'Unknown')" name="29_7" id="29_7_Unknown">Unknown
+                                        </li>
+                                        <li class="radio">
+                                            <input type="radio" value="Member Declined to answer" class="radio" ng-click="radioChangeEvent(7,'Member Declined to answer')" name="29_7" id="29_7_Member_Declined_to_answer">Member Declined to answer
+                                        </li>
+                                    </td>
+                                </tr>
+                                <tr id="tr_8" class="form-group" style="display:none">
+                                   
+                                </tr>
+                            
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <input type="button" ng-click="save();" value="Save" class="pull-right btn">
+        <input type="button" ng-click="Cancel()" class="pull-right btn right-buffer-10" value="Cancel" />
+    </div>
+</div>
+</div>

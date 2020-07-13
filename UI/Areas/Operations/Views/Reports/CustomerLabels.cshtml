@@ -1,0 +1,65 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Operations.ViewModels.CustomerLabelListModel
+@{
+    ViewBag.Title = "Customer Labels";
+}
+<h1>
+    Customer Labels</h1>
+<div id="list-filter">
+    @{Html.BeginForm("CustomerLabels", "Reports", FormMethod.Get);}
+    <h2>
+        Search Event</h2>
+    <div style="padding-left: 5px; overflow: hidden;">
+        <div class="editor-column" style="width: 20%;">
+            <div class="small-text">
+                EventId:
+            </div>
+            @*<input type="text" name="eventId" id="eventId" style="width: 80%;" />*@
+            @Html.TextBoxFor(m => m.EventId, new { @value = (Model !=null && Model.EventId > 0) ? Model.EventId.ToString() : "" })
+        </div>
+        <div class="editor-column" style="width: 20%;">
+            <div class="small-text">
+                Shipping Status:
+            </div>
+            @Html.DropDownListFor(m => m.ShippingStatus, DropDownHelper.GetShippingStatus())
+        </div>
+        <div class="editor-column" style="padding-top: 10px; text-align: right; float: right;">
+            @Html.SubmitButton("Search")
+        </div>
+    </div>
+    @{Html.EndForm();}
+</div>
+<div class="exportcsvlink">
+    <a href="javascript:void(0);" onclick="generateLablesinPrintableFormat(); return false;">
+        Print </a>
+</div>
+@Html.Partial("/Config/Content/Views/Shared/CustomerLabelListModel.cshtml", Model)
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function generateLablesinPrintableFormat() {
+            $.ajax({
+                type: "Post",
+                url: "/Operations/Reports/GeneratePdf?eventId=" + $("#EventId").val() + "&shippingStatus=" + $("#ShippingStatus").val(),
+                success: function (data) {
+                    window.open(data, "PDF", "");
+                }
+            });
+        }
+
+    </script>
+}

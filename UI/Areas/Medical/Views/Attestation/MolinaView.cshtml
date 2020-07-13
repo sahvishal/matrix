@@ -1,0 +1,230 @@
+﻿@using Falcon.App.Core.Medical.Enum
+@model Falcon.App.Core.Medical.ViewModels.MolinaAttestationListModel
+@{
+    if (Model.ModelForPrint)
+    {
+        Layout = null;
+    }
+}
+<style type="text/css">
+    .discription-div {
+        float: left;
+        margin-top: 5px;
+        padding: 3px;
+        margin-left: 50px;
+        border: 1px solid gray;
+        min-height: 50px;
+        width: 91%;
+        overflow-y: auto;
+    }
+
+    .discription-label {
+        clear: both;
+        margin-left: 50px;
+    }
+
+    fieldset {
+        margin-top: 5px;
+        padding: 5px;
+    }
+
+    tr td {
+        padding-top: 5px;
+        padding-left: 10px;
+    }
+</style>
+<div style="padding-left: 15px;@(Model.ModelForPrint ? "width: 850px;" : "width:950px;")">
+    <div class="eventdetail-row">
+        <h2>
+            Attestation Form
+        </h2>
+        <div class="eventdetail-row">
+            <div class="fieldLabelValue" style="width: 67%;float: left;">
+                <label style="width: 100px;font-weight: bold;float: left;">
+                    Patient Name:
+                </label>
+                <div style="width: 400px; display: inline-block; border-bottom: solid 1px;float: left;">@Model.CustomerName</div>
+            </div>
+            <div class="fieldLabelValue" style="width: 30%;float: left;">
+                <label style="width: 100px;font-weight: bold;float: left;">
+                    Patient DOB :
+                </label>
+                <div style="width: 120px; display: inline-block; border-bottom: solid 1px;float: left;">@(Model.CustomerDob.HasValue ? Model.CustomerDob.Value.ToShortDateString() : "")</div>
+            </div>
+        </div>
+        <div class="eventdetail-row">
+            <label style="width: 100px;font-weight: bold;float: left;">
+                DOS :
+            </label>
+            <div style="width: 120px; display: inline-block; border-bottom: solid 1px;float: left;">@Model.EventDate.ToShortDateString()</div>
+        </div>
+    </div>
+    <div class="editor-row" style="clear: both;padding-top: 10px;">
+        <div style="margin-right:20px;">
+            <div id="AttestationTemplate" style="clear: both; @(Model.ModelForPrint ? "" : "max-height:600px;overflow-y:auto;overflow-x:hidden;")">
+                @if (Model.Attestations != null && Model.Attestations.Any())
+                {
+                    var pageIndex = 1;
+                    foreach (var attestation in Model.Attestations)
+                    {
+                        if (pageIndex > 3 && Model.ModelForPrint)
+                        {
+                            <div style="page-break-before: always;padding-left: 3px;padding-top: 10px;clear: both">
+                                <b style="font-size: 24px;">Attestation Form</b> (continued)
+                            </div>
+                            pageIndex = 1;
+                        }
+                        pageIndex++;
+                        <fieldset>
+                            <legend>Condition Review</legend>
+                            <table style="width: 100%">
+                                <tr>
+                                    <td width="40%">
+                                        <div>
+                                            <span class="editor-label" style="display: inline-block;width: 100px;float: left;"> ICD-9 Code:</span>
+                                            <div style="width: 180px; display: inline-block; border-bottom: solid 1px;float: left;">@attestation.Icd9Code&nbsp;</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span class="editor-label" style="display: inline-block;width: 130px;float: left;">ICD-9 Description:</span>
+                                            <div style="width: 190px; display: inline-block; border-bottom: solid 1px;float: left;">@attestation.Icd9CodeDescription&nbsp;</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <span class="editor-label" style="display: inline-block;width: 100px;float: left;">ICD-10 Code:</span>
+                                            <div style="width: 180px; display: inline-block; border-bottom: solid 1px;float: left;">@attestation.Icd10Code&nbsp;</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span class="editor-label" style="display: inline-block;width: 130px;float: left;">ICD-10 Description:</span>
+                                            <div style="width: 190px; display: inline-block; border-bottom: solid 1px;float: left;">@attestation.Icd10CodeDescription&nbsp;</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <span class="editor-label" style="display: inline-block;width: 100px;float: left;">Condition:</span>
+                                            <div style="width: 180px; display: inline-block; border-bottom: solid 1px;float: left;">@attestation.Condition&nbsp;</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input name="@attestation.Id" type="radio" disabled="disabled" @(attestation.StatusId == (int)MolinaAttestationStatus.Existed ? "checked='checked'" : "") />Existed
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input name="@attestation.Id" type="radio" disabled="disabled" @(attestation.StatusId == (int)MolinaAttestationStatus.Resolved ? "checked='checked'" : "") />Resolved
+                                        <div style="margin-left: 50px; display: @(attestation.StatusId == (int) MolinaAttestationStatus.Resolved ? "block" : "none")">
+                                            Date resolved
+                                            <label style="display: inline-block; border: solid 1px; width: 100px; padding: 5px;">@(attestation.DateResolved.HasValue ? attestation.DateResolved.Value.ToShortDateString() : "")</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div>
+                                            <div style="float: left;"> <input name="@attestation.Id" type="radio" disabled="disabled" @(attestation.StatusId == (int)MolinaAttestationStatus.UnabletodetermineDiagnosis ? "checked='checked'" : "") />Unable to determine Diagnosis</div>
+                                            <div style="padding-top:5px;clear: both; display: @(attestation.StatusId == (int) MolinaAttestationStatus.UnabletodetermineDiagnosis ? "block;" : "none")">
+                                                <label class="discription-label">Explanation of why diagnosis cannot be made:</label><br />
+                                                <div class="discription-div">@attestation.WhyNoDiagnosis</div>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input name="@attestation.Id" type="radio" disabled="disabled" @(attestation.StatusId == (int)MolinaAttestationStatus.Confirmed ? "checked='checked'" : "") />Confirmed
+                                    </td>
+                                </tr>
+                            </table>
+                        </fieldset>
+                    }
+                }
+                else
+                {
+                    <fieldset>
+                        <legend>Condition Review</legend>
+                        <table style="width: 100%">
+                            <tr>
+                                <td width="40%">
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 100px;float: left;">ICD-9 Code:</span>
+                                        <div style="width: 180px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 130px;float: left;">ICD-9 Description:</span>
+                                        <div style="width: 190px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 100px;float: left;">ICD-10 Code:</span>
+                                        <div style="width: 180px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 130px;float: left;">ICD-10 Description:</span>
+                                        <div style="width: 190px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 100px;float: left;">Condition:</span>
+                                        <div style="width: 180px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="radio" disabled="disabled" />Existed
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="radio" disabled="disabled" />Resolved
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div>
+                                        <div style="float: left;"> <input type="radio" disabled="disabled" />Unable to determine Diagnosis </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="radio" disabled="disabled" />Confirmed
+                                </td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                }
+
+
+            </div>
+        </div>
+    </div>
+    @if (!Model.ModelForPrint)
+    {
+        <div class="submit-button-row" style="padding-right: 50px;">
+            <a href="/Medical/Results/ResultStatusList?EventId=@Model.EventId">Close</a>
+        </div>
+    }
+</div>
+

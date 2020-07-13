@@ -1,0 +1,109 @@
+﻿html,body{background:#fff;font:normal 12px arial;margin:0;color:#000;line-height:1.5em;overflow-x:hidden;overflow-Y:hidden}
+form{margin:0;padding:0}
+img{border:0}
+p{margin:0;padding:0}
+/* Used Common Classes Body */
+.msgbox_urm{float:left; width:290px;background:#fff;padding:0;margin:0}
+.msgboxrow_urm{float:left; width:288px;}
+.toparrow_urm{float:left; padding-left:213px;}
+.topbg_mbox_urm{float:left; width:290px; height:6px; background-image:url(../Images/top-boxbg-urm.png); background-repeat:no-repeat;}
+.midbg_mbox_urm{float:left; width:274px; padding:8px 8px 0px 8px;}
+.msgboxinnerrow_urm{float:left; width:274px; margin:5px 0 5px 0; }
+.midbg_mbox_urmnew{float:left; width:274px; padding:8px 8px 0px 8px;}
+.msgboxinnerrow1_urm{float:left; width:274px; margin:5px 0px 5px 0px;}
+.msgboxinnerrowmf_urm{float:left; width:274px; margin:0px;}
+.botbg_mbox_urm{float:left; width:290px; height:6px; background-image:url(../Images/bot-boxbg-urm.png);}
+.headtxtmsgbox_urm{float:left; font:bold 18px arial; color:#ED8313;}
+.closebtn_urm{float:right; width:21px;}
+.graylinembox_urm{float:left; width:274px; display:block; height:1px; background-color:#CCCCCC;}
+.titletxt_urm{float:left; width:115px; padding-right:5px;}
+.inputfldconmbox_urm{float:left; width:140px;}
+.chkboxmbox_urm{float:left; width:20px; margin-right:5px;}
+.txtchkbox_urm{float:left; font-size:11px; padding-top:2px;}
+.graysmalltxt1_sne{float:right; font:normal 11px arial; color:#666; padding-top:3px; }
+
+/* *Payment Details Popup * */
+.maindiv_popup{float:left; width:555px; padding:5px;font-size:12px; font-family:Arial;}
+.maindivinner_popup{float:left; width:540px; margin-left:5px;}
+.middivrow_regcust_popup{float:left; width:540px; padding:3px 0 3px 0;font-family:Arial;}
+.headtxtleft_popup{float:left; font:bold 12px arial; color:#000; padding-top:2px;}
+.headingrighttxt_popup{float:right; padding:3px 10px 0px 0px; font:normal 12px arial; color:#000; }
+.headingrightinput_popup{float:right; padding-right:20px; font:normal 12px arial; color:#000; }
+.titletextblueboldpopup_ccrep {float:left; width:305px; margin-right:5px; padding:9px 0px 0px 5px; font:bold 12px arial; color:#009FC3;}
+.normaltxtpopup_popup{float:left; padding-left:5px;}
+.subheadingbgpopup_pd{float:left; width:530px; height:29px; padding:5px 0px 0px 5px; margin:5px 0px 5px 0px; font-weight:bold; background:url(../Images/CCRep/subheadedingtab_ccrep.gif) no-repeat;}
+.titletxt_popup_pd{float:left; width:100px; padding:0px 5px 0px 5px }
+.inputconleft_popup_pd{float:left; width:140px; margin-right:10px;}
+.inputconright_popup_pd{float:left; width:140px;}
+.radiatxtbox1_popup_pd{float:left; width:50px; padding-top:6px;}
+.radiatxtbox_popup_pd{float:left; width:50px; padding-top:6px;}
+.radiatxtbox2_popup_pd{float:left; width:60px; padding-top:6px;}
+.titletxt1_regcust{float:left; width:110px; padding:0px 5px 0px 0px }
+.buttoncell_ccrep{float:right; width:125px;}
+.fline_popup_pdt{float:left; width:540px; background:url(../Images/CCRep/fadeline-hz.gif) no-repeat;height:1px; margin:5px 0px 0px 0px;}
+/* Accept Payment*  */
+.flinerowbg1_ccrep{float:left; width:510px; margin:3px 0px 3px 0px; height:31px; background-image:url(../Images/CCRep/rowbg.gif); padding:5px 0px 2px 0px; background-repeat:no-repeat;}
+.titletxtbldbig_regcust{float:left; font-weight:bold; width:120px; padding:3px 5px 0px 5px;}
+.inputconccoderegcust{float:left; width:160px; margin-right:10px; padding-top:2px;}
+.applycpnbtncon_ccrep{float:left; width:90px; margin-right:5px;}
+/*Template Time Slots for Technician*/
+.maindiv_tts{float:left; width:245px; padding:5px 5px 5px 5px;}
+.immerrow_tts{float:left; width:240px;}
+.gridrow_tts{float:left; width:240px;}
+.halfrow_tts{float:left; width:60px; padding:2px;}
+.halfrow2_tts{float:left; width:162px; padding:2px;}
+.midspace_tts{float:left; width:8px;}
+.gridbg_tts{background-color:#f5f5f5;}
+/**********************************************************  ---body---  ***********************************************/
+.listotherphotosUC { width:720px; float:left; height:100px; }
+.defitemstylelstotherphotosUC { width:106px;  padding-right:13px; float:left; }
+
+.photo_frame_main{  float:left;width:106px; margin-bottom:10px; }
+.photo_frame_topbg{ float:left; width:106px; height:7px;}
+.photo_frame_midbg{ float:left; width:106px; background: url('../Images/photoframe_midbg.gif'); height:50px; background-position:top }
+.photo_frame_image{ width:90px; margin-left:8px; margin-top:2px;}
+.photo_frame_botbg{ float:left; width:106px; background: url('../Images/photoframe_botbg.gif') no-repeat; height:30px; background-repeat:no-repeat }
+.photo_frame_text{ float: left; width:75px; margin-left:7px; margin-top:5px; font: bold 11px arial; color:#333333; }
+.photo_frame_arrow{ float: left; width:10px; margin-left:5px; margin-top:10px; }
+.previous_maincontainer{ float:left; width:715px; margin-bottom:10px;}
+.previous_text{ float:left; width:150px; font:normal 12px arial; color:#7AA5B8; text-decoration:none; }
+.previous_text a:link{ float:left; width:150px; font:normal 12px arial; color:#7AA5B8; text-decoration:none; }
+.previous_text a:visited{ float:left; width:150px; font:normal 12px arial; color:#7AA5B8; text-decoration:none; }
+.previous_text a:hover{ float:left; width:150px; font:normal 12px arial; color:#000000; text-decoration:underline; }
+.next_maincontainer{ float:right; width:50px; margin-bottom:10px;}
+.next_text{ float:left; width:50px; font:normal 12px arial; color:#7AA5B8; text-decoration:none;  }
+.next_text a:link{ float:left; width:50px; font:normal 12px arial; color:#7AA5B8; text-decoration:none; }
+.next_text a:visited{ float:left; width:50px; font:normal 12px arial; color:#7AA5B8; text-decoration:none; }
+.next_text a:hover{ float:left; width:50px; font:normal 12px arial; color:#000000; text-decoration:underline; }
+.uploadbutton_maincontainer{ float:left; width:715px;}
+
+.upload_button_maincontainer{ float:left; width:102px; padding-left:325px; padding-bottom:5px;}
+.upload_button{ width:102px; margin-right:15px; background: url('../Images/button-bg.gif') no-repeat; height:25px; background-repeat:no-repeat }
+.upload_buttontext{ width:102px; padding-left:10px; padding-top:5px; font:bold 12px arial; color:#fff; }
+.upload_buttontext a:link{ width:102px; padding-top:5px; font:bold 12px arial; color:#fff; text-decoration:none; }
+.upload_buttontext a:visited{ width:102px; padding-top:5px; font:bold 12px arial; color:#fff; text-decoration:none;  }
+.upload_buttontext a:hover{ width:102px; padding-top:5px; font:bold 12px arial; color:#fff; text-decoration:none;  }
+/**** Password Reset Request **/
+.headbgtop_box_prr{ float:left; width:753px; background-color:#E1F1F8; height:24px; margin-bottom:5px; }
+.head_text_prr{ float:left; width:740px; padding-left:10px; padding-top:5px; padding-bottom:5px; font:bold 12px arial; }
+/*** Message Box Script ** */
+.maindiv_mbox{float:left; width:230px;}
+.mainarea_mbox{float:left;width:211px;}
+.topbg_mbox{float:left; width:211px; height:5px; background-image:url(../Images/topbg-msgbox.png);}
+.midbox_mbox{float:left; width:201px; background-color:#216fb5; padding:2px 5px 5px 5px; color:#fff; }
+.rowinside_mbox{float:left; width:200px;}
+.btnrow_mbox{float:right; padding-right:10px; margin:0px; padding:0px;}
+.arrowbox_mbox{float:left; width:19px; margin-top:5px;}
+.botbg_mbox{float:left; width:211px; height:5px; background-image:url(../Images/botbg-msgbox.png);}
+.graysmalltxt_sne{float:left; font:normal 11px arial; color:#666; padding-top:3px; }
+/**Health Assessment for MV User**/
+.maindiv_mh{ float:left; width:750px;}
+/* CLASS FOR SHIPPING DETAILS IN ACCEPT PAYMENT POP UP */
+.smalltxtblu{font:normal 11px arial; color:#287AA8;}
+.fline_regcust{float:left;width:540px;background:url(/App/images/ccrep/fadeline-hz.gif) no-repeat;height:1px;margin:5px 0 5px 0}
+.gridselectpackage{float:left;border-collapse:collapse;background:#fff;width:100%}
+.gridselectpackage td{border-bottom:solid 1px #d7ddd3;padding:2px 0 1px 4px;color:#666}
+.gridselectpackage th{text-align:left;padding:1px 0 1px 4px}
+.gridselectpackage .row2{font:bold 12px arial;color:#666;border-bottom:#d7ddd3 1px solid}
+.orngbold12_default{font:bold 12px arial; color:#F37C00;}
+

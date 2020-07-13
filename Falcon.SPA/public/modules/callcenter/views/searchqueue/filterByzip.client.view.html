@@ -1,0 +1,29 @@
+﻿<div class="custom-model-popup block-flat">
+    <fieldset>
+        <legend>
+            Search Customer
+        </legend>
+        <div class="custom-model-popup-content" style="text-align: center;">
+            <div class="header">
+                <span class="pull-left"><input type="radio" name="SearchProspectCustomer" ng-click="FilterOptionChanged(false)" checked="checked" /> Proceed to see the complete list</span> <br />
+                <h5>Or</h5>
+                <span class="pull-left"><input type="radio" name="SearchProspectCustomer" ng-click="FilterOptionChanged(true)" /> Search By Zipcode</span>
+            </div>
+            <div class="content">
+                <div class="row" style="float:left; clear:both; padding:16px 0px;margin-left: 4px;">
+                    <div class="col-sm-12" ng-show="SearchCustomerByZipCode">
+                        <div ng-class="{'error-message' : isZipCodeValid == false}">
+                            <input type="text" class="form-control " ng-model="zipCode" name="zipCode" placeholder="Search  Zip" maxlength="5" >
+
+                        </div>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-sm-11">
+                        <input type="button" class="filter-zip-btn pull-right" ng-click="onOkbutton()" ng-value="modal.OKButtonText" ng-show="modal.showOkButton" class="pull-right ">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>

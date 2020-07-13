@@ -1,0 +1,173 @@
+﻿body,html{font:normal 12px arial, helvetica, tahoma;background:#e5ecf3;margin:0;color:#000;line-height:1.5em;height:101%}
+p,span,form{margin:0;padding:0}
+img{border:0}
+.btextblu{font:bold 12px arial;color:#287aa8}
+a:link{font:12px arial;color:#287aa8;text-decoration:underline}
+a:visited{font:12px arial;color:#287aa8;text-decoration:underline}
+a:hover{font:12px arial;color:#f60;text-decoration:underline}
+/**********************************************************  Common Classes Body ***********************************************/
+.gridjobp { BORDER:none; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: #fff; width:100%; }
+.gridjobp TD { border-bottom:1px solid #CFDAE0; PADDING:8px 4px 8px 4px; }
+.gridjobp TH {  text-align:left; PADDING:4px 4px 8px 4px;}
+.gridjobp .row1 { background-color: #DDF0F7; vertical-align:top; font: bold 14px arial; color:#276C95;}
+.gridjobp .row2 {  background-color:#EFF8FD; font: normal 12px arial; color:#333;}
+.gridjobp .row2 a:link {font-weight:bold; color:#4088AE; text-decoration:none;}
+.gridjobp .row2 a:visited {font-weight:bold; color:#4088AE; text-decoration:none;}
+.gridjobp .row2 a:hover {font-weight:bold; color:#ff6600; text-decoration:underline;}
+.gridjobp .row3 {  background-color:#F8FCFF; font: normal 12px arial; color:#333;}
+.gridjobp .row3 a:link {font-weight:bold; color:#4088AE; text-decoration:none;}
+.gridjobp .row3 a:visited {font-weight:bold; color:#4088AE; text-decoration:none;}
+.gridjobp .row3 a:hover {font-weight:bold; color:#ff6600; text-decoration:underline;}
+/********************************************* Error Message ********************************************************/
+.maindivredmsgbox{float:left; margin-top:5px; width:743px; color:#D60202; padding:4px; border:1px solid #D7E0E3; background-position:bottom; background-image:url(../Images/errormsgdivbg.gif); background-repeat:repeat-x;}
+.maindivgreenmsgbox{float:left; margin-bottom:4px; width:743px; color:#3B8A01; padding:4px; border:1px solid #D7E0E3; background-position:bottom; background-image:url(../Images/errormsgdivbg.gif); background-repeat:repeat-x;}
+/* *************************************** Image Popup***************************************************************/
+.reqiredmark{font:normal 11px arial; color:Red; }
+/* *************************************** Model Popup*******************************************/
+/*Added on 3 March 2008 */
+.PopUp{ float:left; width:355px; background-color:#fff;}
+.headerpopup_genreal { float:left; width:353px; font:bold 12px arial; color:#000000; background-color:#CEE1F4; }
+.txtfield_master{ float:left; width:200px; font:bold 12px arial; color:#000000; padding-left:5px; padding-bottom:5px;}
+.headertitle_popup{float:left; width:240px; padding-left:5px;padding-top:4px;}
+/**************************************************************************************************************************************/
+.modalPopup {
+	background-color:#9EC2CA;
+	border-width:3px;
+	border-style:solid;
+	border-color:Gray;
+	padding:3px;
+	width:250px;
+}
+.modalBackground {
+	background-color:#AAB5B9;
+	filter:alpha(opacity=50);
+	-moz-opacity:0.5;
+}
+/******************* Main Navigation Pannel ******************************************************************************************************************************/
+.mainnav{ float:left; width:980px;}
+.mainnavinner{ float:left; width:980px; margin-top:5px;}
+.mainnavleftbg{ Float:left; width:2px; height:34px;}
+.mainnavmidbg{Float:left; background-image: url(../Images/main_nav_midbg.gif ); background-repeat: repeat-x; width:976px; height:34px;}
+.mainnavrightbg{ Float:left; background-image: url(../Images/main_nav_rightbg.gif );background-repeat: no-repeat; width:2px; height:34px; }
+/******************* Main Body ********************************************************************************************************************************/
+.mainbodyouter{width:980px; margin: 0px auto 0px auto; background-color: #E5ECF3;}
+.mainbodyinner{float:left; width:980px; background-color:#fff;}
+.searchtableft{ float:left; background-image: url('../Images/search_tab_left.gif'); width:13px; height:37px}
+.searchtabmid{ float:left; background: url('../Images/search_tab_midbg.gif') repeat-x; width:954px; height:37px}
+.searchtabtxt{  float:left; font: normal 11px tahoma; color:#333; text-decoration:none; padding:10px 0 0 8px; width:350px;}
+.searchtabtxt a:link{font: bold 11px tahoma; color:#498AAD; text-decoration:none;}
+.searchtabtxt a:visited{font: bold 11px tahoma; color:#498AAD; text-decoration:none;}
+.searchtabtxt a:hover{font: bold 11px tahoma; color:#333; text-decoration:none;}
+.searchtrolebox{ float:left; width:200px;}
+.searchtroleboxright{ float:right; width:460px;}
+.searchtabtxt2{ float:left; font: bold 11px tahoma; color:#000; text-decoration:none; text-align:right;  padding:10px 0 0 0px; width:210px;}
+.searchtabinput{ float:left; padding:8px 0 0 10px; width:100px;}
+.searchtabinputf{ border: 1px solid #7F9DB9; Background-color:#fff; font: normal 11px tahoma; color:#000; text-decoration:none;}
+.searchtabgobutton{ float:left; width:124px; Padding: 7px 0 0 0;}
+.searchtabright{ float:left; background-image: url('../Images/search_tab_right.gif'); width:13px; height:37px}
+.leftpnbody{float:left; width:980px; background-color:#fff;}
+.leftcontainer_main{ float:left; width:203px; background-color:#fff; margin-top:5px;  }
+/**********************************************************  Start body ***********************************************/
+.mainbody_outer{ float:right; width:777px; background-color:#fff; margin-top:5px; }
+.mainbody_inner{ width:763px; margin-left:14px;}
+.mainbody_titletxtleft { float:left; padding-left:3px; padding-top:5px; font: bold 12px arial; color:#000; }
+.main_area_bdr{ float:left; width:751px; border: 1px solid #E5E5E5; margin-top:5px;}
+.main_area_bdrnone{ float:left; width:753px;}
+/***********************************************************---Left Pannel---***********************************************/
+.leftpnbody{float:left; width:980px; background-color:#fff;}
+/**********************************************************  Job Posting ***********************************************/
+.maincontainer_fadmin{float:left; width:980px; background-color:#fff; margin-top:8px;}
+.maininnercon_fadmin{width:960px; margin:0px auto 0px auto; padding-bottom:5px;}
+.leftdivcon_fadmin{float:left; width:245px;}
+.leftheadbg_fadmin{float:left; width:233px; height:28px; padding:8px 0px 0px 13px; background:url(../images/leftconheadbg_fadmin.gif) no-repeat; font-weight:bold; color:#176D9E;}
+.leftmidbg_fadmin{float:left; width:225px; padding:5px 10px 5px 10px; background:url(../images/leftconmidbg_fadmin.gif) repeat-y;}
+.leftmainrow_fadmin{float:left; width:225px; padding:2px 0px 2px 0px;}
+.leftmainrowfright_fadmin{float:right; width:225px; padding:2px 0px 2px 0px;}
+.leftbotbg_fadmin{float:left; width:245px; height:10px; background:url(../images/leftconbotbg_fadmin.gif) no-repeat;}
+.boldtxtleftblu_fadmin{font:bold 12px arial; color:#176D9E;}
+.graysmalltxt_fadmin{float:right; font:normal 11px arial; color:#666; padding:5px 10px 0px 0px;}
+.graysmalltxt_fadmin a:link{ font-size:11px; color :#29749B; text-decoration:none;}
+.graysmalltxt_fadmin a:visited{font-size:11px; color:#29749B; text-decoration:none;}
+.graysmalltxt_fadmin a:hover{font-size:11px; color:#ff6600; text-decoration:underline;}
+.normaltxt_fadmin{font:normal 12px arial; color:#666;}
+.normaltxt_fadmin a:link{font:normal 12px arial; color:#287AA8; text-decoration:none;}
+.normaltxt_fadmin a:visited{font:normal 12px arial; color:#287AA8; text-decoration:none;}
+.normaltxt_fadmin a:hover{font:normal 12px arial; color:#ff6600; text-decoration:underline;}
+.row1leftcon_fadmin{float:left;width:225px; background-color:#fff;}
+.row2leftcon_fadmin{float:left;width:225px; background-color:#F2F2F2;}
+.maindivinner_fadmin{float:left; width:695px; padding-left:15px; margin-bottom:10px;}
+.maindivinnerrow_fadmin{float:left; width:695px;}
+.orngheadtxt_fadmin{font:bold 18px arial; color:#F37C00;}
+.blkheadtxt_fadmin{font:bold 18px arial; color:#000000;}
+.graylinefull_fadmin{float:left; width:695px; height:1px; background-color:#CCCCCC;}
+.headingbox_fadmin{float:left; padding:0px 5px 0px 0px;}
+.searchbox_fadmin{float:right; padding:0px 5px 0px 5px;}
+.gobtn_fadmin{ float:left; margin-left:5px; padding-top:2px;}
+.dgjobptopbg{float:left; width:695px; background:url(../images/jobposting-topbg.gif) no-repeat;margin-top:10px; }
+.blueheadingbox_fadmin{float:left; width:683px; background-color:#DDF0F7; padding:0px 2px 5px 10px;}
+.bluheadtxt_fadmin{float:left; font-weight:bold; color:#287AA8;}
+.rightheadtxt_fadmin{float:right; padding-right:5px;}
+.lightbluebox_fadmin{float:left; width:695px; padding:5px 0px 5px 0px; background-color:#EFF8FD; margin-bottom:10px;}
+.lightblueboxrow_fadmin{float:left; width:680px; padding:3px 5px 3px 10px;}
+.dgjobposting{float:left; width:695px; margin-bottom:5px;}
+.titletext_fadmin{ float:left; width:120px; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+.franchiseeicon_default{float:left; width:23px; padding-top:4px; padding-left:5px;}
+.subhedbar_fadmin{float:left; width:695px; height:27px; padding-top:5px; margin:1px 0px 1px 0px;background-color:#F8FCFD;}
+.subhedtxt_fadmin{float:left; font-weight:bold; color:#528EB0; padding:0px 0px 0px 18px;}
+.resourcesmainrow_fadmin{float:left; width:680px;}
+.divfoldericon_fadmin{float:left; width:54px; padding-left:10px;}
+.midrowresmain_fadmin{float:left; width:430px;}
+.midrowresinner_fadmin{float:left; width:430px; padding:3px 0px 3px 0px;}
+.orngbold_fadmin{font:bold 14px arial; color:#F37C00;}
+.lefttxt_midrow_fadmin{float:left; color:#000000;}
+.rightcolmnreso_fadmin{float:left; margin-left:5px; width:177px; background:url(../images/rightboxresources-bg.gif) no-repeat; height:55px;}
+.rightboxrow_fadmin{float:left; width:177px; padding:2px 0px 2px 0px; }
+.boldgraytxt_fadmin{float:left; font:bold 12px arial; color:#666; padding:3px 0px 0px 10px;}
+.midrow_leftbox_fadmin{float:left; width:245px;}
+.midrow_leftrow_fadmin{float:left; width:245px; padding:10px 5px 0px 0px;}
+.leftboxicons_fadmin{float:left; width:34px;}
+.leftinnertxt_fadmin{float:left; width:210px;}
+.midrow_rightbox_fadmin{float:left; width:175px;}
+.midrow_rightrow_fadmin{float:left; width:175px; padding:10px 5px 0px 0px;}
+.midrow_rightrow2_fadmin{float:left; width:175px;}
+.downloadicon_fadmin{float:left; width:18px; margin-right:5px; }
+.rightinnertxt_fadmin{float:left; width:140px;}
+.leftbotbg_eventfadmin{float:left; width:245px; height:28px; background:url(../images/leftbot-bg_adminevent.gif) no-repeat;}
+.leftheadbg_eventfadmin{float:left; width:245px; height:36px; background:url(../images/leftconheadbg_fadmin.gif) no-repeat; color:#176D9E;}
+/**********************************************************  Event by Location ***********************************************/
+.leftheading_eventfadmin{float:left; padding:8px 0px 0px 13px; font-weight:bold; color:#176D9E; }
+.leftrgttxt_eventfadmin{float:right; padding:12px 10px 0px 0px; font:normal 11px arial; color:#176D9E; }
+.leftrgttxt_eventfadmin a:link{font:normal 11px arial; color:#176D9E; text-decoration:none; }
+.leftrgttxt_eventfadmin a:visited{font:normal 11px arial; color:#176D9E; text-decoration:none; }
+.leftrgttxt_eventfadmin a:hover{font:normal 11px arial; color:#176D9E; text-decoration:none; }
+.leftrgttxt12pt_eventfadmin{float:right; padding:12px 10px 0px 0px; font:normal 12px arial; color:#176D9E; }
+.leftrgttxt12pt_eventfadmin a:link{font:normal 12px arial; color:#176D9E; text-decoration:none; }
+.leftrgttxt12pt_eventfadmin a:visited{font:normal 12px arial; color:#176D9E; text-decoration:none; }
+.leftrgttxt12pt_eventfadmin a:hover{font:normal 12px arial; color:#176D9E; text-decoration:none; }
+.maintxtheadgray_eventfadmin{float:left; font:bold 12px arial; color:#666; padding:8px 0px 0px 13px;}
+.graylinefull_eventfadmin{float:left; width:685px; height:1px; margin-left:3px; background-color:#CCCCCC;}
+.mainbodytopbg_eventfadmin{float:left; height:38px; width:695px; background:url(../images/mainbodytopbgeventfadmin_.gif) no-repeat;}
+.mainbodymidbg_eventfadmin{float:left; width:695px; background:url(../images/mainbodymidbgeventfadmin_.gif) repeat-y;}
+.mainbodybotbg_eventfadmin{float:left; height:6px; width:695px; background:url(../images/mainbodybotbgeventfadmin_.gif) no-repeat;}
+/**********************************************************  FAQ ***********************************************/
+.maincontainer_faq{float:left; width:981px; background-color:#fff; margin-top:8px;}
+.maininnercon_faq{width:961px; margin:0px auto 0px auto; padding-bottom:5px;}
+.maindivinner_faq{float:right; width:696px; padding-left:10px; margin-bottom:10px;}
+.maindivinnerrow_faq{float:right; width:696px;}
+.divboxes_faq{float:left; width:696px; margin-bottom:5px;}
+.bodytopbg_faq{float:left; width:696px; background:url(../images/bodytopbg-faq.gif) no-repeat; }
+.grayheadingbox_faq{float:left; width:696px; background-color:#F0F0F0;}
+.lgtgray_ansbox_faq{float:left; width:696px; background-color:#F8F8F8;}
+.qicon_faq{float:left; width:33px; padding:4px 0px 4px 15px;}
+.qheadtxt_faq{float:left; width:620px; font:bold 14px arial; color:#0B7396; padding:4px 10px 8px 11px;}
+.anstxt_faq{float:left; color:#666; padding:10px 15px 10px 20px; line-height:18px;}
+.backtotop_faq{float:left; width:675px; padding:10px 0px 10px 20px; }
+.bluetopbg_faq{float:left; width:696px; background:url(../images/topbluebg-faq.gif) no-repeat; }
+.blueheadingbox_faq{float:left; width:696px; background-color:#E7F0F5;}
+.lgtblue_ansbox_faq{float:left; width:696px; background-color:#F5F9FB;}
+.leftlnkbox_faq{float:left; width:215px; padding:10px;}
+.leftlnktxt_faq{float:left; width:210px; font:normal 12px arial; color:#666; padding-bottom:5px;}
+.leftlnktxt_faq a:link{ text-decoration:none;}
+.leftlnktxt_faq a:visited{ text-decoration:none;}
+.leftlnktxt_faq a:hover{ text-decoration:none;}
+

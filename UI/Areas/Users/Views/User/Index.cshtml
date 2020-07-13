@@ -1,0 +1,116 @@
+﻿@model Falcon.App.Core.Users.ViewModels.UserListModel
+@using Falcon.App.Core.Extensions
+
+@{
+    ViewBag.Title = "Manage System User";
+}
+
+
+<h1>Manage System Users</h1>
+<div class="option-links">
+    <a href="/Users/User/Create"> + Add New User </a>
+</div>
+
+
+<div id="list-filter">
+    @Html.Partial("UserListModelFilter", new ViewDataDictionary(Model.Filter))
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Users/ExportableReports/GetUserList?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+           <th>Full Name</th>        
+           <th>Email</th>        
+           <th>Phone</th> 
+           <th>Address</th> 
+           <th>Default Role</th> 
+           <th>Action</th> 
+        </tr>
+        @foreach (var user in Model.Collection)
+        {
+            <tr>
+                <td>@user.Name</td>
+                <td>@user.Email</td>
+                <td>@user.Phone</td>
+                <td>@user.Address</td>
+                <td>@user.DefaultRoleDisplayName (@user.OrganizationName)</td>
+                <td>
+                    @if (user.IsActive)
+                    {
+                        <a href="/Users/User/Edit?id=@user.Id">Edit</a>
+                        <br />
+                        <a href="javascript:setIsActiveState(@user.Id,false); void(0)">Deactivate</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:setIsActiveState(@user.Id,true); void(0)">Activate</a>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function setIsActiveState(userId, isActive) {
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/Users/User/SetUserIsActiveStatus?id=" + userId + "&isActive=" + isActive,
+                data: "{}",
+                success: function (result) {
+                    if (result.Result) {
+                        window.location.reload();
+                    }
+                    else {
+                        alert(result.Message);
+                    }
+                },
+                error: function (a, b, c) {
+                    if (a.status == 401) {
+                        alert("You do not have the permission for the action!");
+                    }
+                    else if (isActive)
+                        alert("Some error occured while activating the User! \nPlease contact the support team!");
+                    else
+                        alert("Some error occured while de-activating the User! \nPlease contact the support team!");
+
+                    window.location.reload();
+                }
+            });
+        }
+</script>
+
+}

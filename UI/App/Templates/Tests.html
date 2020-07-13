@@ -1,0 +1,36 @@
+﻿{#param name=PackageId}
+<h3 class="orngbold14_default mt_medium">
+    (2) "A La Carte" Tests</h3>
+<table class="gridselectpackage" cellspacing="0" border="0">
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td align="right">
+            <span class="blkbold12_default">Retail Price</span>
+        </td>
+    </tr>
+    {#foreach $T as Test}
+    <tr class="row2 test-row">
+        <td class="package-test-select">
+            <input type="checkbox" id="SelectTestCheckBox" onclick="javascript:SelectTestCheckBoxClick(this);" />
+            <input type="hidden" id="TestIdHidden" value='{$T.Test.Id}' />
+        </td>
+        <td class="test-name">
+            {$T.Test.Name}
+        </td>
+        <td style="color: #E78839; text-align: right" class="actual-price">
+            <span id="ActualPriceSpan">
+            {#if $P.PackageId == '0'}
+                {FormatCurrency($T.Test.Price)}
+            {#else}
+                {FormatCurrency($T.Test.WithPackagePrice)}
+            {#/if}
+            </span>
+        </td>
+    </tr>
+    {#/for}
+</table>

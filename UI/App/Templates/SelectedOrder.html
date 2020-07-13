@@ -1,0 +1,70 @@
+﻿{#param name=EnableTest}
+<table cellpadding="0" cellspacing="0" border="0" class="select-table" width="90%">
+    {#foreach $T as SelectedTemplateViewData} {#if $T.SelectedTemplateViewData.Package != null}
+    <tr>
+        <td class="my-order-package-select">
+            {#if $T.SelectedTemplateViewData.Package.IsDisabled == true }
+            <input type="checkbox" id="SelectPackageCheckBox" class="chkSelectAll" disabled="disabled" />
+            {#else}
+            <input type="checkbox" id="SelectPackageCheckBox" class="chkSelectAll" />
+            {#/if}
+            <input type="hidden" id="SelectedPackageId" value='{$T.SelectedTemplateViewData.Package.PackageId}' />
+        </td>
+        <td style="font:normal 12px arial !important" align="left">
+            {$T.SelectedTemplateViewData.Package.PackageName}
+        </td>
+        <td style="font:normal 12px arial;color: #E78839;text-align:right !important;" align="right">
+            {FormatCurrency($T.SelectedTemplateViewData.Package.OfferPrice)}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="right">
+            <table cellpadding="0" cellspacing="0" align="right" width="95%" border="0" style="margin:6px 0px;">
+                {#foreach $T.SelectedTemplateViewData.PackageTests as PackageTest}
+                <tr>
+                    <td class="my-order-package-test-select" width="15" valign="top">
+                        {#if $P.EnableTest}
+                            {#if $T.PackageTest.IsDisabled}
+                            <input type="checkbox" id="SelectPackageTestCheckBox" class="check-all" disabled="disabled" />
+                            {#else}
+                            <input type="checkbox" id="SelectPackageTestCheckBox" class="check-all" />
+                            {#/if}
+                        {#/if}
+                        <input type="hidden" id="PackageTestIdHidden" value='{$T.PackageTest.TestId}' />
+                    </td>
+                    <td class="test-name" valign="middle" align="left" style="font:normal 11px arial !important;">
+                        {$T.PackageTest.TestName}
+                    </td>
+                    <td valign="top" align="right" style="font:normal 11px arial !important">
+                        {$T.PackageTest.TestDescription}
+                    </td>
+                </tr>
+                {#/for}
+            </table>
+        </td>
+    </tr> {#/if} {#if $T.SelectedTemplateViewData.AddOnTests != null}
+    {#foreach $T.SelectedTemplateViewData.AddOnTests as AddOnTest}
+    <tr>
+        <td class="my-order-independent-test-select">
+            {#if $T.AddOnTest.PrequalifiedTest}
+            <input type="checkbox" id="IndependentPackageTestCheckBox" disabled="disabled" />
+            {#else}
+            <input type="checkbox" id="IndependentPackageTestCheckBox" />
+            {#/if}
+            <input type="hidden" id="IndependentTestIdHidden" value='{$T.AddOnTest.TestId}' />
+        </td>
+        <td class="test-name" style="font:12px Arial;">
+            {$T.AddOnTest.TestName}
+        </td>
+
+        <td style="color:#E78839;text-align:right;font:12px Arial;">
+            {FormatCurrency($T.AddOnTest.RetailPrice)}
+        </td>
+    </tr>
+    {#/for} {#/if} {#/for}
+    <tr>
+        <td colspan="3" align="left">
+            <img id="RemoveSelectedButton" src="/App/Images/DeteletTest_disable.gif" alt="Remove Selected Items" onclick="javascript:SelectOrderRemoveItemsClick();" />
+        </td>
+    </tr>
+</table>

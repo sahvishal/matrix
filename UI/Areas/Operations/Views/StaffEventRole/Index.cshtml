@@ -1,0 +1,91 @@
+﻿@model Falcon.App.Core.Operations.ViewModels.StaffEventRoleListModel
+@{
+    ViewBag.Title = "Manage Staff Event Roles";
+}
+@section css{
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+}
+<h1>
+    Manage Event Roles</h1>
+<div class="option-links">
+    <a href="/Operations/StaffEventRole/Create">+ Add New Role </a>
+</div>
+@if (Model.StaffEventRoles != null && Model.StaffEventRoles.Count() > 0)
+{
+    <table id="list-view">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Tests
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var role in Model.StaffEventRoles)
+        {
+            <tr>
+                <td>@role.Name
+                </td>
+                <td>@role.Description
+                </td>
+                <td>
+                    <a href="#" id='@("Tests_" + role.Id)' >Tests to Operate on </a>
+                    <span style="display: none;">
+                        @if (role.Tests != null)
+                        {
+                            <ul>
+                                @foreach (var test in role.Tests)
+                                {
+                                    <li>@test </li>   
+                                }
+                            </ul>
+                        }</span>
+                </td>
+                <td>
+                    <a href="/Operations/StaffEventRole/Edit?id=@role.Id">Edit</a>
+                </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+@section scripts {
+    <script type="text/javascript" src="/Scripts/jquery.qtip.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        @if (Model.StaffEventRoles != null && Model.StaffEventRoles.ToArray().Length > 0)
+        {
+            foreach (var role in Model.StaffEventRoles)
+            {
+                <text>
+                    $("#Tests_" + @role.Id).qtip({content : { text : $("#Tests_" + @role.Id).parent().find("span") } });
+                </text>
+            }
+        }
+
+    </script>
+}

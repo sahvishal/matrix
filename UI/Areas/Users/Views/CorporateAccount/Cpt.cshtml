@@ -1,0 +1,207 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.TestCptSelectionViewModel
+
+@{
+    ViewBag.Title = "Test CPT Selection";
+}
+<h1>
+    Test CPT Selection</h1>
+@section css {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+}
+
+@{Html.BeginForm();}
+<div>
+   
+    <div class="eventdetail-row">
+        <div class="fieldLabelValue" style="width: 45%;">
+            <label style="width: 70px;">
+                Select Test:
+            </label>
+            
+        </div>
+        @Html.DropDownListFor(x => x.TestId, Model.Tests.Select(x => new SelectListItem() { Text = x.FirstValue, Value = x.SecondValue.ToString(), Selected = x.SecondValue==Model.TestId }))
+     
+        <input type="button" name="addtabs" id="addtabs" value="Add tabs" onclick="addTab()" />
+    </div>
+    <div class="editor-row" style="width: 99%;">
+        <div style="float: left;">
+        </div>
+        <div style="float: right">
+        </div>
+    </div>
+    <div class="editor-row" style="float: right">
+        <div style="float:right; margin-right:20px;">
+            <a href="javascript:void(0);" onclick="createBlankTemplate(1);renderRegistrations();"> + Add few more</a>
+        </div>
+        
+    </div>
+    <div id="TestTemplate" style="clear: both; width: 99%; height: 600px; overflow-y: auto; overflow-x: hidden;">
+    </div>
+
+</div>
+<div class="submit-button-row">
+    <a href="/User/CorporateAccount/Index">Close</a>
+    &nbsp; &nbsp;
+    @*<input type="button" value="Save and Continue" onclick="SetSaveAndContinue(true);"/>*@
+    &nbsp;&nbsp;<input type="button" value="Save and Close" onclick="SetSaveAndContinue(false);" />
+</div>
+
+@{Html.EndForm();}
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+<script id="registerTestTemplate" type="text/x-jquery-tmpl">
+    <fieldset>
+        <legend>${TestName}</legend>
+        <a href="#" class="deleteTest" data-key="${Key}" style="float: right;">Remove</a>
+        
+        <input type="hidden" name="attestations.Index" value="${Key}" /> 
+        <table>
+            {{each(i) Hcps}}
+            <tr>
+                <td><input type="checkbox"/></td>
+                <td>${Code}</td>
+                <td>${Description}</td>
+            </tr>
+            {{/each}}
+        </table>
+         
+         
+
+
+
+    </fieldset>
+</script>
+<script type="text/javascript" language="javascript">
+     
+    function createBlankTemplate(numberOfTemplate) { //debugger;
+        testPanels = new Object();
+        var count = key_index;
+        for (; key_index < Number(count + numberOfTemplate) ;) {
+            testpanel = new Object(); 
+            testpanel.Hcps[0].Code = "";
+            testpanel.Hcps[0].Id = "";
+            testpanel.Hcps[0].Description = "";
+            testpanel.TestId = "";
+            testpanel.TestName = "";
+          
+            testpanel.Key = key_index + "_" + count;
+            testPanels[key_index] = testpanel;
+            key_index++;
+        }
+    }
+
+    var testPanels = new Object();
+    var key_index = 0;
+    var testpanel = new Object();
+
+    @if (Model.ExistingMappings != null)
+    {
+        foreach (var attestations in Model.ExistingMappings)
+        {
+            <text>
+    testpanel = new Object();
+    testpanel.Hcps = new Object();
+    var inner_key_index = 0;
+    </text>
+           
+            foreach (var hcp in attestations.HcpcsList)
+    {
+        <text>
+    testpanel.Hcps[inner_key_index] = new Object();
+    testpanel.Hcps[inner_key_index].Code = "@hcp.Code";
+    testpanel.Hcps[inner_key_index].Description = "@( string.IsNullOrEmpty(hcp.Description) ? string.Empty : hcp.Description.Replace("'", "\'"))";
+    testpanel.Hcps[inner_key_index].HcpcsId = "@hcp.Id";
+    inner_key_index = inner_key_index +1;
+        
+        </text>
+    }
+    <text>
+    testpanel.TestName = "@attestations.TestName";
+    testpanel.TestId = "@attestations.TestId";
+     
+    testpanel.ErrorMessage = "@Html.Raw(attestations.FeedbackMessage != null ? attestations.FeedbackMessage.Message : string.Empty)";
+
+    testpanel.Key = key_index + "_" + "0";
+    testPanels[key_index] = testpanel;
+    key_index++;
+    </text>
+        }
+    }
+    else
+    {
+        <text>
+    createBlankTemplate(1);
+    </text>
+    }
+
+    function renderRegistrations() {
+        $.each(testPanels, function (key, registerCustomer) {
+            $("#registerTestTemplate").tmpl(registerCustomer).appendTo("#TestTemplate");
+            $("#TestTemplate fieldset:last .error-message").html(registerCustomer.ErrorMessage);
+
+            $("#TestTemplate fieldset:last .auto-Search").each(function () {
+                var contextKeyControl = $(this).parent().parent().find(".state-class").attr("id");
+                $(this).autoComplete({
+                    autoChange: true,
+                    url: '/App/AutoCompleteService.asmx/GetCityByContextKeyAndPrefixText',
+                    type: "POST",
+                    data: "prefixText",
+                    pickContextKeyfrom: contextKeyControl
+                });
+            });
+        });
+
+       // setDatePicker();
+
+        $('.submit-button-row [type="button"]').show();
+         
+    }
+
+    $(document).ready(function () {
+        renderRegistrations();
+
+        $("a.deleteTest").live("click", function () {
+            $(this).parents("fieldset:first").remove();
+
+            if ($("#TestTemplate fieldset").length == 0) {
+                $('.submit-button-row [type="button"]').hide();
+            }
+            else {
+                $('.submit-button-row [type="button"]').show();
+            }
+            return false;
+        });
+
+        
+
+    });
+</script>
+
+@section scripts {
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $('.packages').qtip({
+            content: {
+                title: 'Packages',
+                text: function (api) {
+                    //from the selector to a child element.
+                    return $(this).parent().find('ul').html();
+                }
+            }
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

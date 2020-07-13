@@ -1,0 +1,66 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Finance.ViewModels.CallCenterBonusFilter
+
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>Pay Period</b> Effective Date
+        </div>
+        @Html.DropDownListFor(m => m.PayPeriodId, DropDownHelper.GetPayPeriods(Model.PayPeriodId), new { @style = "width:100%;", onchange = "onChangePayPeriod();" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Pay Range
+        </div>
+        @if (Model.PayPeriodId > 0)
+        {
+            @Html.DropDownListFor(m => m.PayRange, DropDownHelper.GetPayRange(Model.PayPeriodId, Model.PayRange), new { @style = "width:100%;" })
+        }
+        else
+        {
+            @Html.DropDownListFor(m => m.PayRange, DropDownHelper.GetPayRange(Model.PayPeriodId, Model.PayRange), new { @style = "width:100%;", @disabled = "disabled" })
+        }
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Agent
+        </div>
+        @Html.DropDownListFor(m => m.CallCenterAgentId, DropDownHelper.GetCallCenterRep(Model.CallCenterAgentId), new { @style = "width:100%;" })
+    </div>
+    @Html.HiddenFor(m => m.StartDate)
+    @Html.HiddenFor(m => m.EndDate)
+    <div class="editor-column" style="padding-top: 10px; text-align: right; float: right;">
+        @Html.ActionLink("Clear", "CallCenterBonus", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+<script type="text/javascript">
+    function onChangePayPeriod() {
+        if ($("#PayPeriodId").val() !== "-1") {
+            $("#PayRange").attr("disabled", true);
+            $.ajax({
+                url: "/Finance/PayPeriod/GetRangeForPayPeriod",
+                type: "POST",
+                data: {
+                    payPeriodId: $("#PayPeriodId").val()
+                },
+                success: function (results) {
+                    $("#PayRange").html("");
+                    if (results != null && results.length > 0) {
+                        var options = '';
+                        for (var index = 0; index < results.length; index++) {
+                            options += '<option value="' + results[index].Value + '">' + results[index].Text + '</option>';
+                        }
+                        $("#PayRange").html(options);
+                        $("#PayRange").removeAttr("disabled");
+                    }
+                },
+                error: function () {
+
+                }
+            });
+        } else {
+            $("#PayRange").html('<option value="">-- Select --</option>');
+            $("#PayRange").attr("disabled", true);
+        }
+    }
+</script>

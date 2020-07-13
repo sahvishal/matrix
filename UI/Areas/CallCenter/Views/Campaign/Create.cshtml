@@ -1,0 +1,37 @@
+@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.CallCenter.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model CampaignEditModel
+@{
+    ViewBag.Title = "Create Campaign";
+}
+<h1>
+    Create Campaign
+</h1>
+<div class="option-links">
+    <a href="/CallCenter/Campaign/ManageCampaign">Manage Campaign </a>
+</div>
+<div id="edit-Model">
+    @{Html.BeginForm();}
+    @Html.Partial("EditModel", Model)
+    
+    @if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+    {
+        <script type="text/javascript">
+            alert("Campaign created successfully.");
+            window.location = "/CallCenter/Campaign/ManageCampaign";
+        </script>
+    }
+    
+    <div class="submit-button-row">
+        <a href="/CallCenter/Campaign/ManageCampaign">Close</a> &nbsp;&nbsp; @Html.SubmitButton("Save Campaign") &nbsp;&nbsp; <button type="button" onclick="PublishCampaign()">Save & Publish</button>
+    </div>
+    <script type="text/javascript">
+    function PublishCampaign() {
+        $("#IsPublished").val(true);
+        $("#Submit").click();
+    }
+    </script>
+
+    @{Html.EndForm();}
+</div>

@@ -1,0 +1,33 @@
+﻿@model Falcon.App.Core.Application.ViewModels.FileModel
+@{
+    var showRemove = Model != null && (!string.IsNullOrEmpty(Model.FileName) || Model.Id > 0);
+    var fileTypeExtention = ViewData["fileTypeExtention"] != null ? (string)ViewData["fileTypeExtention"] : string.Empty;
+}
+<div class="file-view">
+    @if (Model == null || string.IsNullOrEmpty(Model.FileName))
+    {
+        <h4>No file uploaded yet! </h4>
+    }
+    else
+    {
+        <div>
+            @if (@Model.Caption.Length > 20)
+            {
+                <b>@Model.Caption.Substring(0, 20)</b>
+                <span class="info-tip" style="vertical-align: middle;">...</span>
+                <div class="prop-tip-info" style="display: none;">
+                    @Model.Caption
+                </div>
+            }
+            else
+            {
+                @Model.Caption
+            }
+            <div style="@(!showRemove ? "display:none" : "")">
+                <a href='@(Model.Url + Model.FileName)' target="_blank">View</a> &nbsp;&nbsp;
+                <a class="default_bttn" style="display:inline-block" href="javascript:void(0);" onclick='@("removeUploadedFile($(this),'" + ViewData.TemplateInfo.HtmlFieldPrefix + "','" + fileTypeExtention + "');")'>Remove</a>
+                <a class="template_bttn" style="display:none" href="javascript:void(0);" onclick='@("removeTemplateUploadedFile($(this));")'>Remove</a>
+            </div>
+        </div>
+    }
+</div>

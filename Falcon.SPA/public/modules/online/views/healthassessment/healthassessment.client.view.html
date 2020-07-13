@@ -1,0 +1,140 @@
+﻿<main class="main" data-ng-controller="HealthAssessmentController as healthAssessment" us-spinner spinner-key="online-spinner">
+    <quantcast name1="Healthfair" name2="HAF"></quantcast>
+    <div class="container no-padding bg-default">
+        <div class="sub-header bg-success relative">
+            <!--<div class="header-right">
+                <progressbar-view></progressbar-view>
+                <order-summary></order-summary>
+            </div>-->
+            <div class="header-left">
+                <h2 class="no-margin">Health Assessment</h2>
+            </div>
+        </div>
+        <div class="main-container border-default">
+            <div class="assessment-wrap">
+                <div class="clearfix row haf-fields">
+                    <div class="col-sm-12">
+                        <div class="pull-left no-float-xs bottom-buffer-xs-10">
+                            <div class="table-look">
+                                <div class="table-row">
+                                    <div class="table-cell">
+                                        <label for="Height" class="left-buffer-xs-10">Height <span ng-show="isKynPurchased" class="required">&#42;</span></label>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="select-wrap height-feet" ng-class="{ 'select-focus': hhfocus, 'select-blur': hhblur }">
+                                            <select class="form-control" ng-model="CustomerHeightFeet" ng-focus="hhfocus=true;hhblur=false;" ng-blur="hhblur=true;hhfocus=false;" ng-options="feet.value as feet.text for feet in FeetDropwdown"></select>
+                                        </div>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="select-wrap height-inches" ng-class="{ 'select-focus': hifocus, 'select-blur': hiblur }">
+                                            <select class="form-control" ng-model="CustomerHeightInches" ng-focus="hifocus=true;hiblur=false;" ng-blur="hiblur=true;hifocus=false;" ng-options="inch.value as inch.text for inch in InchDropwdown"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-left no-float-xs bottom-buffer-xs-10">
+                            <div class="table-look">
+                                <div class="table-row">
+                                    <div class="table-cell">
+                                        <label for="Weight" class="left-buffer-10">Weight <span ng-show="isKynPurchased" class="required">&#42;</span></label>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="height-inches">
+                                            <input type="text" class="form-control" placeholder="In Lbs" ng-model="Weight" only-digits />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-left no-float-xs bottom-buffer-xs-10">
+                            <div class="table-look">
+                                <div class="table-row">
+                                    <div class="table-cell">
+                                        <label for="Weight" class="left-buffer-10">Race <span ng-show="isKynPurchased" class="required">&#42;</span></label>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="select-wrap height-feet" ng-class="{ 'select-focus': hwfocus, 'select-blur': hwblur }">
+                                            <select class="form-control" ng-model="selectedRace" ng-focus="hwfocus=true;hwblur=false;" ng-blur="hwblur=true;hwfocus=false;" ng-options="u as u.text for u in Race track by u.value"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-left no-float-xs">
+                            <div class="table-look">
+                                <div class="table-row">
+                                    <div class="table-cell">
+                                        <label for="Waist" class="left-buffer-10">Waist <span ng-show="isKynPurchased" class="required">&#42;</span></label>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="height-feet">
+                                            <input type="text" class="form-control" placeholder="In Inches" only-digits ng-model="Waist" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="clearfix haf-progress-bar">
+                    <div class="col-sm-3 no-padding top-buffer-8 hidden-xs">
+                        <p class="big-text no-margin">Health Assessment</p>
+                    </div>
+                    <div class="col-sm-5 top-buffer-16 relative">
+                        <span class="progress-range start">0</span>
+                        <span class="progress-range end" ng-bind="HafQuestionList.TotalHafQuestionCount"></span>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" ng-style="{'width':getHafProgress()}">
+                                <span ng-bind="SelectedCount" class="hidden-xs"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4 no-padding top-buffer-10 progress-bar-info-text">
+                        <p class="no-margin text-right">&#91; <b class="text-primary" ng-bind="HafQuestionList.TotalHafQuestionCount-SelectedCount"></b> More Questions to complete &#93;</p>
+                    </div>
+                </div>
+                <div class="clearfix top-buffer-20 questionnaire-wrap">
+                    <!--<a href="javascript:void(0);" class="load next pull-right" ng-show="currentHafPageIndex < TotalHafPagecount" ng-click="nextHafQuestion()" tooltip-placement="left" tooltip-html-unsafe="{{toolTipNext}}" tooltip-trigger="mouseenter">&nbsp;</a>
+                    <a href="javascript:void(0);" class="load prev pull-right" ng-show="currentHafPageIndex <= TotalHafPagecount && currentHafPageIndex > 1" ng-click="PreviousHafQuestion()" tooltip-placement="right" tooltip-html-unsafe="{{toolTipPrev}}" tooltip-trigger="mouseenter"> prev temp&nbsp;</a>-->
+                    <div class="col-md-12 no-padding">
+                        <div class="question-wrap">
+                            <div ng-repeat="question in PagewiseQuestions">
+                                <h4 ng-if="question.TestName" ng-bind="question.TestName" class="single-question-heading"></h4>
+                                <h5 ng-if="question.GroupName" ng-bind="question.GroupName" class="single-question-heading-sub text-center"></h5>
+                                <h6 ng-if="question.Description" ng-bind="question.Description" clh6s="single-question-header"></h6>
+                                <div class="single-question-wrap clearfix">
+                                    <div class="clearfix">
+                                        <div class="single-question-no pull-left">
+                                            <span ng-bind="(($index) + 1) +((currentHafPageIndex-1)* HafPageSize)"></span>
+                                        </div>
+                                        <haf-parent-radio></haf-parent-radio>
+                                        <haf-parent-textarea></haf-parent-textarea>
+                                        <haf-parent-textbox></haf-parent-textbox>
+                                    </div>
+                                    <div ng-repeat="childquestion in question.ChildQuestion" class="pull-left top-buffer-10">
+                                        <haf-child-radio></haf-child-radio>
+                                        <haf-child-checkbox></haf-child-checkbox>
+                                        <haf-child-textbox></haf-child-textbox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix lower-btns">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary pull-left " ng-show="currentHafPageIndex <= TotalHafPagecount && currentHafPageIndex > 1" ng-click="PreviousHafQuestion()" ng-disabled="isPosted">&#60; Back</button>
+                    <!--<button class="btn btn-primary pull-left left-buffer-10 ng-hide" ng-click="goToPreviousStep()" ng-disabled="isPosted">&nbsp;&nbsp;<em ng-show="loader_back"></em>&#60; Back&nbsp;&nbsp;</button>-->
+                    <button class="btn btn-primary btn-solid pull-right" ng-show="currentHafPageIndex < TotalHafPagecount" ng-click="nextHafQuestion()" ng-disabled="isPosted">Continue &#62;</button>
+                    <button class="btn btn-primary btn-solid pull-right right-buffer-10" ng-hide="currentHafPageIndex < TotalHafPagecount" ng-click="SaveHealthAssessmentQuestion()" ng-disabled="isPosted">Submit <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_Submit"></i></button>
+                    <a href="javascript:void(0);" class="pull-right top-buffer-10 right-buffer-10 host-name-transfrom" ng-click="SkiptAndSave()" ng-disabled="isPosted">Skip <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_Skip"></i></a>
+                    <!--<button class="btn btn-primary pull-right right-buffer-10 ng-hide" ng-click="SkiptAndSave()" ng-disabled="isPosted">&nbsp;&nbsp;<em ng-show="loader_Skip"></em>Skip&nbsp;&nbsp;</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,422 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.Core.ValueTypes
+@using Falcon.App.DependencyResolution
+@model Falcon.App.Core.Operations.ViewModels.BloodworksLabelViewModel
+@{
+    Layout = null;
+
+    var settings = IoC.Resolve<ISettings>();
+}
+
+<div class="bloodwork-main-container">
+    <div style="width: 95%; font-size: 15px; padding-top: 30px; padding-bottom: 30px;" class="bloodwork-form">
+        <div style="width: 100%; margin: auto; clear: both; text-align: center">
+            <div style="font-size: 38px; font-weight: bold; clear: both;">REQUISITION/CONSENT FORM</div>
+            <br />
+            <div style="text-align: left; float: left; font-size: 20px; width: 95%"><span style="float: right">(Part No. NCD 02.2)</span></div>
+        </div>
+
+        <div style="width: 400px; height: 100px; border: solid gray 2px; margin-top: 30px; padding: 10px;">
+            <div style="width: 20px; float: left;">
+                <span>C</span><br />
+                <span>L</span><br />
+                <span>I</span><br />
+                <span>E</span><br />
+                <span>N</span><br />
+                <span>T</span><br />
+            </div>
+            <div style="width: 350px; float: right; font-size: 17px;">
+                <div style="float: left">
+                    ID: 1161<br />
+                    Name: Matrix Medical Network
+                    <br />
+                    <img src="@settings.MediumLogoLocation" />
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="full-width-abn" style="width: 95%; margin: auto; clear: both; font-size: 18px; margin-top: 30px;">
+            <div><b>PLEASE READ THOROUGHLY</b></div>
+            Remember to complete all your personal information on this requisition form.
+            Patient's name is required on the collection card. Please read and provide your signature and date within the Patient Consent Section in order to approve your sample for testing. Please include this form with your sample.
+            Prior to taking this test, please be sure to drink plenty of water to help increase blood flow.
+        </div>
+
+        <div style="color: #C44C5D; font-size: 20px; clear: both; font-weight: bold; margin: auto; padding-top: 20px; padding-left: 150px; padding-right: 150px;">
+            This form must be included with your sample.
+        </div>
+
+        <div style="width: 100%; padding-top: 30px;">
+            <div style="width: 49%; display: inline-block; float: left;">
+                <div style="margin-top: 5px; clear: both;">
+                    <div style="float: left; margin-right: 10px; margin-top: 5px;">Customer Id: </div>
+                    <div style="float: left;">
+                        @{
+                            var charArray = Model.CustomerId.ToString().ToCharArray();
+
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div style="clear: both;width: 550px;">
+                    <div style="width: 375px; float: left;">
+                        <div style="margin-top: 8px; clear: both">
+                            <div style="float: left; margin-right: 10px; margin-top: 5px;">Last:</div>
+                            <div style="float: left;">
+                                @{
+                                    charArray = Model.CustomerName.LastName.ToCharArray();
+                                    foreach (var charter in charArray)
+                                    {
+                                        <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                                    }
+                                    if (charArray.Length < 15)
+                                    {
+                                        for (int i = 0; i < 15 - charArray.Length; i++)
+                                        {
+                                            <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 5px; clear: both;">
+                            <div style="float: left; margin-right: 10px; margin-top: 5px;">Middle:</div>
+
+                            <div style="float: left;">
+                                @{
+                                    charArray = Model.CustomerName.MiddleName.ToCharArray();
+                                    foreach (var charter in charArray)
+                                    {
+                                        <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                                    }
+                                    if (charArray.Length < 14)
+                                    {
+                                        for (int i = 0; i < 14 - charArray.Length; i++)
+                                        {
+                                            <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div style="clear: both; margin-top: 5px;">
+                            <div style="float: left; margin-right: 10px; margin-top: 5px;">First: </div>
+                            <div style="float: left;">
+                                @{
+                                    charArray = Model.CustomerName.FirstName.ToCharArray();
+                                    foreach (var charter in charArray)
+                                    {
+                                        <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                                    }
+                                    if (charArray.Length < 15)
+                                    {
+                                        for (int i = 0; i < 15 - charArray.Length; i++)
+                                        {
+                                            <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width: 75px; float: left">
+                        <div style="width: 50px; text-align: center;">Sex:</div>
+                        <div style="width: 20px; float: left; margin-right: 10px; text-align: center;">M</div>
+                        <div style="width: 20px; float: left; text-align: center;">F</div>
+                        <div style="clear: both; margin-top: 5px;">
+                            @if (Model.Gender == Gender.Male)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-right: 10px">M</div></text><text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center">&nbsp;</div></text>
+                            }
+                            else if (Model.Gender == Gender.Female)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-right: 10px">&nbsp;</div></text><text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center">F</div></text>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 5px; clear: both;width: 450px;">
+                    <div style="float: left; margin-right: 10px; margin-top: 5px;">Address: </div>
+                    <div style="float: left;">
+                        @{
+                            charArray = Model.CustomerAddress.StreetAddressLine1.ToCharArray();
+
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }
+                            if (charArray.Length < 18)
+                            {
+                                for (int i = 0; i < 18 - charArray.Length; i++)
+                                {
+                                    <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <div style="margin-top: 5px; clear: both;width: 450px;">
+                    <div style="float: left; margin-right: 60px; margin-top: 5px;"></div>
+                    <div style="float: left;">
+                        @{
+                            charArray = Model.CustomerAddress.StreetAddressLine2.ToCharArray();
+
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }
+                            if (charArray.Length < 18)
+                            {
+                                for (int i = 0; i < 18 - charArray.Length; i++)
+                                {
+                                    <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <div style="clear: both; width: 450px;">
+                    <div style="float: left; margin-right: 35px; margin-top: 5px;">City: </div>
+                    <div style="float: left;">
+                        @{
+                            charArray = Model.CustomerAddress.City.ToCharArray();
+
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }
+                            if (charArray.Length < 18)
+                            {
+                                for (int i = 0; i < 18 - charArray.Length; i++)
+                                {
+                                    <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                                }
+                            }
+                        }
+
+                    </div>
+                </div>
+                <div style="float: left; clear: left;width: 450px;">
+                    <div style="float: left; margin-top: 5px; margin-right: 30px;">State:</div>
+                    <div style="float: left;">
+                        @{
+                            charArray = Model.CustomerAddress.StateCode.ToCharArray();
+
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }
+                        }
+                    </div>
+                </div>
+                <div style="float: left;width: 450px;">
+                    <div style="float: left; margin-top: 5px; margin-left: 2px;">Zip:</div>
+                    <div style="float: left;">
+                        @{
+                            charArray = Model.CustomerAddress.ZipCode.Zip.ToCharArray();
+
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }
+                        }
+                    </div>
+                </div>
+                <div style="float: left;width: 450px;">
+                    <div style="float: left; margin-top: 5px; margin-left: 2px;">DOB:</div>
+                    <div style="float: left;">
+                        @{
+
+                            if (Model.DateOfBirth.HasValue)
+                            {
+                                var shortDate = Model.DateOfBirth.Value.ToString("MM/dd/yy").Split('/');
+                                charArray = shortDate[0].ToCharArray();
+                                foreach (var charter in charArray)
+                                {
+                                    <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                                }<div style="float: left; padding-top: 2px; font-size: 25px">/</div>
+
+                                charArray = shortDate[1].ToCharArray();
+                                foreach (var charter in charArray)
+                                {
+                                    <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                                }<div style="float: left; padding-top: 2px; font-size: 25px">/</div>
+                                charArray = shortDate[2].ToCharArray();
+                                foreach (var charter in charArray)
+                                {
+                                    <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <div style="float: left; clear: left; width: 450px;">
+                    <div style="float: left; margin-top: 5px; margin-right: 5px;">Telphone:</div>
+                    <div style="float: left;">
+                        @if (Model.PhoneNumber != null && !string.IsNullOrEmpty(Model.PhoneNumber.ToString()))
+                        {
+                            charArray = PhoneNumber.ToNumber(Model.PhoneNumber.ToString()).ToCharArray();
+                            var index = 0;
+                            for (index = 0; index < 3; index++)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charArray[index]</div></text>
+                            }<div style="float: left; padding-top: 2px; font-size: 20px">-</div>
+                            for (; index < 6; index++)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charArray[index]</div></text>
+                            }<div style="float: left; padding-top: 2px; font-size: 20px">-</div>
+                            for (; index < 10; index++)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charArray[index]</div></text>
+                            }
+                        }
+                        else
+                        {
+                            var index = 0;
+                            for (index = 0; index < 3; index++)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                            }<div style="float: left; padding-top: 1px; font-size: 20px">-</div>
+                            for (; index < 6; index++)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                            }<div style="float: left; padding-top: 1px; font-size: 20px">-</div>
+                            for (; index < 10; index++)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                            }
+                        }
+                    </div>
+                </div>
+                <div style="float: left; clear: left; width: 450px;">
+                    <div style="float: left; margin-top: 5px;">Location/Employer's Name:</div>
+                    <div style="border-bottom: solid 1px black; width: 250px; margin-top: 5px;">@Model.EventId</div>
+                    <div style="float: left;"></div>
+                </div>
+                <div style="float: left; clear: left; width: 450px;">
+                    <div style="float: left; margin-top: 5px;">Collection Date:</div>
+                    <div style="float: left;">
+                        @{
+                            var collectionDate = Model.TestDate.ToString("MM/dd/yy/hh/mm").Split('/');
+                            charArray = collectionDate[0].ToCharArray();
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }<div style="float: left; padding-top: 2px; font-size: 25px">/</div>
+
+                            charArray = collectionDate[1].ToCharArray();
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }<div style="float: left; padding-top: 2px; font-size: 25px">/</div>
+                            charArray = collectionDate[2].ToCharArray();
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">@charter</div></text>
+                            }
+
+                            <div style="float: left; padding-top: 8px; padding-left: 10px;">Time</div>
+                            charArray = collectionDate[3].ToCharArray();
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                            }<div style="float: left; padding-top: 2px; font-size: 20px">:</div>
+
+                            charArray = collectionDate[4].ToCharArray();
+                            foreach (var charter in charArray)
+                            {
+                                <text><div style="border: solid 1px grey; width: 20px; height: 20px; float: left; text-align: center; margin-top: 5px;">&nbsp;</div></text>
+                            }
+                        }
+                    </div>
+                </div>
+
+                @*<div style="float: left; clear: left; width: 450px">
+                    <div style="float: left; margin-top: 5px;">Blood Test(s):</div>
+                    <div style="float: left; margin-top: 5px;">@(string.IsNullOrEmpty(Model.BloodTests) ? "N/A" : Model.BloodTests)</div>
+                </div>
+                <br />*@
+            </div>
+            <div style="width: 49%; display: none; float: right;">
+                <div style="margin: auto; text-align: center">
+                    <u><b>PATIENT CONSENT</b></u>
+                </div>
+                <div style="font-size: 14px; text-align: justify;">
+                    <p>
+                        I hereby acknowledge and consent by signing this form that New Century Diagnostics, Inc. will deliver the above services.
+                    </p>
+                    <p>
+                        I understand that for any healthcare concerns I may have, I should contact my usual healthcare provider. My collection of this blood sample and my submission of this form is my consent and acceptance to the collection and testing of my blood for the purpose of the service noted above ("SERVICE"), my release of New Century Diagnostics, Inc. and its affiliates and any other entity and individual associated with this SERVICE (including but not limited to distributors or contracted providers of this SERVICE) and their successors, assigns, employees, directors and shareholders from any and all liability of any kind or nature whatsoever arising from or in any way connected with the collection and testing of my blood and acknowledges my understanding that the results for the SERVICE can be affected by many factors, such as medical condition, illness or medication, and do not constitute medical advice or a diagnosis of any kind. I hereby authorize New Century Diagnostics, Inc. to release copies of my medical report, or such portions or summaries thereof that may be relevant, to other healthcare providers, distributors, regulatory or accrediting bodies for the purpose of continuing and coordinating my plan of treatment or for quality assurance, survey and accreditation purposes. Furthermore, I consent to the release to third parties of the results of my SERVICE and any data derived from my SERVICE (without my name being used or associated with results) and to the use of such results and data in clinical and research studies and reports that may be published.
+                    </p>
+                    <p style="color: #C44C5D; font-size: 12px;">
+                        <span>Patient/Guardian Signature: ______________________________ </span><span>Date:__/__/____</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div style="float: left; clear: left; width: 80%;">
+            <div style="float: left; margin-top: 5px; width: 90px;">Blood Test(s):</div>
+            <div style="float: left; margin-top: 5px;">
+                @if (Model.BloodTestIds != null && Model.BloodTestIds.Any())
+                {
+                    var testNameList = new List<string>();
+                    foreach (var bloodTestId in Model.BloodTestIds)
+                    {
+                        if (bloodTestId == (long) TestType.Thyroid)
+                        {
+                            testNameList.Add("Thyroid-Stimulating Hormone");
+                        }
+
+                        if (bloodTestId == (long)TestType.Psa)
+                        {
+                            testNameList.Add("Prostate-Specific Antigen");
+                        }
+
+                        if (bloodTestId == (long)TestType.Crp)
+                        {
+                            testNameList.Add("C-Reactive Protein");
+                        }
+
+                        if (bloodTestId == (long)TestType.Testosterone)
+                        {
+                            testNameList.Add("Testosterone");
+                        }
+
+                        if (bloodTestId == (long)TestType.VitaminD)
+                        {
+                            testNameList.Add("Vitamin-D");
+                        }
+
+                        if (bloodTestId == (long)TestType.MenBloodPanel)
+                        {
+                            testNameList.Add("Prostate-Specific Antigen, Testosterone, C-Reactive Protein");
+                        }
+
+                        if (bloodTestId == (long)TestType.WomenBloodPanel)
+                        {
+                            testNameList.Add("Thyroid-Stimulating Hormone, Vitamin-D, C-Reactive Protein");
+                        }
+                    }
+                    <text>
+                        @string.Join(", ", testNameList)
+                    </text>
+                }
+                else
+                {
+                    <text>N/A</text>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

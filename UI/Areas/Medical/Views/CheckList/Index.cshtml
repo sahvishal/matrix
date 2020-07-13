@@ -1,0 +1,94 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.CheckListTemplateListModel
+
+@{
+    ViewBag.Title = "Manage Check List Templates";
+}
+<h2>
+    Manage Check List Templates<span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New", "Create")
+    </span>
+</h2>
+
+<div id="list-filter">
+    @{Html.BeginForm("Index", "CheckList", FormMethod.Get);}
+    @Html.Partial("CheckListTemplateModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && Model.Templates != null && Model.Templates.Count() > 0)
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th width="35%">
+                Name
+            </th>
+            <th width="40%">
+                HealthPlan
+            </th>
+            <th width="40%">
+                Type
+            </th>
+            <th width="25%" style="text-align:right;">
+                Action
+            </th>
+        </tr>
+        @foreach (var template in Model.Templates)
+        {
+            <tr>
+                <td>
+                    @template.Name
+                </td>
+                <td>
+                    @template.HealthPlan
+                </td>
+                <td>
+                    @template.Type
+                </td>
+                <td style="text-align:right">
+                    @if (!template.IsPublished)
+                    {
+                        <a href="/medical/CheckList/edit?id=@template.Id">Edit</a>
+                    }
+                    &nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" onclick="ShowChecklistTemplatePopup(@template.Id);">View</a>
+
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+<script type="text/javascript">
+
+    function ShowChecklistTemplatePopup(templateId) {
+        openIndependentPopup("/Medical/CheckList/View?templateId=" + templateId, "Checklist Template Questions", "width=1050, height=970, resizable=0, scrollbars=1");
+        return false;
+    }
+
+    function openIndependentPopup(url, windowname, properties, replaceWith) {
+        openChildPopup(url, windowname, properties, replaceWith);
+    }
+
+    function openChildPopup(url, windowname, properties, replaceWith) {
+
+        if (windowname == null || windowname.length < 1) {
+            windowname = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"));
+        }
+
+        if (properties == null || properties.length < 1) {
+            properties = "width=" + Number($(window).width() - 20) + ", height=" + Number($(window).height() - 20) + ", resizable=1, scrollbars=1";
+        }
+
+        var win = (replaceWith == null || replaceWith.length < 1) ? window.open(url, windowname, properties) : window.open(url, windowname, properties, replaceWith);
+
+        return win;
+    }
+
+</script>

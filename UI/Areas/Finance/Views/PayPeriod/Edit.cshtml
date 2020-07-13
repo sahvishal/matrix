@@ -1,0 +1,53 @@
+﻿@using System
+@using Falcon.App.Core.Finance.ViewModels;
+@using Falcon.App.UI.HtmlHelpers
+@model PayPeriodEditModel
+@{
+    ViewBag.Title = "Pay Period Configuration";
+}
+<script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script src="/App/JavascriptFiles/validations.js?v=@DateTime.Now.Ticks"></script>
+
+<h1>
+    Pay Period Configuration
+</h1>
+
+@{ Html.BeginForm();}
+
+<div style="margin:10px;">
+    <fieldset style="min-height: 500px; position: relative;">
+        <div>@Html.Partial("EditModel")</div>
+
+        <div class="editor-row" style="bottom: 5px; position: absolute; right: 20px;">
+            <div class="pay-period-submit-button-row" style="float: right;">
+                <a href="/Finance/PayPeriod/Index">Close</a> &nbsp;&nbsp;  @Html.SubmitButton("Save") &nbsp;&nbsp; <button type="button" onclick="PublishPayPeriod()">Save & Publish</button>
+            </div>
+            <div class="pay-period-submit-button-row" style="display: none; text-align: right;">
+                <img src="/App/Images/loading.gif" alt="" />Saving
+            </div>
+        </div>
+    </fieldset>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("input[type=submit]").click(function () {
+            $(".pay-period-submit-button-row").toggle();
+        });
+    });
+
+    function PublishPayPeriod() {
+        $("#IsPublished").val(true);
+        $("input[type=submit]").click();
+    }
+
+</script>
+@{ Html.EndForm();}
+
+<style type="text/css">
+    .btnrow {
+        width: 100%;
+        height: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+</style>

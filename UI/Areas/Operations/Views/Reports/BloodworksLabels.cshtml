@@ -1,0 +1,69 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Extensions
+@model IEnumerable<Falcon.App.Core.Operations.ViewModels.BloodworksLabelViewModel>
+           
+@{
+    Layout = null;
+}
+
+@if (Model != null && Model.Count() > 0)
+{
+    int index = 0;
+    var customers = Model.ToArray();
+
+    while (index < customers.Count())
+    {
+        string pageBreakString = "margin-top: 10px; ";
+        if (index > 0)
+        {
+            pageBreakString = "page-break-before:always; display:block; padding-top: 10px; ";
+        }
+        <div style="clear: both; width: 100%; @pageBreakString">
+                <table id="list-view" cellspacing="30px">
+                    @while (true)
+                    {
+                        <tr>
+                            @for (int count = 0; count < 2; count++)
+                            {
+                                var customer = customers[index++];
+                                <td style="padding-top: 0px; padding-bottom: 15px; padding-left:@((count + 1) * 15)px; font-size: 18px; width:221px; height:384px">
+                                    <b>Patient Name:</b> @customer.CustomerName
+                                    <br />
+                                    <b>Patient Address:</b> @customer.CustomerAddress.ToString()
+                                    <br />
+                                    <b>Phone Number:</b> @customer.PhoneNumber.ToString()
+                                    <br />
+                                    <b>Date of Birth:</b> @(customer.DateOfBirth.HasValue?customer.DateOfBirth.Value.ToShortDateString():"") <b>Age:</b> @(customer.DateOfBirth.HasValue?customer.Age.ToString():"")
+                                    <br />
+                                    <b>Gender:</b> @customer.Gender
+                                    <br />
+                                    <b>Account Name:</b>
+                                    <br />
+                                    <b>Account Phone Number:</b>
+                                    <br />
+                                    <b>Account ID:</b>                                    
+                                </td>
+                
+                                if (index >= customers.Count() || index % 10 == 0)
+                                {
+                                    break;
+                                }
+                            }
+                        </tr>
+                            if (index >= customers.Count() || index % 10 == 0)
+                            {
+                                break;
+                            }
+                    }
+                </table>
+            </div>
+    }
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}
+

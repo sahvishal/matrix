@@ -1,0 +1,130 @@
+P {
+	FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 1.35; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.whitetext {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.whitetitle {
+	PADDING-LEFT: 8px; FONT-WEIGHT: bold; FONT-SIZE: 16px; PADDING-BOTTOM: 8px; COLOR: #ffffff; PADDING-TOP: 8px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+A {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+A:hover {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.agreylink {
+	PADDING-RIGHT: 6px; PADDING-LEFT: 6px; FONT-WEIGHT: normal; FONT-SIZE: 11px; MARGIN-LEFT: 6px; COLOR: #000000; MARGIN-RIGHT: 6px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.agreylink:hover {
+	PADDING-RIGHT: 6px; PADDING-LEFT: 6px; FONT-WEIGHT: normal; FONT-SIZE: 11px; MARGIN-LEFT: 6px; COLOR: #000000; MARGIN-RIGHT: 6px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.greyspacer {
+	FONT-WEIGHT: normal; FONT-SIZE: 11px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.redtitle {
+	FONT-WEIGHT: bolder; FONT-SIZE: 16px; MARGIN: 9px 0px 0px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.blacktitle {
+	FONT-WEIGHT: bolder; FONT-SIZE: 14px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.linksbrown {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: bold; FONT-SIZE: 12px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #036bbe; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.linksbrown:hover {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: bold; FONT-SIZE: 12px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #036bbe; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksblue {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #036bbe; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksblue a:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #036bbe; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksblue a:visited {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #036bbe; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksblue a:hover {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #036bbe; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksbrown2 {
+	FONT-WEIGHT: normal; FONT-SIZE: 12px; COLOR: #a61e1e; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksbrown2:hover {
+	FONT-WEIGHT: normal; FONT-SIZE: 12px; COLOR: #a61e1e; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksbrown3 {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: bold; FONT-SIZE: 16px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #a61e1e; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksbrown3:hover {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: bold; FONT-SIZE: 16px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #a61e1e; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksblack {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: normal; FONT-SIZE: 11px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #000000; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.linksblack:hover {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: normal; FONT-SIZE: 11px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #000000; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.textblack {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: normal; FONT-SIZE: 12px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #000000; LINE-HEIGHT: 1.5; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.linksblack2b {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: normal; FONT-SIZE: 11px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #036bbe; LINE-HEIGHT: 1.5; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.linksblack2b:hover {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: normal; FONT-SIZE: 11px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #036bbe; LINE-HEIGHT: 1.5; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.linksblack2 {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: normal; FONT-SIZE: 13px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #000000; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.linksblack2:hover {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-WEIGHT: normal; FONT-SIZE: 13px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #000000; PADDING-TOP: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.textnewsletter {
+	FONT-SIZE: 10px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.linksbbottom {
+	FONT-SIZE: 10px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.linksbbottom:hover {
+	FONT-SIZE: 10px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-DECORATION: underline
+}
+.textbottom {
+	FONT-SIZE: 10px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.textbrown {
+	FONT-SIZE: 12px; COLOR: #450c0c; LINE-HEIGHT: 1.5; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.padding {
+	PADDING-LEFT: 2px; PADDING-BOTTOM: 16px; PADDING-TOP: 16px
+}
+.padding1a {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 1px; PADDING-BOTTOM: 8px; PADDING-TOP: 8px
+}
+.padding2 {
+	PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px
+}
+.padding1 {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 1px; PADDING-BOTTOM: 8px; PADDING-TOP: 0px
+}
+.padding3 {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; PADDING-TOP: 5px
+}
+.paddinglinks {
+	PADDING-LEFT: 12px; PADDING-BOTTOM: 9px; PADDING-TOP: 9px
+}
+.subtitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 14px; COLOR: #3366cc; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.stats {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.listfont {
+	FONT-SIZE: 11px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.olSpacing {
+	MARGIN-TOP: 5px; MARGIN-BOTTOM: 5px
+}
+.resetpass_pw{float:right; padding-right:10px; font:normal 12px arial; color:#666;}
+.resetpass_pw a:link{font:normal 12px arial; color:#287AA8; text-decoration:underline; }
+.resetpass_pw a:visited{font:normal 12px arial; color:#287AA8; text-decoration:underline; }
+.resetpass_pw a:hover{font:normal 12px arial; color:#FF6600; text-decoration:underline; }

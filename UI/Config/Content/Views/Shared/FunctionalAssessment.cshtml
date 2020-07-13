@@ -1,0 +1,221 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Users.Enum
+@*@model QualityAssuranceResultViewModel*@
+@model HealthAssessmentHeaderEditModel
+
+<style type="text/css">
+    .faform .row-div {
+        float: left;
+        width: 832px;
+        margin: 0px !important;
+        padding: 0px 0px 0 3px;
+        border-left: solid 1px black;
+        border-right: solid 1px black;
+    }
+
+    .faform .divborderbottom {
+        border-bottom: solid 1px #000000;
+    }
+
+    .faform .divborderleft {
+        border-left: solid 1px #000000;
+        margin-right: 2px;
+    }
+
+    .faform .divborderright {
+        border-right: solid 1px #000000;
+        margin-right: 3px;
+    }
+
+    .faform .left-float {
+        float: left;
+    }
+
+    .faform table {
+        border-collapse: collapse;
+    }
+
+    .faform th {
+        text-align: center;
+    }
+
+    .faform table, .faform th, .faform td {
+        border: 1px solid black;
+    }
+
+    .faform .bold {
+        font-weight: bold;
+    }
+
+    .faform .Activity {
+        float: left;
+        font-weight: bold;
+    }
+
+    .faform .point {
+        margin-left: 20px;
+    }
+
+    .faform input[type="text"] {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .faform .title-text {
+        font-size: 30px;
+    }
+
+    .faform .pain-staus {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding-left: 60px;
+        font-size: large;
+        clear: both;
+        float: left;
+    }
+</style>
+
+<div class="section" style="margin-top: 30px; padding-left: 6px; padding-right: 6px; clear: both;">
+    <div class="faform">
+        <div>
+            <div class="title-text bold" style="padding-left: 30px;">Functional Assessment:</div>
+        </div>
+        <div style="margin-top: 10px; margin-bottom: 10px; float: left; clear: both;">
+            <div class="left-float" style="width: 250px;">
+                <span class="bold" style="float: left;width: 50px;">PID: </span>
+                <div style="width: 200px;float: left;border-bottom: solid 1px black;">@Model.CustomerId</div> 
+            </div>
+            <div class="left-float" style="width: 270px; padding-left: 35px; float: left; ">
+                <span class="bold" style="float: left;width: 75px;"> Member ID: </span>
+                <div style="width: 150px;float: left;border-bottom: solid 1px black;">@(string.IsNullOrEmpty(Model.MemberId) ? "N/A" : Model.MemberId)</div> 
+            </div>
+            <div class="left-float" style="width:250px;">
+                <span class="bold" style="float: left;width: 50px;"> DOB: </span>
+               <div style="width: 200px;float: left;border-bottom: solid 1px black;">@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")</div> 
+            </div>
+        </div>
+        <div style="margin-bottom: 15px;float: left;clear: both;width: 800px;">
+            <div style="width:560px;float: left;">
+                <span class="bold" style="float: left;width: 50px;"> Name: </span>
+                <div style="width: 460px;float: left;border-bottom: solid 1px black;">@Model.CustomerName</div>
+            </div>
+            <div style="width:230px;float: left;">
+                <span class="bold" style="float: left;width: 80px;"> Event Date: </span>
+                <div style="width: 150px;float: left;border-bottom: solid 1px black;">@( Model.EventDate.ToShortDateString())</div>
+            </div>
+        </div>
+        
+            <table>
+                <tr>
+                    <td width="26%" align="center" valign="top">
+                        <br /><span class="bold">ACTIVITIES</span><br />
+                        POINTS (1 OR 0)<br />
+                    </td>
+
+                    <td width="37%" align="center" valign="top">
+                        <br /><span class="bold">INDEPENDENCE:</span><br />
+                        (1 POINT)<br /><b>NO</b> surpervision, direction or personal assistance<br />
+                    </td>
+
+                    <td width="37%" align="center" valign="top">
+                        <br /><span class="bold">DEPENDENCE:</span><br />
+                        (0 POINTS)<br /><b>WITH</b> surpervision, direction, personal assistance or total care<br />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="Activity" style="padding: 0px 0px 0 10px; padding-top :5px">BATHING</span><br /><br />
+                        <span class="point">POINTS:</span><input type="text" style="width: 80px;" /><br /><br />
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(1 POINT)</span> Bathes self completely or needs help in bathing only a single part of the body such as the back, genital area or disabled extremity.
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(0 POINTS)</span> Needs help with bathing more than one part of the body, getting in or out of the tub or shower. Requires total bathing.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <span class="Activity" style="padding: 0px 0px 0 10px; padding-top: 5px">DRESSING</span><br /><br />
+                        <span class="point">POINTS:</span><input type="text" style="width: 80px;" /><br /><br />
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(1 POINT)</span> Gets clothes from closets and drawers and puts on clothes and outer garments complete with fasteners. May have help tying shoes.
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(0 POINTS)</span> Needs help with dressing self or needs to be completely dressed.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="Activity" style="padding: 0px 0px 0 10px; padding-top: 5px">TOILETING</span><br /><br />
+                        <span class="point">POINTS:</span><input type="text" style="width: 80px;" /><br /><br />
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(1 POINT)</span> Goes to toilet, gets on and off, arranges clothes, cleans genital area without help.
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(0 POINTS)</span> Needs help transferring to the toilet, cleaning self or uses bedpan or commode.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="Activity" style="padding: 0px 0px 0 10px; padding-top: 5px">TRANSFERRING</span><br /><br />
+                        <span class="point">POINTS:</span><input type="text" style="width: 80px;" /><br /><br />
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(1 POINT)</span> Moves in and out of bed or chair unassisted. Mechanical transferring aides are acceptable.
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(0 POINTS)</span> Needs help in moving from bed to chair or requires a complete transfer.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="Activity" style="padding: 0px 0px 0 10px; padding-top: 5px">CONTINENCE</span><br /><br />
+                        <span class="point">POINTS:</span><input type="text" style="width: 80px;" /><br /><br />
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(1 POINT)</span> Exercises complete self control over urination and defecation.
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(0 POINTS)</span> Is partially or totally incontinent of bowel or bladder.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="Activity" style="padding: 0px 0px 0 10px; padding-top: 5px">FEEDING</span><br /><br />
+                        <span class="point">POINTS:</span><input type="text" style="width: 80px;" /><br /><br />
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(1 POINT)</span> Gets food from plate into mouth without help. Preparation of food may be done by another person.
+                    </td>
+                    <td style="padding: 0px 0px 0 10px; padding-top: 5px">
+                        <span class="bold">(0 POINTS)</span> Needs partial or total help with feeding or requires parenteral feeding.
+                    </td>
+                </tr>
+            </table>
+        
+     
+
+        <div style="border: 1px solid black; margin-top: 5px; padding: 20px; float: left; width: 804px; clear: both;">
+            <div style="margin-left: 150px;float: left;">
+                <span class="bold">TOTAL POINTS </span>  =
+                <input style="width: 80px;" type="text" /> 6 = High (<i>patient independent</i>) 0 = Low  (<i>patient very dependent</i>)
+            </div>
+        </div>
+
+        <div class="title-text bold" style="margin-left: 30px;margin-top: 10px;float: left;clear: both;width: 300px;">Pain Assessment:</div>
+        <div style="margin-left: 40px; font-size: large; float: left; clear: both; width: 650px;">
+            During the <b>past four weeks</b> how much bodily pain have you generally had?
+        </div>
+        <div class="pain-staus" style="width: 300px;">0 - (No pain)</div>
+        <div class="pain-staus" style="width: 300px;">2 - (Very mild pain)</div>
+        <div class="pain-staus" style="width: 300px;">4 - (Mild pain)</div>
+        <div class="pain-staus" style="width: 300px;">6 - (Moderate pain)</div>
+        <div class="pain-staus" style="width: 300px;">8 - (Severe pain)</div>
+        <div class="pain-staus" style="width: 300px;">10 - (Unbearable pain)</div>
+    </div>
+</div>

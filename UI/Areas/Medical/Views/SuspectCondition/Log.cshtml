@@ -1,0 +1,176 @@
+﻿@using Falcon.App.Core.Extensions 
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Medical.ViewModels.SuspectConditionUploadListModel
+
+<script src="/Scripts/reportexportqueue.js"></script>
+@{
+    ViewBag.Title = "Suspect Condition Archives";
+}
+<h1>
+    Suspect Condition Archives
+
+</h1>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("Log", "SuspectCondition", FormMethod.Get);}
+    
+    
+
+<h2>
+    Search Records <span style="float: right">
+        Preset Searches: <a href="#" onclick="clickToday(); return false;">
+            Today
+        </a>| <a href="#" onclick="clickThisWeek(); return false;">This Week </a>
+    </span>
+</h2>
+    <div style="padding-left: 5px; overflow: hidden;">
+        <div class="editor-column" style="width: 27%">
+            <div class="small-text">
+                Uploaded By:
+            </div>
+            @Html.DropDownListFor(m => Model.Filter.UploadedBy, DropDownHelper.SuspectConditionUploadedBy())
+        </div>
+        <div class="editor-column" style="width: 27%">
+            <div class="small-text">
+                Status
+            </div>
+            @Html.DropDownListFor(m => m.Filter.Status, new SelectList(ViewBag.Status, "FirstValue", "SecondValue")
+                , new { @style = "width:90%;" })
+        </div>
+        <div class="editor-column" style="width: 17%">
+            <div class="small-text">
+                <b>Uploaded</b> From
+            </div>
+            @Html.TextBoxFor(m => Model.Filter.FromDate, new { @class = "datePicker" })
+        </div>
+        <div class="editor-column" style="width: 20%">
+            <div class="small-text">
+                To
+            </div>
+            @Html.TextBoxFor(m => Model.Filter.ToDate, new { @class = "datePicker" })
+        </div>
+    </div>
+<div class="editor-column" style="padding-top: 10px; width: 20%; float: right; text-align: right;clear: both;">
+    @Html.ActionLink("Clear", "Log", "SuspectCondition") | @Html.SubmitButton("Search")
+</div>
+<script language="javascript" type="text/javascript">
+
+    function clickToday() {
+        clearAll();
+        $("input#Filter_FromDate").val('@DateTime.Now.ToShortDateString()');
+        $("input#Filter_ToDate").val('@DateTime.Now.ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clickThisWeek() {
+        clearAll();
+        $("input#Filter_FromDate").val('@DateTime.Now.AddDays(-1 * (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("input#Filter_ToDate").val('@DateTime.Now.AddDays(6 - (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clearAll() {
+        $("input[type=text], input[type=checkbox]").val("");
+    }
+     
+
+</script>
+
+
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+     
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <table id="list-view">
+            <tr>
+                <th>
+                    Uploaded By
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Status)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Date)
+                </th>
+                
+                <th>
+                    Successful Record(s)
+                </th>
+                <th>
+                    Failed Record(s)
+                </th>
+                <th>
+                    Uploaded File
+                </th>
+                <th>Failed File</th> 
+            </tr>
+            @foreach (var file in Model.Collection)
+            {
+                <tr>
+                    <td>
+                        @file.UploadedName
+                    </td>
+                    <td>
+                        @file.Status
+                    </td>
+                    <td>
+                        @file.Date
+                    </td>
+                    
+                    <td>
+                        @file.SuccessfullUploadCount
+                    </td>
+                    <td>
+                        @file.FailedUploadCount
+                    </td>
+                    <td>
+                        <a href="@(Model.Url + file.Filename)">Download</a>
+                    </td>
+                     
+                    <td>
+                        @if (file.FailedUploadCount > 0)
+                        {
+                            <a href="@(Model.Url + file.FailName)">Download</a>
+                        }
+                        else
+                        {
+                               @: N/A
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        
+    </script>
+}

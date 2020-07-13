@@ -1,0 +1,499 @@
+﻿@{
+    Layout = null;
+}
+
+@using Falcon.App.Core.Enum
+@using Falcon.App.Core.Medical.Domain
+@using Falcon.App.Core.Medical.ViewModels
+@model IEnumerable<MedicareQuestionGroupEditModel>
+@{
+    ViewBag.Title = "MSP Form";
+}
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript">
+    function showRemarks(questionId, value) {
+
+        $("#question" + questionId + "_remarks_" + value);
+        $("#question" + questionId + "_remarks_" + value).hide();
+
+        if ($("input:radio[name='question" + questionId + "']:checked").attr("ctrl_answer") == value) {
+            $("#question" + questionId + "_remarks_" + value).show();
+        }
+    }
+
+    function showNextQuestion(questionId, dependentQuestionId, value) {
+
+        if ($("input:radio[name='question" + questionId + "']:checked").attr("ctrl_answer") == value) {
+            $("#question" + dependentQuestionId).show();
+            setDefaultValueIfAny($("#question" + dependentQuestionId));
+        } else {
+            $("#question" + dependentQuestionId).hide();
+            uncheckAllReadiobox($("#question" + dependentQuestionId));
+        }
+    }
+
+    function setDefaultValueIfAny(questionDiv) {
+        var radiobtn = $(questionDiv).find("input:radio[default_answer]");
+        
+        $(radiobtn).each(function() {
+            var defaultValue = $(this).attr('default_answer');
+            $(this).closest("div").find("input:radio[ctrl_answer='" + defaultValue + "']").attr('checked', true);
+        });
+        $(radiobtn).trigger("change");
+    }
+
+    function uncheckAllReadiobox(questionDiv) {
+        var radiobtn = $(questionDiv).find("input:radio:checked");
+       
+        $(radiobtn).attr('checked', false);
+        $(radiobtn).trigger("change");
+        
+    }
+
+    function showGroup(questionId, QuestionValue, groupAlias) {
+
+        if ($("input:radio[name='question" + questionId + "']:checked").attr("ctrl_answer") == QuestionValue) {
+            $("#" + groupAlias).show();
+            getQuestionHavingDefaultValue(groupAlias);
+        } else {
+            $("#" + groupAlias).hide();
+            var radiobtns = $("#" + groupAlias).find("input:radio:checked");
+            $(radiobtns).attr('checked', false);
+            $(radiobtns).trigger("change");
+        }
+    }
+
+    function getQuestionHavingDefaultValue(groupAlias) {
+        var radioBtns= $("#" + groupAlias).find("input:radio[default_answer]:visible");
+        $(radioBtns).each(function() {
+            setDefaultValueIfAny($(this).closest('.sequence-block'));
+        });
+    }
+
+    var customerAnswerArray = new Array();
+
+    function addToObject() {
+        $(".save-medicare-data").toggle();
+        var isAllMandatoryFieldSet = validateIsAllQuestionAnswered();
+        
+        if (!isAllMandatoryFieldSet) {
+            QuestionNotFilled();
+            $(".save-medicare-data").toggle(); 
+            return isAllMandatoryFieldSet;
+        }
+
+        customerAnswerArray = new Array();
+        
+        $("div.sequence-block:visible").each(function () {
+            var questionId = $(this).attr("questionId");
+            var answer = '';
+            
+            if ($("[name='question" + questionId + "']").is(":radio")) {
+                answer = $("[name='question" + questionId + "']:checked").attr("ctrl_answer");
+            } else {
+                answer = encodeURIComponent( $("[name='question" + questionId + "']").val());
+            }
+
+            var customerObject = new Object();
+            customerObject.Id = questionId;
+            customerObject.Answer = answer;
+            customerObject.DefaultValue=$("#default" + questionId + "_answer:hidden").val();
+            customerObject.ControlType = $("#question" + questionId + "_controlType:hidden").val();
+            customerAnswerArray.push(customerObject);
+        });
+
+        var customerMedicareQuestionAnswerEditModel = new Object();
+        customerMedicareQuestionAnswerEditModel.CustomerEventId=@Request.QueryString["eventcustomerid"];
+        customerMedicareQuestionAnswerEditModel.Question = customerAnswerArray;
+        console.log( JSON.stringify(customerMedicareQuestionAnswerEditModel));
+        renderMedicareAnswer(customerMedicareQuestionAnswerEditModel);
+
+        return isAllMandatoryFieldSet;
+    }
+
+    function renderMedicareAnswer(object) {
+        $.ajax({
+            url: "/Medical/MedicareQuestion/SaveCustomerAnswer",
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            type: 'POST',
+            data :JSON.stringify(object),
+            success: on_Success,
+            error: function(a, b, c) {$(".save-medicare-data").toggle(); }
+        });
+    }
+
+    function on_Success(result) {
+        $(".save-medicare-data").toggle();
+        alert("saved successfully");
+        backToHistory();
+    }
+
+    function validateIsAllQuestionAnswered() {
+        var isAllMandatoryFieldSet = true;
+        $("div.sequence-block:visible").each(function() {
+            var questionId = $(this).attr("questionId");
+
+            if (!$(this).is("combinedQuestionId")) {
+                isAllMandatoryFieldSet=   validateSimpleQuestions(questionId);
+            } else {
+                isAllMandatoryFieldSet = validateQuestionWithCombination(questionId, $(this).attr("combinedQuestionId"));
+            }
+            if (!isAllMandatoryFieldSet) return isAllMandatoryFieldSet;
+        });
+
+        return isAllMandatoryFieldSet;
+    }
+
+    function validateSimpleQuestions(questionId) {
+        var isAllMandatoryFieldSet = true;
+
+        var answer = '';
+        if ($("[name='question" + questionId + "']").is(":radio")) {
+            answer = $("[name='question" + questionId + "']:checked").attr("ctrl_answer");
+        } else {
+            answer = $("[name='question" + questionId + "']").val();
+        }
+
+        if (answer == '' || answer === undefined) {
+            isAllMandatoryFieldSet = false;
+        }
+
+        return isAllMandatoryFieldSet;
+    }
+
+    function validateQuestionWithCombination(questionId,combinedQuestionId) {
+        var answer = '';
+        answer = $("[name='question" + questionId + "']:checked").attr("ctrl_answer");
+        var combinedQuestionAnswer = $("[name='question" + combinedQuestionId + "']:checked").attr("ctrl_answer");    
+
+        if ((answer == '' || answer === undefined) && (combinedQuestionAnswer== '' || combinedQuestionAnswer === undefined)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    function showRemarkswithCombined(questionId,questionValue,combinedQuestionId,combinedQuestionValue,dependentQuestionId,value,remarks) {
+        var  answer = $("[name='question" + questionId + "']:checked").attr("ctrl_answer");
+
+        var questionValues = questionValue.split(',');
+        var dependentQuesionValue = $("[name='question" + dependentQuestionId + "']:checked").attr("ctrl_answer");
+
+        if (combinedQuestionId > 0) {
+            var combinedQuestionAnswer = $("[name='question" + combinedQuestionId + "']:checked").attr("ctrl_answer");
+            
+            var combinedQuestionValues = combinedQuestionValue.split(',');
+            if ($.inArray(answer, questionValues) >= 0 && $.inArray(combinedQuestionAnswer, combinedQuestionValues) >= 0) {
+                if (dependentQuesionValue == value) {
+                    $("#question" + combinedQuestionId + "_remarks_" + combinedQuestionValues[0]).html(remarks);
+                }
+                $("#question" + combinedQuestionId + "_remarks_" + combinedQuestionValues[0]).show();
+            } else {
+                $("#question" + combinedQuestionId + "_remarks_" + combinedQuestionValues[0]).hide();
+            }
+        } else {
+            if ($.inArray(answer, questionValues) >= 0) {
+                if (dependentQuesionValue == value) {
+                    $("#question" + questionId + "_remarks_" + questionValues[0]).html(remarks);
+                }
+                $("#question" + questionId + "_remarks_" + questionValues[0]).show();
+            } else {
+                $("#question" + questionId + "_remarks_" + questionValues[0]).hide();
+            } 
+        }
+        
+        
+    }
+
+    function showRemarkswithCombinedDefault(questionId,questionValue,combinedQuestionId,combinedQuestionValue,remarks) {
+        
+        var  answer = $("[name='question" + questionId + "']:checked").attr("ctrl_answer");
+        
+        var questionValues = questionValue.split(',');
+        
+        if (combinedQuestionId > 0) {
+            var combinedQuestionAnswer = $("[name='question" + combinedQuestionId + "']:checked").attr("ctrl_answer");
+            var combinedQuestionValues = combinedQuestionValue.split(',');
+
+            if ($.inArray(answer, questionValues) >= 0 && $.inArray(combinedQuestionAnswer, combinedQuestionValues) >= 0) {
+                $("#question" + combinedQuestionId + "_remarks_" + combinedQuestionValues[0]).html(remarks);
+                $("#question" + combinedQuestionId + "_remarks_" + combinedQuestionValues[0]).show();
+            } else {
+                $("#question" + combinedQuestionId + "_remarks_" + combinedQuestionValues[0]).hide();
+            }
+        } else {
+            if ($.inArray(answer, questionValues) >= 0) {
+                $("#question" + questionId + "_remarks_" + questionValues[0]).html(remarks);
+                $("#question" + questionId + "_remarks_" + questionValues[0]).show();
+            } else {
+                $("#question" + questionId + "_remarks_" + questionValues[0]).hide();
+            } 
+        }
+        
+    }
+
+
+    function QuestionNotFilled() {
+
+        var displayTemplate = "";
+        $("div.sequence-block:visible").each(function() {
+
+            var questionId = $(this).attr("questionId");
+            var quesion = $("#question" + questionId).find("span.question-label-block").html();
+            var answer = '';
+            if ($("[name='question" + questionId + "']").is(":radio")) {
+                answer = $("[name='question" + questionId + "']:checked").attr("ctrl_answer");
+            } else {
+                answer = $("[name='question" + questionId + "']").val();
+            }
+
+            if (answer == '' || answer === undefined) {
+                displayTemplate=  CreateDisplayText(displayTemplate,quesion);
+            }
+        });
+
+        displayTemplate = "<ul>" + displayTemplate + "</ul>";
+        
+        $("#unAnswedQuestionAnswer").html(displayTemplate);
+        $("#medicareQuestionAnswer").dialog("open");
+
+    }
+    function CreateDisplayText(displayTemplate, question) {
+        if (displayTemplate == "") {
+            displayTemplate = "<li style='line-height:1.5;'>" + question + "</li>";
+        } else {
+            displayTemplate = displayTemplate + "<li style='line-height:1.5;'>" + question + "</li>";
+        }
+        return displayTemplate;
+    }
+    
+    
+</script>
+
+<style type="text/css">
+    .front-radio-block {
+        padding-left: 10px;
+        margin-bottom: 3px;
+        margin-top: 3px;
+    }
+</style>
+<div style="margin: 20px 70px;">
+    <div style="font-weight: bold; float: left; clear: both">
+        20.2.1 - Admission Questions to Ask Medicare Beneficiaries
+    </div>
+    <div style="clear: both">(Rev.)</div>
+    <div style="margin-top: 20px; margin-bottom: 20px;">
+        <div style="text-align: left; clear: both;">
+            The following questionnaire contains questions that can be used to ask Medicare beneficiaries upon each inpatient and outpatient admission. Providers may use this as a guide to help identify other payers that may be primary to Medicare. This questionnaire is a model of the type of questions that may be asked to help identify Medicare Secondary Payer (MSP) situations. If you choose to use this questionnaire, please note that it was developed to be used in sequence. Instructions are listed after the questions to facilitate transition between questions. The instructions will direct the patient to the next appropriate question to determine MSP situations.
+        </div>
+    </div>
+    @if (Model == null || !Model.Any())
+    {
+        <div>No Data Found</div>
+    }
+    else
+    {
+        <fieldset>
+
+            <legend>
+                <h3>Medicare Secondary Payer</h3>
+            </legend>
+            <div>
+                @foreach (var mqgrop in Model)
+                {
+                    var hasAnswerd = mqgrop.MedicareQuestions.Any(x => !string.IsNullOrWhiteSpace(x.Answer));
+                
+                    <div id="@mqgrop.GroupAlias" style="font-weight: bold;padding-top:10px; clear: both;display: @((mqgrop.IsDefault || hasAnswerd) ? "block" : "none")">
+                        <fieldset>
+
+                            <legend>
+                                <h3>@mqgrop.GroupName</h3>
+                            </legend>
+
+                            @if (mqgrop.MedicareQuestions != null && mqgrop.MedicareQuestions.Any())
+                            {
+                                var index = 1;
+                                var radioTypeQuestion = mqgrop.MedicareQuestions.Where(x => x.ControlType == DisplayControlType.Radio);
+                                foreach (var medicareQuestion in radioTypeQuestion)
+                                {
+                                    List<MedicareQuestionsRemark> defaultRemarksOnly = null;
+                                    List<MedicareQuestionsRemark> depndentForRemarks = null;
+                                    MedicareQuestionsRemark combindedRemarks = null;
+
+                                    if (medicareQuestion.MedicareQuestionsRemarks != null)
+                                    {
+                                        defaultRemarksOnly = medicareQuestion.MedicareQuestionsRemarks.Where(x => x.IsDefault).ToList();
+                                        depndentForRemarks = medicareQuestion.MedicareQuestionsRemarks.Where(x => !x.IsDefault).ToList();
+                                        combindedRemarks = depndentForRemarks.FirstOrDefault(x => x.CombinedQuestionId.HasValue && x.CombinedQuestionId.Value > 0 && !x.DependentQuestionId.HasValue);
+
+                                    }
+
+                                    var isAnswered = !string.IsNullOrWhiteSpace(medicareQuestion.Answer);
+                            
+                                <div class="sequence-block" id="question@(medicareQuestion.Id)" questionId="@medicareQuestion.Id"  style=";padding-top:10px;display: @((medicareQuestion.IsDefault || isAnswered) ? "block" : "none")" @(combindedRemarks != null ? "combinedQuestionId=" + combindedRemarks.CombinedQuestionId : "")>
+
+                                    <div>
+                                        @index. <span class="question-label-block">@medicareQuestion.Question</span>
+                                    </div>
+                                    <div class="front-radio-block">
+                                        @foreach (var controlValue in medicareQuestion.ControlValues)
+                                        {
+                                            var hasDependencyQuestion = medicareQuestion.DependencyRules != null && medicareQuestion.DependencyRules.Any();
+                                            var clientSidefunction = string.Empty;
+
+                                            var hasGroupDependency = medicareQuestion.MedicareGroupDependencyRules != null && medicareQuestion.MedicareGroupDependencyRules.Any();
+
+                                            if (hasDependencyQuestion)
+                                            {
+                                                clientSidefunction = medicareQuestion.DependencyRules.Aggregate(string.Empty, (current, dependencyRule) => current + "showNextQuestion(" + dependencyRule.QuestionId + "," + dependencyRule.DependentQuestionId + ",'" + dependencyRule.DependencyValue + "');");
+                                            }
+
+                                            if (defaultRemarksOnly != null && defaultRemarksOnly.Any())
+                                            {
+                                                clientSidefunction = defaultRemarksOnly.Aggregate(clientSidefunction, (current, remark) => current + "showRemarks(" + remark.QuestionId + ",'" + remark.QuestionValue + "');");
+                                            }
+
+                                            if (depndentForRemarks != null && depndentForRemarks.Any())
+                                            {
+                                                foreach (MedicareQuestionsRemark remark in depndentForRemarks)
+                                                {
+                                                    var combindQuestionId = remark.CombinedQuestionId ?? 0;
+                                                    var combinedQuestionValue = remark.CombinedQuestionValue ?? string.Empty;
+                                                    var dependentQuestionId = remark.DependentQuestionId ?? 0;
+                                                    var dependentQuestionValue = remark.DependentQuestionValue ?? string.Empty;
+                                                    if (remark.DependentQuestionId.HasValue)
+                                                    {
+                                                        clientSidefunction = clientSidefunction + "showRemarkswithCombined(" + remark.QuestionId + ",'" + remark.QuestionValue + "'," + combindQuestionId + ",'" + combinedQuestionValue + "'," + dependentQuestionId + ",'" + dependentQuestionValue + "','" + remark.Remarks + "');";
+                                                    }
+                                                    else
+                                                    {
+                                                        clientSidefunction = "showRemarkswithCombinedDefault(" + remark.QuestionId + ",'" + remark.QuestionValue + "'," + combindQuestionId + ",'" + combinedQuestionValue + "','" + remark.Remarks + "');" + clientSidefunction;
+                                                    }
+                                                }
+                                            }
+
+
+                                            if (hasGroupDependency)
+                                            {
+                                                foreach (MedicareGroupDependencyRule rule in medicareQuestion.MedicareGroupDependencyRules)
+                                                {
+                                                    var group = Model.First(x => x.Id == rule.DependentGroupId);
+
+                                                    clientSidefunction = clientSidefunction + "showGroup(" + rule.QuestionId + ",'" + rule.DependencyValue + "','" + group.GroupAlias + "');";
+                                                }
+                                            }
+                                            var isSelected = (!string.IsNullOrWhiteSpace(medicareQuestion.Answer) && medicareQuestion.Answer == controlValue);
+                                    
+                                            <div>
+                                                <input type="hidden" id="question@(medicareQuestion.Id)_controlType" value="@((int)medicareQuestion.ControlType)" />
+                                                <input type="hidden" id="default@(medicareQuestion.Id)_answer" value="@(!string.IsNullOrWhiteSpace(medicareQuestion.DefaultValue) ? medicareQuestion.DefaultValue : "")" />
+                                                <input type="radio" ctrl_answer="@controlValue" name="question@(medicareQuestion.Id)" onclick="@clientSidefunction" onchange="@clientSidefunction" @(isSelected ? "checked='checked'" : "")  @(!string.IsNullOrWhiteSpace(medicareQuestion.DefaultValue) ? "default_answer=" + medicareQuestion.DefaultValue + "" : "")/>
+
+                                                @controlValue
+
+                                                @if (hasDependencyQuestion)
+                                                {
+                                                    var dependentQuestionIds = medicareQuestion.DependencyRules.Where(x => x.DependencyValue == controlValue && x.QuestionId == medicareQuestion.Id).Select(x => x.DependentQuestionId).ToArray();
+                                                    var dependentQuestions = mqgrop.MedicareQuestions.Where(x => dependentQuestionIds.Contains(x.Id) && x.ControlType != DisplayControlType.Radio);
+
+                                                    foreach (var question in dependentQuestions)
+                                                    {
+                                                
+                                                    <div class="sequence-block" id="question@(question.Id)" questionId="@question.Id" style="display: none; padding-left: 40px;margin: 10px;" >
+                                                        <input type="hidden" id="question@(question.Id)_controlType" value="@((int)question.ControlType)"/>
+                                                        <span class="question-label-block">@question.Question</span>
+                                                        @switch (question.ControlType)
+                                                        {
+                                                            case DisplayControlType.TextBox:
+                                                                {
+                                                            <input type="text" name="question@(question.Id)" value="@question.Answer" />
+                                                                    break;
+
+                                                                }
+                                                            case DisplayControlType.TextArea:
+                                                                {
+                                                            <br /> <textarea style="width: 350px;height: 100px;" name="question@(question.Id)" >@question.Answer</textarea>
+                                                                    break;
+                                                                }
+                                                            case DisplayControlType.DateTypeTextBox:
+                                                                {
+                                                            <input type="text" name="question@(question.Id)" class="datePicker-dob" value="@question.Answer" />
+                                                                    break;
+                                                                }
+                                                        }
+                                                    </div>  
+                                                    }
+
+                                                }
+                                            </div>           
+                                        }
+                                    </div>
+                                </div>
+                                        if (defaultRemarksOnly != null && defaultRemarksOnly.Any())
+                                        {
+                                            foreach (var medicareQuestionsRemark in defaultRemarksOnly)
+                                            {
+                                        
+                                <div class="question@(medicareQuestion.Id)_remarks" id="question@(medicareQuestion.Id)_remarks_@(medicareQuestionsRemark.QuestionValue)" style="display: none">@medicareQuestionsRemark.Remarks </div>  
+                                            }
+                                        }
+
+                                        if (combindedRemarks != null && combindedRemarks.CombinedQuestionId.HasValue && combindedRemarks.CombinedQuestionId.Value == medicareQuestion.Id)
+                                        {
+                                <div class="question@(combindedRemarks.CombinedQuestionId)_remarks" id="question@(combindedRemarks.CombinedQuestionId)_remarks_@(combindedRemarks.QuestionValue.Split(',')[0])" style="display:none">@combindedRemarks.Remarks </div>          
+                                        }
+
+                                        if (depndentForRemarks != null && depndentForRemarks.Any(x => !x.CombinedQuestionId.HasValue))
+                                        {
+                                            var remarks = depndentForRemarks.First(x => !x.CombinedQuestionId.HasValue);
+                                <div class="question@(remarks.QuestionId)_remarks" id="question@(remarks.QuestionId)_remarks_@(remarks.QuestionValue.Split(',')[0])" style="display:none">@remarks.Remarks </div>         
+                                
+                                        }
+
+                                        index++;
+                                }
+
+                            }
+
+                        </fieldset>
+                    </div>
+                }
+
+                <div style="margin: 30px 0;">
+                </div>
+            </div>
+        </fieldset>
+    }
+    <div style="margin-top: 20px; margin-bottom: 20px;">If no MSP data are found in the Common Working File (CWF) for the beneficiary, the provider still asks the types of questions above and provides any MSP information on the bill using the proper uniform billing codes. This information will then be used to update CWF through the billing process.</div>
+    <div style="display: none" id="medicareQuestionAnswer">
+        <h3>All Question are mandatory</h3>
+        <span style="padding-left: 5px; padding-right: 5px">Please Complete the following Questions.</span>
+        <div style="padding-left: 5px; padding-right: 5px" id="unAnswedQuestionAnswer"></div>
+    </div>
+    <hr />
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("input:radio:checked").each(function() {
+            $(this).click();
+        });
+    });
+    $(function() {
+        $("#medicareQuestionAnswer").dialog({
+            modal: true,
+            width: 600,
+            autoOpen: false,
+            title: 'Mandatory Questions',
+            buttons: {
+                Close: function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        $("#medicareQuestionAnswer").bind('dialogclose', function (){$("#unAnswedQuestionAnswer").empty();});
+    });
+    
+</script>
+

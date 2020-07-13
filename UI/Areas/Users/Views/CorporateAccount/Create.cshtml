@@ -1,0 +1,26 @@
+﻿@model Falcon.App.Core.Users.ViewModels.CorporateAccountEditModel
+@{
+    ViewBag.Title = "Create New Corporate Account";
+}
+<h1>
+    Create New Corporate Account
+</h1>
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script type="text/javascript" src="/App/JavascriptFiles/tiny_mce/tiny_mce.js"></script>
+
+<div class="option-links">
+    <a href="/Users/CorporateAccount/Index">+ Manage Corporate Accounts </a>
+</div>
+<div id="edit-Model">
+    @Html.Partial("EditModel")
+</div>
+<script type="text/javascript">
+    function loadEditModel(accountId) {
+        $.ajax({
+            url: "/Users/CorporateAccount/EditModel?id=" + accountId + "&openNextTab=true",
+            success: function (result) {
+                $("#edit-Model").html(result);
+            }
+        });
+    }
+</script>

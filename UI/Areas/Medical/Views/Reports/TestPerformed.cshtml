@@ -1,0 +1,161 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+
+@model TestPerformedListModel
+
+@{
+    ViewBag.Title = "Test Performed";
+}
+
+<h1>Test Performed</h1>
+<script src="/Scripts/reportexportqueue.js"></script>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("TestPerformed", "Reports", FormMethod.Get);}
+    @Html.Partial("TestPerformedListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 1000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/Medical/ReportsQueue/TestPerformed?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>Export CSV </a>
+        }
+        else
+        {
+            <a target="_blank" href="/Medical/ExportableReports/TestPerformed?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th style="width:120px;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().TechnicianName)
+            </th>
+            <th style="width:250px;">
+                Event Info
+            </th>
+            <th style="width:200px;">
+                Customer Info
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().TestName)
+            </th>
+            <th>
+                Pre-Approved Test
+            </th>
+            <th style="width:100px;">
+                Is Billable To Health Plan
+            </th>
+            <th nowrap>
+                Physician
+            </th>
+            <th>
+                Is PDF Generated
+            </th>
+            <th nowrap>
+                Is Retest
+            </th>
+            <th>
+                Is Override
+            </th>
+        </tr>
+        @foreach (var testPerformed in Model.Collection)
+        {
+            <tr>
+                <td style="width:120px;">@testPerformed.TechnicianName</td>
+                <td style="width:250px;">
+                    <b>Id: </b> @testPerformed.EventId
+                    <br />
+                    <b>Name: </b>@testPerformed.EventName
+                    <br />
+                    <b>Date: </b>@testPerformed.EventDate.ToShortDateString()
+                    <br />
+                    <b>Pod: </b>@testPerformed.PodName
+                    <br />
+                    <b>State: </b>@testPerformed.State
+                </td>
+                <td style="width:200px;">
+                    <b>Id: </b> @testPerformed.CustomerId
+                    <br />
+                    <b>Name: </b>@testPerformed.CustomerName
+                    <br />
+                    <b>Health Plan: </b>@(string.IsNullOrEmpty(testPerformed.HealthPlan) ? "N/A" : testPerformed.HealthPlan)
+                    <br />
+                    <b>Date Of Birth: </b>@(testPerformed.DateOfBirth.HasValue ? testPerformed.DateOfBirth.Value.ToShortDateString() : "N/A")
+                    <br />
+                    <b>Member Id: </b>@(string.IsNullOrEmpty(testPerformed.MemberId) ? "N/A" : testPerformed.MemberId)
+                    <br />
+                    <b>HICN: </b>@(string.IsNullOrEmpty(testPerformed.HICN) ? "N/A" : testPerformed.HICN)
+                    <br />
+                    <b>Group Name: </b>@(string.IsNullOrEmpty(testPerformed.GroupName) ? "N/A" : testPerformed.GroupName)
+                    <br />
+                    @if (testPerformed.AdditionalFields != null && testPerformed.AdditionalFields.Any())
+                    {
+                        foreach (var additionalField in testPerformed.AdditionalFields)
+                        {
+                            <span><b>@additionalField.FirstValue</b>: @additionalField.SecondValue</span><br />
+                        }
+                    }
+                </td>
+                <td>
+                    @testPerformed.TestName
+                </td>
+                <td>
+                    @testPerformed.IsPreApprovedTest
+                </td>
+                <td>
+                    @testPerformed.IsBillableToHealthPlan
+                </td>
+                <td nowrap>
+                    <b>Primary Physician :</b> @(string.IsNullOrEmpty(testPerformed.Physician) ? "N/A" : testPerformed.Physician)
+                    <br />
+                    @if (!string.IsNullOrEmpty(testPerformed.OverReadPhysician))
+                    {
+                        <b>Over Read Physician :</b> @testPerformed.OverReadPhysician
+                    }
+                </td>
+                <td>
+                    @testPerformed.IsPdfGenerated
+                </td>
+                <td>
+                    @testPerformed.IsRetest
+                </td>
+                <td>
+                    @testPerformed.IsOverride
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+    </script>
+}

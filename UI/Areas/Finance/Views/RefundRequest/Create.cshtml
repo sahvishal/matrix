@@ -1,0 +1,49 @@
+﻿@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model RefundRequestEditModel
+@{
+    ViewBag.Title = "Refund Requests";
+    Layout = null;
+}
+
+@Html.EditorForModel()
+
+<script language="javascript" type="text/javascript">
+
+    function CreateRefundRequest(executeOnSuccess, executeOnFailure) {
+        var refundRequest = new Object();
+        var objectString = "'Reason' : '" + $("#Reason").val() + "', 'RefundType' : '" + $("#RefundType option:selected").val() + "'";
+        alert($("#RefundRequestInputContainerDiv input").length);
+        $("#RefundRequestInputContainerDiv input").each(function () {
+            objectString += ", '" + $(this).attr("id") + "' : '" + $(this).val() + "'";
+        });
+
+        eval("refundRequest = {" + objectString + "}");
+        alert(refundRequest.Reason);
+
+        $.ajax({
+            type: "POST",
+            url: "/Finance/RefundRequest/Create",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ model: refundRequest }),
+            dataType: "json",
+            error: function (xmlHttpRequest) {
+                executeOnFailure();
+                alert("Request not generated");
+            },
+            success: function (result) {
+                if (result > 0) {
+                    alert("Request created succesfully.");
+                    executeOnSuccess();
+                } else {
+                    executeOnFailure();
+                    alert("Request not generated");
+                }
+            }
+        });
+    }
+
+    $('form').submit(function () {
+        $("select[id*=RefundType]").attr("disabled", "");
+    });
+</script>

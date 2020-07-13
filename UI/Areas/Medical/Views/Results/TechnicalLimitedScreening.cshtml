@@ -1,0 +1,144 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Extensions
+@model TechnicalLimitedScreeningCustomerListModel
+@{
+    ViewBag.Title = "Technical Limited Screening";
+}
+<h1>
+    Technical Limited Screening</h1>
+<div id="list-filter">
+    @{Html.BeginForm("TechnicalLimitedScreening", "Results", FormMethod.Get);}
+    @Html.Partial("TechnicalLimitedScreeningCustomerListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Collection != null && Model.Collection.Count() > 0)
+{
+    var tests = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Medical.Interfaces.ITestRepository>().GetAll();
+    
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Medical/ExportableReports/TechnicalLimitedScreening?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Customer
+            </th>
+            <th>
+                Event
+            </th>
+            <th>
+                Pod
+            </th>
+            <th>
+                Result State
+            </th>
+            <th>
+                Tests
+                <br />
+                (with ltd. screening)
+            </th>
+            <th>
+            </th>
+        </tr>
+        @foreach (var item in Model.Collection)
+        {
+            <tr>
+                <td style="width: 250px;">
+                    <a class="customer-info" href="javascript:void(0);"><b>@item.CustomerName</b> [ID: @item.CustomerId]</a>
+                    <div class="customer-info-tip" style="display: none;">
+                        <div style="float: left; width: 500px;">
+                            <b>Address: </b>@item.Address.ToString()
+                        </div>
+                        <div style="float: left; width: 500px; margin: 10px 0px; clear: both;">
+                            <span style="float: left; width: 280px;"><b>Email:</b> @item.Email</span> <span style="float: right;
+                                width: 200px;"><b>Phone:</b> @item.Phone</span>
+                        </div>
+                        <div style="float: left; width: 500px; padding: 10px 0px 5px 0px; border-top: solid 1px;">
+                            <b>Screened For:</b> @item.CustomerOrder
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    @item.EventName [ID: @item.EventId]
+                    <br />
+                    Event Date: @item.EventDate.ToShortDateString()
+                </td>
+                <td>
+                    @item.Pod
+                </td>
+                <td>
+                    <img src="/App/Images/ResultState/@(item.CurrentState.ToString()).gif" alt="@item.CurrentState.GetDescription()" class="result-state" />
+                </td>
+                <td>
+                    @foreach (var test in tests)
+                    {
+                        var testViewModel = item.Test.Where(t => t.TestId == test.Id).ToArray();
+                        if (testViewModel == null || testViewModel.Count() < 1) {continue;}
+                        string reason = string.Join(" | ", testViewModel.Where(tv => !string.IsNullOrEmpty(tv.Reason)).Select(tv => tv.Reason));
+                        
+                        <div>
+                            <span class="test-stats"><b>@test.Name </b>@(string.IsNullOrEmpty(reason) ? "" : "(" + reason + ")")
+                            </span><span class="test-stats-tip" style="display: none;"><b>@test.Name </b>
+                                <br />
+                                <br />
+                                <b>Conducted By: </b>@testViewModel.FirstOrDefault().ConductedBy
+                                <br />
+                                <br />
+                                <b>Technician Notes: </b>@testViewModel.FirstOrDefault().TechnicianNotes
+                            </span>
+                        </div>
+                    }
+                </td>
+                <td>
+                    <a href="/App/Common/Results.aspx?EventId=@item.EventId&CustomerId=@item.CustomerId" target="_blank">
+                        View Results </a>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+
+    $('.customer-info').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            title: function (api) {
+                return $(this).html();
+            },
+            text: function (api) {
+                return $(this).parent().find('.customer-info-tip').html();
+            }
+        },
+        style: {
+            width: '520px'
+        }
+    });
+
+
+    $('.test-stats').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            text: function (api) {
+                return $(this).parent().find('.test-stats-tip').html();
+            }
+        },
+        style: {
+            width: '400px'
+        }
+    });
+</script>

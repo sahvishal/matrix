@@ -1,0 +1,171 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model LabFormViewModel
+@{
+    var formTitle = "Microalbumin Lab Form";
+}
+<div id="container" style="float: left; width: 910px;padding-top:20px; font-family: Arial; font-size: 13px;">
+    <div style="font-size:20px; text-align:center;">
+        <b style="text-decoration: underline; height:40px;"> @formTitle</b>
+    </div>
+    <div style="float: left; width: 184px; margin-top: 15px;">
+        <div style="float:left">
+            <img src="~/Content/Images/LabCorp_logo.PNG" />
+            <div style="color: #0280A6">To find the nearest patient service center, visit www.labcorp.com or call 888-LABCORP<br /> (888-522-2677)</div>
+        </div>
+        <div style="margin-top:200px;">
+            <div> CHECK ONE:</div>
+            <div> 03 [X] ACCOUNT BILL</div>
+        </div>
+    </div>
+    <div style="width: 720px; float: left; margin-top: 15px;">
+        <div style="font-size: 18px;padding-bottom: 25px;">
+            <div style="clear: both;padding-bottom: 5px;">Matrix Medical Network General LIAE</div>
+            <div style="clear: both; margin-top: 25px;">LABCORP WELLNESS VERIFIED</div>
+            <div style="clear: both;">1030 Spring Villas Pt</div>
+            <div style="clear: both;">WINTER SPRINGS FL 32708</div>
+            <div style="clear: both;">407.672.9090</div>
+        </div>
+
+        <div style="display:block;padding-bottom: 20px;">LABCORP ACCOUNT NUMBER: <input type="text" style="width: 150px; border: none;" value="@Model.PhysicianAccountNumber" /></div>
+        <div style="float: left; clear: both;padding-bottom: 10px;">
+            <div style="float: left;">Patient's Legal Name (Last, First, Mi):</div>
+            <div style="float: left">
+                <input type="text" style="width: 222px; border: none; border-bottom: 1px solid black;" value="@((Model !=null && Model.PatientName !=null) ? (Model.PatientName.LastName + " " + (string.IsNullOrWhiteSpace(Model.PatientName.MiddleName) ? "" : Model.PatientName.MiddleName + " ") + Model.PatientName.FirstName) : string.Empty)" />
+            </div>
+            <div style="float: left;padding-left: 15px;">Sex: @((Model != null && !string.IsNullOrWhiteSpace(Model.Gender)) ? Model.Gender : string.Empty)</div>
+            <div style="float: left; padding-left: 15px;">
+                DOB: <input type="text" style="width: 100px; border: none; border-bottom: 1px solid black; " value="@(Model != null && Model.DateOfBirth != null ? Model.DateOfBirth.Value.ToShortDateString() : string.Empty)" />
+            </div>
+        </div>
+        <div style="float:left; clear: both; padding-bottom: 10px; width :100%;">
+            <div style="float: left;">Collection Time:<input type="text" style="width: 50px; border: none; border-bottom: 1px solid black; " /></div>
+            <div style="float: left">
+                <input type="checkbox" /> AM <input type="checkbox" /> PM
+            </div>
+            <div style="float: left;padding-left: 10px;">
+                Fasting   <input type="checkbox" /> Yes <input type="checkbox" /> No
+            </div>
+            <div style="float: left; padding-left: 10px;">Collection Date:<input type="text" style="width: 60px; border: none; border-bottom: 1px solid black;" /></div>
+        </div>
+        <div style="overflow: hidden; clear: both; float: left; padding-bottom: 10px; width: 100%; ">
+            <div style="float: left;">
+                Urine(hrs/Vol): hrs<input type="text" style="width: 20px; border: none; border-bottom: 1px solid black; " /> Vol<input type="text" style="width: 20px; border: none; border-bottom: 1px solid black; " />
+            </div>
+        </div>
+        <div style="float: left; clear: both; padding-bottom: 20px; width: 100%;">
+            <div style="float: left;">Event Id:<input type="text" style="width: 80px; border: none; border-bottom: 1px solid black; " value="@(Model != null ? Model.EventId : 0)" /></div>
+            <div style="float: left; padding-left: 15px;">Patient Id:<input type="text" style="width: 80px; border: none; border-bottom: 1px solid black; " value="@(Model != null ? Model.PatientId : 0)" /></div>
+            <div style="float: left;padding-left: 15px;">
+                Hospital Patient Status: <input type="checkbox" />In-Patient <input type="checkbox" />Out-Patient <input type="checkbox" />Non-Patient
+            </div>
+        </div>
+        <div style=" overflow: hidden; clear: both; padding-bottom: 10px; width: 100%;">
+            <div style="float: left;">Physician Name: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black; " value="@(Model != null && Model.PhysicianName != null ? Model.PhysicianName.ToString() : string.Empty)" /></div>
+            <div style="float: left; padding-left: 15px;">Physician NPI:<input type="text" style="width: 100px; border: none; border-bottom: 1px solid black; " value="@(Model != null && !string.IsNullOrWhiteSpace(Model.Npi) ? Model.Npi : string.Empty)" /></div>
+            <div style="float: left;padding-left: 15px;">
+                Physician Signature: <input type="text" style="width: 100px; border: none; border-bottom: 1px solid black; " value="" />
+            </div>
+        </div>
+        <div style="float: left; clear: both; padding-bottom: 10px;width: 98%;">
+            <fieldset>
+                <legend>Patient</legend>
+                <div style="width: 100%;margin-bottom: 20px;float: left; margin-left:10px;">
+                    <div style="width: 60%;float: left;">
+                        Patient Address: <input type="text" style="width: 250px; border: none; border-bottom: 1px solid black; " value="@(Model != null && Model.PatientAddress != null ? Model.PatientAddress.StreetAddressLine1 : string.Empty)" />
+                    </div>
+                    <div style="width: 40%;float: left;">
+                        Phone: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black; " value="@(Model != null && Model.PatientPhone != null ? Model.PatientPhone.ToString() : string.Empty)" />
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 20px; float: left; margin-left: 10px;">
+                    <div style="width: 33%;float: left;">
+                        City: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black; " value="@(Model != null && Model.PatientAddress != null ? Model.PatientAddress.City.ToString() : string.Empty)" />
+                    </div>
+                    <div style="width: 33%;float: left;">
+                        State: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black; " value="@(Model != null && Model.PatientAddress != null ? Model.PatientAddress.State.ToString() : string.Empty)" />
+                    </div>
+                    <div style="width: 33%;float: left;">
+                        Zip: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black; " value="@(Model != null && Model.PatientAddress != null ? Model.PatientAddress.ZipCode.ToString() : string.Empty)" />
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div style="float: left; clear: both; padding-bottom: 10px; width: 98%; display: none;">
+            <fieldset>
+                <legend>RESP. PARTY</legend>
+                <div style="width: 100%; margin-bottom: 20px; float: left; margin-left: 10px;">
+                    Name of Policy Holder (if different from Patient): <input type="text" style="width: 250px; border: none; border-bottom: 1px solid black;"  />
+                </div>
+                <div style="width: 100%; margin-bottom: 20px; float: left; margin-left: 10px;">
+                    <div style="width: 60%;float: left;">
+                        Address of Policy Holder: <input type="text" style="width: 250px; border: none; border-bottom: 1px solid black;" />
+                    </div>
+                    <div style="width: 40%;float: left;">
+                        APT #: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black;" />
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 20px; float: left; margin-left: 10px;">
+                    <div style="width: 33%;float: left;">
+                        City: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black;"  />
+                    </div>
+                    <div style="width: 33%;float: left;">
+                        State: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black;"  />
+                    </div>
+                    <div style="width: 33%;float: left;">
+                        Zip: <input type="text" style="width: 150px; border: none; border-bottom: 1px solid black;"  />
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div style="float: left; clear: both; padding-bottom: 10px;width: 98%;">
+            I hereby authorize the release of medical information related to the service describe herein and authorize payment directly to LabCorp.<br/>
+            I agree to assume responsibility of payment of charges for laboratory services that are not covered by my healthcare insurer.
+        </div>
+
+        <div style="float: left; clear: both; padding-bottom: 10px;width: 98%;">
+            <div style="width: 60%;float: left;">
+                Patient's Signature: <input type="text" style="width: 250px; border: none; border-bottom: 1px solid black; " />
+            </div>
+            <div style="width: 36%;float: left;">
+                Date: <input type="text" style="width: 200px; border: none; border-bottom: 1px solid black; " />
+            </div>
+        </div>
+        <hr style="border: 2px solid gray;clear:both; margin-top: 20px; margin-bottom: 20px; width: 100%;" />
+        <div style="float: left; clear: both; padding-bottom: 10px;width: 98%;">
+
+            <div>LabCorp Use Only:</div>
+            <div style="float: left; width: 100%;">
+                <div style="float: left;width: 30%;">
+                    STAT: <input type="checkbox" /> 998074
+                </div>
+                <div style="float: left; width: 30%;">
+                    VENIPUNCTURE: <input type="checkbox" /> 998085
+                </div>
+                <div style="float: left;width: 30%;">
+                    NON LABCORP: <input type="checkbox" /> 998239
+                </div>
+                <div style="float: left;width: 30%;">
+                    VERBAL ORDER: <input type="checkbox" /> 998250
+                </div>
+                <div style="float: left;width: 30%;">
+                    CHART ORDER: <input type="checkbox" /> 998261
+                </div>
+
+                <div style="float: left;width: 30%;">
+                    HANDWRITTEN: <input type="checkbox" /> 998272
+                </div>
+
+                <div style="float: left;width: 30%;">
+                    24 HR TUV: <input type="checkbox" /> 998283
+                </div>
+
+                <div style="float: left;width: 30%;">
+                    PST/PSC #
+                </div>
+            </div>
+        </div>
+        <div style="float: left; clear: both; margin-top: 10px; width: 98%; font-size: 18px;">
+            <span><b>[X] 149997 Microalbumin, Randon Urine</b></span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,320 @@
+@using Falcon.App.Core.CallQueues.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.CallQueueEditModel
+
+<div class="leftside-div-with-roundborder" style="padding-left: 10px; width: 60%;">
+    @Html.EditorFor(m => m.Id)
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.Name) @Html.ValidationMessageFor(m => m.Name)
+        </div>
+        @Html.TextBoxFor(m => m.Name, new { @style = "width: 95%;" })
+    </div>
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.Description)
+        </div>
+        @Html.TextAreaFor(m => m.Description, new { @rows = "4", @cols = "61" })
+    </div>
+    @Html.HiddenFor(m => m.ScriptId)
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.ScriptText) @Html.ValidationMessageFor(m => m.ScriptText)
+        </div>
+        @Html.TextAreaFor(m => m.ScriptText, new { @rows = "4", @cols = "61" })
+    </div>
+    <div class="editor-row" style="margin-bottom: 10px;">
+        <div class="editor-column-twoinrow">
+            <div>
+                @Html.ValidationMessageFor(m => m.Attempts)
+            </div>
+            @Html.LabelFor(m => m.Attempts) : @Html.DropDownListFor(m => m.Attempts, DropDownHelper.Attempts())
+        </div>
+        <div class="editor-column-twoinrow">
+            <div>
+                @Html.ValidationMessageFor(m => m.QueueGenerationInterval)
+            </div>
+            @Html.LabelFor(m => m.QueueGenerationInterval) : @Html.DropDownListFor(m => m.QueueGenerationInterval, DropDownHelper.CallQueueInterval())
+        </div>
+    </div>
+    <h4>Criteria:</h4>@Html.ValidationMessageFor(m=> m.Criterias)
+    <div class="editor-row">
+        @Html.DropDownList("criteriaId", DropDownHelper.QueueCriteria(), new { @style = "width:160px;" }) within
+        @Html.DropDownList("radius", DropDownHelper.Miles(), new { @style = "width:85px;" }) miles of
+        @Html.TextBox("zipcode", "", new { @style = "width:70px;" })
+        <input type="button" value="Add Condition" onclick="addCriteria();" />
+    </div>
+    <div id="criteria-container">
+        
+    </div>
+</div>
+<div class="rightside-div-with-roundborder" style="width:36%;">
+    <h2>Assigned To</h2>
+    <div class="editor-row">
+        <div class="editor-label">
+            Call Center Agent @Html.ValidationMessageFor(m => m.Assignments)
+        </div>
+        @Html.DropDownList("assignedId", DropDownHelper.GetCallCenterRep(), new { @style = "width:240px;" })
+        <input type="button" value="Add" onclick="addAssignment();" />
+    </div>
+    <div id="assignment-container">
+
+    </div>
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script id="criteriaTemplate" type="text/x-jquery-tmpl">
+    <div class="criteria-row" style="margin-bottom: 10px; margin-top: 10px;">
+        <div style="margin-left: 50px;" class="criteria-row-condition">
+            <select name="Criterias[${Key}].Condition" onchange='setCondition("${Key}", this)'>
+                {{if Condition == 'True' }}
+                <option value="True" selected="selected">Or</option>
+                {{else}}
+                <option value="True">Or</option>
+                {{/if}}
+                {{if Condition == 'False' }}
+                <option value="False" selected="selected">And</option>
+                {{else}}
+                <option value="False">And</option>
+                {{/if}}
+            </select>
+        </div>
+        <div>
+            ${Name} within ${Radius} miles of ${Zipcode} 
+            <a href="javascript:void(0);" data-key="${Key}" class="removeCriteria">Remove</a>
+        </div>
+        {{if CriteriaId == '@((long)QueueCriteria.AllProspects)'}}
+        <div style="margin-top: 2px;">
+            <span style="float:left; width:90px;"><b>Call Reason :</b></span>
+            <span style="float:left; width: 450px;">
+                <input type="text" value="${CallReason}" name="Criterias[${Key}].CallReason" style="width: 445px;" onblur='setCallReason("${Key}", this)' />
+                <em style="font-size:10px;">(max length 100 characters)</em>
+            </span>
+        </div>
+        {{/if}}
+        <div style="display: none;">
+            <input type="hidden" name="Criterias.Index" value="${Key}" />
+            <input type="text" name="Criterias[${Key}].CriteriaId" value="${CriteriaId}" />
+            <input type="text" name="Criterias[${Key}].Name" value="${Name}" />
+            <input type="text" name="Criterias[${Key}].Radius" value="${Radius}" />
+            <input type="text" name="Criterias[${Key}].Zipcode" value="${Zipcode}" />
+        </div>
+    </div>    
+</script>
+<script type="text/javascript">
+    var criterias = new Object();
+
+    @if (Model.Criterias != null && Model.Criterias.Any())
+    {
+        <text>
+        var criteriaKey = "";
+        var criteria = new Object();
+        </text>
+        foreach (var queueCriteria in Model.Criterias)
+        {
+            <text>    
+            criteria = new Object();
+            criteria.CriteriaId = '@queueCriteria.CriteriaId';
+            criteria.Name = "@queueCriteria.Name";
+            criteria.Radius = "@queueCriteria.Radius";
+            criteria.Zipcode = "@queueCriteria.Zipcode";
+            criteria.Condition = "@queueCriteria.Condition";
+            criteria.CallReason = "@queueCriteria.CallReason";
+
+            criteriaKey = "@queueCriteria.CriteriaId" + "_" + "@queueCriteria.Zipcode";
+            criteria.Key = criteriaKey;
+            criterias[criteriaKey] = criteria;
+            </text>
+        }
+    }
+    
+    function addCriteria() {//debugger;
+        if ($("#criteriaId").val() <= 0) {
+            alert("Please select criteria.");
+            return false;
+        }
+        if ($("#radius").val() <= 0) {
+            alert("Please select radius.");
+            return false;
+        }
+        if ($("#zipcode").val() == "") {
+            alert("Please enter zipcode.");
+            return false;
+        }
+        
+        var criteria = new Object();
+        criteria.CriteriaId = $("#criteriaId").val();
+        criteria.Name = $("#criteriaId option:selected").text();
+        criteria.Radius = $("#radius").val();
+        criteria.Zipcode = $("#zipcode").val();
+        criteria.Condition = '@Boolean.TrueString';
+        criteria.CallReason = '';
+        criteria.Key = criteria.CriteriaId + "_" + criteria.Zipcode;
+        
+        if (criterias[criteria.Key] != undefined) {
+            alert("This criteria has already has been added.");
+            return false;
+        }
+
+        criterias[criteria.Key] = criteria;
+        
+        renderCriteria();
+        
+        return false;
+    }
+
+    function renderCriteria() {//debugger;
+        if ($.isEmptyObject(criterias)) {
+            $("#criteria-container").empty();
+        }
+        else {
+            $("#criteria-container").empty();
+            $.each(criterias, function (key, criteria) {
+                $("#criteriaTemplate").tmpl(criteria).appendTo("#criteria-container");
+            });
+
+            $("#criteria-container").find(".criteria-row:first").find(".criteria-row-condition").hide();
+        }
+    }
+    
+    function setCondition(key, ctrlRef) {
+        var criteria = criterias[key];
+        criteria.Condition = $(ctrlRef).val();
+        criterias[key] = criteria;
+    }
+    
+    function setCallReason(key, ctrlRef) {
+        var criteria = criterias[key];
+        criteria.CallReason = $(ctrlRef).val();
+        criterias[key] = criteria;
+    }
+</script>
+
+<script type="text/javascript">
+    var percentageDropDownValues = new Array();
+    var percentageDropDown = new Object();
+    percentageDropDown.Text = "-Select-";
+    percentageDropDown.Value = "0";
+    percentageDropDownValues.push(percentageDropDown);
+    for (var index = 10; index <= 100; index+=10) {
+        percentageDropDown = new Object();
+        percentageDropDown.Text = index.toString() + " %";
+        percentageDropDown.Value = index.toString();
+        percentageDropDownValues.push(percentageDropDown);
+    }
+</script>
+<script id="assignmentTemplate" type="text/x-jquery-tmpl">
+    <div class="assignment-row" style="margin-bottom: 10px; margin-top: 10px;">        
+        <div>
+            ${Name} 
+            <select name="Assignments[${Key}].Percentage" onchange='setPercentage("${Key}", this)'>
+                {{each(i, percentageDropDown) PercentageDropDownValues}}
+                {{if Percentage == percentageDropDown.Value }}
+                <option value="${percentageDropDown.Value}" selected="selected">${percentageDropDown.Text}</option>
+                {{else}}
+                <option value="${percentageDropDown.Value}">${percentageDropDown.Text}</option>
+                {{/if}}
+                {{/each}}                
+            </select>
+            <a href="javascript:void(0);" data-key="${Key}" class="removeAssignment">Remove</a>
+        </div>
+        <div style="display: none;">
+            <input type="hidden" name="Assignments.Index" value="${Key}" />
+            <input type="text" name="Assignments[${Key}].AssignedOrgRoleUserId" value="${AssignedOrgRoleUserId}" />
+            <input type="text" name="Assignments[${Key}].Name" value="${Name}" />
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    var assignments = new Object();
+
+    @if (Model.Assignments != null && Model.Assignments.Any())
+    {
+        <text>
+        var assignmentKey = "";
+        var assignment = new Object();
+        </text>
+        foreach (var queueAssignment in Model.Assignments)
+        {
+            <text>
+            assignment = new Object();
+            assignment.AssignedOrgRoleUserId = '@queueAssignment.AssignedOrgRoleUserId';
+            assignment.Name = "@queueAssignment.Name";
+            assignment.Percentage = '@queueAssignment.Percentage';
+            assignment.PercentageDropDownValues = percentageDropDownValues;
+
+            assignmentKey = "@queueAssignment.AssignedOrgRoleUserId";
+            assignment.Key = assignmentKey;
+            assignments[assignmentKey] = assignment;
+            </text>
+        }
+    }
+
+    function addAssignment() {//debugger;
+        if ($("#assignedId").val() <= 0) {
+            alert("Please select Call center agent.");
+            return false;
+        }
+        
+
+        var assignment = new Object();
+        assignment.AssignedOrgRoleUserId = $("#assignedId").val();
+        assignment.Name = $("#assignedId option:selected").text();
+        assignment.Percentage = "0";
+        assignment.PercentageDropDownValues = percentageDropDownValues;
+        assignment.Key = assignment.AssignedOrgRoleUserId;
+
+        if (assignments[assignment.Key] != undefined) {
+            alert("This assignment has already has been added.");
+            return false;
+        }
+
+        assignments[assignment.Key] = assignment;
+
+        renderassignment();
+
+        return false;
+    }
+
+    function renderassignment() {//debugger;
+        if ($.isEmptyObject(assignments)) {
+            $("#assignment-container").empty();
+        }
+        else {
+            $("#assignment-container").empty();
+            $.each(assignments, function (key, assignment) {
+                $("#assignmentTemplate").tmpl(assignment).appendTo("#assignment-container");
+            });
+            
+        }
+    }
+    
+    function setPercentage(key, ctrlRef) {
+        var assignment = assignments[key];
+        assignment.Percentage = $(ctrlRef).val();
+        assignments[key] = assignment;
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        renderCriteria();
+        renderassignment();
+        
+        $("a.removeCriteria").live("click", function () {
+            delete criterias[$(this).attr('data-key')];
+
+            renderCriteria();
+            return false;
+        });
+        
+        $("a.removeAssignment").live("click", function () {
+            $(this).parents("div.assignment-row:first").remove();
+            delete assignments[$(this).attr('data-key')];
+
+            if ($.isEmptyObject(assignments)) {
+                $("#assignment-container").empty();
+            }
+            return false;
+        });
+    });
+</script>

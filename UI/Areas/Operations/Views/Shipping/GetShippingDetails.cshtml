@@ -1,0 +1,56 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Operations.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+
+@model IEnumerable<ShippingDetailEditModel>
+
+@{
+    Layout = null;
+}
+
+@if (Model != null && !Model.IsNullOrEmpty())
+{
+    
+    <table id="list-view">
+        <tr>
+            <th style="width:300px;">
+                Shipping Option
+            </th>            
+            <th style="width:130px;">
+                Status
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var shipping in Model)
+        {
+            <tr>
+                <td>@shipping.ShippingOptionName</td>
+                <td>@Html.DropDownList("Status_" + shipping.ShippingDetailId, DropDownHelper.ShippingStatus(shipping.Status), new { style="width:110px;"})</td>
+                <td>
+                    <input type="button" value="Update" onclick="UpdateShippingStatus(@shipping.ShippingDetailId);" />
+                </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <div>No Records Found</div>
+}
+
+<script type="text/javascript" language="javascript">
+    function UpdateShippingStatus(shippingDetailId) {
+        var status = $('#Status_' + shippingDetailId).val();
+
+        $.ajax({ type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html", url: "/Operations/Shipping/UpdateShippingStatus?shippingDetailId=" + shippingDetailId + "&status=" + status, data: '{}',
+            success: function (result) {
+                alert("Shipping status updated successfully.");
+            },
+            error: function (a, b, c) { }
+        });
+    }    
+</script>

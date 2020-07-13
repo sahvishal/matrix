@@ -1,0 +1,653 @@
+﻿@model Falcon.App.Core.Users.ViewModels.UserEditModel
+
+<script src="/App/JavascriptFiles/validations.js?v=@DateTime.Now.Ticks"></script>
+
+<div class="content-main-column user-detail-div">
+    <fieldset>
+        <legend>User Details</legend>
+        @Html.EditorFor(m => m.FullName)
+        @Html.EditorFor(m => m.Email)
+        @Html.EditorFor(m => m.UserName)
+        <input type="checkbox" id="changePassword" style="margin-bottom: 20px;" /> <span id="cptext">Change Password</span>
+        <div id="passwordPanel">
+            @Html.EditorFor(m => m.Password)
+            @Html.EditorFor(m => m.ConfirmPassword)
+        </div>
+        @Html.EditorFor(m => m.DateOfBirth)
+        <div id="dvEmployeeId">
+            @Html.EditorFor(m => m.EmployeeId)
+        </div>
+        @Html.EditorFor(m => m.OfficeNumber)
+        @Html.EditorFor(m => m.CellNumber)
+        @Html.EditorFor(m => m.HomeNumber)
+        @Html.EditorFor(m => m.Address)
+        @Html.EditorFor(m => m.IsLocked)
+
+        @Html.EditorFor(m => m.OverRideTwoFactorAuthrequired, new { id = "OverRideTwoFactorAuthrequired" })
+        <div id="IsTwoFactorAuthrequireddiv">
+            @Html.EditorFor(m => m.IsTwoFactorAuthrequired)
+        </div>
+        <br />
+        <span><b>Last logged in : </b></span>@(Model.LastLoggedInAt.HasValue ? Model.LastLoggedInAt.Value.ToString("M/dd/yyyy hh:mm:ss tt") : "Never Logged In")
+
+        @Html.EditorFor(m => m.Id)
+        @Html.HiddenFor(m => m.Ssn)
+        @Html.HiddenFor(m => m.LastLoggedInAt)
+    </fieldset>
+</div>
+<div id="PhysicianProfileDiv" style="display: none">
+    @Html.EditorFor(m => m.PhysicianProfile)
+</div>
+<div class="content-side-column">
+    @* Form to add a new role the user *@
+    @Html.Partial("AddRoleMiniForm")
+    <h3>
+        Current User Roles @Html.ValidationMessageFor(m => m.UsersRoles)
+        <br/>@Html.ValidationMessageFor(m => m.Credential)<br />
+        <br />@Html.ValidationMessageFor(m => m.Npi)
+    </h3>
+    <div id="userRolesContainer">
+        @if (Model.UsersRoles == null)
+        {
+        <div class="info-box roles-info-box">
+            No roles have been defined for the user yet. Please use the "Add Role" link about
+            to add a new role. <b>Note:</b> A user cannot login till they have atleast one role.
+        </div>
+        }
+    </div>
+</div>
+<div id="TechnicianProfileDialogDiv" style="display: none;" title="Technician Profile">
+    <input type="checkbox" id="IsTeamLeadCheckBox" onclick="SetTechnicianProfile();" /><b>
+        Team
+        Lead
+    </b>
+    <br />
+    <span>
+        <i>
+            If this is checked then the technician can view and edit any staff schedule.
+            They will get aditional options in the Technician role, that will allow them to
+            do this.
+        </i>
+    </span>
+    <br />
+    <br />
+    <input type="checkbox" id="AllowPreAuditCheckbox" onclick="SetTechnicianProfile();" /><b>
+        Allow
+        Pre-Audit
+    </b>
+    <br />
+    <span>
+        <i>
+            If this is checked then the technician can review and approve test screening
+            results. Once pre-audited results go directly in to the reviewing physician's queue
+            for evaluation.
+        </i>
+    </span>
+    <br />
+    <br />
+
+    <input type="checkbox" id="changePin" /> <label for="changePin" style="margin-right: 20px; font-weight:bold">Change Pin</label>
+    
+    <div id="dvMobilePinSection" style="float:left; margin-top:10px">
+        <b>
+            PIN :
+        </b><input type="text" id="Pin" maxlength="4" onkeydown="return KeyPress_NumericAllowedOnly(event);" />
+        <br />
+        <span>
+            <i>
+                This PIN is used on the tablet/mobile device to validate user.
+            </i>
+        </span>
+    </div>
+</div>
+
+<div id="AccountCoordinatorProfileDialogDiv" style="display: none" title="Account Coordinator Profile">
+    <input type="checkbox" id="IsAdminCheckBox" checked="checked" disabled="disabled" /><b>
+        Admin Coordinator
+    </b>
+    <br />
+    <br />
+    <br />
+    <input type="checkbox" id="IsClinicalCoordinatorCheckbox" onclick="SetAccountCoordinatorProfile();" /><b>
+        Clinical Coordinator
+    </b>
+    <br />
+</div>
+@Html.HiddenFor(m => m.TechnicianProfile.IsTeamLead)
+@Html.HiddenFor(m => m.TechnicianProfile.CanCompletePreAudit)
+@Html.HiddenFor(m => m.TechnicianProfile.Pin)
+@Html.HiddenFor(m => m.Npi)
+@Html.HiddenFor(m=>m.Credential)
+@Html.HiddenFor(m => m.TechnicianProfile.TechnicianId)
+<div style="display: none">
+    @Html.CheckBoxFor(m => m.AccountCoordinatorProfile.IsClinicalCoordinator)
+</div>
+
+<div id="CallCenterAgentProfileDialogDiv" style="display: none" title="Call Center Agent Profile">
+    <input type="hidden" name="Dialer_Index" value="" />
+    <div class="label">
+        Dialer URL
+    </div>
+    <div>
+        <input type="text" id="dialerUrl" style="width:95%;" />
+    </div>
+    <br />
+    <span>
+        <i>
+            Note: We currently support only two dialers.
+        </i>
+        <br /><br />
+        <span><b>Glocom : </b>Glocom:// *65*CallerId*1PatientContact</span><br /><br />
+        <span><b>Vici : </b>http://localhost:9000/PhoneServices/Dial?PhoneNumber=PatientContact&DID=CallerId&MemberID=PatientId</span>
+    </span>
+</div>
+
+<div id="UserNpiInfoDialogDiv" style="display: none" title="Nurse Practitioner Profile">
+    <br />
+    <div>
+        <div id="npiLabel" style="width: 15%;margin: 0; display: inline-block;">NPI:</div> <input type="text" id="txtUserNpiInfo" maxlength="10" onkeyup=" validateUserNpiInfo() " />
+        <span id="errorUserNpiInfo" style="color: red; font-size: 12px"></span>
+        <br /><br />
+        
+
+        <div id="credentialLabel" style="width: 15%; margin: 0; display: inline-block;">Credential:</div> <input type="text" maxlength="20" id="txtUserCredentialInfo" onkeyup=" validateUserCredentialInfo() " />
+        <span id="errorUserCredentialInfo" style="color: red; font-size: 12px"></span>
+        <br /><br />
+    </div>
+    <br />
+</div>
+
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript" language="javascript">
+
+    var userOrgRoles = new Object();
+
+    @if (Model.UsersRoles != null)
+        {
+        <text>
+    var k = "";
+    var orgRole = new Object();
+    </text>
+            foreach (var orgRole in Model.UsersRoles)
+            {
+                <text>
+    {
+        orgRole = new Object();
+        orgRole.OrganizationId = @orgRole.OrganizationId ;
+        orgRole.OrganizationName =  "@orgRole.OrganizationName" ;
+        orgRole.RoleId = @orgRole.RoleId ;
+        orgRole.RoleDisplayName = "@orgRole.RoleDisplayName";
+        orgRole.IsDefault = @(orgRole.IsDefault ? "true" : "false") ;
+        orgRole.ParentRoleId = @orgRole.GetSystemRoleId;
+        orgRole.DialerUrl = "@(!string.IsNullOrEmpty(orgRole.DialerUrl)?orgRole.DialerUrl:"")";
+        k = "@orgRole.OrganizationId" + "_" + "@orgRole.RoleId" ;
+        orgRole.Key = k;
+        userOrgRoles[k] = orgRole;
+    }
+    </text>
+            }
+        }
+
+    $("#DateOfBirth").removeClass("datePicker");
+    $("#DateOfBirth").addClass("datePicker-dob");
+
+    $(document).ready(function () {
+
+        renderRoles("");
+        AttachDialogBoxes();
+
+        $("#organizationId").change(function () {
+
+            var url = "/Users/Role/GetAllowedRolesForOrganization?id=" + $("#organizationId").val();
+
+            $.getJSON(url, null, function (allowedRoles) {
+                //build up the list of roles
+                $("#roleId").empty();
+                $("#roleId").removeAttr('disabled');
+                $.each(allowedRoles, function (index, role) {
+                    $("#roleId").append("<option value='" + role.RoleId + "' parentId='" + role.ParentId + "'>" + role.Name + "</option>");
+                });
+            });
+        });
+
+        $("#addRole").click(addRoleToUser);
+
+        $("a.deleteRole").live("click", function () {
+            $(this).parents("div.mini-container:first").remove();
+            delete userOrgRoles[$(this).attr('data-key')];
+
+            if ($.isEmptyObject(userOrgRoles)) {
+                $(".roles-info-box").show();
+            }
+            showHideEmployeeIdDiv();
+            return false;
+        });
+
+        $("a.createprofile").live("click",function(){
+            ShowProfile(userOrgRoles[$(this).attr('data-key')]);
+        });
+
+        $("a.makeRoleDefault").live("click", function () {
+            renderRoles($(this).attr('data-key'));
+            return false;
+        });
+
+
+        $("#Email").blur(function(){
+
+            var url = "/Users/User/IsEmailUnique/?email=" + $("#Email").val() + "&excludedUserId=" + $("#UserId").val();
+            $("#email-hint").remove();
+            $.getJSON(url, null, function (isUnique) {
+                if (isUnique) {
+                    $("#Email").after("<span id='email-hint' class='success-userhint'> Available </span>");
+                }
+                else {
+                    $("#Email").after("<span id='email-hint' class='error-userhint'> Not Available </span>");
+                }
+            });
+        });
+
+
+        $("#UserName").blur(function(){
+
+            var url = "/Users/User/IsAvailable/?userName=" + $("#UserName").val() + "&excludedUserId=" + $("#UserId").val();
+            $("#username-hint").remove();
+            $.getJSON(url, null, function (isUnique) {
+                if (isUnique) {
+                    $("#UserName").after("<span id='username-hint'  class='success-userhint'> Available </span>");
+                }
+                else {
+                    $("#UserName").after("<span id='username-hint' class='error-userhint'> Not Available </span>");
+                }
+            });
+        });
+
+        $("#EmployeeId").blur(function(){
+            var empId = $.trim($("#EmployeeId").val());
+            if(empId!="")
+            {
+                var url = "/Users/User/IsEmployeeIdExist?userId=" + '@Model.Id' + "&employeeId=" + $("#EmployeeId").val();
+                $("#employeeId-hint").remove();
+                $.getJSON(url, null, function (isUnique) {
+                    if (isUnique) {
+                        $("#EmployeeId").after("<span id='employeeId-hint'  class='success-userhint'> Available </span>");
+                    }
+                    else {
+                        $("#EmployeeId").after("<span id='employeeId-hint' class='error-userhint'> Not Available </span>");
+                    }
+                });
+            }
+        });
+
+        GetTechnicianProfile();
+
+        if($("#OverRideTwoFactorAuthrequired").is(":checked"))
+            $("#IsTwoFactorAuthrequireddiv").show();
+        else
+            $("#IsTwoFactorAuthrequireddiv").hide();
+
+        $("#OverRideTwoFactorAuthrequired").change(function() {
+            if($("#OverRideTwoFactorAuthrequired").is(":checked"))
+                $("#IsTwoFactorAuthrequireddiv").show();
+            else
+                $("#IsTwoFactorAuthrequireddiv").hide();
+        });
+    }); @* document ready *@
+
+
+    function addRoleToUser() {
+
+        var orgRole = new Object();
+        orgRole.OrganizationId = $("#organizationId").val();
+        orgRole.OrganizationName = $("#organizationId option:selected").text();
+        orgRole.RoleId = $("#roleId").val();
+        orgRole.RoleDisplayName = $("#roleId option:selected").text();
+        orgRole.ParentRoleId = $("#roleId option:selected").attr('parentId');
+        orgRole.DialerUrl = "";
+        orgRole.IsDefault = $("#IsDefault").attr("checked");
+        orgRole.Key = orgRole.OrganizationId + "_" + orgRole.RoleId;
+
+        if (orgRole.RoleId == -1) {
+            alert("Please select a valid organization and role before assigning it to the user.");
+            return false;
+        }
+        if (userOrgRoles[orgRole.Key] != undefined) {
+            alert("This role for this organization has already has been added.");
+            return false;
+        }
+
+        userOrgRoles[orgRole.Key] = orgRole;
+        $(".roles-info-box").hide();
+        $("#IsDefault").attr('checked', false);
+        renderRoles((orgRole.IsDefault ? orgRole.Key : ""));
+        return false;
+    }
+
+    function renderRoles(selectedKey) {
+        $("#userRolesContainer div.mini-container").remove();
+        showHideEmployeeIdDiv();
+        $.each(userOrgRoles, function (key, orgRole) {
+            if (orgRole.Key == selectedKey) {
+                userOrgRoles[key].IsDefault = true;
+            }
+            else {
+                userOrgRoles[key].IsDefault =  (selectedKey == "") ? userOrgRoles[key].IsDefault : false;
+            }
+
+            $("#roleDisplayTemplate").tmpl(orgRole).appendTo("#userRolesContainer");
+        });
+
+    }
+
+</script>
+@* Display role template*@
+<script id="roleDisplayTemplate" type="text/x-jquery-tmpl">
+    <div class='mini-container'>
+        <h4>${RoleDisplayName} {{if IsDefault}} (Default Role) {{/if}}</h4>
+        <div class="small-text">
+            ${OrganizationName} [<a href="#" data-key="${Key}" class="deleteRole">Remove</a> {{if !IsDefault}} | <a href="#" data-key="${Key}" class="makeRoleDefault">Make Default</a> {{/if}} {{if RoleId == @((long)Falcon.App.Core.Enum.Roles.Technician) || RoleId == @((long)Falcon.App.Core.Enum.Roles.MedicalVendorUser) || RoleId == @((long)Falcon.App.Core.Enum.Roles.CorporateAccountCoordinator) || RoleId == @((long)Falcon.App.Core.Enum.Roles.CallCenterRep) || ParentRoleId == @((long)Falcon.App.Core.Enum.Roles.CallCenterRep) || RoleId == @((long)Falcon.App.Core.Enum.Roles.NursePractitioner) }} | <a href="javascript:void(0);" data-key="${Key}" class="createprofile">Profile</a> {{/if}} ]
+        </div>
+
+        <div style="display:none;">
+            <input type="hidden" name="UsersRoles.Index" value="${Key}" />
+            <input type="text" name="UsersRoles[${Key}].OrganizationId" value="${OrganizationId}" />
+            <input type="text" name="UsersRoles[${Key}].OrganizationName" value="${OrganizationName}" />
+            <input type="text" name="UsersRoles[${Key}].RoleId" value="${RoleId}" />
+            <input type="text" name="UsersRoles[${Key}].RoleDisplayName" value="${RoleDisplayName}" />
+            <input type="text" name="UsersRoles[${Key}].ParentRoleId" value="${ParentRoleId}" />
+            <input type="text" name="UsersRoles[${Key}].DialerUrl" value="${DialerUrl}" />
+            <input type="text" name="UsersRoles[${Key}].IsDefault" value="${IsDefault}" />
+        </div>
+    </div>
+</script>
+@* Technician profile *@
+<script type="text/javascript" language="javascript">
+    function AttachDialogBoxes() {
+        $('#TechnicianProfileDialogDiv').dialog({ autoOpen: false, modal: true,  width: 500, height: 330, closeOnEscape: true, buttons: { 'Save': function() {
+            if (ValidatePin(true)) {                
+                $(this).dialog('close');
+            }
+        }},
+        beforeClose: function(event){
+            if(!ValidatePin(false)) {event.preventDefault(); }
+                
+        },
+        open: function(event, ui) {
+            $("#Pin").val("");
+            if ($("#Id").val() != "0") {
+                $("#changePin").attr("checked",false);
+                $("#dvMobilePinSection").hide();
+            } else {
+                $('#changePin').attr('checked',true);
+                $("#dvMobilePinSection").show();
+            }
+        }});
+        
+        $('#AccountCoordinatorProfileDialogDiv').dialog({ autoOpen: false, modal: true ,width: 300, height: 200, closeOnEscape: true, buttons: { 'Save': function () { $(this).dialog('close'); } } });
+        $('#CallCenterAgentProfileDialogDiv').dialog({ autoOpen: false, modal: true ,width: 750, height: 250, closeOnEscape: true, buttons: { 'Save': function() {
+            var dialerIndex = $("input[type='hidden'][name='Dialer_Index']").val();
+            var url = $('#dialerUrl').val();
+            $(this).dialog('close');
+            setDialerUrl(dialerIndex, url);
+        } } });
+
+        $('#UserNpiInfoDialogDiv').dialog({ autoOpen: false, modal: true ,width: 750, height: 250, closeOnEscape: true, buttons: { 'Save': function() {
+            checkAndSetNpi();
+        } } });
+    }
+
+    function setDialerUrl(dialerIndex, dialerUrl) {
+        $("#userRolesContainer div.mini-container").remove();
+        $.each(userOrgRoles, function (key, orgRole) {
+            if (orgRole.Key == dialerIndex) {
+                userOrgRoles[key].DialerUrl = dialerUrl;
+            }
+
+            $("#roleDisplayTemplate").tmpl(orgRole).appendTo("#userRolesContainer");
+        });
+    }
+
+    function ShowProfile(userOrgRole) {//debugger;
+        if (userOrgRole.RoleId == '@((long)Falcon.App.Core.Enum.Roles.Technician)')
+            $('#TechnicianProfileDialogDiv').dialog('open');
+        else if (userOrgRole.RoleId == '@((long)Falcon.App.Core.Enum.Roles.CorporateAccountCoordinator)') {
+
+            if ($("#AccountCoordinatorProfile_IsClinicalCoordinator").is(":checked")) {
+                $('#IsClinicalCoordinatorCheckbox').attr('checked', true);
+            } else {
+                $('#IsClinicalCoordinatorCheckbox').attr('checked', false);
+            }
+            $('#AccountCoordinatorProfileDialogDiv').dialog('open');
+        }
+        else if (userOrgRole.RoleId == '@((long)Falcon.App.Core.Enum.Roles.MedicalVendorUser)') {
+            $('.user-detail-div').animate({
+                height: '0'
+            },
+                {
+                    duration: 1000
+                });
+
+            $('#PhysicianProfileDiv').show();
+        }
+        else if (userOrgRole.RoleId == '@((long)Falcon.App.Core.Enum.Roles.CallCenterRep)' || userOrgRole.ParentRoleId == '@((long)Falcon.App.Core.Enum.Roles.CallCenterRep)') {
+            $('#CallCenterAgentProfileDialogDiv').dialog('open');
+            $("#CallCenterAgentProfileDialogDiv").find("input[type='hidden'][name='Dialer_Index']").val(userOrgRole.Key);
+            $("#CallCenterAgentProfileDialogDiv").find('#dialerUrl').val(userOrgRole.DialerUrl.replace(/&amp;/g, "&"));
+        } else if (userOrgRole.RoleId == '@((long)Falcon.App.Core.Enum.Roles.NursePractitioner)') {
+            $('#UserNpiInfoDialogDiv').dialog('open');
+            $('#errorUserNpiInfo').text('');
+            $('#errorUserCredentialInfoInfo').text('');
+            $("#UserNpiInfoDialogDiv").find('#txtUserNpiInfo').val($('#Npi').val());
+            $("#UserNpiInfoDialogDiv").find('#txtUserCredentialInfo').val($('#Credential').val());
+        }
+    }
+
+    function SetTechnicianProfile() {
+        if ($('#IsTeamLeadCheckBox').attr('checked'))
+            $('#TechnicianProfile_IsTeamLead').val('@(Boolean.TrueString)');
+        else
+            $('#TechnicianProfile_IsTeamLead').val('False');
+
+        if ($('#AllowPreAuditCheckbox').attr('checked'))
+            $('#TechnicianProfile_CanCompletePreAudit').val('@(Boolean.TrueString)');
+        else
+            $('#TechnicianProfile_CanCompletePreAudit').val('False');
+        
+    }
+
+    function ValidatePin(validate)
+    {
+        if ($("#changePin").is(":checked") && validate) {
+            var pin = $('#Pin').val();
+        
+            if(pin == null || pin == "" || pin == undefined)
+            {
+                alert('Pin is required.');
+                return false;
+            }
+
+            if(pin.length!=4)
+            {
+                alert('Pin length should be 4 digit.');
+                return false;
+            }
+            if(pin.length==4)
+            {            
+                $('#TechnicianProfile_Pin').val(pin);
+            }
+        }
+        return true;
+    }
+
+
+    function GetTechnicianProfile() {
+        $('#IsTeamLeadCheckBox').attr('checked', $('#TechnicianProfile_IsTeamLead').val() == '@(Boolean.TrueString)');
+        $('#AllowPreAuditCheckbox').attr('checked', $('#TechnicianProfile_CanCompletePreAudit').val() == '@(Boolean.TrueString)');
+        //$('#Pin').val($('#TechnicianProfile_Pin').val());
+    }
+
+    $(document).ready(function() {
+
+        if ($("#Id").val() == "0") {
+            $("#changePassword").hide();
+            $("#cptext").hide();
+            $('#changePin').attr('checked',true);
+        }
+        else
+        {
+            $("#dvMobilePinSection").hide();
+        }
+
+        if ($("#Id").val() != "0" && $("#Password").val() == "") {
+            $("#passwordPanel").hide();
+        } else {
+            $("#changePassword").attr("checked", true);
+        }
+
+        $("#changePassword").change(function() {
+            if ($("#changePassword").is(":checked")) {
+                $("#passwordPanel").show();
+            } else {
+                $("#passwordPanel").hide();
+            }
+        });
+
+        $("#changePin").change(function() {
+            if ($("#changePin").is(":checked")) {
+                $("#dvMobilePinSection").show();
+            } else {
+                $("#dvMobilePinSection").hide();
+            }
+        });
+    });
+
+    function SetAccountCoordinatorProfile() {
+        if ($('#IsClinicalCoordinatorCheckbox').is(':checked'))
+            $('#AccountCoordinatorProfile_IsClinicalCoordinator').attr('checked', true);
+        else
+            $('#AccountCoordinatorProfile_IsClinicalCoordinator').attr('checked', false);
+    }
+
+    function checkAndSetNpi() {
+        var npiText = $('#txtUserNpiInfo').val();
+        var credentialText = $('#txtUserCredentialInfo').val();
+
+        if (npiText.length == 0)
+            $('#Npi').val('');
+
+        if (credentialText.length == 0)
+            $('#Credential').val('');
+
+        //var isNpiCheckSuccess=false;
+        //var isCredentialCheckSuccess=false;
+
+        if (validateUserNpiInfo() && validateUserCredentialInfo()) {
+            $('#Credential').val(credentialText);
+            if(npiText.length>0)
+            {
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    url: "/Users/User/IsNpiExist?npi=" + npiText + "&userId="+ '@Model.Id',
+                    data: "{}",
+                    success: function (result) {
+                        if (!result.isExist) {
+                            $('#Npi').val(npiText);
+                            $('#UserNpiInfoDialogDiv').dialog('close');
+                        }
+                        else {
+                            $("#errorUserNpiInfo").text('NPI: ' + npiText + ' already acquired by someone else.');
+                        }
+                    },
+                    error: function (a) {
+                        console.log(JSON.stringify(a));
+                        alert('Some error occurred, please try again.');
+                    }
+                });
+            }
+            else
+            {
+                $('#Npi').val(npiText);
+                $('#UserNpiInfoDialogDiv').dialog('close');
+            }
+        }
+    }
+
+    function validateUserNpiInfo()
+    {
+        var npi = $('#txtUserNpiInfo').val();
+        var validateFlag = false;
+
+        if (npi.length > 0) {
+            var alphanumeric = /^[0-9a-zA-Z]+$/;
+            if(npi.match(alphanumeric))
+            {
+                if(npi.length <= 10 && npi.length >= 1){
+                    $("#errorUserNpiInfo").text('');
+                    validateFlag = true;
+                }
+                else{
+                    $("#errorUserNpiInfo").text('Make sure the input is max 10 characters long');
+                    validateFlag = false;
+                }
+            }
+            else
+            {
+                $("#errorUserNpiInfo").text('Please input alphanumeric characters only');
+                validateFlag = false;
+            }
+        } else {
+            validateFlag = true;
+        }
+
+        return validateFlag;
+    }
+
+    function validateUserCredentialInfo()
+    {
+        var credential = $('#txtUserCredentialInfo').val();
+        var validateFlag = false;
+
+        if (credential.length > 0) {
+            var alphanumeric = /^[0-9a-zA-Z ,-.]+$/;
+            if(credential.match(alphanumeric))
+            {
+                if(credential.length <= 20 && credential.length >= 1){
+                    $("#errorUserCredentialInfo").text('');
+                    validateFlag = true;
+                }
+                else{
+                    $("#errorUserCredentialInfo").text('Make sure the input is max 20 characters long');
+                    validateFlag = false;
+                }
+            }
+            else
+            {
+                $("#errorUserCredentialInfo").text('Please input alphanumeric characters only');
+                validateFlag = false;
+            }
+        } else {
+             validateFlag = true;
+        }
+        return validateFlag;
+    }
+
+    function showHideEmployeeIdDiv()
+    {
+        $("#dvEmployeeId").show();
+        if(Object.keys(userOrgRoles).length==1)
+        {
+            var customerRoleId = @((long)Falcon.App.Core.Enum.Roles.Customer);
+            $.each(userOrgRoles, function(index, userRole){
+                if(userRole.RoleId == customerRoleId)
+                {
+                    $("#EmployeeId").val('');
+                    $("#dvEmployeeId").hide();
+                    return false;
+                }
+            });
+        }
+    }
+
+</script>

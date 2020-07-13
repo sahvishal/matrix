@@ -1,0 +1,24 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Sales.ViewModels.ContentEditModel
+@{
+    ViewBag.Title = "Create Content";
+}
+<h1>
+    Create Content<span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Manage Contents", "Index")
+    </span>
+</h1>
+@if (Model.FeedbackMessage != null)
+{
+    @Html.Partial("Message", Model.FeedbackMessage)
+}
+@{Html.BeginForm();}
+<div class="content-main-column" style="width: 70%;">
+    <fieldset>
+        @Html.EditorForModel()
+    </fieldset>
+    <div class="submit-button-row">
+        @Html.ActionLink("Close", "Index") @Html.SubmitButton("Create", "Submit")
+    </div>
+</div>
+@{Html.EndForm();}

@@ -1,0 +1,388 @@
+@model Falcon.App.Core.CallCenter.ViewModels.CustomerContactViewModel
+@using Falcon.App.Core.Users.Enum
+@{
+    ViewBag.Title = "Call Center Dashboard";
+    var PhoneHomeUrl = " ";
+    var PhoneOfficeUrl = " ";
+    var PhoneMobileUrl = " ";
+    if (Model.PatientInfomation.HealthPlanPhoneNumber != null && Model.PatientInfomation.HealthPlanPhoneNumber.Number != "")
+    {
+        if (Model.PatientInfomation.CallBackPhoneNumber != null && Model.PatientInfomation.CallBackPhoneNumber.Number != null)
+        {
+            PhoneHomeUrl = "Glocom://*65*" + Model.PatientInfomation.HealthPlanPhoneNumber.AreaCode + Model.PatientInfomation.HealthPlanPhoneNumber.Number + "*1" + Model.PatientInfomation.CallBackPhoneNumber.AreaCode + Model.PatientInfomation.CallBackPhoneNumber.Number;
+        }
+
+        if (Model.PatientInfomation.OfficePhoneNumber != null && Model.PatientInfomation.OfficePhoneNumber.Number != null)
+        {
+            PhoneOfficeUrl = "Glocom://*65*" + Model.PatientInfomation.HealthPlanPhoneNumber.AreaCode + Model.PatientInfomation.HealthPlanPhoneNumber.Number + "*1" + Model.PatientInfomation.OfficePhoneNumber.AreaCode + Model.PatientInfomation.OfficePhoneNumber.Number;
+        }
+
+        if (Model.PatientInfomation.MobilePhoneNumber != null && Model.PatientInfomation.MobilePhoneNumber.Number != null)
+        {
+            PhoneMobileUrl = "Glocom://*65*" + Model.PatientInfomation.HealthPlanPhoneNumber.AreaCode + Model.PatientInfomation.HealthPlanPhoneNumber.Number + "*1" + Model.PatientInfomation.MobilePhoneNumber.AreaCode + Model.PatientInfomation.MobilePhoneNumber.Number;
+        }
+    }
+}
+<style>
+    body {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+    }
+
+    #list-view .tag, #list-view .history {
+        width: 125px;
+    }
+
+    .small-section {
+        border: 1px solid #cdcdcd;
+        border-radius: 5px;
+        overflow: hidden;
+        padding: 0 0 5px;
+        margin-bottom: 15px;
+    }
+
+    .small-section-inner {
+        padding: 10px;
+        min-height: 210px;
+    }
+
+        .small-section-inner b {
+            margin-right: 4px;
+        }
+
+        .small-section-inner label, .small-section-inner .table > thead > tr > th {
+            font-weight: 500;
+        }
+
+        .small-section-inner .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+
+        .small-section-inner div.pager .page-nav {
+            float: none;
+            width: auto;
+        }
+
+        .small-section-inner .outcome {
+            margin-right: 50px !important;
+            padding: 10px 0 !important;
+        }
+
+        .small-section-inner p, .small-section-inner span {
+            font-weight: 300;
+        }
+
+        .small-section-inner textarea {
+            width: 100%;
+        }
+
+    .small-section h2 {
+        background: none repeat scroll 0 0 #efefef;
+        border-bottom: 1px solid #cdcdcd;
+        color: #4292b0;
+        font-size: 10pt;
+        margin: 0 0 5px;
+        padding: 4px 10px;
+    }
+
+    .small-section .contact-screen-no-event {
+        font-size: 17px;
+        padding: 5px;
+    }
+
+    .middivrow_regcust a.glyphicon {
+        font-family: "Glyphicons Halflings";
+        text-decoration: none;
+        margin-top: 7px;
+        font-size: 16px;
+    }
+
+    .info-row {
+        display: block;
+        width: 750px;
+        padding-bottom: 30px;
+    }
+
+    .info-text {
+        width: 220px;
+        margin-left: 5px;
+        float: left;
+    }
+
+    b {
+        font-weight: 700;
+    }
+</style>
+
+<div class="small-section">
+    <h2>Patient Info</h2>
+    <div class="clearfix small-section-inner">
+        <div class="info-row">
+            <div class="info-text">
+
+                <b>Customer ID: </b>
+
+                @if (Model.PatientInfomation.CallQueueCustomerId == null || Model.PatientInfomation.CallQueueCustomerId <= 0)
+                {
+                    <span>N/A</span>
+                }
+                else
+                {
+                    <b>@Model.PatientInfomation.CallQueueCustomerId</b>
+                }
+            </div>
+            <div class="info-text">
+
+                <b>Name: </b>
+
+                <span>@Model.PatientInfomation.FirstName</span> <span>@Model.PatientInfomation.LastName</span>
+
+            </div>
+            <div class="info-text" style="border: solid 1px black;">
+
+                <b>Is Eligible: </b>
+
+                @if (Model.PatientInfomation.IsEligible == null)
+                {
+                    <span>N/A</span>
+                }
+                else if (Model.PatientInfomation.IsEligible.Value == true)
+                {
+                    <span>Yes</span>
+                }
+                else
+                {
+                    <span>No</span>
+                }
+            </div>
+
+        </div>
+        <div class="info-row">
+            <div class="info-text">
+                <b>Email: </b>
+                @if (Model.PatientInfomation.Email == "")
+                {
+                    <span>N/A</span>
+                }
+                else
+                {
+                    <span>@Model.PatientInfomation.Email</span>
+                }
+            </div>
+
+
+            <div class="info-text">
+                <b>Alternate Email: </b>
+                @if (Model.PatientInfomation.AlternateEmail == null)
+                {
+                    <span>N/A</span>
+                }
+                else
+                {
+                    <span>@Model.PatientInfomation.AlternateEmail</span>
+                }
+            </div>
+
+
+
+            <div class="info-text">
+                <b>Address: </b>
+                @if (Model.PatientInfomation.AddressViewModel != null)
+                {
+                    if (Model.PatientInfomation.AddressViewModel.StreetAddressLine1 != "")
+                    { <span>@Model.PatientInfomation.AddressViewModel.StreetAddressLine1,</span> }
+                    if (Model.PatientInfomation.AddressViewModel.StreetAddressLine2 != "")
+                    { <span>@Model.PatientInfomation.AddressViewModel.StreetAddressLine2, </span>}
+                    if (Model.PatientInfomation.AddressViewModel.City != "")
+                    {<span>@Model.PatientInfomation.AddressViewModel.City,</span>    }
+                    if (Model.PatientInfomation.AddressViewModel.State != "")
+                    {<span>@Model.PatientInfomation.AddressViewModel.State,</span>    }
+                    if (Model.PatientInfomation.AddressViewModel.Country != null)
+                    {<span>@Model.PatientInfomation.AddressViewModel.Country -</span>  }
+                    if (Model.PatientInfomation.AddressViewModel.ZipCode != "")
+                    {<span>@Model.PatientInfomation.AddressViewModel.ZipCode </span>    }
+                }
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-text">
+                <b>DOB: </b>
+                @if (Model.PatientInfomation.DateOfBirth == null)
+                { <span>N/A</span>}
+                else
+                {<span>@Model.PatientInfomation.DateOfBirth</span> }
+
+            </div>
+            <div class="info-text">
+                <b>Gender: </b>
+                @if (Model.PatientInfomation.Gender == null || Model.PatientInfomation.Gender == Gender.Unspecified)
+                {<span>N/A</span> }
+                else if (Model.PatientInfomation.Gender == Gender.Male)
+                {
+                    <span>Male</span>}
+                else if (Model.PatientInfomation.Gender == Gender.Female)
+                {
+                    <span>Female</span>
+                }
+            </div>
+        </div>
+
+        @if (Model.ReadAndUnderstood == false)
+        {
+            <div class="info-row">
+                <div class="info-text">
+                    <b>Phone Home: </b>
+                    @if (Model.PatientInfomation.CallBackPhoneNumber == null || Model.PatientInfomation.CallBackPhoneNumber.FormatPhoneNumber == "")
+                    {  <span>N/A</span>}
+                    @if (Model.PatientInfomation.CallBackPhoneNumber != null && PhoneHomeUrl != "")
+                    {
+                        <a href="@PhoneHomeUrl" target="_blank">@Model.PatientInfomation.CallBackPhoneNumber.FormatPhoneNumber</a>
+                    }
+                    else if (Model.PatientInfomation.CallBackPhoneNumber != null && PhoneHomeUrl == " ")
+                    {
+                        <span>@Model.PatientInfomation.CallBackPhoneNumber.FormatPhoneNumber</span>
+                    }
+                </div>
+                @if (Model.PatientInfomation.CallQueueCustomerId != null && Model.PatientInfomation.CallQueueCustomerId > 0 && Model.PatientInfomation.OfficePhoneNumber != null)
+                {
+                    <div class="info-text">
+                        <b>Phone Office: </b>
+                        @if (Model.PatientInfomation.OfficePhoneNumber.FormatPhoneNumber == "" || Model.PatientInfomation.OfficePhoneNumber.FormatPhoneNumber == null)
+                        {  <span>N/A</span> }
+
+                        @if (Model.PatientInfomation.OfficePhoneNumber != null && PhoneOfficeUrl != "")
+                        {
+                            <a href="@PhoneOfficeUrl" target="_blank">@Model.PatientInfomation.OfficePhoneNumber.FormatPhoneNumber</a>
+                        }
+                        else if (Model.PatientInfomation.OfficePhoneNumber != null && PhoneOfficeUrl == " ")
+                        {
+                            <span>@Model.PatientInfomation.OfficePhoneNumber.FormatPhoneNumber</span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="info-text">
+                        <b>Phone Office: </b>
+                        <span>N/A</span>
+                    </div>
+                }
+                @if (Model.PatientInfomation.CallQueueCustomerId != null && Model.PatientInfomation.CallQueueCustomerId > 0 && Model.PatientInfomation.MobilePhoneNumber != null)
+                {
+                    <div class="info-text">
+                        <b>Phone Mobile: </b>
+                        @if (Model.PatientInfomation.MobilePhoneNumber.FormatPhoneNumber == null)
+                        {
+                            <span>N/A</span>
+                        }
+                        @if (Model.PatientInfomation.MobilePhoneNumber != null && PhoneMobileUrl != null)
+                        {
+                            <a href="@PhoneMobileUrl" target="_blank">@Model.PatientInfomation.MobilePhoneNumber.FormatPhoneNumber</a>
+                        }
+
+                        else if (Model.PatientInfomation.MobilePhoneNumber != null && PhoneMobileUrl == null)
+                        {
+                            <span>@Model.PatientInfomation.MobilePhoneNumber.FormatPhoneNumber</span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="info-text">
+                        <b>Phone  Mobile: </b>
+                        <span>N/A</span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="info-row">
+                <div class="info-text">
+                    <b>Phone Home: </b>
+                </div>
+                @if (Model.PatientInfomation.CallQueueCustomerId != null && Model.PatientInfomation.CallQueueCustomerId > 0 && Model.PatientInfomation.OfficePhoneNumber != null)
+                {
+                    <div class="info-text">
+                        <b>Phone Office: </b>
+                    </div>
+                    if (Model.PatientInfomation.CallQueueCustomerId != null && Model.PatientInfomation.CallQueueCustomerId > 0 && Model.PatientInfomation.MobilePhoneNumber != null)
+                    {
+                        <div class="info-text">
+                            <b>Phone Mobile: </b>
+                        </div>
+                    }
+                }
+            </div>
+        }
+
+
+        <div class="info-row">
+            <div class="info-text">
+                <b>Custom Tags: </b>
+                @if (Model.PatientInfomation.CustomCorporateTags == null || Model.PatientInfomation.CustomCorporateTags == "")
+                {  <span>N/A</span> }
+                else
+                {
+                    <span>@Model.PatientInfomation.CustomCorporateTags</span>
+                }
+            </div>
+            <div class="info-text">
+                <b>HICN Number: </b>
+                @if (Model.PatientInfomation.HicnNumber == null || Model.PatientInfomation.HicnNumber == "")
+                {
+                    <span>N/A</span>
+                }
+                else
+                {
+                    <span>@Model.PatientInfomation.HicnNumber</span>
+                }
+            </div>
+            <div class="info-text">
+                <b>MBI Number: </b>
+                @if (string.IsNullOrWhiteSpace(Model.PatientInfomation.MbiNumber))
+                {
+                    <span>N/A</span>
+                }
+                else
+                {
+                    <span>@Model.PatientInfomation.MbiNumber</span>
+                }
+            </div>
+            <div class="info-text">
+                <b>Member Id: </b>
+                @if (Model.PatientInfomation.MemberId == null || Model.PatientInfomation.MemberId == "")
+                {
+                    <span>N/A</span>
+                }
+                else
+                {
+                    <span>
+                        Model.PatientInfomation.MemberId
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* Event Info Section *@
+<div class="col-md-12">
+    <div class="small-section">
+        <h2>Event List</h2>
+        <div class="clearfix small-section-inner">
+            <event-list></event-list>
+        </div>
+    </div>
+</div>
+
+@* Tab Container Section *@
+
+@section scripts {
+    <script type="text/javascript">
+
+    </script>
+}

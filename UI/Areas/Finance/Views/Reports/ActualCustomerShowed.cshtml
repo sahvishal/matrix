@@ -1,0 +1,109 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Finance.ViewModels.ActualCustomerShowedListModel
+@{
+    ViewBag.Title = Model.Filter.ShowAttendedCustomersOnly ? "Attended Customers" : "Customers Booked";
+}
+
+<h1>Attended customers report for agent @Model.RegisteredBy</h1>
+<div id="list-filter" style="padding: 10px;">
+    @if (Model != null && Model.Filter != null)
+    {
+        <text> Customers attended events between @Model.Filter.StartDate.Value.ToShortDateString() - @Model.Filter.EndDate.Value.ToShortDateString() </text>
+    }
+</div>
+@if (!Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/ActualCustomerShowed?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Customer Id
+            </th>
+            <th>
+                Customer Name
+            </th>
+            <th>
+                Registration Date
+            </th>
+            <th>
+                Event Id
+            </th>
+            <th>
+                Event Date
+            </th>
+
+            <th>
+                Appointment Time
+            </th>
+            <th>
+                Package + Test
+            </th>
+            <th>
+                Bonus Earned ($)
+            </th>
+        </tr>
+        @foreach (var lineItem in Model.Collection)
+        {
+            <tr>
+                <td>
+                    @lineItem.CustomerCode
+                </td>
+                <td>
+                    @lineItem.CustomerName
+                </td>
+                <td>
+                    @lineItem.RegistrationDate.ToString("MM/dd/yyyy hh:mm tt")
+                </td>
+                <td>
+                    @lineItem.EventId
+                </td>
+                <td>
+                    @lineItem.EventDate.ToShortDateString()
+                </td>
+                <td>
+                    @if (lineItem.AppointmentTime.HasValue)
+                    {
+                        <text>@lineItem.AppointmentTime.Value.ToString("hh:mm tt")</text>
+                    }
+                </td>
+                <td>
+                    @lineItem.Package
+                </td>
+                <th>
+                     $@lineItem.BonusOnCustomer.ToString("0.00")
+                </th>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

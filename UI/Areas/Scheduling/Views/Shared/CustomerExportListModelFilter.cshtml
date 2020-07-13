@@ -1,0 +1,260 @@
+@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.CustomerExportListModelFilter
+
+@*<script src="~/Content/JavaScript/jquery-1.9.1.min.js"></script>*@
+@*<script src="~/Content/JavaScript/hoverIntent.js"></script>*@
+@*<link href="~/Content/Styles/select2.css" rel="stylesheet" />
+    <script src="~/Content/JavaScript/select2.full.js"></script>*@
+
+<style type="text/css">
+    .select2-dropdown {
+        width: 200px;
+    }
+
+    .select2-selection__choice {
+        background-color: #00A6d8 !important;
+        border: solid 1px #00A6d8 !important;
+        font-size: 14px;
+        color: #ffffff;
+    }
+
+    .select2-selection__choice__remove {
+        color: #ffffff;
+    }
+</style>
+
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden; padding-top: 5px;width: 45%;float: left;">
+    <div class="editor-column" style="width: 100%; padding-top: 5px;">
+        <div style="width: 190px;float: left;">
+            <div class="small-text">
+                <b>Signup</b> From
+            </div>
+            @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker", @style = "width : 170px;" })
+        </div>
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                To
+            </div>
+            @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker", @style = "width : 170px;" })
+        </div>
+
+    </div>
+    <div class="editor-column" style="width: 100%; padding-top: 5px;">
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                <b>Name </b>First
+            </div>
+            @Html.TextBoxFor(m => m.FirstName, new { @style = "width:170px;" })
+        </div>
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                Last
+            </div>
+            @Html.TextBoxFor(m => m.LastName, new { @style = "width:170px;" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 100%; padding-top: 5px;">
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                Member Id
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.MemberId, new { @style = "width:170px;" })
+            </div>
+        </div>
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                Customer Id
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.CustomerId, new { @style = "width:170px;" })
+            </div>
+        </div>
+    </div>
+    <div class="editor-column" style="width: 100%; padding-top: 5px;">
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                <b>Appointment </b>From
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.AppointmentFrom, new { @class = "datePicker" })
+            </div>
+        </div>
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                To
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.AppointmentTo, new { @class = "datePicker" })
+            </div>
+        </div>
+    </div>
+    <div class="editor-column" style="width: 100%; float: left; padding-top: 5px;">
+        <div class="small-text">
+            Tag
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.Tag, new { @style = "width:170px;" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 100%; float: left; padding-top: 5px;">
+        <div class="small-text">
+            Health Plan
+        </div>
+        <div style="float: left;">
+            @Html.DropDownListFor(x => x.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:294px;" })
+        </div>
+    </div>
+
+    <div class="editor-column" style="width: 100%; padding-top: 5px;">
+        <div style="float: left;margin-right: 3%">
+            <div class="small-text">
+                Appointment Status
+            </div>
+            <div style="float: left;">
+                @Html.CheckBoxFor(m => m.IsAttendedCustomers) With Appointment
+            </div>
+        </div>
+        <div style="width: 50%;float: left;">
+            <div class="small-text">
+                &nbsp;
+            </div>
+            <div>
+                @Html.CheckBoxFor(m => m.IsNotAttendedCustomers) Without Appointment
+            </div>
+        </div>
+    </div>
+    <div class="editor-column" style="width: 100%; clear: both; padding-top: 5px;">
+        <div class="small-text">
+            Event Type:
+        </div>
+        <div style="float: left;width: 100%;">
+            <div style="float: left;width: 19%;">
+                <input type="checkbox" id="is-retail-event" @(Model.IsRetailEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsRetailEvent');" />Retail
+            </div>
+            <div style="float: left; width: 25%; ">
+                <input type="checkbox" id="is-corporate-event" @(Model.IsCorporateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsCorporateEvent');" />Corporate
+            </div>
+            <div style="float: left; width: 25%; ">
+                <input type="checkbox" id="is-healthplan-event" @(Model.IsHealthPlanEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsHealthPlanEvent');" />Health Plan
+            </div>    
+        </div>
+        <div style="float: left;width: 100%;">
+            <div style="float: left; width: 19%; ">
+                <input type="checkbox" id="is-public-event" @(Model.IsPublicEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPublicEvent');" />Public
+            </div>
+            <div style="float: left; width: 19%;">
+                <input type="checkbox" id="is-private-event" @(Model.IsPrivateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsPrivateEvent');" />Private
+            </div>
+        </div>
+        
+        
+        @Html.HiddenFor(m => m.IsRetailEvent)
+        @Html.HiddenFor(m => m.IsCorporateEvent)
+        @Html.HiddenFor(m => m.IsPublicEvent)
+        @Html.HiddenFor(m => m.IsPrivateEvent)
+        @Html.HiddenFor(m => m.IsHealthPlanEvent)
+    </div>
+
+
+    @Html.HiddenFor(m => m.DoNotContactOnly)
+    @Html.HiddenFor(m => m.IncludeDoNotContact)
+    @Html.HiddenFor(m => m.EligibleStatus)
+</div>
+<div style="padding-left: 5px; overflow: hidden; padding-top: 5px; width: 52%;float: left;">
+    <div class="editor-column" style="width: 100%;">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllCustomTags(), new { @class = "tokenizer", @multiple = "multiple", @style = "width: 99%;height:150px;" })
+        </div>
+
+        <div class="editor-column" style="width: 100%; float: left; padding-top: 5px;clear: both;">
+            <div class="small-text" style="clear: both;">
+                Customer Type
+            </div>
+            <div style="float: left; width: 17%">
+                <input type="radio" name="DonNotContactCustomer" @(Model.IncludeDoNotContact ? "checked" : "") onclick="setDoNotContactCustomerFilter(this, 'IncludeDoNotContact');" />Show All
+            </div>
+            <div style="float: left; width: 37%">
+                <input type="radio" name="DonNotContactCustomer" @((!Model.IncludeDoNotContact && !Model.DoNotContactOnly) ? "checked" : "") onclick="setDoNotContactCustomerFilter(this, '');" />Exclude Do Not Contact
+            </div>
+            <div style="float: left; width: 39%">
+                <input type="radio" name="DonNotContactCustomer" @((Model.DoNotContactOnly) ? "checked" : "") onclick="setDoNotContactCustomerFilter(this, 'DoNotContactOnly');" />Show Only Don't Contact
+            </div>
+        </div>
+
+        <div class="editor-column" style="width: 100%; float: left; padding-top: 5px;clear:both;">
+            <div class="small-text" style="clear: both;">
+                Eligiblity Status
+            </div>
+            <div style="float: left; width: 20%">
+                <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.All) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.All)');" />Show All
+            </div>
+            <div style="float: left; width: 22%">
+                <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.OnlyEligible) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.OnlyEligible)');" />Only Eligible
+            </div>
+            <div style="float: left; width: 22%">
+                <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.NotEligible) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.NotEligible)');" />Not Eligible
+            </div>
+            <div style="float: left; width: 35%">
+                <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.NotMentioned) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.NotMentioned)');" />Not Mentioned
+            </div>
+        </div>
+
+        <div class="editor-column" style="width: 35%; float: left; padding-top: 5px; clear: both;">
+
+            <div class="small-text">
+                Product
+            </div>
+            @Html.DropDownListFor(m => m.ProductTypeId, DropDownHelper.GetAllProductType(), new { @style = "width:100%;" })
+
+        </div>
+    </div>
+</div>
+<div class="editor-column" style="padding-top: 10px; float:right; text-align:right;">
+    @Html.ActionLink("Clear", "CustomerExport", "Reports") | @Html.SubmitButton("Search")
+</div>
+<script type="text/javascript" language="javascript">
+    function onCheckEventType(checkBox, hiddenBox) {
+        if ($(checkBox).attr("checked")) {
+            $("#" + hiddenBox).val('@Boolean.TrueString');
+        }
+        else {
+            $("#" + hiddenBox).val('@Boolean.FalseString');
+        }
+    }
+
+    function setDoNotContactCustomerFilter(radioBtn, hiddenBox) {
+
+        var includeDontContact = $("#IncludeDoNotContact");
+        var donotContactOnly = $("#DoNotContactOnly");
+        $(donotContactOnly).val(false);
+        $(includeDontContact).val(false);
+
+        if ($(radioBtn).is(":checked")) {
+            if (hiddenBox == 'IncludeDoNotContact') {
+                $(includeDontContact).val(true);
+            }
+            if (hiddenBox == 'DoNotContactOnly') {
+                $(donotContactOnly).val(true);
+            }
+        }
+    }
+
+    function setEligibleStatus(status) {
+        $("#EligibleStatus").val(status);
+    }
+
+    $(document).ready(function () {
+        //$(".tokenizer").select2({
+        //    tags: true,
+        //    tokenSeparators: [',', ' ']
+        //});
+    });
+</script>

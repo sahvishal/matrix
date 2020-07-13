@@ -1,0 +1,212 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.Core.Finance.Enum
+@model RefundRequestListModel
+@{
+    ViewBag.Title = "Refund Requests";
+}
+@section css {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+}
+<h1>
+    Refund Requests
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("Index", "RefundRequest", FormMethod.Get);}
+    @Html.Partial("RefundRequestListModelFilter", Model.Filter)
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/ExportableRefundRequest?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Customer Info
+            </th>
+            <th>
+                Order
+            </th>
+            <th>
+                Event
+            </th>
+            <th>Booked By</th>
+            <th>
+                Request Info
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                Reason
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var request in Model.Collection)
+        {
+            <tr>
+                <td>
+                    <b>Name:</b> @request.CustomerName
+                    <br />
+                    <b>Id:</b> @request.CustomerId
+                </td>
+                <td>
+                    <a href="javascript:void(0)" onclick="ShowOrderDetails(@request.OrderId, @request.CustomerId, '@request.CustomerName.Replace("'", "\\\'")');">
+                        View Order
+                    </a>
+                </td>
+                <td>
+                    @(string.Concat("[ID: " + request.EventId + "] ", request.HostName, " on ", request.EventDate.Value.ToShortDateString()))
+                <br />
+                @String.Concat(request.HostAddress.City, ", ", request.HostAddress.State)
+            </td>
+            <td>
+                @request.BookedBy <br />(@request.BookedByRole)
+            </td>
+            <td>
+                <b>By:</b>@request.RequestedBy
+                <br />
+                (@request.RequestedByRole)<br />
+                <b>On:</b>@request.RequestedOn.ToShortDateString()
+            </td>
+            <td>
+                $@request.RequestedRefundAmount.ToString("00.00")
+            </td>
+            <td>
+                <a href="javascript:void(0);" class="refundtype">@request.RefundRequestType.ToString()</a>
+                <span style="display: none;">
+                    @if (request.RefundRequestType == RefundRequestType.CustomerCancellation)
+                    {
+                        <li><b>Cancellation Reason: </b>@request.CancellationReason</li>
+                        if (!string.IsNullOrEmpty(request.SubReason))
+                        {
+                            <li><b>SubReason: </b> @request.SubReason</li> 
+                        }
+                    }
+                    <li><b>Notes: </b>@request.ReasonforRefund </li>
+
+                </span>
+            </td>
+            <td>
+                @if (request.Status == RequestStatus.Resolved || request.Status == RequestStatus.Reverted)
+                {
+                    <a href="javascript:void(0)" class="request-resolved">@(request.Status.ToString())</a>
+                    <span style="display: none;">
+                        <li>
+                            <b>Resolved by: </b>@request.RequestProcessedBy (@request.RequestProcessedByRole)
+                            <b>on</b> @request.RequestProcessedOn
+                        </li>
+                        <li><b>Action: </b>@(request.RequestResultType.HasValue && (int)request.RequestResultType.Value > 0 ? request.RequestResultType.GetDescription() : "none")</li>
+                        <li><b>Notes: </b>@Html.Raw(request.RequestProcessedNotes) </li>
+                    </span>
+                }
+                else
+                {
+                    <a href="/Finance/RefundRequest/Edit?id=@request.RequestId" class="request-resolved">Process Refund </a>
+                    <span style="display: none;">
+                        <li>
+                            <b>Notes: </b>
+                            <br />@Html.Raw(request.RequestProcessedNotes)
+                        </li>
+                    </span>
+                    if (request.RefundRequestType == RefundRequestType.ApplySourceCode || request.RefundRequestType == RefundRequestType.CancelShipping || request.RefundRequestType == RefundRequestType.ManualRefund
+                        || request.RefundRequestType == RefundRequestType.CDRemoval)
+                    {
+                        <br />
+                        <a href="javascript:void(0);" onclick='undoRefundRequest(@request.RequestId)'>Undo Refund </a>
+                    }
+                }
+            </td>
+        </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+        $(".refundtype").qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                text: function (api) { return $(this).parent().find("span").html(); }
+            },
+            style: {
+                width: '300px'
+            }
+        });
+
+        $(".request-resolved").qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                text: function (api) { return $(this).parent().find("span").html(); }
+            },
+            style: {
+                width: '400px'
+            }
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+
+        function ShowOrderDetails(orderId, customerId, customerName) {
+            window.open("/App/Common/OrderSummary.aspx?OrderId=" + orderId + "&CustomerName=" + customerName + "&CustomerId=" + customerId, "OrderSummary", "width=750, height=400, menubar=0, toolbar=0, status=0, location=0, resizable=0, dependent=1, scrollbars=1");
+            return false;
+        }
+
+    </script>
+
+    <script type="text/javascript" language="javascript">
+        function undoRefundRequest(refundRequestId) {
+            var ans = confirm('Are you sure that you want to undo this refund request?');
+            if (!ans) return false;
+            $.ajax({ type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json", url: "/Finance/RefundRequest/UndoRefundRequest",
+                data: "{'refundRequestId':'" + refundRequestId + "'}",
+                success: function (result) {
+                    //debugger;
+                    alert(result.Message);
+                    if (result.IsSuccessful)
+                        window.location.reload();
+                },
+                error: function (a, b, c) {
+                    //debugger;
+                    if (a.status == 401) {
+                        alert('You do not have the permission for removing refund request!');
+                    }
+                    else
+                        alert("Some error occured while removing refund request.");
+                }
+            });
+        }
+    </script>
+}

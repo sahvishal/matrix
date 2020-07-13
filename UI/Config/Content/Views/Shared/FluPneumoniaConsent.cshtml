@@ -1,0 +1,417 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical.ViewModels
+@model FluVaccinationConsentViewModel
+@{
+    Layout = null;
+    var settings = IoC.Resolve<ISettings>();
+
+}
+<style type="text/css">
+    .fluconsentInfo .row-div {
+        float: left;
+        width: 95%;
+        margin-bottom: 5px;
+    }
+
+    .fluconsentInfo input[type="text"] {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .left-float {
+        float: left;
+    }
+
+    .vactiantion table tr th.Question,
+    .vactiantion table tr td.Question {
+        width: 70%;
+    }
+
+    .vactiantion table tr th.yes,
+    .vactiantion table tr td.yes,
+    .vactiantion table tr th.no,
+    .vactiantion table tr td.no {
+        width: 15%;
+    }
+
+    .vactiantion table tr th {
+        background-color: gray;
+    }
+
+    .vactiantion table tr th,
+    .vactiantion table tr td {
+        border: solid 1px black;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .clinical-use table tr th {
+        background-color: gray;
+    }
+
+    .clinical-use table tr th,
+    .clinical-use table tr td {
+        border: solid 1px black;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 10px;
+    }
+
+    .fluconsentInfo {
+        font-size: 18px;
+        margin: 0px auto;
+    }
+
+        .fluconsentInfo input {
+            font-size: 18px;
+        }
+</style>
+<div class="fluconsentInfo">
+    <div class="row-div" style="height: 120px; float: left; clear: both;">
+        <div style="margin-left: 40px;float: left;clear: both;">
+            <img src="@settings.MediumLogo" />
+        </div>
+        <div style="margin-top: 40px; text-align: center; font-size: 32px; color: #330170; margin-bottom: 10px;clear: both;">
+            <span style="/*border-bottom: solid 2px #00b050;*/font-weight: bold;">FLU VACCINE CONSENT FORM</span>
+            @*<span style="border-bottom: solid 2px #00b050;font-weight: bold;">FLU / PNEUMOCOCCAL VACCINE CONSENT FORM</span>*@
+        </div>
+    </div>
+
+    <div class="row-div" style="padding-top: 5px; clear: both; margin-left: 15px; ">
+        <div class="row-div">
+            <div style="float: left; width: 48%;">
+                <div class="left-float" style="width: 120px">Today's Date:</div>
+                <div class="left-float" style="width: 250px">
+                    <input type="text" style="width: 95%" readonly="readonly" value="@(DateTime.Now.Date.ToString("MM/dd/yyyy"))" />
+                </div>
+            </div>
+
+            <div style="float: left;width: 48%;">
+                <div class="left-float" style="width: 110px;">Date of Birth:</div>
+                <div class="left-float" style="width: 250px">
+                    <input type="text" style="width: 95%" readonly="readonly" value="@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("MM/dd/yyyy") : string.Empty)" />
+                </div>
+            </div>
+        </div>
+        <div class="row-div">
+            <div class="left-float" style="width: 48%;">
+                <div class="left-float" style="width: 120px">First Name:</div>
+                <div class="left-float" style="width: 250px">
+                    <input type="text" style="width: 95%" readonly="readonly" value="@Model.CustomerName.FirstName" />
+                </div>
+            </div>
+
+            <div class="left-float" style="width: 48%;">
+                <div class="left-float" style="width: 110px;">Last Name:</div>
+                <div class="left-float" style="width: 250px">
+                    <input type="text" style="width: 95%" readonly="readonly" value="@Model.CustomerName.LastName" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*<div class="row-div" style="display: none;">
+            <div style="margin-right: 40px; text-align: center; font-size: 18px; color: #00B050; margin-bottom: 5px; ">
+                <b><span style="border-bottom: solid 1px #00b050">VACCINE HEALTH HISTORY QUESTIONS </span></b>
+            </div>
+        </div>*@
+    <div class="row-div vactiantion" style="text-align: center;width: 813px; border: 1px solid black;">
+        <table style="border-collapse: collapse;width: 100%; font-size: 18px;">
+            <tr style="color: #330170;">
+                <th class="Question">Question</th>
+                <th class="yes">Yes</th>
+                <th class="no">No</th>
+            </tr>
+            <tr>
+                <td class="Question">
+                    <div style="float: left; text-align: left;clear: both;margin-left: 10px;">
+                        Have you received the current flu vaccination for this year?
+                    </div>
+                    <div style="float: left; clear: both;margin-left: 10px;">
+                        If yes, when was your last vaccination? <input type="text" questionid="2" style="width:100px; border-bottom: 1px solid #000000;" />
+                    </div>
+                </td>
+                <td class="yes"><input type="radio" name="questionid-1" value="true" style="height:20px; width:20px;" /></td>
+                <td class="no"><input type="radio" name="questionid-1" value="false" style="height:20px; width:20px;" /></td>
+            </tr>
+            <tr>
+                <td class="Question">
+                    <div style="float: left; text-align: left;clear: both;margin-left: 10px;">
+                        Have you ever had an allergic or serious reaction to a past flu or other vaccination?
+                    </div>
+                    <div style="float: left;clear: both;margin-left: 10px;">
+                        If YES, please explain: <span questionid="4"></span>
+                    </div>
+                </td>
+                <td class="yes"><input type="radio" name="questionid-3" value="true" style="height:20px; width:20px;" /></td>
+                <td class="no"><input type="radio" name="questionid-3" value="false" style="height:20px; width:20px;" /></td>
+            </tr>
+            <tr>
+                <td class="Question">
+                    <div style="float: left; text-align: left;clear: both;margin-left: 10px;padding-top: 5px;padding-bottom: 5px;">
+                        Have you ever had a severe allergic reaction to eggs, egg products, chickens, or chicken feathers?
+                    </div>
+                </td>
+                <td class="yes"><input type="radio" name="questionid-5" value="true" style="height:20px; width:20px;" /></td>
+                <td class="no"><input type="radio" name="questionid-5" value="false" style="height:20px; width:20px;" /></td>
+            </tr>
+            <tr>
+                <td class="Question">
+                    <div style="float: left; text-align: left;clear: both;margin-left: 10px;padding-top: 5px;padding-bottom: 5px;">
+                        Have you been diagnosed with Guillain-Barre Syndrome or a persistent neurological illness?
+                    </div>
+                </td>
+                <td class="yes"><input type="radio" name="questionid-6" value="true" style="height:20px; width:20px;" /></td>
+                <td class="no"><input type="radio" name="questionid-6" value="false" style="height:20px; width:20px;" /></td>
+            </tr>
+            <tr>
+                <td class="Question">
+                    <div style="float: left; text-align: left;clear: both;margin-left: 10px;padding-top: 5px;padding-bottom: 5px;">
+                        Do you feel ill today or do you have a fever?
+                    </div>
+                </td>
+                <td class="yes"><input type="radio" name="questionid-7" value="true" style="height:20px; width:20px;" /></td>
+                <td class="no"><input type="radio" name="questionid-7" value="false" style="height:20px; width:20px;" /></td>
+            </tr>
+            <tr>
+                <td class="Question">
+                    <div style="float: left; text-align: left;clear: both;margin-left: 10px;padding-top: 5px;padding-bottom: 5px;">
+                        Do you have an allergy to latex?
+                    </div>
+                </td>
+                <td class="yes"><input type="radio" name="questionid-8" value="true" style="height:20px; width:20px;" /></td>
+                <td class="no"><input type="radio" name="questionid-8" value="false" style="height:20px; width:20px;" /></td>
+            </tr>
+            <tr>
+                <td class="Question">
+                    <div style="float: left; text-align: left;clear: both;margin-left: 10px;padding-top: 5px;padding-bottom: 5px;">
+                        Do you take a daily blood thinner?
+                    </div>
+                </td>
+                <td class="yes"><input type="radio" name="questionid-9" value="true" style="height:20px; width:20px;" /></td>
+                <td class="no"><input type="radio" name="questionid-9" value="false" style="height:20px; width:20px;" /></td>
+            </tr>
+            <tr>
+                <td class="Question">
+                    <div style="float: left; text-align: left;clear: both;margin-left: 10px;padding-top: 5px;padding-bottom: 5px;">
+                        If you are female, are you pregnant?
+                    </div>
+                </td>
+                <td class="yes"><input type="radio" name="questionid-10" value="true" style="height:20px; width:20px;" /></td>
+                <td class="no"><input type="radio" name="questionid-10" value="false" style="height:20px; width:20px;" /></td>
+            </tr>
+        </table>
+        <div style="float: left; width: 100%; margin: 25px 0 25px 2px; padding: 10px; text-align: center;">
+            <div style="margin-right: 40px; margin-top: 3px; text-align: center;color: #330170; margin-bottom: 3px;clear: both; font-size: 32px;">
+                <b><span>INFLUENZA/FLU VACCINE </span></b>
+            </div>
+            <div style="margin: 0 auto; font-size: 22px; width: 434px;">
+                <div style="float: left; clear:both;">
+                    <div style="float: left; width: 10px; height: 10px; text-align: center; margin-right: 20px; "><input type="radio" name="questionid-11" value="true" style="height:20px; width:20px" /></div>
+                    <b>I REQUEST</b> to receive the vaccination.
+                </div>
+                <div style="float: left; clear:both;">
+                    <div style="float: left; width: 10px; height: 10px; text-align: center; margin-right: 20px; "><input type="radio" name="questionid-11" value="false" style="height:20px; width:20px" /></div>
+                    <b>I DECLINE</b> to receive the vaccination.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*<div style="float: left; width: 400px; margin-left: 15px; border: 1px solid black; padding: 10px; height: 195px;">
+            <div style="margin-right: 40px; margin-top: 3px; text-align: center;color: #00B050; margin-bottom: 3px;clear: both; ">
+                <b><span style="border-bottom: solid 1px #00b050">PNEUMOCOCCAL/PNEUMONIA VACCINE</span></b>
+            </div>
+            <div style="float: left; clear:both;">
+                <div style="float: left; width: 10px; height: 10px; text-align: center; color: #00B050; border: solid 3px #00b050; margin-right: 10px; ">&nbsp;</div>
+                I understand the risks and benefits of the pneumococcal vaccinations as described and at this time I <b>REQUEST</b> to receive the vaccination.
+            </div>
+            <div style="clear:both;">
+                <div style="float: left; width: 10px; height: 10px; text-align: center; color: #00B050; border: solid 3px #00b050; margin-right: 10px; ">&nbsp;</div>
+                I understand the risks and benefits of the pneumococcal vaccinations as described and at this time I <b>DECLINE</b> to receive the vaccination.
+            </div>
+        </div>*@
+
+    <div class="row-div" style="margin-top: 20px; padding-top: 5px; padding-bottom: 5px; width: 813px;">
+        I have received, as of the event date listed above, and have carefully read and fully understand the contents of the CDC Inactivated Influenza Vaccine Information Statement version dated 08/07/2015. I have carefully reviewed this form and have had the opportunity to ask questions to my satisfaction prior to signing. I attest that I have no known contraindications to administration of the flu vaccine. I agree to remain at the event for at least 15 minutes after vaccination for supervision. I understand the benefits and risks of influenza vaccine and hereby consent and request that Matrix Medical Network Mobile administer 0.5mL of the inactivated influenza.
+    </div>
+
+    <div class="row-div" style="padding-left: 10px;">
+        <div style="float: left; width: 70%;">Signature of member or legal guardian: <img src="@Model.SignatureImageUrl" style="height: 90px; vertical-align: middle;" /> </div>
+        <div style="float: left; width: 25%; line-height: 90px;">Date:&nbsp; <span>@Model.ConsentSignedDate</span> </div>
+    </div>
+
+    <div class="row-div clinical-use" style="page-break-before: always; padding-left: 20px; padding-right: 20px; padding-top: 5px; width: 813px; float: left; clear: both; margin-top: 10px;">
+        <div style="margin-right: 40px; margin-bottom: 5px;clear: both; ">
+            <div style="text-align: center; border-bottom: 1px solid black; font-size: 22px;">
+                <span style="color: #330170; font-weight: bold;">FOR CLINIC USE ONLY </span>
+            </div>
+
+            <table style="border-collapse: collapse;width: 790px;margin-top: 10px;">
+                <tr style="font-size: 22px;">
+                    <th colspan="2" style="border: 1px solid black;background-color: gray; color:#330170; padding: 3px">
+                        <span style="font-size: 18px;">0.5 mL IM INFLUENZA VIRUS VACCINE ADMINISTERED</span>
+                    </th>
+                    @*<th colspan="2" style="border: 1px solid black; background-color: gray; padding: 3px">
+                            <span style="font-size: 16px;">PNEUMOCOCCAL VACCINE</span>
+                        </th>*@
+                </tr>
+                <tr>
+                    <td style="width: 40%; border: 1px solid black;">
+                        Event Number:
+                    </td>
+                    <td style="width: 60%; border: 1px solid black;">@Model.EventId</td>
+                    @*<td style="width: 20%; border: 1px solid black;">Date / Time</td>
+                        <td style="width: 30%; border: 1px solid black;"></td>*@
+                </tr>
+                <tr>
+                    <td style="width: 40%; border: 1px solid black;">
+                        Date / Time:
+                    </td>
+                    <td style="width: 60%; border: 1px solid black;">@Model.EventDate.ToString("MM/dd/yyyy") <span questionid="21"></span></td>
+                    @*<td style="width: 20%; border: 1px solid black;">Date / Time</td>
+                        <td style="width: 30%; border: 1px solid black;"></td>*@
+                </tr>
+                @*<tr>
+                     <td style="width: 40%; border: 1px solid black;">
+                         Manufacturer Number:
+                     </td>
+                     <td style="width: 60%; border: 1px solid black;"><input type="text" questionid="12" style="border:none;" /></td>
+                    <td style="width: 20%; border: 1px solid black;">Manufacturer</td>
+                         <td style="width: 30%; border: 1px solid black;"></td>
+                                </tr>*@
+                               @* <tr>
+                    <td style="width: 40%; border: 1px solid black;">
+                        Lot/Expiration Date:
+                    </td>
+                    <td style="width: 60%; border: 1px solid black;"><input type="text" questionid="13" style="border:none;" /></td>
+                    <td style="width: 20%; border: 1px solid black;">Lot / Expiration</td>
+                        <td style="width: 30%; border: 1px solid black;"></td>
+                                </tr>*@
+                <tr>
+                    <td style="width: 40%; border: 1px solid black;">
+                        Injection Site (circle one):
+                    </td>
+                    <td style="width: 60%; border: 1px solid black;">
+                        <span>Right Deltoid <input type="radio" name="questionid-14" value="right" style="height:20px; width:20px" /></span>
+                        <span style="margin-left: 50px;">Left Deltoid <input type="radio" name="questionid-14" value="left" style="height:20px; width:20px" /></span>
+                    </td>
+                    @*<td style="width: 20%; border: 1px solid black;">Site</td>
+                        <td style="width: 30%; border: 1px solid black;"></td>*@
+                </tr>
+                <tr>
+                    <td style="width: 40%; border: 1px solid black;">
+                        Clinical Provider's Name:
+                    </td>
+                    <td style="width: 60%; border: 1px solid black;"><input type="text" questionid="15" style="border:none;" /></td>
+                    @*<td style="width: 20%; border: 1px solid black;">Tech Name</td>
+                        <td style="width: 30%; border: 1px solid black;"></td>*@
+                </tr>
+                <tr>
+                    <td style="width: 40%; border: 1px solid black;">
+                        Clinical Provider's Signature:
+                    </td>
+                    <td style="width: 60%; border: 1px solid black;">
+                        @if (!string.IsNullOrWhiteSpace(Model.ClinicalProviderSignatureImageUrl))
+                        {
+                            <img src="@Model.ClinicalProviderSignatureImageUrl" style="width: 220px;" />
+                        }
+                    </td>
+                    @*<td style="width: 20%; border: 1px solid black;">Tech Signature</td>
+                        <td style="width: 30%; border: 1px solid black;"></td>*@
+                </tr>
+            </table>
+        </div>
+
+        <div class="row-div" style="margin-top: 20px; padding-top: 5px; padding-bottom: 5px; width: 100%">
+            <div style="text-align: center; font-size: 22px; ">
+                <span style="color: #330170; font-weight: bold;">REASON INFLUENZA VACCINATION NOT ADMINISTERED</span>
+            </div>
+            <div style="padding-top:10px; padding-bottom: 10px; width: 100%;float: left;">
+                <div style="float: left; width: 150px;">
+                    <input type="radio" name="questionid-16" value="true" style="height:20px; width:20px;" /> Yes <input type="radio" name="questionid-16" value="false" style="margin-left:15px; height:20px; width:20px;" /> No
+                </div>
+                <div style="margin-left: 5px; float: left; width: 650px;">
+                    History of Guillain-Barre Syndrome. Advised to consult with PCP about getting the flu vaccine.
+                </div>
+            </div>
+            <div style="padding-top:10px; padding-bottom: 10px; width: 100%;float: left;">
+                <div style="float: left; width: 150px;">
+                    <input type="radio" name="questionid-17" value="true" style="height:20px; width:20px;" /> Yes
+                    <input type="radio" name="questionid-17" value="false" style="margin-left:15px; height:20px; width:20px;" /> No
+                </div>
+                <div style="margin-left: 5px; float: left; width: 650px;">
+                    <span>History of severe egg, chicken, or chicken feathers allergic reaction. Advised to consult with PCP about getting the flu vaccine.</span>
+                </div>
+            </div>
+            <div style="padding-top:10px; padding-bottom: 10px; width: 100%;float: left;">
+                <div style="float: left; width: 150px;">
+                    <input type="radio" name="questionid-18" value="true" style="height:20px; width:20px;" /> Yes
+                    <input type="radio" name="questionid-18" value="false" style="margin-left:15px; height:20px; width:20px;" /> No
+                </div>
+                <div style="margin-left: 5px; float: left; width: 650px;">
+                    <span>History of severe reaction to influenza vaccine in the past. Advised to consult with PCP about getting the flu vaccine.</span>
+                </div>
+            </div>
+            <div style="padding-top:10px; padding-bottom: 10px; width: 100%;float: left;">
+                <div style="float: left; width: 150px;">
+                    <input type="radio" name="questionid-19" value="true" style="height:20px; width:20px;" /> Yes
+                    <input type="radio" name="questionid-19" value="false" style="margin-left:15px; height:20px; width:20px;" /> No
+                </div>
+                <div style="margin-left: 5px; float: left; width: 650px;">
+                    <span>Had influenza vaccine already this flu season.</span>
+                    <span>Date:</span>&nbsp;<input type="text" questionid="20" style="border-bottom:1px solid black;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    function setQuestionStatus(questionId, answer, questionType) {
+
+        if (questionType == '@CheckListQuestionType.CheckBox') {
+            var checkBox = $(".fluconsentInfo").find("input[type='checkbox'][questionid=" + questionId + "]");
+            if (answer.toLowerCase() == 'true') {
+                $(checkBox).attr("checked", true);
+            }
+        } else if (questionType == '@CheckListQuestionType.Radio') {
+            if (answer !== '') {
+                var values = answer.toLowerCase();
+                var radio = $(".fluconsentInfo").find("input[name='questionid-" + questionId + "'][value=" + values + "]");
+                $(radio).attr("checked", true);
+            }
+        } else if (questionType == '@CheckListQuestionType.TextBox') {
+            var textBox = $(".fluconsentInfo").find("input[type='text'][questionid='" + questionId + "']");
+            if (textBox.length > 0) {
+                $(textBox).val(answer);
+            } else {
+                var span = $(".fluconsentInfo").find("span[questionid='" + questionId + "']");
+                if (span.length > 0)
+                    $(span).text(answer);
+            }
+        }
+    }
+
+    $(document).ready(function () {
+
+        @if (Model != null && !Model.Answers.IsNullOrEmpty())
+        {
+            foreach (var item in Model.Answers)
+            {
+                if (item.Type != CheckListQuestionType.None)
+                {
+                    var answer = !string.IsNullOrEmpty(item.Answer) ? item.Answer.Replace("'", "\\\'").Replace("\"", "\\\"").Replace("\r", " ").Replace("\n", "{newlinefeed}") : "";
+                    <text>
+        setQuestionStatus("@item.QuestionId", "@Html.Raw(answer)", "@item.Type")
+        </text>
+                }
+            }
+        }
+    });
+</script>

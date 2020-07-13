@@ -1,0 +1,39 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.CallQueueSchedulingReportFilter
+<h2>
+    Search Records 
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>From</b>
+        </div>
+        @Html.TextBoxFor(m => m.DateFrom, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>To</b>
+        </div>
+        @Html.TextBoxFor(m => m.DateTo, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Health Plan
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:100%;" })
+    </div>
+    
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Call Queue
+        </div>
+        @Html.DropDownListFor(m => m.CallQueueId, DropDownHelper.GetHealthPlanCallQueueForReport(), new { @style = "width:100%;" })
+    </div>
+</div>
+
+<div style="padding-left: 5px; overflow: hidden;">
+
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "CallQueueSchedulingReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>

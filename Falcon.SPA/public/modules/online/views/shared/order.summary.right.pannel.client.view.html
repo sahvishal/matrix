@@ -1,0 +1,130 @@
+﻿<div class="order-summary-lg">
+    <div class="clearfix">
+        <h3 class="no-margin order-text text-uppercase">Your Summary</h3>
+        <div class="col-xs-12 top-buffer-10 no-padding-left">
+            <div class="col-xs-4 no-padding text-right">
+                <p class="no-margin semibold">Location :</p>
+            </div>
+            <div class="col-xs-8 no-padding-right">
+                <p class="location-name no-margin" ng-if="orderSummary.EventCustomerOrderSummaryModel==null || orderSummary.EventCustomerOrderSummaryModel.Host==null">NA</p>
+                <p class="location-name no-margin" ng-if="orderSummary.EventCustomerOrderSummaryModel!=null && orderSummary.EventCustomerOrderSummaryModel.Host != null" ng-bind="orderSummary.EventCustomerOrderSummaryModel.Host"></p>
+                <div ng-if="orderSummary.EventCustomerOrderSummaryModel != null && orderSummary.EventCustomerOrderSummaryModel.Address != null">
+                    <p class="location-address no-margin">
+                        <div>
+                            <span ng-bind="orderSummary.EventCustomerOrderSummaryModel.Address.StreetAddressLine1"></span>,
+                            <span ng-if="orderSummary.EventCustomerOrderSummaryModel.Address.StreetAddressLine2 != null && orderSummary.EventCustomerOrderSummaryModel.Address.StreetAddressLine2 !=''">
+                            <span ng-bind="orderSummary.EventCustomerOrderSummaryModel.Address.StreetAddressLine2"></span>,
+                            </span>
+                            <span ng-bind="orderSummary.EventCustomerOrderSummaryModel.Address.City"></span>,
+                        </div>
+                        <div>
+                            <span ng-bind="orderSummary.EventCustomerOrderSummaryModel.Address.State"></span>,
+                            <span ng-bind="orderSummary.EventCustomerOrderSummaryModel.Address.Country"></span>-
+                            <span ng-bind="orderSummary.EventCustomerOrderSummaryModel.Address.ZipCode"></span>
+                        </div>
+                    </p>
+                </div>
+                <div ng-if="orderSummary.EventCustomerOrderSummaryModel==null || orderSummary.EventCustomerOrderSummaryModel.Address==null">
+                    <p class="location-address no-margin">NA</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 no-padding-left">
+            <div class="col-xs-4 no-padding text-right">
+                <p class="no-margin semibold">Date :</p>
+            </div>
+            <div class="col-xs-8 no-padding-right">
+                <span ng-if="orderSummary.EventCustomerOrderSummaryModel==null || orderSummary.EventCustomerOrderSummaryModel.EventDate ==null">NA</span>
+                <span ng-if="orderSummary.EventCustomerOrderSummaryModel!=null && orderSummary.EventCustomerOrderSummaryModel.EventDate !=null">
+                    {{orderSummary.EventCustomerOrderSummaryModel.EventDate | date:'MMMM dd' }}<sup>{{dateSuffix}}</sup> {{orderSummary.EventCustomerOrderSummaryModel.EventDate | date:'yyyy' }}
+                </span>
+            </div>
+        </div>
+        <div class="col-xs-12 no-padding-left">
+            <div class="col-xs-4 no-padding text-right">
+                <p class="no-margin semibold">Time :</p>
+            </div>
+            <div class="col-xs-8 no-padding-right">
+                <span class="clearfix" ng-if="orderSummary.EventCustomerOrderSummaryModel!=null && orderSummary.EventCustomerOrderSummaryModel.EventDate !=null">
+                    <span ng-if="orderSummary.EventCustomerOrderSummaryModel!=null && orderSummary.EventCustomerOrderSummaryModel.AppointmentTime !=null" ng-bind="orderSummary.EventCustomerOrderSummaryModel.AppointmentTime | date:'hh:mm a'"></span>
+                    <span ng-if="orderSummary.EventCustomerOrderSummaryModel==null || orderSummary.EventCustomerOrderSummaryModel.AppointmentTime ==null">NA</span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+        <div class="order-box-height-lg col-xs-12">
+            <h4 class="no-margin order-text text-uppercase top-buffer-20">Your Screening Package/Tests</h4>
+            <div class="col-lg-12">
+                <p class="top-buffer-6 bottom-buffer-0 text-primary" ng-if="orderSummary.EventCustomerOrderSummaryModel==null || (orderSummary.EventCustomerOrderSummaryModel.Package ===null && orderSummary.EventCustomerOrderSummaryModel.AdditionalTests ==null)">NA</p>
+                <div ng-if="orderSummary.EventCustomerOrderSummaryModel!=null && (orderSummary.EventCustomerOrderSummaryModel.Package !=null || orderSummary.EventCustomerOrderSummaryModel.AdditionalTests !=null)">
+                    <p ng-if="orderSummary.EventCustomerOrderSummaryModel.Package !=null" class="top-buffer-6 bottom-buffer-0 text-primary">
+                        <span>{{ orderSummary.EventCustomerOrderSummaryModel.Package.FirstValue}}</span>
+                        <span class="price-text"><b>{{ orderSummary.EventCustomerOrderSummaryModel.Package.SecondValue | currency}}</b></span>
+                    </p>
+                    <ul class="summary-list" ng-if="orderSummary.EventCustomerOrderSummaryModel.PackageTest !=null">
+                        <li ng-repeat="packageTest in orderSummary.EventCustomerOrderSummaryModel.PackageTest" ng-bind="packageTest"></li>
+                    </ul>
+
+                    <p ng-if="orderSummary.EventCustomerOrderSummaryModel.AdditionalTests !=null" class="top-buffer-6 bottom-buffer-0 text-primary" ng-repeat="test in orderSummary.EventCustomerOrderSummaryModel.AdditionalTests">
+                        <span>{{test.FirstValue}}</span>
+                        <b class="price-text">{{test.SecondValue | currency}}</b>
+                    </p>
+                </div>
+                <div ng-if="orderSummary.EventCustomerOrderSummaryModel !=null && orderSummary.EventCustomerOrderSummaryModel.Product !=null">
+                    <p class="top-buffer-6 bottom-buffer-0 text-primary text-nowrap" ng-repeat="product in orderSummary.EventCustomerOrderSummaryModel.Product">
+                        {{product.FirstValue}} - Yes
+                        <b class="price-text">{{product.SecondValue | currency}}</b>
+                    </p>
+                </div>
+                <div ng-if="orderSummary.EventCustomerOrderSummaryModel.ShippingOptionId !=null">
+                    <p class="top-buffer-6 bottom-buffer-0 text-primary" ng-if="orderSummary.EventCustomerOrderSummaryModel.ShippingOptionId > 0">
+                        <span>{{orderSummary.EventCustomerOrderSummaryModel.ShippingOption.FirstValue}}</span>
+                        <b class="price-text">{{orderSummary.EventCustomerOrderSummaryModel.ShippingOption.SecondValue | currency}}</b>
+                    </p>
+                    <p class="top-buffer-6 bottom-buffer-0 text-primary" ng-if="orderSummary.EventCustomerOrderSummaryModel.ShippingOptionId <= 0">Result - Online <b class="price-text">{{0.00 | currency}}</b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="summary-total top-buffer-20 clearfix" ng-if="orderSummary.EventCustomerOrderSummaryModel !== null">
+        <table class="table-look">
+            <tbody>
+                <tr>
+                    <td>Total Price</td>
+                    <td class="text-right price-text"><b ng-bind="orderSummary.EventCustomerOrderSummaryModel.TotalPrice | currency"></b></td>
+                </tr>
+                <tr ng-hide="hidePaymentDetail">
+                    <td>Discount</td>
+                    <td class="text-right price-text">(&nbsp;<b ng-bind="orderSummary.EventCustomerOrderSummaryModel.DiscountAmount | currency"></b>&nbsp;)</td>
+                </tr>
+                <tr ng-hide="hidePaymentDetail">
+                    <td>Amount Due</td>
+                    <td class="text-right price-text"><b ng-bind="orderSummary.EventCustomerOrderSummaryModel.AmountDue | currency"></b></td>
+                </tr>               
+            </tbody>
+        </table>
+    </div>
+    <div class="bg-warning summary-total clearfix" ng-if="orderSummary.EventCustomerOrderSummaryModel === null">
+        <table class="table-look">
+            <tbody>
+                <tr>
+                    <td>Total Price</td>
+                    <td class="text-right price-text"><b ng-bind="0 | currency"></b></td>
+                </tr>
+                <tr>
+                    <td>Discount</td>
+                    <td class="text-right price-text">(&nbsp;<b ng-bind="0 | currency"></b>)&nbsp;)</td>
+                </tr>
+                <tr>
+                    <td>Amount Due</td>
+                    <td class="text-right price-text"><b ng-bind="0 | currency"></b></td>
+                </tr>
+                <tr>
+                    <td>Amount Paid:</td>
+                    <td class="text-right price-text"><b ng-bind="0 | currency"></b></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

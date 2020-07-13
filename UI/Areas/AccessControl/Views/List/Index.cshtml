@@ -1,0 +1,98 @@
+﻿@using System.Web.Mvc.Ajax
+@using System.Web.Mvc.Html
+@model Falcon.App.Core.ACL.ViewModel.RoleAccessControlObjectEditModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = Model.RoleName + " Access Control";
+}
+
+<style type="text/css">
+    .table > tbody > tr.acl-parentrow > th:last-child {
+        padding-right: 10px !important;
+    }
+</style>
+<div class="content">
+    <h1>@Model.RoleName Access Control</h1>
+    <div class="option-links">
+        <a href="/AccessControl/Roles">  Manage Roles </a>
+    </div>
+    @if (Model != null)
+    {
+        @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+    }
+    @using (Ajax.BeginForm("Edit", "List", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "permissionlist-container" }))
+    {
+        <div>
+            <div id="list-filter" style="padding: 5px 5px 10px 5px; margin-top: 15px;">
+                <div style="padding: 5px; padding-top:5px; overflow: hidden;">
+                    <div class="editor-column" style="padding-top: 10px; width: 40%;">
+                        <label class="checkbox"><input id="rolepermission-selectall" type="checkbox" />Click to Select / Deselect All</label>
+                    </div>
+                    <div class="editor-column" style="padding-top: 10px; width: 40%; float: right; text-align: right;">
+                        <div class="pull-right">
+                            @*<a href="#" id="rolepermission-reset" roleid="@Model.RoleId">Reset</a>*@
+                            <button type="submit" class="btn btn-info">Save</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="permissionlist-container" style="overflow-y: auto;" class="content margin-v-small">
+                    @Html.Partial("Edit", Model)
+                </div>
+                <div style="padding: 5px; padding-top:5px; overflow: hidden;">
+                    <div class="editor-column" style="padding-top: 10px; width: 40%; float: right; text-align: right;">
+                        <div class="pull-right">
+                            @*<a href="#" id="rolepermission-reset" roleid="@Model.RoleId">Reset</a>*@
+                            <button type="submit" class="btn btn-info">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $('#rolepermission-selectall').click(function () {
+        var isChecked = $(this).is(":checked");
+
+        var objects = $(".acl-parentrow input[type=checkbox]:not(disabled), .acl-childrow input[type=checkbox]");
+
+        objects.each(function () {
+            if (isChecked) {
+                var isDisabled = $(this).is(":disabled");
+                if (!isDisabled) {
+                    $(this).attr("checked", "checked");
+                }
+
+            } else {
+                isDisabled = $(this).is(":disabled");
+                if (!isDisabled) {
+                    $(this).removeAttr("checked");
+                }
+            }
+        });
+    });
+
+    $('#rolepermission-reset').click(function () {
+        var objects = $(".acl-parentrow input[type=checkbox]:not(disabled), .acl-childrow input[type=checkbox]");
+        objects.each(function () {
+            var isDisabled = $(this).is(":disabled");
+            if (!isDisabled) {
+                $(this).removeAttr("checked");
+            }
+        });
+    });
+
+    $('.selectBox').click(function () {
+        var isChecked = $(this).is(":checked");
+        $(this).parent().parent().parent().parent().find('.acl-parentrow input[type=checkbox]').attr('checked', isChecked);
+        var label = $(this).attr('data-lbl');
+        var selector = '[data-lbl=' + label + ']';
+        var list = $(selector);
+        if(list != undefined)
+            list.attr('checked', isChecked);
+        var ctrl = $(this);
+        if (!ctrl.hasClass('parentCheckBox'))
+            ctrl.closest(".parentCheckBoxRow").find(".parentCheckBox").attr('checked', true);
+
+    }); 
+</script>

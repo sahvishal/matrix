@@ -1,0 +1,194 @@
+﻿<div class="mainbodyouter" data-ng-controller="filledEventController" us-spinner spinner-key="online-spinner">
+    <div class="main-container border-default">
+        <!--Event Grid and Pager-->
+        <h4>
+            Customer Prospects Queue: {{selectedCategory.text}}
+        </h4>
+        <div>
+            <div class="row" style="padding-top: 10px;">
+                <div class="col-xs-12 col-md-10"><fill-event-criteria-view model="EventFilterCriteria" method="ClearData()"></fill-event-criteria-view></div>
+            </div>
+            <div id="list-filter" style="margin-top: 15px ">
+                <form name="filterEventForm" data-ng-submit="filterEvent(filterEventForm)" novalidate autocomplete="off">
+
+                    <h2> Filter Customer Prospects</h2>
+                    <div style="padding-left: 5px; overflow: hidden;">
+                        <div class="editor-column callQueueCustomer-Search-filter-19">
+                            <div class="small-text">Event Id: </div>
+                            <input type="text" class="small-text-box" name="EventId" placeholder="Event Id" ng-model="eventFilters.EventId" />
+                        </div>
+                        <div class="editor-column callQueueCustomer-Search-filter-19">
+                            <div class="small-text">Pod: </div>
+                            <input type="text" class="small-text-box" placeholder="Pod" name="Pod" ng-model="eventFilters.Pod" />
+                        </div>
+                        <div class="editor-column" style="padding-top: 10px; width: 40%; float: right; text-align:right;">
+                            <a href="" ng-disabled="isPosted" ng-click="ManageCategory()">Change Category</a>  | <a href="" ng-disabled="isPosted" ng-click="GoToFillEventList()" ng-show="showEventCatory">Event List</a> <span ng-show="showEventCatory">|</span>  <a href="" ng-disabled="isPosted" ng-click="clearFilter()">Clear</a> | <button type="submit" ng-disabled="isPosted">Search<i class="spin spin-right" ng-show="loader_filter"></i></button>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+            <div>
+                <paging-model model="PagingModel" url="GetEventByPageNumber(number)"></paging-model>
+                <table id="list-view" style="margin-top: 5px; margin-bottom: 5px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th class="event-list-date">Info</th>
+                            <th class="event-list-distance">Address</th>
+                            <th class="event-list-available">Date</th>
+                            <th class="event-list-available">Pod</th>
+                            <th class="text-center event-list-select">Booked/Total Slots</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="alt-row">
+                        <tr ng-repeat="event in EventList" ng-if="EventList != null && EventList.length >= 1">
+                            <td class="event-list-location">
+                                <span ng-bind="event.Id"></span>
+                            </td>
+                            <td class="col-lg-2">
+                                <span ng-bind="event.HostName"></span>
+                                <br />
+                                <img ng-if="event.RegistrationMode != RegistrationMode.Private" src="/App/Images/public-icon.gif" alt="Public" />
+                                <img ng-if="event.RegistrationMode == RegistrationMode.Private" src="/App/Images/private-icon.gif" alt="Private" />
+                                <span ng-if="event.EventType == EventType.Corporate">
+                                    | <img src="/App/Images/corporate_icon_buy.jpg" alt="Corporate" style="height: 16px;width: 16px;" />
+                                </span>
+                                <span ng-if="event.InvitationCode !=null && event.InvitationCode !=''">
+                                    Code: <span ng-bind="event.InvitationCode"></span><br />
+                                </span>
+                            </td>
+                            <td class="col-lg-3">
+                                <span ng-bind="event.HostAddress.StreetAddressLine1"></span>,
+                                <span ng-if="event.HostAddress.StreetAddressLine2 != null && event.HostAddress.StreetAddressLine2 != ''">
+                                    <span ng-bind="event.HostAddress.StreetAddressLine2"></span>,
+                                </span>
+                                <span ng-bind="event.HostAddress.City"></span>,<span ng-bind="event.HostAddress.State"></span>,<span ng-bind="event.HostAddress.Country"></span> - <span ng-bind="event.HostAddress.ZipCode"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="event.EventDate | date : 'MM/dd/yyyy'"></span>
+                            </td>
+                            <td>
+                                <span ng-repeat="pod in event.Pods" ng-bind="pod.SecondValue"></span>
+                            </td>
+                            <td class="text-center">
+                                <a id='Id_{{event.Id}}' href="javascript:void(0)" class="appointment-slots" custom-tool-tip tool-tip-header="Appointment Slots" tool-tip-container="appointment-slot-div">
+                                    <span ng-if="event.IsDynamicScheduling==true">Dynamic Scheduling</span>
+                                    <span ng-if="event.IsDynamicScheduling==false">{{event.BookedSlots}}/{{event.TotalAppointmentSlots}}</span>
+                                </a>
+                                <div class="appointment-slot-div qtip" style="width:300px; display: none;">
+                                    <div><b>Morning Slots: </b><span ng-bind="event.MorningAvailableSlots"></span> </div>
+                                    <div><b>Afternoon Slots: </b><span ng-bind="event.AfternoonAvailableSlots"></span> </div>
+                                    <div><b>Evening Slots: </b><span ng-bind="event.EveningAvailableSlots"></span> </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center no-margin">
+                                    <input class="btn btn-primary " type="button" name="event" value="Get Customers" ng-click="getCustomersByEvent(event)">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr ng-if="showNoEventInList == true">
+                            <td colspan="7">
+                                <h4>No data found</h4>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <paging-model model="PagingModel" url="GetEventByPageNumber(number)"></paging-model>
+            </div>
+
+        </div>
+        <!--Customer Grid and Pager-->
+        <div class="event-search-list-wrap customer-list" ng-show="showCustomers">
+            <paging-model model="PagingModel" url="GetPage(number)"></paging-model>
+            <table id="list-view" style="margin-top: 5px; margin-bottom: 5px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th ng-class="{ 'col-lg-2': showSmallColumns(), 'col-lg-3' : !showSmallColumns() }">Name</th>
+                        <th class="col-lg-2">Email</th>
+                        <th class="col-lg-2">Number</th>
+                        <th class="col-lg-2" ng-show="selectedCategory.Category === CallQueueCategory.Upsell || selectedCategory.Category === CallQueueCategory.Confirmation">Event Details</th>
+                        <th ng-class="{ 'col-lg-2': showSmallColumns(), 'col-lg-3' : !showSmallColumns() }">Call History</th>
+                        <th class="col-lg-2" ng-show="selectedCategory.Category === CallQueueCategory.EasiestToConvertProspect">Tag</th>
+                        <th class="col-lg-2 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="alt-row">
+                    <tr ng-repeat="customer in data.Customers" ng-show="data.Customers != null && data.Customers.length > 0">
+                        <td ng-class="{ 'col-lg-2': showSmallColumns(), 'col-lg-3' : !showSmallColumns() }">
+                            <span class="location-name no-margin host-name-transfrom" ng-bind="customer.FirstName + ' ' + customer.LastName"></span>
+                            <br />
+                            <b>Gender: </b> <span ng-bind="customer.Gender===GenderEnum.Unspecified ? 'Unspecified' : customer.Gender===GenderEnum.Male ? 'Male' : 'Female' "></span>
+                            <br />
+                            <b>Dob:</b><span ng-if="customer.DateOfBirth ===null">N/A</span><span ng-if="customer.DateOfBirth !==null" ng-bind="customer.DateOfBirth | date: 'MM/dd/yyyy'"></span><br />
+
+                            <b>Created On: </b><span ng-if="customer.CreatedOn !==null" ng-bind="customer.CreatedOn | date: 'MM/dd/yyyy'"></span>
+                        </td>
+
+                        <td class="col-lg-2">
+                            <span ng-if="customer.Email ==null">N/A</span><b><span ng-if="customer.Email !=null" ng-bind="customer.Email"></span></b>
+                        </td>
+
+                        <td class="col-lg-2">
+                            <div ng-if="customer.CustomerId<=0">
+                                <span ng-show="customer.CallBackPhoneNumber == null">N/A</span>
+                                <span class="event-day no-margin" ng-bind="customer.CallBackPhoneNumber.FormatPhoneNumber"></span>
+                            </div>
+                            <div ng-if="customer.CustomerId > 0">
+                                <div ng-if="customer.CallBackPhoneNumber !=null">
+                                    <b>Home:</b><span class="event-day no-margin" ng-bind="customer.CallBackPhoneNumber.FormatPhoneNumber"></span>
+                                </div>
+                                <div ng-if="customer.MobilePhoneNumber !=null">
+                                    <b>Mobile:</b><span class="event-day no-margin" ng-bind="customer.CallBackPhoneNumber.FormatPhoneNumber"></span>
+                                </div>
+                                <div ng-if="customer.OfficePhoneNumber != null">
+                                    <b>Office:</b><span class="event-day no-margin" ng-bind="customer.CallBackPhoneNumber.FormatPhoneNumber"></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-lg-2" ng-show="selectedCategory.Category === CallQueueCategory.Upsell || selectedCategory.Category === CallQueueCategory.Confirmation">
+                            <b>Id: </b>{{customer.EventId}}<br />
+                            <b>Date: </b>{{customer.EventDate |  date: 'MM/dd/yyyy' }}<br />
+                            {{customer.HostName}}
+                            <span ng-bind="customer.EventLocation.StreetAddressLine1"></span>,
+                            <span ng-if="customer.EventLocation.StreetAddressLine2 != null && customer.EventLocation.StreetAddressLine2 != ''">
+                                <span ng-bind="customer.EventLocation.StreetAddressLine2"></span>,
+                            </span>
+                            <span ng-bind="customer.EventLocation.City"></span>,
+                            <span ng-bind="customer.EventLocation.State"></span>,
+                            <span ng-bind="customer.EventLocation.Country"></span> - <span ng-bind="customer.EventLocation.ZipCode"></span>
+                        </td>
+                        <td ng-class="{ 'col-lg-2': showSmallColumns(), 'col-lg-3' : !showSmallColumns() }">
+                            <div class="event-distance no-margin" ng-if="customer.CallHistory == null"> No Previous Calls</div>
+                            <div class="event-distance no-margin" ng-if="customer.CallHistory != null">
+                                <a class="call-history link-button" custom-tool-tip tool-tip-header="Call History" tool-tip-container="call-div">{{customer.CallHistory.length}} Previous Calls</a>
+                                <div class="call-div qtip" style="width:300px; display: none;">
+                                    <div ng-repeat="history in customer.CallHistory" class="callhistory-notes-border" ng-class="{ 'callhistory-notes-pading': $index > 0 }">
+                                        <div> On <span ng-bind="history.DateCreated | date: 'MM/dd/yyyy' "></span> @ <span ng-bind="history.DateCreated | date: 'shortTime' "></span></div>
+                                        <div ng-if="history.Notes != null">
+                                            <div><b>Notes:</b></div>
+                                            <div ng-repeat="item in history.Notes" ng-bind="item.Note"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-lg-2" ng-show="selectedCategory.Category === CallQueueCategory.EasiestToConvertProspect">{{customer.Tag}}</td>
+                        <td class="col-lg-2 text-center">
+                            <a href="javascript:void(0)" ng-disabled="isPosted" ng-click="StartOutboundCall(customer)" ng-hide="customer.CallQueueCustomerId==callingCustomer">Start Call</a>
+                            <a href="javascript:void(0)" ng-disabled="isPosted" ng-show="customer.CallQueueCustomerId==callingCustomer"><i class="spin"></i></a>
+                        </td>
+
+                    </tr>
+                    <tr ng-hide="data.Customers != null && data.Customers.length > 0">
+                        <td colspan="7" class="text-center"><h4>No Records Found!</h4></td>
+                    </tr>
+                </tbody>
+            </table>
+            <paging-model model="PagingModel" url="GetPage(number)"></paging-model>
+        </div>
+
+    </div>
+</div>

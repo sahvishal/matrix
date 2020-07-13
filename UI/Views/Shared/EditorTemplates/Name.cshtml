@@ -1,0 +1,27 @@
+﻿@model Falcon.App.Core.ValueTypes.Name
+
+<strong>Name:</strong>
+<div style="overflow:hidden;margin-bottom:5px;">
+ 
+    <div class="editor-column">
+        @Html.TextBoxFor(m => m.FirstName)
+        <div class="small-text">
+            @Html.LabelFor(m => m.FirstName) @Html.ValidationMessageFor(m => m.FirstName)
+         </div>
+    </div>
+
+    <div class="editor-column">
+        @Html.TextBoxFor(m => m.LastName) 
+        <div class="small-text">
+            @Html.LabelFor(m=> m.LastName) @Html.ValidationMessageFor(m => m.LastName)           
+        </div>
+    </div>
+
+    <div class="editor-column">
+        @Html.TextBoxFor(m => m.MiddleName)
+        <div class="small-text">
+            @Html.LabelFor(m=> m.MiddleName) @Html.ValidationMessageFor(m => m.MiddleName)
+        </div>
+    </div>        
+</div>
+

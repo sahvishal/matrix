@@ -1,0 +1,215 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Extensions
+@model ChaperoneFormViewModel
+@{
+    Layout = null;
+
+    var settings = IoC.Resolve<ISettings>();
+}
+<style type="text/css">
+    .full-width {
+        float: left;
+        width: 90%;
+        margin-top: 5px;
+    }
+
+    .threeColmn-width {
+        float: left;
+        width: 200px;
+    }
+
+    .bold-underline {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .underline {
+        text-decoration: underline;
+    }
+
+    .row-margin {
+        margin-top: 3px;
+        margin-bottom: 2px;
+        padding-left: 20px;
+    }
+
+    .healthplan-chaperonForm ul li {
+        margin-left: 0;
+        padding-left: 15px;
+    }
+
+    .healthplan-chaperonForm ul {
+        margin-left: 0;
+        padding-left: 15px;
+    }
+
+    .healthplan-chaperonForm input {
+        font-size: 11.5pt;
+        font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+    }
+
+    .healthplan-chaperonForm {
+        font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+        font-size: 11.5pt;
+    }
+    .healthplan-chaperonForm input[type='checkbox']{
+        margin-left:0;
+    }
+</style>
+
+<div id="info" class="healthplan-chaperonForm" style="float: left; width: 860px;  margin-top: 70px; font-size: 17px; line-height:22px; padding-left:50px">
+    <div class="full-width">
+        <div style="float: left;">
+            <img src="@settings.SmallLogo" style="text-align: center" />
+        </div>
+    </div>
+
+    <div class="full-width" style="text-align: center;padding-top: 10px;margin-left: 15px;padding-bottom: 10px;">
+        <b>Declination of Staff Chaperone and Test Form</b>
+    </div>
+    <div class="full-width row-margin">
+        <div>
+            I understand the recommended test(s) that are to be performed and the proper draping procedure to maintain privacy.
+            I have been offered the opportunity to have a staff chaperone present.
+        </div>
+        <p>
+            <input type="checkbox" questionid="1" /><b> Chaperone Declined:</b>
+            <br />
+            I have declined the need for a staff chaperone to be present, and I wish to proceed with the recommended testing.
+            I understand proper draping and patient privacy will be maintained throughout the testing.
+
+        </p>
+        <div>
+            <b>Patient agrees to the following test(s) without a chaperone:</b>
+            <div style="margin:5px 40px;">
+                <input type="checkbox" questionid="2" /><b> Echo</b><br />
+                <input type="checkbox" questionid="3" /><b> EKG</b><br />
+                <input type="checkbox" questionid="4" /><b> AAA</b><br />
+                <input type="checkbox" questionid="5" /><b> LEAD</b>
+            </div>
+        </div>
+        <p>
+            <input type="checkbox" questionid="6" /><b> Testing Declined:</b>
+            <br />
+            I understand the recommended test(s) that are to be performed and the proper draping procedure to maintain privacy,
+            and I have declined the recommended test(s) due to the following reason(s):
+
+        </p>
+        <div>
+            <b>Check reason(s) below (if possible):</b>
+            <div style="margin:5px 40px;">
+                <input type="checkbox" questionid="7" /><b> Declined to partially disrobe</b><br />
+                <input type="checkbox" questionid="8" /><b> Other:</b> <input type="text" style="width: 580px;" questionid="14" />
+            </div>
+        </div>
+        <div style="margin-top:10px">
+            <b>Check test(s) Declined:</b>
+            <div style="margin:5px 40px;">
+                <input type="checkbox" questionid="9" /><b> Echo</b><br />
+                <input type="checkbox" questionid="10" /><b> EKG</b><br />
+                <input type="checkbox" questionid="11" /><b> AAA</b><br />
+                <input type="checkbox" questionid="12" /><b> LEAD</b>
+            </div>
+        </div>
+        <div style="margin-top: 40px; float: left">
+            <div style="width: 550px;float: left;">
+                <b>Patient Name (Print):</b> <input type="text" style="width: 340px;" value="@(Model.CustomerName!=null ? Model.CustomerName.FullName : "")" readonly="readonly" />
+            </div>
+            <div class="threeColmn-width">
+                <b>DOB:</b>
+                <input type="text" style="width: 100px" value="@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("MM/dd/yyyy") : "")" readonly="readonly" />
+            </div>
+        </div>
+        <div style="margin-top: 20px; float:left">
+            @if (!string.IsNullOrWhiteSpace(Model.SignatureImageUrl))
+            {
+                <div style="width: 550px;">
+                    <b>Patient Signature:</b><img src="@Model.SignatureImageUrl" style="height: 90px; vertical-align: middle;" />
+                </div>
+            }
+            else
+            {
+                <div style="width: 550px;">
+                    <b>Patient Signature:</b><input type="text"style="width: 370px; border: 0; border-bottom: 1px solid black; " />
+                </div>
+            }
+        </div>
+        <div style="margin-top: 20px; float: left">
+            <div style="width: 550px; float: left;">
+                @if (!string.IsNullOrWhiteSpace(Model.StaffSignatureImageUrl))
+                {
+                    <div style="width: 550px;">
+                        <b>Staff Witness:</b><img src="@Model.StaffSignatureImageUrl" style="height: 90px; vertical-align: middle;" />
+                    </div>
+                }
+                else
+                {
+                    <div style="width: 550px;">
+                        <b>Staff Witness:</b><input type="text" style="width: 400px; border: 0; border-bottom: 1px solid black; " />
+                    </div>
+                }
+            </div>
+            <div class="threeColmn-width">
+                <b>Date:</b>
+                <input type="text" style="width: 100px" value="@(Model.EventDate.HasValue ? Model.EventDate.Value.ToString("MM/dd/yyyy") : "")" readonly="readonly" />
+            </div>
+        </div>
+        <div style="float: left; margin-top:30px">
+            <input type="checkbox" questionid="13" /><b> Patient verbally declined a chaperone, but has refused to sign.</b>
+        </div>
+        @*<div style="float: left; margin-top:20px; font-size:14px">
+            <b>Directions: </b>
+            Unit Manager will forward the forms at the end of each day to the Clinical and Operations Directors.
+            Clinical Director will then store the forms on the secure "m" drive for tracking and quality purposes and provide
+            regular reports to the Company's Compliance Director as set forth herein. In the event a patient declines to sign this
+            form, the responsible staff member is required to record and date that refusal in writing.
+        </div>*@
+    </div>
+</div>
+<script type="text/javascript">
+
+    function setQuestionStatus(questionId, answer, questionType) {
+
+        if (questionType == '@CheckListQuestionType.CheckBox') {
+            var checkBox = $(".healthplan-chaperonForm").find("input[type='checkbox'][questionid=" + questionId + "]");
+            if (answer.toLowerCase() == 'true') {
+                $(checkBox).attr("checked", true);
+            }
+        } else if (questionType == '@CheckListQuestionType.Radio') {
+            if (answer !== '') {
+                var values = answer.toLowerCase();
+                var radio = $(".healthplan-chaperonForm").find("input[name='questionid-" + questionId + "'][value=" + values + "]");
+                $(radio).attr("checked", true);
+            }
+        } else if (questionType == '@CheckListQuestionType.TextBox') {
+            var textBox = $(".healthplan-chaperonForm").find("input[type='text'][questionid='" + questionId + "']");
+            if (textBox.length > 0) {
+                $(textBox).val(answer);
+            } else {
+                var span = $(".healthplan-chaperonForm").find("span[questionid='" + questionId + "']");
+                if (span.length > 0)
+                    $(span).text(answer);
+            }
+        }
+    }
+
+    $(document).ready(function () {
+
+        @if (Model != null && !Model.Answers.IsNullOrEmpty())
+        {
+            foreach (var item in Model.Answers)
+            {
+                if (item.Type != CheckListQuestionType.None)
+                {
+                    var answer = !string.IsNullOrEmpty(item.Answer) ? item.Answer.Replace("'", "\\\'").Replace("\"", "\\\"").Replace("\r", " ").Replace("\n", "{newlinefeed}") : "";
+                    <text>
+                        setQuestionStatus("@item.QuestionId", "@Html.Raw(answer)", "@item.Type")
+                    </text>
+                }
+            }
+        }
+    });
+</script>

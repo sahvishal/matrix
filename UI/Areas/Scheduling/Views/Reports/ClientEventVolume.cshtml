@@ -1,0 +1,113 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.ClientEventVolumeListModel
+@{
+    ViewBag.Title = "Event Volume (Health Plan)";
+}
+
+<h1>
+    Event Volume (Health Plan)
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("ClientEventVolume", "Reports", FormMethod.Get);}
+    @Html.Partial("ClientEventVolumeListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{    
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Scheduling/ExportableReports/ClientEventVolume?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th nowrap>
+                Event Info
+            </th>
+            <th nowrap>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Pod)
+            </th>
+            <th style="text-align: right" nowrap>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().TotalSlots)
+            </th>
+            <th style="text-align: right" nowrap>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().AppointmentsBooked)
+            </th>
+            <th style="text-align: right" nowrap>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().AvailableSlots)
+            </th>
+            <th style="text-align: right" nowrap>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().ScreenedCustomers)
+            </th>
+            <th nowrap>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().HospitalPartner)
+            </th>
+            <th nowrap>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().CorporateAccount)
+            </th>
+        </tr>
+        @foreach (var selectedEvent in Model.Collection)
+        {
+            <tr>
+                <td style="width:170px;">
+                    <b>Id:</b> @selectedEvent.EventCode <br />
+                    <b>Date:</b> @selectedEvent.EventDate.ToShortDateString() <br />
+                    <b>Location:</b> @selectedEvent.Location <br />
+                    <b>Address:</b> @selectedEvent.Address.ToString()<br />
+                    <b>Status:</b> @selectedEvent.Status
+                </td>
+                <td>
+                    @selectedEvent.Pod
+                </td>
+                <td style="text-align: right">
+                    @selectedEvent.TotalSlots
+                </td>
+                <td style="text-align: right">
+                    @selectedEvent.AppointmentsBooked
+                </td>
+                <td style="text-align: right">
+                    @selectedEvent.AvailableSlots
+                </td>
+                <td style="text-align: right">
+                    @selectedEvent.ScreenedCustomers
+                </td>
+                <td style="width:100px;">
+                    @(!string.IsNullOrEmpty(selectedEvent.HospitalPartner) ? selectedEvent.HospitalPartner : "")
+                </td>
+                <td style="width:100px;">
+                    @selectedEvent.CorporateAccount
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+    </script>
+}

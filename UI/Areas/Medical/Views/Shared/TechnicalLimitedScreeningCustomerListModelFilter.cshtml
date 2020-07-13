@@ -1,0 +1,43 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Medical.ViewModels.TechnicalLimitedScreeningCustomerListModelFilter
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 32%">
+        <div class="small-text">
+            Event Date:
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker", @style = "width:40%;" }) -
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker", @style = "width:40%;" })
+    </div>
+    <div class="editor-column" style="width: 12%">
+        <div class="small-text">
+            Pod:
+        </div>
+        @Html.TextBoxFor(m => m.Pod, new { @style = "width:80%;" })
+    </div>
+    <div class="editor-column" style="width: 17%">
+        <div class="small-text">
+            Customer:
+        </div>
+        @Html.TextBoxFor(m => m.CustomerName, new { @style = "width:80%;" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Test:
+        </div>
+        @Html.DropDownListFor(m => m.Test, DropDownHelper.RecordableTests(), new { @style = "width:90%;" })
+    </div>
+    <div class="editor-column" style="width: 18%; float:right; text-align:right;">
+        <div class="small-text" style="text-align:left;">
+            Result State:
+        </div>
+        @Html.DropDownListFor(m => m.ResultState, DropDownHelper.ResultStatus(), new { @style = "width:100%;" })
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="float: right; width: 18%; padding-top: 12px; text-align: right;">
+        @Html.ActionLink("Clear", "TechnicalLimitedScreening", "Results") | @Html.SubmitButton("Search")
+    </div>
+</div>

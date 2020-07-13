@@ -1,0 +1,46 @@
+@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.CallCenter.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model CampaignEditModel
+@{
+    ViewBag.Title = "Edit Campaign";
+}
+<h1>
+    Edit Campaign
+</h1>
+<div class="option-links">
+    <a href="/CallCenter/Campaign/ManageCampaign">Manage Campaign </a>
+</div>
+<div id="edit-Model">
+    @{Html.BeginForm();}
+    @Html.Partial("EditModel", Model)
+    
+    @if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+    {
+        <script type="text/javascript">
+            alert("Campaign updated successfully.");
+            window.location = "/CallCenter/Campaign/ManageCampaign";
+        </script>
+    }
+    <div class="submit-button-row campaign-save-publish-buttons">
+        <a href="/CallCenter/Campaign/ManageCampaign">Close</a> &nbsp;&nbsp;  @Html.SubmitButton("Save") &nbsp;&nbsp; <button type="button" onclick="PublishCampaign()">Save & Publish</button>
+    </div>
+    <div class="row">        
+        <div class="campaign-save-publish-buttons" style="display: none; padding-top:20px; text-align: right;">
+            <img src="/App/Images/loading.gif" alt="" />Updating
+        </div>
+    </div>
+    <script type="text/javascript">
+        function PublishCampaign() {
+            $("#IsPublished").val(true);
+            $("#Submit").click();
+        }
+
+        $(document).ready(function () {
+            $("#Submit").click(function () {                
+                $(".campaign-save-publish-buttons").toggle();
+            });
+        });
+    </script>
+    @{Html.EndForm();}
+</div>

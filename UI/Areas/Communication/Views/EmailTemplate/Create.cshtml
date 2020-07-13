@@ -1,0 +1,298 @@
+﻿@using Falcon.App.Core.Communication.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Communication.ViewModels.EmailTemplateEditModel
+@{
+    ViewBag.Title = "Create";
+}
+<style>
+    input[type=text], textarea {
+        width: 95%;
+    }
+
+    #tablemacros td {
+        padding: 5px;
+        border-bottom: solid 1px;
+        cursor: pointer;
+    }
+
+        #tablemacros td:hover {
+            text-decoration: underline;
+        }
+
+    #tablemacros th {
+        font-size: bold;
+        padding: 5px;
+        border-bottom: solid 1px;
+        text-align: left;
+    }
+</style>
+<script type="text/javascript" src="/App/JavascriptFiles/tiny_mce/tiny_mce.js"></script>
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+<h1>Create</h1>
+@if (Model.FeedbackMessage != null)
+{
+    @Html.Partial("Message", Model.FeedbackMessage)
+}
+@{Html.BeginForm();}
+<div class="content-main-column" style="width: 70%;">
+    <div class="editor-row" style="width: 300px;">
+        <div class="small-text">
+            Select Template Type
+        </div>
+        @Html.DropDownListFor(m => m.NotificationTypeId, DropDownHelper.GetNotificationTypes(), new { @style = "width:98%;" })
+    </div>
+
+</div>
+
+<div class="content-main-column" style="width: 70%;">
+    <fieldset>
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.Alias)
+        @Html.HiddenFor(m => m.TemplateType)
+        <div class="editor-row">
+            <div class="small-text">
+                @Html.LabelFor(m => m.Subject) @Html.ValidationMessageFor(m => m.Subject)
+            </div>
+            @Html.TextBoxFor(m => m.Subject)
+        </div>
+        <div class="editor-row">
+            <div class="small-text">
+                @Html.LabelFor(m => m.Body) @Html.ValidationMessageFor(m => m.Body)
+            </div>
+            @Html.TextAreaFor(m => m.Body, new { rows = 20, @class = "myTextEditor" })
+
+        </div>
+    </fieldset>
+    <div class="submit-button-row">
+        <div style="float: left;">
+            <a href="javascript:void(0);" class="preview-toggle" onclick="@(Model.TemplateType == (long)TemplateType.Sms ? "getSmsModelPreview()" : "getModelPreview();");  return false;">
+                Preview
+            </a>
+            <img src="/App/Images/loading.gif" alt="" style="display: none;" class="preview-toggle" />
+        </div>
+        <div style="float: right; text-align: right;">
+            <a href="/App/Franchisor/Admin/ManageEmailTemplate.aspx">Close</a> @Html.SubmitButton()
+        </div>
+    </div>
+</div>
+<div class="content-side-column" style="width: 25%;">
+    <table id="tablemacros">
+        <tr class="tablemacros-header-row">
+            <th>
+                Available Macros
+                <img src="/app/images/info-icon.gif" alt="" class="info-macro" />
+            </th>
+        </tr>
+        @if (Model.TemplateMacros != null && Model.TemplateMacros.Any())
+        {
+            foreach (var item in Model.TemplateMacros)
+            {
+                <tr class="macros">
+                    <td onclick="insertMacro('@(Falcon.App.Core.Communication.Domain.TemplateMacro.GetIdentifierUiString(item))')">
+                        @item
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+@{Html.EndForm();}
+<div id="preview-dialog-div">
+    <div style="width: 700px; margin: 0 auto;">
+    </div>
+</div>
+<div id="preview-sms-dialog-div">
+    <div style="width: 500px; margin: 0 auto;">
+    </div>
+</div>
+
+<script language="javascript" type="text/javascript">
+
+    tinyMCE.init({
+        // General options
+        //mode: "textareas",
+        //mode: "specific_textareas",
+        //editor_selector: "myTextEditor",
+        mode: "exact",
+        elements: "Body",
+        setup: function (ed) {
+            ed.onKeyUp.add(function (ed, e) {
+                actualCaretPositionBookmark = tinyMCE.get('Body').selection.getBookmark(1);
+            });
+            ed.onClick.add(function (ed, e) {
+                actualCaretPositionBookmark = tinyMCE.get('Body').selection.getBookmark(1);
+            });
+        },
+        theme: "advanced",
+        height: "500",
+        plugins: "pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+
+        // Theme options
+        theme_advanced_buttons1: "newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,cleanup,code", //anchor,image //,help
+        theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,advhr,|,ltr,rtl", //iespell,media,//,|,print,|,ltr,rtl,|,fullscreen
+        theme_advanced_buttons4: "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak,restoredraft,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+        theme_advanced_toolbar_location: "top",
+        theme_advanced_toolbar_align: "left",
+        theme_advanced_statusbar_location: "bottom",
+        theme_advanced_resizing: false,
+        theme_advanced_resizing_min_width: 320,
+
+        // Example content CSS (should be your site CSS)
+        content_css: "/App/JavascriptFiles/tiny_mce/css/content.css",
+
+        // Drop lists for link/image/media/template dialogs
+        template_external_list_url: "/App/JavascriptFiles/tiny_mce/lists/template_list.js",
+        external_link_list_url: "/App/JavascriptFiles/tiny_mce/lists/link_list.js",
+        external_image_list_url: "/App/JavascriptFiles/tiny_mce/lists/image_list.js",
+        media_external_list_url: "/App/JavascriptFiles/tiny_mce/lists/media_list.js",
+
+        // Style formats
+        style_formats: [
+            { title: 'Bold text', inline: 'b' },
+            { title: 'Red text', inline: 'span', styles: { color: '#ff0000' } },
+            { title: 'Red header', block: 'h1', styles: { color: '#ff0000' } },
+            { title: 'Example 1', inline: 'span', classes: 'example1' },
+            { title: 'Example 2', inline: 'span', classes: 'example2' },
+            { title: 'Table styles' },
+            { title: 'Table row 1', selector: 'tr', classes: 'tablerow1' }
+        ],
+
+        // Replace values for the template plugin
+        template_replace_values: {
+            username: "Some User",
+            staffid: "991234"
+        }
+    });
+
+</script>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+    var previewdialogWidth = 800;
+    var previewdialogHeightDeduction = 20;
+
+    $('.info-macro').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            text: function (api) {
+                return "Please click on the macros to insert in the Email Body. It gets appended to the last cursor position.";
+            }
+        },
+        style: {
+            width: '300px'
+        }
+    });
+
+    var matches = [];
+    var selectedIndex = -1;
+    var scrollTopTextarea = 0;
+
+    $(document).ready(function () {
+        $("#preview-dialog-div").dialog({ autoOpen: false, title: 'Preview', modal: true, width: 800, height: ($(window).height() - 20) });
+        $("#preview-sms-dialog-div").dialog({ autoOpen: false, title: 'Preview', modal: true, width: 700, height: 'auto' });
+
+        $("#preview-dialog-div").bind("dialogClose", function () { $("#preview-dialog-div div").empty(); });
+        $("#preview-sms-dialog-div").bind("dialogClose", function () { $("#preview-sms-dialog-div div").empty(); });
+
+        $("#Submit").click(function () {
+            var result = confirm("WARNING: Saving this template will result in changes applicable to the notifications sent henceforth!");
+            if (!result) return false;
+            return true;
+        });
+    });
+
+    function insertMacro(macro) {//debugger;
+
+        if (tinymce.isIE) {
+            tinyMCE.activeEditor.selection.moveToBookmark(actualCaretPositionBookmark);
+            //tinyMCE.execCommand('mceInsertContent', false, macro);
+            tinyMCE.execInstanceCommand('Body', 'mceInsertContent', false, macro);
+        }
+        else {
+            tinyMCE.execInstanceCommand('Body', 'mceInsertContent', false, macro);
+        }
+    }
+
+    function getSmsModelPreview() {
+        var text = $.trim(tinyMCE.get('Body').getContent({ format: 'text' }));
+        if (text.length < 1) return;
+
+        $(".preview-toggle").toggle();
+        $.ajax({
+            url: '/Communication/EmailTemplate/PreviewTemplate',
+            type: 'Post',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'Html',
+            data: "{emailTemplateId: '@Model.Id', emailTemplateAlias: '@Model.Alias',body: " + JSON.stringify(text) + "}",
+            success: function (content) {
+                $("#preview-sms-dialog-div div").html(content);
+                $("#preview-sms-dialog-div div").width(600);
+                $("#preview-sms-dialog-div").dialog("open");
+                $(".preview-toggle").toggle();
+            },
+            error: function (arg1, arg2) {
+                alert("Some error occured while processing your request!");
+                $(".preview-toggle").toggle();
+            }
+        });
+
+    }
+
+    function getModelPreview() {
+        if ($("#NotificationTypeId").val() > 0) {
+            var text = $.trim(tinyMCE.get('Body').getContent());
+            if (text.length < 1) return;
+
+            $(".preview-toggle").toggle();
+            $.ajax({
+                url: '/Communication/EmailTemplate/PreviewTemplate',
+                type: 'Post',
+                contentType: "application/json; charset=utf-8",
+                dataType: 'Html',
+                data: "{emailTemplateId: '@Model.Id', emailTemplateAlias: '@Model.Alias', notificationTypeId: " + $("#NotificationTypeId").val() + ", body: " + JSON.stringify(text) + "}",
+                success: function (content) {
+                    $("#preview-dialog-div div").html(content);
+                    $("#preview-dialog-div div").width($("#preview-dialog-div div table:first").width());
+                    $("#preview-dialog-div").dialog("open");
+                    $(".preview-toggle").toggle();
+                },
+                error: function (arg1, arg2) {
+                    alert("Some error occured while processing your request!");
+                    $(".preview-toggle").toggle();
+                }
+            });
+        }
+    }
+</script>
+
+
+<script language="javascript" type="text/javascript">
+    $("#NotificationTypeId").change(function () {
+        tinyMCE.get('Body').setContent("");
+        $(".macros").remove();
+        $("#Id").val(0);
+        $("#Alias").val("");
+        $("#Subject").val("");
+
+        var notificationTypeId = $(this).val();
+        if (Number(notificationTypeId) > 0) {
+            $.ajax({
+                type: "GET",
+                url: "/Communication/EmailTemplate/TemplateMacros",
+                data: "notificationId=" + notificationTypeId,
+                dataType: 'Html',
+                async: false,
+                success: function (response) {
+                    $(response).insertAfter(".tablemacros-header-row");
+                    return response;
+                },
+                error: function () {
+                    alert('Error occured');
+                }
+            });
+        }
+    });
+</script>

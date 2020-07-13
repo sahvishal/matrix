@@ -1,0 +1,543 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Finance.Domain
+@using Falcon.App.Core.Finance.Enum
+@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.Core.Geo.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@model PaymentEditModel
+<div class="editor-row">
+    <div style="float: left;">
+        @if (Model.PaymentFlow == PaymentFlow.In)
+        {
+            <h4>
+                Payment from Customer to @(IoC.Resolve<ISettings>().CompanyName)
+            </h4>
+        }
+        else
+        {
+            <h4>
+                Payment from @(IoC.Resolve<ISettings>().CompanyName)
+                to Customer
+            </h4>
+        }
+    </div>
+    <div style="float: right;">
+        <h4>
+            Total Amount: <b>$<span id="total-amount">@Model.Amount.ToString("0.00") </span></b>
+        </h4>
+    </div>
+    @Html.HiddenFor(m => m.Amount, new { @class = "total-amount" })
+    @Html.HiddenFor(m => m.PaymentFlow)
+</div>
+@Html.ValidationMessageFor(m => m.Amount)
+<div class="editor-row">
+    <table id="list-view" class="withborder withmargin" style="width: 100%;">
+        <thead>
+            <tr>
+                <th>
+                    Payment Details
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<div id="payment-option-amount" class="editor-row">
+    <div class="editor-column" style="width: 40%;">
+        <div class="small-text">
+            Payment Mode
+        </div>
+        @Html.DropDownListFor(m => m.AllowedPaymentTypes, DropDownHelper.PaymentTypes(Model.AllowedPaymentTypes), new { @style = "width: 95%;" })
+    </div>
+    <div class="editor-column">
+        <div class="small-text">
+            Amount
+        </div>
+        @Html.TextBox("Amount", "", new { @class = "paying-amount" })
+    </div>
+</div>
+<div id="payment-instrument-section" class="editor-row" style="display: none;">
+    @Html.Partial("ChargeCard", new ViewDataDictionary(new ChargeCard()))
+    @Html.Partial("Check", new ViewDataDictionary(new Check()))
+</div>
+<div class="editor-row" id="billing-address" style="display: none;">
+    <fieldset>
+        <legend>Billing Address </legend>
+        @Html.EditorFor(m => m.ExistingBillingAddress)
+    </fieldset>
+</div>
+<div class="editor-row" style="float: right;">
+    <input type="button" id="AddPayment" value="Add Payment" onclick="return addPayment();" />
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script language="javascript" type="text/javascript">
+    var paymentCollection = new Object();
+    var selectedKeyForEdit = -1;
+    var k = 0;
+    var payment = null;
+    var paymentInstrument = null;
+    var addressModel = null;
+    var cardOnFile = null;
+    var addressOnFile = null;
+    var validations = null;
+    
+    @if (Model.ChargeCardonFile != null)
+    {
+        var card = Model.ChargeCardonFile.ChargeCard;
+        var cardPayment = Model.ChargeCardonFile.ChargeCardPayment;
+        <text>
+            cardOnFile = new Object();
+            cardOnFile.Id = '@card.Id';
+            cardOnFile.TypeId = '@((int)card.TypeId)';
+            cardOnFile.NameOnCard = '@card.NameOnCard';
+            cardOnFile.Number = '@card.Number';
+            cardOnFile.CVV = '@card.CVV';
+            cardOnFile.CardIssuer = '@card.CardIssuer';
+            cardOnFile.IsDebit = '@card.IsDebit';
+            cardOnFile.ExpirationDate = '@card.ExpirationDate.ToString("MM/yyyy")';
+            cardOnFile.PaymentId = '@(cardPayment == null ? 0 : cardPayment.PaymentId)';
+            cardOnFile.InstrumentPaymentId = '@(cardPayment == null ? 0 : cardPayment.Id)';
+            cardOnFile.ChargeCardId = '@(cardPayment == null ? 0 : cardPayment.ChargeCardId)';
+            cardOnFile.ProcessorResponse = '@(cardPayment == null ? "" : cardPayment.ProcessorResponse)';
+        </text>
+    }
+
+    @if (Model.ExistingBillingAddress != null)
+    {        
+        <text>
+            addressOnFile = new Object();
+            addressOnFile.StreetAddressLine1 = '@Model.ExistingBillingAddress.StreetAddressLine1';
+            addressOnFile.StreetAddressLine2 = '@(Model.ExistingBillingAddress.StreetAddressLine2)';                   
+            addressOnFile.CountryId = '@Model.ExistingBillingAddress.CountryId';
+
+            addressOnFile.StateId = '@Model.ExistingBillingAddress.StateId';
+            addressOnFile.City = '@Model.ExistingBillingAddress.City';
+            addressOnFile.ZipCode = '@Model.ExistingBillingAddress.ZipCode';
+        </text>
+    }
+        
+    @if ((Model.Payments != null) && (Model.Payments.Count() > 0))
+    {
+        int index = 0;
+        foreach (var payment in Model.Payments)
+        {
+            if (payment != null)
+            {
+                <text>
+                validations = new Array();
+                payment = null;
+                paymentInstrument = null;
+                addressModel = null;
+
+                payment = new Object();
+                payment.Amount = @payment.Amount;
+                payment.IsProcessed = '@payment.IsProcessed';
+                payment.PaymentType = @payment.PaymentType; 
+                payment.FeedbackMessage = '@(payment.FeedbackMessage != null ? Html.Raw(payment.FeedbackMessage.Message) : null)';
+
+                </text>
+            
+                if (payment.ChargeCard != null)
+                {
+                    var card = payment.ChargeCard.ChargeCard;
+                    var cardPayment = payment.ChargeCard.ChargeCardPayment;
+                    <text>
+                    paymentInstrument = new Object();
+                    paymentInstrument.Id = '@card.Id';
+                    paymentInstrument.TypeId = '@((int)card.TypeId)';
+                    paymentInstrument.NameOnCard = '@card.NameOnCard';
+                    paymentInstrument.Number = '@card.Number';
+                    paymentInstrument.CVV = '@card.CVV';
+                    paymentInstrument.CardIssuer = '@card.CardIssuer';
+                    paymentInstrument.IsDebit = '@card.IsDebit';
+                    paymentInstrument.ExpirationDate = '@card.ExpirationDate.ToString("MM/yyyy")';
+                    paymentInstrument.PaymentId = '@(cardPayment == null ? 0 : cardPayment.PaymentId)';
+                    paymentInstrument.InstrumentPaymentId = '@(cardPayment == null ? 0 : cardPayment.Id)';
+                    paymentInstrument.ChargeCardId = '@(cardPayment == null ? 0 : cardPayment.ChargeCardId)';
+                    paymentInstrument.ProcessorResponse = '@(cardPayment == null ? "" : cardPayment.ProcessorResponse)';
+                    </text>
+                                        
+                }
+                else if (payment.Check != null)
+                {
+                    var check = payment.Check.Check;
+                    var checkPayment = payment.Check.CheckPayment;
+
+                    <text>
+                    paymentInstrument = new Object();
+                    paymentInstrument.Id = '@check.Id';
+                    paymentInstrument.PayableTo = '@check.PayableTo';        
+                    paymentInstrument.CheckNumber = '@check.CheckNumber';
+                    paymentInstrument.CheckDate = '@(check.CheckDate.HasValue ? check.CheckDate.Value.ToShortDateString() : "")';
+                    paymentInstrument.RoutingNumber = '@check.RoutingNumber';
+                    paymentInstrument.BankName = '@check.BankName';
+                    paymentInstrument.AccountNumber = '@check.AccountNumber';
+                    paymentInstrument.Memo = '@check.Memo';
+                    paymentInstrument.IsElectronicCheck ='@check.IsElectronicCheck';
+                    paymentInstrument.AcountHolderName = '@check.AcountHolderName';
+                    paymentInstrument.CheckId = '@checkPayment.CheckId';
+                    paymentInstrument.PaymentId = '@checkPayment.PaymentId';
+                    </text>
+                }
+
+                if (payment.BillingAddress != null && !payment.BillingAddress.IsEmpty())
+                {
+                    <text>
+                    addressModel = new Object();
+                    addressModel.StreetAddressLine1 = '@payment.BillingAddress.StreetAddressLine1';
+                    addressModel.StreetAddressLine2 = '@(payment.BillingAddress.StreetAddressLine2)';                   
+                    addressModel.CountryId = '@payment.BillingAddress.CountryId';
+
+                    addressModel.StateId = '@payment.BillingAddress.StateId';
+                    addressModel.City = '@payment.BillingAddress.City';
+                    addressModel.ZipCode = '@payment.BillingAddress.ZipCode';
+                    </text>
+                }
+            }
+
+            <text>
+            if(payment != null && paymentInstrument != null){
+                k++;
+                paymentCollection[k] = new Object();
+                paymentCollection[k].Key = k;
+                paymentCollection[k].Payment = payment;
+                paymentCollection[k].PaymentInstrument = paymentInstrument;
+                paymentCollection[k].BillingAddress = addressModel;
+            }
+            </text>
+
+            index++;
+        }
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+
+    function setPaymentAmount(amount) {
+        $("#total-amount").html(amount);
+        $(".total-amount").val(amount);
+    }
+
+    function clearPaymentSection(clearAll) {
+        if (clearAll != null && clearAll == true)
+            $("#list-view tbody").empty();
+
+        $(".paying-amount").val("");
+        $("select[id*='AllowedPaymentTypes'] option:first").attr("selected", true);
+
+        clearInstrumentSection();
+    }
+
+    function clearInstrumentSection() {
+
+        $(".paymentinstrumentsubsection").hide();
+        $("#billing-address").hide();
+        clearChargeCard();
+        clearAddress($("#billing-address"));
+
+    }
+
+    function addPayment() {
+        var result = validateAmount();
+        if (!result) return false;
+
+        var selectedOption = $("select[id*='AllowedPaymentTypes'] option:selected").val();
+
+        if (selectedOption == "-1")
+            return false;
+
+        payment = new Object();
+        payment.Amount = $(".paying-amount").val();
+        payment.IsProcessed = false;
+        payment.PaymentType = selectedOption;
+        payment.FeedbackMessage = "";
+
+        if (selectedOption == '@PaymentType.CreditCard.PersistenceLayerId') {
+            paymentInstrument = getCardDetails();
+            paymentInstrument.Id = 0;
+            paymentInstrument.PaymentId = 0;
+            paymentInstrument.ChargeCardId = 0;
+            paymentInstrument.InstrumentPaymentId = 0;
+            paymentInstrument.ProcessorResponse = "";
+
+            addressModel = getAddress($("#billing-address"));
+        }
+        else if (selectedOption == '@PaymentType.CreditCardOnFile_Value') {
+            paymentInstrument = cardOnFile;
+            addressModel = addressOnFile;
+        }
+        else if (selectedOption == '@PaymentType.Check.PersistenceLayerId') {
+            paymentInstrument = getCheckDetails();
+            paymentInstrument.Id = 0;
+            paymentInstrument.PaymentId = 0;
+            paymentInstrument.CheckId = 0;
+        }
+
+        var index = selectedKeyForEdit;
+        if (selectedKeyForEdit < 0) {
+            k++;
+            paymentCollection[k] = new Object();
+            paymentCollection[k].Key = k;
+            index = k;
+        }
+        else {
+            payment.FeedbackMessage = paymentCollection[index].Payment.FeedbackMessage;
+        }
+
+        selectedKeyForEdit = -1;
+        paymentCollection[index].Payment = payment;
+        paymentCollection[index].BillingAddress = addressModel;
+        paymentCollection[index].PaymentInstrument = paymentInstrument;
+        renderPayment();
+
+        clearPaymentSection(false);
+        return false;
+    }
+
+    function removePayment(key) {
+        delete paymentCollection[key];
+        renderPayment();
+    }
+
+    function editPayment(key) {
+        clearInstrumentSection();
+        selectedKeyForEdit = key;
+        $("#payment-option-amount").show();
+        $(".paying-amount").val(paymentCollection[key].Payment.Amount);
+        $("select[id*='AllowedPaymentTypes'] option[value=" + paymentCollection[key].Payment.PaymentType + "]").attr("selected", true);
+
+        if (paymentCollection[key].Payment.PaymentType == '@PaymentType.CreditCard.PersistenceLayerId') {
+            setCardDetails(paymentCollection[key].PaymentInstrument);
+            setAddress($("#billing-address"), paymentCollection[key].BillingAddress);
+            $("#payment-instrument-section").show();
+            $("#charge-card").show();
+            $("#billing-address").show();
+        }
+        else if (paymentCollection[key].Payment.PaymentType == '@PaymentType.CreditCardOnFile_Value') {
+            $("#payment-instrument-section").show();
+            $("#charge-card").show();
+            setCardonFileDetails(cardOnFile);
+        }
+        else if (paymentCollection[key].Payment.PaymentType == '@PaymentType.Check.PersistenceLayerId') {
+            setCheckDetails(paymentCollection[key].PaymentInstrument);
+            $("#payment-instrument-section").show();
+            $("#checksection").show();
+        }
+    }
+
+    function onChangeShowPaymentOption() {
+        clearInstrumentSection();
+
+        var selectedOption = $("select[id*='AllowedPaymentTypes'] option:selected").val();
+        if (selectedOption == '@PaymentType.CreditCard.PersistenceLayerId') {
+            $("#payment-instrument-section").show();
+            $("#charge-card").show();
+            setAddress($("#billing-address"), addressOnFile);
+            $("#billing-address").show();
+        }
+        else if (selectedOption == '@PaymentType.CreditCardOnFile_Value') {
+            $("#payment-instrument-section").show();
+            $("#charge-card").show();
+            setCardonFileDetails(cardOnFile);
+            setAddress($("#billing-address"), addressOnFile);
+        }
+        else if (selectedOption == '@PaymentType.Check.PersistenceLayerId') {
+            $("#payment-instrument-section").show();
+            $("#checksection").show();
+        }
+
+    }
+
+    function setInitials() {
+        $("#payment-instrument-section > div").addClass("paymentinstrumentsubsection");
+        $(".paymentinstrumentsubsection").hide();
+
+        $("select[id*='AllowedPaymentTypes']").change(onChangeShowPaymentOption);
+        renderPayment();
+    }
+
+    window.onload = setInitials;
+
+    function renderPayment() {
+        $("#list-view tbody").empty();
+        var totalAmount = 0;
+        $.each(paymentCollection, function (key, payment) {            
+
+            $("#displayPaymentTemplate").tmpl(payment).appendTo("#list-view tbody");
+            $("#paymentTemplate").tmpl(payment).appendTo("#list-view tbody");
+
+            if (payment.Payment.PaymentType == '@PaymentType.CreditCard.PersistenceLayerId' || payment.Payment.PaymentType == '@PaymentType.CreditCardOnFile_Value') {
+                $("#cardPaymentTemplate").tmpl(payment).appendTo("#list-view tbody");
+                $("#billingAddressTemplate").tmpl(payment).appendTo("#list-view tbody");
+            }
+            if (payment.Payment.PaymentType == '@PaymentType.Check.PersistenceLayerId') {
+                $("#checkPaymentTemplate").tmpl(payment).appendTo("#list-view tbody");
+            }
+
+            if (payment.Payment.FeedbackMessage.length > 0) {
+                $(".feedbackmessagediv:last").html(payment.Payment.FeedbackMessage);
+            }
+            totalAmount += parseFloat(payment.Payment.Amount);
+        });
+
+        if (totalAmount > 0) {
+            $("#list-view tbody").append("<tr style='font-weight:bold; border-size: 2px;'> <td> Total Amount </td> <td> $" + totalAmount + " </td> <td> </td>");
+            checkIfMorePaymentscanbeMade(totalAmount);
+        }
+
+    }
+
+    function checkIfMorePaymentscanbeMade(totalAmount) {
+        if (isNaN($(".total-amount").val()))
+            return;
+
+        if (totalAmount < parseFloat($(".total-amount").val())) {
+            $("#payment-option-amount").show();
+        }
+        else {
+            $("#payment-option-amount").hide();
+        }
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+    /* validations and automations for Amount Input Box */
+
+    function validateAmount() {
+        var amount = $.trim($(".paying-amount").val());
+        if (amount.length < 1) {
+            alert("Amount can not be left blank.");
+            return false;
+        }
+
+        if (isNaN(amount)) {
+            alert("Please input a valid amount.");
+            return false;
+        }
+
+        var totalChargeable = parseFloat($(".total-amount").val());
+        var totalAmount = 0;
+        $.each(paymentCollection, function (key, payment) {
+            if (selectedKeyForEdit > -1 && key == selectedKeyForEdit) return;
+            totalAmount += parseFloat(payment.Payment.Amount);
+        });
+        
+        var difference = (parseFloat(amount) + totalAmount) - totalChargeable;
+        var allowedMax = totalChargeable - totalAmount;
+        if (difference > 0) {
+            alert("Amount can not be greater than " + allowedMax.toFixed(2) + ".");
+            return false;
+        }
+
+        return true;
+    }
+
+    $(".paying-amount").keydown(function (evt) {
+        var key = (evt.which ? evt.which : ((evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : 0)));
+        x = $(".paying-amount").val();
+        var RegExp = /^(-)?(\d*)(\.?)(\d*)$/;
+        var result = x.match(RegExp);
+        return result;
+    })
+
+</script>
+<script id="displayPaymentTemplate" type="text/x-jquery-tmpl">
+
+    {{if Payment.FeedbackMessage.length > 0 }}
+        <tr>
+            <td colspan='3'> 
+                <div class='feedbackmessagediv' style='float:left; display: block; color: Red;'>
+                    ${Payment.FeedbackMessage}           
+                </div>
+            <td>
+        </tr>
+    {{/if}}
+
+    <tr>        
+        {{if Payment.PaymentType == @PaymentType.CreditCard.PersistenceLayerId }}
+        <td> <b>@PaymentType.CreditCard.Name</b> ${PaymentInstrument.CardType} (Ending In ${PaymentInstrument.Number.length >= 4 ? PaymentInstrument.Number.substr(PaymentInstrument.Number.length - 4, 4) : PaymentInstrument.Number})</td> 
+        {{/if}}
+        
+        {{if Payment.PaymentType == @PaymentType.CreditCardOnFile_Value }}
+        <td> <b>@PaymentType.CreditCardOnFile_Text</b> </td> 
+        {{/if}}
+
+        {{if Payment.PaymentType == @PaymentType.Check.PersistenceLayerId }}
+        <td> <b>@PaymentType.Check.Name</b> ${PaymentInstrument.BankName} (Check Num ${PaymentInstrument.CheckNumber})</td> 
+        {{/if}}
+                  
+        {{if Payment.PaymentType == @PaymentType.ElectronicCheck.PersistenceLayerId }}
+        <td> <b>@PaymentType.ElectronicCheck.Name</b> ${PaymentInstrument.BankName} (A/c Num ${PaymentInstrument.AccountNumber})</td> 
+        {{/if}} 
+
+        {{if Payment.PaymentType == @PaymentType.Cash.PersistenceLayerId }}
+        <td> <b>@PaymentType.Cash.Name</b> </td> 
+        {{/if}}
+        
+        <td> $ ${Payment.Amount} </td>
+        <td> <a href="javascript:void(0);" onclick="removePayment(${Key})"> Remove </a> | <a href="javascript:void(0);" onclick="editPayment(${Key})"> Edit </a> </td>
+    </tr>      
+
+</script>
+<script id="paymentTemplate" type="text/x-jquery-tmpl">
+    <input type="hidden" name="Payments.Index" value="${Key}" />
+    <div style="display:none;">
+        <input type="text" name="Payments[${Key}].Amount" value="${Payment.Amount}" />
+        <input type="text" name="Payments[${Key}].IsProcessed" value="${Payment.IsProcessed}" />
+        <input type="text" name="Payments[${Key}].PaymentType" value="${Payment.PaymentType}" />
+    </div>                 
+</script>
+<script id="cardPaymentTemplate" type="text/x-jquery-tmpl">    
+    <div style="display:none;">
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.Id" value="${PaymentInstrument.Id}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.TypeId" value="${PaymentInstrument.TypeId}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.NameOnCard" value="${PaymentInstrument.NameOnCard}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.Number" value="${PaymentInstrument.Number}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.CVV" value="${PaymentInstrument.CVV}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.CardIssuer" value="${PaymentInstrument.CardIssuer}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.ExpirationDate" value="${PaymentInstrument.ExpirationDate}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.IsDebit" value="False" />        
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.PaymentId" value="${PaymentInstrument.PaymentId}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.Id" value="${PaymentInstrument.InstrumentPaymentId}" />        
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.Amount" value="${Payment.Amount}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.ChargeCardId" value="${PaymentInstrument.ChargeCardId}" />
+        <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.ProcessorResponse" value="${PaymentInstrument.ProcessorResponse}" />
+    </div>     
+</script>
+<script id="checkPaymentTemplate" type="text/x-jquery-tmpl">    
+    <div style="display:none;">
+        <input type="text" name="Payments[${Key}].Check.Check.Id" value="${PaymentInstrument.Id}" />
+        <input type="text" name="Payments[${Key}].Check.Check.PayableTo" value="${PaymentInstrument.PayableTo}" />
+        <input type="text" name="Payments[${Key}].Check.Check.CheckNumber" value="${PaymentInstrument.CheckNumber}" />
+        <input type="text" name="Payments[${Key}].Check.Check.CheckDate" value="${PaymentInstrument.CheckDate}" />
+        <input type="text" name="Payments[${Key}].Check.Check.RoutingNumber" value="${PaymentInstrument.RoutingNumber}" />
+        <input type="text" name="Payments[${Key}].Check.Check.BankName" value="${PaymentInstrument.BankName}" />
+        <input type="text" name="Payments[${Key}].Check.Check.AccountNumber" value="${PaymentInstrument.AccountNumber}" />
+        <input type="text" name="Payments[${Key}].Check.Check.Memo" value="${PaymentInstrument.Memo}" />
+        <input type="text" name="Payments[${Key}].Check.Check.AcountHolderName" value="${PaymentInstrument.AcountHolderName}" />
+        <input type="text" name="Payments[${Key}].Check.Check.IsElectronicCheck" value="${PaymentInstrument.IsElectronicCheck}" />        
+        <input type="text" name="Payments[${Key}].Check.Check.Amount" value="${Payment.Amount}" />
+        <input type="text" name="Payments[${Key}].Check.CheckPayment.Amount" value="${Payment.Amount}" />
+        <input type="text" name="Payments[${Key}].Check.CheckPayment.PaymentId" value="${PaymentInstrument.PaymentId}" />
+        <input type="text" name="Payments[${Key}].Check.CheckPayment.CheckId" value="${PaymentInstrument.CheckId}" />
+    </div>     
+</script>
+<script id="billingAddressTemplate" type="text/x-jquery-tmpl">    
+    <div style="display:none;">
+        <input type="text" name="Payments[${Key}].BillingAddress.Id" value="${BillingAddress.Id}" />
+        <input type="text" name="Payments[${Key}].BillingAddress.StreetAddressLine1" value="${BillingAddress.StreetAddressLine1}" />
+        <input type="text" name="Payments[${Key}].BillingAddress.StreetAddressLine2" value="${BillingAddress.StreetAddressLine2}" />
+        <input type="text" name="Payments[${Key}].BillingAddress.City" value="${BillingAddress.City}" />
+        <input type="text" name="Payments[${Key}].BillingAddress.StateId" value="${BillingAddress.StateId}" />
+        <input type="text" name="Payments[${Key}].BillingAddress.CountryId" value="${BillingAddress.CountryId}" />
+        <input type="text" name="Payments[${Key}].BillingAddress.ZipCode" value="${BillingAddress.ZipCode}" />
+    </div>     
+</script>

@@ -1,0 +1,203 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+@model PhysicianQueueListModel
+@{
+    ViewBag.Title = "Physician Queue";
+}
+<h2>
+    Physician Queue
+    @if (Model != null && !Model.Collection.IsNullOrEmpty())
+    {
+        <span style="float: right; font-size: 11px;"><a target="_blank" href="/Medical/ExportableReports/PhysicianQueue?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export To CSV</a></span>
+    }
+</h2>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<div id="list-filter">
+    @{Html.BeginForm("PhysicianQueue", "Reports", FormMethod.Get);}
+    @Html.Partial("PhysicianQueueListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th style="width: 120px;">
+                Customer
+            </th>
+            <th style="width: 100px;">
+                Event Details
+            </th>
+            <th style="text-align: center;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().Package)
+            </th>
+            <th style="width: 160px;">
+                Time in Queue
+            </th>
+            <th style="text-align: center; width: 90px;">
+                Remarks
+            </th>
+            <th style="width: 120px;">
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().PhysicianName)
+            </th>
+            <th style="text-align: right;">
+                Action
+            </th>
+        </tr>
+        @foreach (var queue in Model.Collection)
+        {
+            <tr>
+                <td style="width: 140px;">
+                    <b>@queue.CustomerName</b><br />
+                    Id: @queue.CustomerId
+                </td>
+                <td style="width: 100px;">
+                    Id: @queue.EventId
+                    <br />
+                    On @queue.EventDate.ToShortDateString()<br />
+                    Pod: @queue.Vehicle
+                </td>
+                <td style="width: 180px;">@queue.Package
+                </td>
+                <td style="width: 160px;">
+                    <span style="font-weight: bold; color: Red;">@queue.TimeInQueue</span>
+                    <br />
+                    Last Updated On: @queue.PreAuditDate.ToShortDateString()
+                </td>
+                <td style="text-align: center;">
+                    @if (queue.IsCritical)
+                    {
+                        <b>Critical </b>
+                    }
+                    else if (queue.SentBackforCorrection)
+                    {
+                        <b>Sent Back by Physician </b>
+                    }
+                </td>
+                <td style="width: 120px;">@queue.PhysicianName
+                </td>
+                <td style="text-align: right; width: 140px;">
+                    <a href="/App/Common/Results.aspx?EventId=@queue.EventId&CustomerId=@queue.CustomerId" target="_blank">
+                        View Results</a>
+                    <div class="priorityinqueue_@(queue.EventCustomerId)">
+                        @if (queue.InQueuePriority.HasValue && queue.InQueuePriority.Value > 0)
+                        {
+                            <a href="javascript:void(0);" onclick="setPriorityInQueue('@queue.EventCustomerId', 'false')">Remove Priority</a>
+                        }
+                        else
+                        {
+                            <a href="javascript:void(0);" onclick="setPriorityInQueue('@queue.EventCustomerId', 'true')">Set Priority</a>
+                        }
+                    </div>
+                    <div class="priorityinqueue_@(queue.EventCustomerId)" style="display:none;">
+                        <img src="/App/Images/loading.gif" alt="" />
+                        Updating Priority In Queue
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found!</h2>
+    </div>
+}
+
+<div id="priorityInQueue-dialog" class="jdbox" style="display: none;">
+
+    <input type="hidden" name="EventCustomerId" id="PriorityInQueueEventCustomerIdHidden" />
+    <input type="hidden" id="IsPriorityInQueueSetHidden" value="False" />
+    Note : <textarea id="PriorityInQueueNote" cols="85" rows="5" maxlength="5000" style="width:auto;"></textarea>
+    <div style="float: right; margin-top: 10px;" class="editor-row ">
+        <input type="button" value="Cancel" onclick="closePriorityInQueue()">
+
+        <input type="button" value="Save" onclick="closePriorityInQueueAfterSave()">
+        <img src="/App/Images/loading.gif" style="display: none;">
+    </div>
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+            
+            $("#priorityInQueue-dialog").dialog({ width: 650, autoOpen: false, title: 'Priority in Queue Reason', modal: true, resizable: false, draggable: true, dialogClass: 'no-close' });
+            $("#priorityInQueue-dialog").bind('dialogclose', closePriorityInQueue);
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+        function setPriorityInQueue(eventCustomerId, isPriorityinQueue) {
+
+            if (isPriorityinQueue == 'true') {
+                $('#PriorityInQueueEventCustomerIdHidden').val(eventCustomerId);
+                $("#priorityInQueue-dialog").dialog('open');
+            }
+            else {
+                savePriorityInQueue(eventCustomerId, isPriorityinQueue, '');
+            }
+        }
+        
+        function savePriorityInQueue(eventCustomerId, isPriorityinQueue, notes) {
+            $(".priorityinqueue_" + eventCustomerId).toggle();
+            
+            notes = notes.replace(/\?\?+/gi, "?");
+            
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/Medical/Results/SetPriorityInQueue",
+                data: "{'EventCustomerResultId' : '" + eventCustomerId + "', 'IsPriorityInQueue' : '" + isPriorityinQueue + "','Note':'" + notes + "'}", 
+                success: function (result) {
+                    $(".priorityinqueue_" + eventCustomerId).toggle();
+                    window.location.reload();
+                },
+                error: function (a, b, c) {
+                    alert("Some error occured while updating the Priority In Queue \nPlease try again or contact the support team!");
+                    window.location.reload();
+                }
+            });
+        }
+        
+        function closePriorityInQueue() { 
+            if ($('#IsPriorityInQueueSetHidden').val() == 'False') {
+                if ($("#priorityInQueue-dialog").dialog('isOpen'))
+                    $("#priorityInQueue-dialog").dialog('close');
+            } else {
+                $('#IsPriorityInQueueSetHidden').val('False');
+            }
+
+            $('#PriorityInQueueNote').val('');
+            $('#PriorityInQueueEventCustomerIdHidden').val('');
+        }
+
+        function closePriorityInQueueAfterSave() {
+            var note = $.trim($('#PriorityInQueueNote').val());
+            if (note == '') {
+                alert('Please enter the reason');
+            }
+            else {
+                var eventCustomerId = $('#PriorityInQueueEventCustomerIdHidden').val();
+                savePriorityInQueue(eventCustomerId, true, note);
+                $('#IsPriorityInQueueSetHidden').val('True');
+                $("#priorityInQueue-dialog").dialog('close');
+            }
+        }
+    </script>
+}

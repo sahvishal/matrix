@@ -1,0 +1,1245 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Finance.Domain
+@using Falcon.App.Core.Finance.Enum
+@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.Core.Geo.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@model PaymentEditModel
+<style>
+.small-text
+{
+    font-size: 1.05em;
+    color: #5f5f5f;
+}
+
+.editor-row
+{
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.editor-column
+{
+    float: left;
+    width: 32%;
+    margin-right: 5px;
+}
+
+.submit-button-row
+{
+    text-align: right;
+    padding: 10px;
+    clear: both;
+    margin-top: 5px;
+}
+</style>
+
+@{
+    var paylaterOnlineRegistration = Convert.ToBoolean(Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IConfigurationSettingRepository>().GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.PayLaterOnlineRegistration));
+}
+<div class="title_blue mb10">
+    <h3 class="left-float pt5"><strong> Billing Information</strong></h3>
+    <h5 class="right-float">
+        <span style="font-weight:bold; font-size:15px;">Amount</span>
+        @Html.TextBox("Amount", "", new { @class = "paying-amount highlight_box p5 txt-black", @style = "width:80px; font-weight:bold; font-size:15px;" })
+    </h5>
+    <div class="clearfix"></div>
+</div>
+@Html.ValidationMessageFor(m => m.Amount)
+<div class="information_form">
+    @Html.HiddenFor(m => m.Amount, new { @class = "total-amount" })
+    @Html.HiddenFor(m => m.PaymentFlow)
+    <div id="payment-option-amount">
+        @foreach (var item in Model.AllowedPaymentTypes)
+        {
+            var paymentModecount = Model.AllowedPaymentTypes.Where(apt => apt.FirstValue != PaymentType.GiftCertificate.PersistenceLayerId && apt.FirstValue != PaymentType.Insurance.PersistenceLayerId).Count();
+            if (item.FirstValue == PaymentType.GiftCertificate.PersistenceLayerId || item.FirstValue == PaymentType.Insurance.PersistenceLayerId)
+            {
+                continue;
+            }            
+            <div class="tab_blue @(paymentModecount <= 2 ? "tabs" : "tabs_three") left-float">
+                <label><input type="radio" value="@item.SecondValue" name="payment" onclick="onClickShowPaymentOption('@item.FirstValue');" /> @item.SecondValue </label>
+                <input type="text" class="payment-type-hidden" style="display:none;" value="@item.FirstValue" />
+            </div>
+        }
+        <div class="clearfix"></div>        
+    </div>    
+    <ul style="padding-bottom:0px;">
+        @if (Model.AllowedPaymentTypes.Any(apt => apt.FirstValue == PaymentType.Insurance.PersistenceLayerId))
+        {
+            <li id="InsurancePaymentModeDiv" class="insurance-container">
+                <h4 class="title_blue" style="text-transform: none;">
+                    <b>Do you have insurance?</b>
+                    <input type="radio" onclick="insurancePaymentMode(true)" name="eligibility" id="EligibilityYesRadioButton"/>Yes
+                    <input type="radio" title="No" onclick="insurancePaymentMode(false)" name="eligibility" id="EligibilityNoRadioButton"/>No
+                </h4>
+                <div class="insurance-payment-detail highlight_box p10 txt-brown" style="display: none;">
+                    <span>Amount covered by insurance:</span>
+                    <span id="insurance-amount"></span>
+                </div>
+                <div class="insurance-payment-detail highlight_box p10 txt-brown" style="display: none;">
+                    <span>Co Pay:</span>
+                    <span id="copay-amount"></span>
+                </div>
+                <input type="hidden" id="EligibilityIdHiddenField" value="0"/>
+                <input type="hidden" id="ChargeCardIdHiddenField" value="0"/>
+            </li>
+        }
+        @if (Model.AllowedPaymentTypes.Any(apt => apt.FirstValue == PaymentType.GiftCertificate.PersistenceLayerId))
+        {
+            <li class="gc-container">
+                <h4 class="title_blue" style="text-transform: none;">
+                    <strong>Have a gift certificate? </strong> 
+                    <input type="radio" name="gcselection" id="gc-selection-yes" onclick="onClickGiftCertificateCheckBox(true);"/> Yes 
+                    <input type="radio" name="gcselection" id="gc-selection-no" checked="checked" onclick="onClickGiftCertificateCheckBox(false);" /> No
+                </h4>
+            </li>
+            <li class="gc-container" id="GcContainerLi" style="display: none;">
+                <div id="gc-messagebox" class="container-row" style="display: none; width:88%;">
+                </div>
+                <div class="mt5">
+                    <input type="text" class="textbox_coupon" id="claimcodeinput" />
+                    <a href="javascript:void(0);" onclick="applyGiftCertificate();" class="apply-gc-btn-toggle">
+                        <img src="/Config/Content/Images/apply_btn.png" width="96" height="39" alt="" align="top" />
+                    </a>                    
+                    <img src="/App/Images/loading.gif" alt="Loading ..." class="apply-gc-btn-toggle" style="display: none;" />                    
+                </div> 
+                <div id="gcappliedamountdiv" style="float: right; text-align: right; display: none;">
+                    Amount:
+                    <br />
+                    $ <span id="gcamountcharged"></span>
+                </div>                                   
+            </li>
+        }
+        <li>
+            <div id="payment-instr-message" class="error-message" style="clear: both; display: none;">
+            </div>
+        </li>        
+    </ul>
+    <div id="payment-instrument-section" style="display: none;">
+        @Html.Partial("OnlineChargeCard", new ChargeCard())
+        @Html.Partial("OnlineCheck", new Check())
+    </div>
+    <div id="billing-address" style="display: none; clear: both;">
+        <div id="copyaddress-placement-div">
+        </div>
+        <div class="billing-address">            
+            <ul style="padding-bottom:0px; padding-top:0px;">
+                <li><h4 class="title_blue"><strong>Billing Address</strong></h4></li>                             
+            </ul>
+            @Html.EditorFor(m => m.ExistingBillingAddress, "OnlineAddressEditModel") 
+        </div>
+        <div>
+            <ul style="padding-bottom:5px; padding-top:0px;">
+                <li>
+                    <h5 class="highlight_box p10 txt-brown">                        
+                        <input  id="ShippingAddressSameAsBillingAddress" name="ShippingAddressSameAsBillingAddress" onclick="sameAddressBlockClicked();" type="checkbox" @(Model.ShippingAddressSameAsBillingAddress ? "checked='checked'" : "") />
+                        <em> Shipping Address is Same as Billing Address </em>
+                    </h5>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="no-payment-div" style="display: none; width: 500px; margin: 0 auto; text-align: center; clear: both;">
+        <h2>
+            No Payment Required!
+        </h2>
+    </div>
+    <div id="shipping-address" style="display: none; clear: both;">                
+        <div class="shipping-address">
+            <ul style="padding-bottom:0px; padding-top:0px;">
+                <li><h4 class="title_blue"><strong>Shipping Address</strong></h4></li>                             
+            </ul>
+            @Html.EditorFor(m => m.ExistingShippingAddress, "OnlineAddressEditModel")
+        </div>
+    </div> 
+
+    <div id="selectedpaymentoptionsdiv" style="display: none;">
+    </div>
+    
+    <script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+    <script language="javascript" type="text/javascript">
+        var paymentCollection = new Object();
+        var selectedKeyForEdit = -1;
+        var k = 0;
+        var payment = null;
+        var paymentInstrument = null;
+        var addressModel = null;
+        var cardOnFile = null;
+        var addressOnFile = null;
+        var validations = null;
+        function setPaymentControls(){
+        @if (Model.ChargeCardonFile != null)
+        {
+            var card = Model.ChargeCardonFile.ChargeCard;
+            var cardPayment = Model.ChargeCardonFile.ChargeCardPayment;
+            <text>
+                cardOnFile = new Object();
+                cardOnFile.Id = '@card.Id';
+                cardOnFile.TypeId = '@((int)card.TypeId)';
+                cardOnFile.NameOnCard = '@card.NameOnCard';
+                cardOnFile.Number = '@card.Number';
+                cardOnFile.CVV = '@card.CVV';
+                cardOnFile.CardIssuer = '@card.CardIssuer';
+                cardOnFile.IsDebit = '@card.IsDebit';
+                cardOnFile.ExpirationDate = '@card.ExpirationDate.ToShortDateString()';
+                cardOnFile.PaymentId = '@(cardPayment == null ? 0 : cardPayment.PaymentId)';
+                cardOnFile.InstrumentPaymentId = '@(cardPayment == null ? 0 : cardPayment.Id)';
+                cardOnFile.ChargeCardId = '@(cardPayment == null ? 0 : cardPayment.ChargeCardId)';
+                cardOnFile.ProcessorResponse = '@(cardPayment == null ? "" : cardPayment.ProcessorResponse)';
+            </text>
+        }
+
+        @if (Model.ExistingBillingAddress != null)
+        {        
+            <text>
+                addressOnFile = new Object();
+                addressOnFile.StreetAddressLine1 = '@Model.ExistingBillingAddress.StreetAddressLine1';
+                addressOnFile.StreetAddressLine2 = '@(Model.ExistingBillingAddress.StreetAddressLine2)';                   
+                addressOnFile.CountryId = '@Model.ExistingBillingAddress.CountryId';
+
+                addressOnFile.StateId = '@Model.ExistingBillingAddress.StateId';
+                addressOnFile.City = '@Model.ExistingBillingAddress.City';
+                addressOnFile.ZipCode = '@Model.ExistingBillingAddress.ZipCode';
+            </text>
+        }
+        
+        @if ((Model.Payments != null) && (Model.Payments.Count() > 0))
+        {
+            int index = 0;
+            foreach (var payment in Model.Payments)
+            {
+                if (payment != null)
+                {
+                    <text>
+                    validations = new Array();
+                    payment = null;
+                    paymentInstrument = null;
+                    addressModel = null;
+
+                    payment = new Object();
+                    payment.Amount = @payment.Amount;
+                    payment.IsProcessed = '@payment.IsProcessed';
+                    payment.PaymentType = @payment.PaymentType; 
+                    payment.FeedbackMessage = "@(payment.FeedbackMessage != null ? Html.Raw(payment.FeedbackMessage.Message) : null)";
+                
+                    if(payment.FeedbackMessage.length > 0){
+                        $("#payment-instr-message").html(payment.FeedbackMessage);
+                        $("#payment-instr-message").show("higlight");
+                    }                
+
+                    @if (payment.BillingAddress != null && !payment.BillingAddress.IsEmpty())
+                    {
+                        <text>
+                        addressModel = new Object();
+                        addressModel.StreetAddressLine1 = "@Html.Raw(payment.BillingAddress.StreetAddressLine1)";
+                        addressModel.StreetAddressLine2 = "@Html.Raw(payment.BillingAddress.StreetAddressLine2)";                   
+                        addressModel.CountryId = '@payment.BillingAddress.CountryId';
+
+                        addressModel.StateId = '@payment.BillingAddress.StateId';
+                        addressModel.City = '@payment.BillingAddress.City';
+                        addressModel.ZipCode = '@payment.BillingAddress.ZipCode';
+                        </text>
+                    }
+
+                    </text>
+            
+                    if (payment.ChargeCard != null)
+                    {
+                        var card = payment.ChargeCard.ChargeCard;
+                        var cardPayment = payment.ChargeCard.ChargeCardPayment;
+                        <text>
+                        paymentInstrument = new Object();
+                        paymentInstrument.Id = 0;
+                        paymentInstrument.TypeId = '@((int)card.TypeId)';
+                        paymentInstrument.NameOnCard = '@card.NameOnCard';
+                        paymentInstrument.Number = '@card.Number';
+                        paymentInstrument.CVV = '@card.CVV';
+                        paymentInstrument.CardIssuer = '@card.CardIssuer';
+                        paymentInstrument.IsDebit = '@card.IsDebit';
+                        paymentInstrument.ExpirationDate = '@card.ExpirationDate.ToString("MM/yyyy")';
+                        paymentInstrument.PaymentId = 0;
+                        paymentInstrument.InstrumentPaymentId = 0;
+                        paymentInstrument.ChargeCardId = 0;
+                        paymentInstrument.ProcessorResponse = '@(cardPayment == null ? "" : cardPayment.ProcessorResponse)';
+
+                        setCardDetails(paymentInstrument);
+                        setAddress($("#billing-address"), (addressModel == null ? addressOnFile : addressModel));
+                        $("#payment-instrument-section").show();
+                        $("#charge-card").show();
+                        $("#billing-address").show();
+                        selectInputforPaymentType('@PaymentType.CreditCard.PersistenceLayerId');
+                        </text>
+                                        
+                    }
+                    else if (payment.Check != null)
+                    {
+                        var check = payment.Check.Check;
+                        var checkPayment = payment.Check.CheckPayment;
+
+                        <text>
+                        paymentInstrument = new Object();
+                        paymentInstrument.Id = 0;
+                        paymentInstrument.PayableTo = '@check.PayableTo';        
+                        paymentInstrument.CheckNumber = '@check.CheckNumber';
+                        paymentInstrument.CheckDate = '@(check.CheckDate.HasValue ? check.CheckDate.Value.ToShortDateString() : "")';
+                        paymentInstrument.RoutingNumber = '@check.RoutingNumber';
+                        paymentInstrument.BankName = '@check.BankName';
+                        paymentInstrument.AccountNumber = '@check.AccountNumber';
+                        paymentInstrument.Memo = '@check.Memo';
+                        paymentInstrument.IsElectronicCheck ='@check.IsElectronicCheck';
+                        paymentInstrument.AcountHolderName = '@check.AcountHolderName';
+                        paymentInstrument.CheckId = 0;
+                        paymentInstrument.PaymentId = 0;
+
+                        setCheckDetails(paymentInstrument);
+                        setasEcheck(false);
+                        $("#payment-instrument-section").show();
+                        $("#checksection").show();
+                        selectInputforPaymentType('@PaymentType.Check.PersistenceLayerId');
+                        </text>
+                    }
+                    else if (payment.ECheck != null)
+                    {
+                        var echeck = payment.ECheck.ECheck;
+                        var echeckPayment = payment.ECheck.ECheckPayment;
+                        <text>
+                        paymentInstrument = new Object();
+                        paymentInstrument.Id = 0;
+                        paymentInstrument.PayableTo = '@echeck.PayableTo';        
+                        paymentInstrument.CheckNumber = '@echeck.CheckNumber';
+                        paymentInstrument.CheckDate = '@(echeck.CheckDate.HasValue ? echeck.CheckDate.Value.ToShortDateString() : "")';
+                        paymentInstrument.RoutingNumber = '@echeck.RoutingNumber';
+                        paymentInstrument.BankName = '@echeck.BankName';
+                        paymentInstrument.AccountNumber = '@echeck.AccountNumber';
+                        paymentInstrument.Memo = '@echeck.Memo';
+                        paymentInstrument.IsElectronicCheck ='@echeck.IsElectronicCheck';
+                        paymentInstrument.AcountHolderName = '@echeck.AcountHolderName';
+                        paymentInstrument.CheckId = 0;
+                        paymentInstrument.PaymentId = 0;
+                    
+                        setCheckDetails(paymentInstrument);
+                        setasEcheck(true);
+                        setAddress($("#billing-address"), (addressModel == null ? addressOnFile : addressModel));
+                        $("#payment-instrument-section").show();
+                        $("#checksection").show();
+                        $("#billing-address").show();
+
+                        selectInputforPaymentType('@PaymentType.ElectronicCheck.PersistenceLayerId');
+                        </text>
+                                        
+                    }
+                    else if (payment.GiftCertificate != null)
+                    {
+                        var giftCertificate = payment.GiftCertificate.GiftCertificate;
+                        var giftCertificatePayment = payment.GiftCertificate.GiftCertificatePayment;
+                        <text>
+
+                        paymentInstrument = new Object();
+                        paymentInstrument.Id = '@giftCertificate.Id';
+                        paymentInstrument.ClaimCode = '@giftCertificate.ClaimCode';        
+                        paymentInstrument.Price = '@giftCertificate.Price';
+                        paymentInstrument.Amount = '@giftCertificate.Amount';
+                        paymentInstrument.PaymentId = 0;
+                    
+                        $("#gc-apply-checkbox").attr("checked", true);
+                        $("#gcappliedamountdiv").show();
+                        $("#gcamountcharged").text(parseFloat('@giftCertificatePayment.Amount').toFixed(2));
+                        $("#claimcodeinput").show();
+                        $("#claimcodeinput").val('@giftCertificate.ClaimCode');
+                        $("#claimcodeinput").parent().find("input[type=button]").show();
+                        checkIfMorePaymentscanbeMade(parseFloat('@giftCertificatePayment.Amount'));
+                        $("#gc-selection-yes").attr("checked",true);
+                        $("#gc-selection-no").removeAttr("checked");
+                        onClickGiftCertificateCheckBox(true);
+                        </text>
+                                        
+                    }
+                    else if (payment.Insurance != null)
+                    {
+                        <text>
+                        $("#EligibilityIdHiddenField").val('@payment.Insurance.EligibilityId');
+                        $("#ChargeCardIdHiddenField").val('@payment.Insurance.ChargeCardId');
+                        </text>
+                                        
+                    }
+                    else if (payment.PaymentType == PaymentType.Onsite_Value)
+                    {
+                        <text>
+                        $("#shipping-address").show();
+                        selectInputforPaymentType('@PaymentType.Onsite_Value');
+                        </text>
+                    }
+                    
+                }
+
+                <text>
+                if(payment != null && paymentInstrument != null){
+                    k++;
+                    paymentCollection[k] = new Object();
+                    paymentCollection[k].Key = k;
+                    paymentCollection[k].Payment = payment;
+                    paymentCollection[k].PaymentInstrument = paymentInstrument;
+                    paymentCollection[k].BillingAddress = addressModel;
+                }
+                </text>
+
+                index++;
+            }
+        }
+        }
+
+    </script>
+    <script language="javascript" type="text/javascript">
+        var getGiftCertificateDetail = null;
+        var selectedOption = "-1";
+        var getInsuranceDetail = null;
+
+        function setPaymentAmount(amount) {
+            //$("#total-amount").html(amount);
+            $(".total-amount").val(amount);
+        }
+
+        function selectInputforPaymentType(paymentType) {//debugger;
+            $(".payment-type-hidden").each(function () {
+                if (paymentType == $(this).val()) {
+                    $(this).parent().find("input[type=radio]").attr("checked", true);
+                }
+                else {
+                    $(this).parent().find("input[type=radio]").attr("checked", false);
+                }
+            });
+
+            selectedOption = paymentType;
+
+            $("#payment-option-amount .tab_blue").removeClass("tab_blue").addClass("tab_default");
+            $("input[type=text][value=" + paymentType + "]").parents("div:first").removeClass("tab_default").addClass("tab_blue");
+        }
+
+        function clearPaymentSection() {
+
+            $(".paying-amount").val(0);
+            $(".payment-type-hidden").each(function () {
+                $(this).parent().find("input[type=button].select-button-selected").hide();
+                $(this).parent().find("input[type=button].select-button").show();
+            });
+
+            selectedOption = -1;
+            clearInstrumentSection();
+        }
+
+        function clearInstrumentSection() {
+
+            $(".paymentinstrumentsubsection").hide();
+            $("#billing-address").hide();
+            clearChargeCard();
+            clearAddress($("#billing-address"));
+        }
+
+        function addPayment() {
+            if (selectedOption == "-1")
+                return false;
+
+            addPaymentforOption(selectedOption, $(".paying-amount").val());
+
+            return false;
+        }
+
+
+        function addPaymentforOption(option, amountCharged) {
+            //debugger;
+            payment = new Object();
+            paymentInstrument = new Object();
+            addressModel = new Object();
+
+            payment.Amount = amountCharged;
+            payment.IsProcessed = false;
+            payment.PaymentType = option;
+            payment.FeedbackMessage = "";
+
+            if (option != '@PaymentType.GiftCertificate.PersistenceLayerId' && option != '@PaymentType.Insurance.PersistenceLayerId') {
+                $.each(paymentCollection, function () {
+                    if (this.Payment.PaymentType != '@PaymentType.GiftCertificate.PersistenceLayerId' && this.Payment.PaymentType != '@PaymentType.Insurance.PersistenceLayerId') {
+                        delete paymentCollection[this.Key];
+                        return false;
+                    }
+                });
+            }
+
+            if (option == '@PaymentType.CreditCard.PersistenceLayerId') {
+                paymentInstrument = getCardDetails();
+                paymentInstrument.Id = 0;
+                paymentInstrument.PaymentId = 0;
+                paymentInstrument.ChargeCardId = 0;
+                paymentInstrument.InstrumentPaymentId = 0;
+                paymentInstrument.ProcessorResponse = "";
+
+                addressModel = getAddress($("#billing-address"));
+            }
+            else if (option == '@PaymentType.CreditCardOnFile_Value') {
+                paymentInstrument = cardOnFile;
+                addressModel = addressOnFile;
+            }
+            else if (option == '@PaymentType.Check.PersistenceLayerId') {
+                paymentInstrument = getCheckDetails();
+                paymentInstrument.Id = 0;
+                paymentInstrument.PaymentId = 0;
+            }
+            else if (option == '@PaymentType.ElectronicCheck.PersistenceLayerId') {
+                paymentInstrument = getCheckDetails();
+                paymentInstrument.Id = 0;
+                paymentInstrument.PaymentId = 0;
+
+                addressModel = getAddress($("#billing-address"));
+            }
+            else if (option == '@PaymentType.GiftCertificate.PersistenceLayerId') {
+                paymentInstrument = getGiftCertificateDetail();
+                checkIfMorePaymentscanbeMade(amountCharged);
+                paymentInstrument.PaymentId = 0;
+                paymentInstrument.GiftCertificateId = paymentInstrument.Id;
+            }
+            else if (option == '@PaymentType.Insurance.PersistenceLayerId') {
+                paymentInstrument = getInsuranceDetail();
+                checkIfMorePaymentscanbeMade(amountCharged);
+                paymentInstrument.PaymentId = 0;
+            }
+
+
+            var index = selectedKeyForEdit;
+            if (selectedKeyForEdit < 0) {
+                k++;
+                paymentCollection[k] = new Object();
+                paymentCollection[k].Key = k;
+                index = k;
+            }
+            else {
+                payment.FeedbackMessage = paymentCollection[index].Payment.FeedbackMessage;
+            }
+
+            selectedKeyForEdit = -1;
+            paymentCollection[index].Payment = payment;
+            if (option != '@PaymentType.GiftCertificate.PersistenceLayerId' && option != '@PaymentType.Insurance.PersistenceLayerId') {
+                paymentCollection[index].BillingAddress = addressModel;
+            }
+
+            paymentCollection[index].PaymentInstrument = paymentInstrument;
+            renderPayment();
+        }
+
+        function onClickGiftCertificateCheckBox(hasGc) {
+            if (hasGc == false) {
+                getGiftCertificateDetail = null;
+                checkIfMorePaymentscanbeMade(0);
+                $("#claimcodeinput").val("");
+                $("#GcContainerLi").hide();
+                clearPrevGiftCertificate();
+                renderPayment();
+            }
+            else {
+                $("#GcContainerLi").show();
+            }
+        }
+
+        function clearPrevGiftCertificate() {
+            $("#gcappliedamountdiv").hide();
+            $.each(paymentCollection, function () {
+                if (this.Payment.PaymentType == '@PaymentType.GiftCertificate.PersistenceLayerId') {
+                    $(".paying-amount").val($(".total-amount").val());
+                    delete paymentCollection[this.Key];
+                    return false;
+                }
+            });
+        }
+
+        function onClickShowPaymentOption(currentOption) {//debugger;                
+
+            clearInstrumentSection();
+            selectedOption = currentOption;
+
+            selectInputforPaymentType(currentOption);                
+
+            if (selectedOption == '@PaymentType.CreditCard.PersistenceLayerId') {
+                $("#payment-instrument-section").show();
+                $("#charge-card").show();
+                setAddress($("#billing-address"), addressOnFile);
+                $("#billing-address").show();
+                sameAddressBlockClicked();
+            }
+            else if (selectedOption == '@PaymentType.CreditCardOnFile_Value') {
+                $("#payment-instrument-section").show();
+                $("#charge-card").show();
+                setCardonFileDetails(cardOnFile);
+                sameAddressBlockClicked();
+            }
+            else if (selectedOption == '@PaymentType.Check.PersistenceLayerId') {
+                setasEcheck(false);
+                $("#payment-instrument-section").show();
+                $("#checksection").show();
+                sameAddressBlockClicked();
+            }
+            else if (selectedOption == '@PaymentType.ElectronicCheck.PersistenceLayerId') {
+                setasEcheck(true);
+                $("#payment-instrument-section").show();
+                $("#checksection").show();
+                setAddress($("#billing-address"), addressOnFile);
+                $("#billing-address").show();
+                sameAddressBlockClicked();
+            }
+            else if (selectedOption = '@PaymentType.Onsite_Value') {
+                $("#shipping-address").show();
+            }
+        }
+
+
+        var difference = 0;
+
+        function renderPayment() {
+            $("#selectedpaymentoptionsdiv").empty();
+            var totalAmount = parseFloat($(".total-amount").val());
+            var paymentAmount = 0;
+
+            $.each(paymentCollection, function (key, payment) {
+
+                $("#paymentTemplate").tmpl(payment).appendTo("#selectedpaymentoptionsdiv");
+
+                if (payment.Payment.PaymentType == '@PaymentType.CreditCard.PersistenceLayerId' || payment.Payment.PaymentType == '@PaymentType.CreditCardOnFile_Value') {
+                    $("#cardPaymentTemplate").tmpl(payment).appendTo("#selectedpaymentoptionsdiv");
+                    if (payment.BillingAddress != null) {
+                        $("#billingAddressTemplate").tmpl(payment).appendTo("#selectedpaymentoptionsdiv");
+                    }
+                }
+                if (payment.Payment.PaymentType == '@PaymentType.Check.PersistenceLayerId') {
+                    $("#checkPaymentTemplate").tmpl(payment).appendTo("#selectedpaymentoptionsdiv");
+                }
+
+                if (payment.Payment.PaymentType == '@PaymentType.ElectronicCheck.PersistenceLayerId') {
+                    $("#eCheckPaymentTemplate").tmpl(payment).appendTo("#selectedpaymentoptionsdiv");
+                    if (payment.BillingAddress != null) {
+                        $("#billingAddressTemplate").tmpl(payment).appendTo("#selectedpaymentoptionsdiv");
+                    }
+                }
+
+                if (payment.Payment.PaymentType == '@PaymentType.GiftCertificate.PersistenceLayerId') {
+                    $("#giftCertificatePaymentTemplate").tmpl(payment).appendTo("#selectedpaymentoptionsdiv");
+                }
+                
+                if (payment.Payment.PaymentType == '@PaymentType.Insurance.PersistenceLayerId') {
+                    $("#insurancePaymentTemplate").tmpl(payment).appendTo("#selectedpaymentoptionsdiv");
+                }
+
+                if (payment.Payment.FeedbackMessage.length > 0) {
+                    $(".feedbackmessagediv:last").html(payment.Payment.FeedbackMessage);
+                }
+                paymentAmount += parseFloat(payment.Payment.Amount);
+            });
+
+            difference = totalAmount - paymentAmount;
+
+        }
+
+        function checkIfMorePaymentscanbeMade(gcAmountApplied) {
+            //debugger;
+            if (isNaN($(".total-amount").val()))
+                return;
+
+           
+            var insuranceDetail = getInsuranceDetail != null ? getInsuranceDetail() : null;
+
+            var totalAmount = parseFloat($(".total-amount").val());
+
+            var insuranceAmount = 0;
+            if (insuranceDetail != null) {
+                insuranceAmount = parseFloat(insuranceDetail.InsuranceAmount);
+                if (insuranceAmount < totalAmount) {
+                    $("#payment-option-amount").show();
+                    $(".paying-amount").val((totalAmount - insuranceAmount).toFixed(2));
+                    
+                } else {
+                    $("#payment-option-amount").hide();
+                    clearPaymentSection();
+                    $("#no-payment-div").show();
+                    $("#shipping-address").show();
+                    $(".gc-container").hide();
+
+                    $.each(paymentCollection, function() {
+                        if (this.Payment.PaymentType != '@PaymentType.Insurance.PersistenceLayerId') {
+                            delete paymentCollection[this.Key];
+                            return false;
+                        }
+                    });
+                    difference = 0;
+                    return;
+                }
+            }
+           
+            totalAmount = totalAmount - insuranceAmount;
+            var gcAmount = 0;
+            
+            @*$.each(paymentCollection, function () {
+                var payment = this.Payment;
+                if (payment.PaymentType == '@PaymentType.GiftCertificate.PersistenceLayerId') {
+                        var paymentInstrument = this.PaymentInstrument;
+                        gcAmount = paymentInstrument.Amount;
+                    }
+            });*@
+
+            var appliedGiftCertificateDetail = getGiftCertificateDetail != null ? getGiftCertificateDetail() : null;
+            if (appliedGiftCertificateDetail != null) {
+                gcAmount = appliedGiftCertificateDetail.Amount;
+            } else if(gcAmountApplied> 0) {
+                gcAmount = gcAmountApplied;
+            }
+            
+            if (gcAmount < totalAmount) {
+                $("#payment-option-amount").show();
+                $(".paying-amount").val((totalAmount - gcAmount).toFixed(2));
+                onClickShowPaymentOption("@PaymentType.CreditCard.PersistenceLayerId");                            
+                $("#no-payment-div").hide();
+                $("#shipping-address").hide();
+            } else {
+                    $("#payment-option-amount").hide();
+                    clearPaymentSection();
+                    $("#no-payment-div").show();
+                    $("#shipping-address").show();
+                    $("#gcamountcharged").text(parseFloat(gcAmount).toFixed(2));
+                    $("#ShippingAddressSameAsBillingAddress").removeAttr("checked");
+
+                    $.each(paymentCollection, function() {
+                        if (this.Payment.PaymentType != '@PaymentType.GiftCertificate.PersistenceLayerId' && this.Payment.PaymentType != '@PaymentType.Insurance.PersistenceLayerId') {
+                        delete paymentCollection[this.Key];
+                        return false;
+                    }
+                });
+            }
+            
+        }
+
+        function reAdjustPayment(totalPayableAmount) {//debugger;
+            setPaymentAmount(totalPayableAmount);
+
+            $(".gc-container").show();
+
+            if (totalPayableAmount == 0) {
+                $("#selectedpaymentoptionsdiv").empty();
+                $("#payment-option-amount").hide();
+                clearPaymentSection();
+                paymentCollection = new Object();
+                $("#no-payment-div").show();
+                $("#shipping-address").show();
+                $(".gc-container").hide();
+                $(".insurance-container").hide();
+                difference = 0;
+                return;
+            }
+
+            var coveredByGcPayment = false;
+            var amountLeftAfterAdjustment = parseFloat(totalPayableAmount);
+
+            $.each(paymentCollection, function () {
+                var payment = this.Payment;
+                if (payment.PaymentType == '@PaymentType.Insurance.PersistenceLayerId') {
+                    var insurance = this.PaymentInstrument;
+
+                    if (parseFloat(insurance.InsuranceAmount) >= parseFloat(totalPayableAmount)) {
+                        insurance.InsuranceAmount = totalPayableAmount;
+                        payment.Amount = totalPayableAmount;
+                        amountLeftAfterAdjustment = 0;
+                        $("#insurance-amount").html("$ " + insurance.InsuranceAmount.toFixed(2));
+                        $("#copay-amount").html("$ " + insurance.CoPayAmount.toFixed(2));
+                    }
+                    else {
+                        insurance.InsuranceAmount = insurance.InsuranceAmount;
+                        payment.Amount = insurance.InsuranceAmount;
+                        amountLeftAfterAdjustment = totalPayableAmount - payment.Amount;
+                    }
+
+                    this.PaymentInstrument = insurance;
+                    this.Payment = payment;
+                }
+            });
+
+            if (amountLeftAfterAdjustment == 0) {
+                $("#payment-option-amount").hide();
+                clearPaymentSection();
+                $("#no-payment-div").show();
+                $("#shipping-address").show();
+                $(".gc-container").hide();
+                
+                $.each(paymentCollection, function () {
+                    if (this.Payment.PaymentType != '@PaymentType.Insurance.PersistenceLayerId') {
+                        delete paymentCollection[this.Key];
+                        return false;
+                    }
+                });
+                difference = 0;
+                return;
+            }
+            
+            $.each(paymentCollection, function () {
+                var payment = this.Payment;
+                if (payment.PaymentType == '@PaymentType.GiftCertificate.PersistenceLayerId') {
+                    var gc = this.PaymentInstrument;
+
+                    if (parseFloat(gc.BalanceAmount) >= parseFloat(amountLeftAfterAdjustment)) {
+                        gc.Amount = amountLeftAfterAdjustment;
+                        payment.Amount = amountLeftAfterAdjustment;
+                        amountLeftAfterAdjustment = 0;
+                        $("#gcamountcharged").text(amountLeftAfterAdjustment);
+                        coveredByGcPayment = true;
+                    }
+                    else {
+                        gc.Amount = gc.BalanceAmount;
+                        payment.Amount = gc.BalanceAmount;
+                        amountLeftAfterAdjustment = amountLeftAfterAdjustment - payment.Amount;
+                    }
+
+                    this.PaymentInstrument = gc;
+                    this.Payment = payment;
+                }
+            });
+
+            if (!coveredByGcPayment && amountLeftAfterAdjustment > 0) {
+                $.each(paymentCollection, function () {
+                    var payment = this.Payment;
+                    if (payment.PaymentType != '@PaymentType.GiftCertificate.PersistenceLayerId') {
+                        var paymentInstrument = this.PaymentInstrument;
+
+                        paymentInstrument.Amount = amountLeftAfterAdjustment;
+                        payment.Amount = amountLeftAfterAdjustment;
+
+                        this.PaymentInstrument = paymentInstrument;
+                        this.Payment = payment;
+                    }
+                });
+
+                $(".paying-amount").val(amountLeftAfterAdjustment.toFixed(2));
+                $("#payment-option-amount").show();
+                if (selectedOption < 1) {//debugger;
+                    //onClickShowPaymentOption(selectedOption < 1 ? "@PaymentType.CreditCard.PersistenceLayerId" : selectedOption);
+                    if ('@paylaterOnlineRegistration' == '@Boolean.TrueString')
+                        onClickShowPaymentOption("@PaymentType.Onsite_Value");
+                    else
+                        onClickShowPaymentOption("@PaymentType.CreditCard.PersistenceLayerId");
+                }
+                $("#no-payment-div").hide();
+                $("#shipping-address").hide();
+            }
+            else {
+                $(".paying-amount").val(0);
+                $("#no-payment-div").show();
+                $("#shipping-address").show();
+            }
+
+            renderPayment();
+
+        }
+    
+
+    </script>
+    <script language="javascript" type="text/javascript">
+            /* validations and automations for Amount Input Box */
+
+            function setGcMessage(isSuccess, message) {
+                if (message == null || message.length < 1) {
+                    $("#gc-messagebox").hide();
+                    return;
+                }
+
+                if (isSuccess) {
+                    $("#gc-messagebox").addClass("success-message").removeClass("warning-message");
+                }
+                else {
+                    $("#gc-messagebox").addClass("warning-message").removeClass("success-message");
+                }
+
+                $("#gc-messagebox").show('slow');
+                $("#gc-messagebox").text(message);
+            }
+
+            function setInitials() {
+                $("#payment-instrument-section > div").addClass("paymentinstrumentsubsection");
+                $(".paymentinstrumentsubsection").hide();
+
+
+                $(".paying-amount").val('@Model.Amount.ToString("0.00")');
+                $(".paying-amount").attr("disabled", "disabled");
+                setPaymentControls();
+                renderPayment();
+
+                @if (Model.Amount < 1)
+                {
+                    <text> reAdjustPayment('@Model.Amount'); </text>
+                }
+
+            }
+
+            $(document).ready(function(){ setInitials(); });
+
+            function validateAmount() {
+
+                if (difference > 0) {
+                    alert("Provide the payment Details for Total Chargeable Amount.");
+                    return false;
+                }
+
+                return true;
+            }
+
+            $(".paying-amount").keydown(function (evt) {
+                var key = (evt.which ? evt.which : ((evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : 0)));
+                x = $(".paying-amount").val();
+                var RegExp = /^(-)?(\d*)(\.?)(\d*)$/;
+                var result = x.match(RegExp);
+                return result;
+            });
+
+            setPayabletoHidden();
+
+            function setBillingAddress(addressModelInstance) {
+                setAddress($("#billing-address"), addressModelInstance);
+                addressOnFile = addressModelInstance;
+            }
+
+            $('#claimcodeinput').keypress(function (evt) {
+                var key = (evt.which ? evt.which : ((evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : 0)));
+                if (key == 13) {
+                    applyGiftCertificate();
+                    return false;
+                }
+            });
+
+            function applyGiftCertificate() {
+                getGiftCertificateDetail = null;
+                var claimCode = $.trim($("#claimcodeinput").val());
+
+                if (claimCode.length < 1) {
+                    return;
+                }
+
+                clearPrevGiftCertificate();
+                renderPayment();
+
+                $(".apply-gc-btn-toggle").toggle();
+
+                $.ajax({ type: 'POST',
+                    url: '/Scheduling/Online/ApplyGiftCertificate?claimCode=' + claimCode,
+                    data: '{}',
+                    dataType: 'json',
+                    success: function (result) {
+                        $(".apply-gc-btn-toggle").toggle();
+                        if (result.Result) {
+                            var giftCertificate = result.GiftCertificate;
+                            var totalAmount = parseFloat($(".total-amount").val());
+
+                            getGiftCertificateDetail = function () {
+                                return {
+                                    'Id': giftCertificate.Id,
+                                    'ClaimCode': giftCertificate.ClaimCode,
+                                    'Amount': parseFloat(giftCertificate.BalanceAmount) > totalAmount ? totalAmount : giftCertificate.BalanceAmount,
+                                    'BalanceAmount': giftCertificate.BalanceAmount,
+                                    'Price': giftCertificate.Price
+                                };
+                            };
+                            var amountCharged = parseFloat(giftCertificate.BalanceAmount) > totalAmount ? totalAmount : giftCertificate.BalanceAmount;
+
+                            $("#gcappliedamountdiv").show();
+                            $("#gcamountcharged").text(amountCharged.toFixed(2));
+
+                            addPaymentforOption('@PaymentType.GiftCertificate.PersistenceLayerId', amountCharged);
+
+                            setGcMessage(true, "Gift Certifcate amounted to $" + amountCharged.toFixed(2));
+                        }
+                        else {
+                            setGcMessage(false, result.Message);
+                            $("#payment-option-amount").show();
+                            var total = parseFloat($(".total-amount").val());
+                            $(".paying-amount").val((total).toFixed(2));
+                            onClickShowPaymentOption("@PaymentType.CreditCard.PersistenceLayerId");                            
+                            $("#no-payment-div").hide();
+                            $("#shipping-address").hide();
+                        }
+                    },
+                    error: function () {
+                        $(".apply-gc-btn-toggle").toggle();
+                        setGcMessage(false, "Some System Error Occured!");
+                    }
+                });
+            }
+
+    </script>
+
+    <script type="text/javascript" language="javascript">
+
+        function sameAddressBlockClicked() {//debugger;
+            if ($("#ShippingAddressSameAsBillingAddress").is(":checked")) {
+                $("#shipping-address").hide();
+
+                var address = getAddress($(".billing-address"));
+                setAddress($(".shipping-address"), address);
+            }
+            else {
+                $("#shipping-address").show();                    
+            }
+        }
+
+        $(document).ready(function () {
+
+            $(".billing-address input[type=text], .billing-address select").change(function () {
+                sameAddressBlockClicked();
+            });
+
+            if (selectedOption != '@PaymentType.Onsite_Value')
+                sameAddressBlockClicked();
+            
+            $("#insurance-eligibility-div-dialog").dialog({ width: 650, autoOpen: false, title: 'Check Eligibility', modal: true, resizable: false, draggable: true });
+            $("#insurance-eligibility-div-dialog").bind('dialogclose', function() { onCloseEligibilityDialog(); });
+            if ('@Model.AllowedPaymentTypes.Any(apt => apt.FirstValue == PaymentType.Insurance.PersistenceLayerId)' == '@Boolean.FalseString') {
+                $(".insurance-container").hide();
+            } else {
+                $(".insurance-container").show();
+                onCloseEligibilityDialog();
+            }
+        });
+    </script>
+    
+    <script type="text/javascript">
+        var insuranceAmount = 0;
+        var copayamount = 0;
+        
+        
+        function saveTempCartforEligibility(eligibilityId, chargeCardId) {//debugger; 
+            var guid = getGuid();
+            $.ajax({ 'type': 'POST',
+                'dataType': 'json',
+                'url': '/Scheduling/Online/SaveTempCartforEligibility?guid=' + guid + '&eligibilityId=' + eligibilityId + '&chargeCardId=' + chargeCardId,
+                'data': '{}',
+                'success': function (result) {                
+                },
+                'error': function () {               
+                }
+            });
+        }
+        
+        function calculateInsuranceAmount() {
+            //debugger;
+            var eligibilityData = getInsuranceDetail == null ? null : getInsuranceDetail();
+            if (eligibilityData != null) {
+                addPaymentforOption('@PaymentType.Insurance.PersistenceLayerId', eligibilityData.InsuranceAmount);
+            } else {
+                $.each(paymentCollection, function () {
+                    if (this.Payment.PaymentType == '@PaymentType.Insurance.PersistenceLayerId') {
+                        delete paymentCollection[this.Key];
+                        return false;
+                    }
+                });
+                renderPayment();
+            }
+        }
+        
+        function insurancePaymentMode(hasInsurance) {
+            //debugger;
+            if (hasInsurance) {
+                $("#insurance-eligibility-div-dialog").dialog("open");
+                checkEligibility();
+            } else {
+                $("#EligibilityIdHiddenField").val(0);
+                $("#ChargeCardIdHiddenField").val(0);
+                $(".insurance-payment-detail").hide();
+                getInsuranceDetail = null;
+                calculateInsuranceAmount();
+            }
+        }
+        
+        function saveEligibilityInfo(eligibilityId, chargeCardId, cardDetails) {
+            //debugger;
+            $("#EligibilityIdHiddenField").val(eligibilityId);
+            $("#ChargeCardIdHiddenField").val(chargeCardId);
+            saveTempCartforEligibility(eligibilityId, chargeCardId);
+            if (eligibilityId > 0 && chargeCardId > 0) {
+                setCardDetails(cardDetails);
+            }
+        }
+
+        function getEligibilityDetail() {
+            //debugger;
+            var parameter = "{'eligibilityId':'" + $("#EligibilityIdHiddenField").val() + "'"; 
+            parameter += ",'eventId':'" + _eventId + "'";
+            parameter += ",'packageId':'" + _packageId + "'"; 
+            parameter += ",'addOnTestIds':" + JSON.stringify(_addOntestIds) + "}";  
+            
+            $.ajax({
+                url: '/Scheduling/Insurance/GetInsuranceDetail',
+                type: 'Post',
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: parameter,
+                success: function(result) {
+                    //debugger;
+                    $("#insurance-amount").html("$ " + result.AmountCovered.toFixed(2));
+                    $("#copay-amount").html("$ " + result.CoPayAmount.toFixed(2));
+                    
+                    $(".insurance-payment-detail").show();
+                    
+                    getInsuranceDetail = function () {
+                        return {
+                            'EligibilityId': result.EligibilityId,
+                            'ChargeCardId': $("#ChargeCardIdHiddenField").val(),
+                            'InsuranceAmount': result.AmountCovered,
+                            'CoPayAmount': result.CoPayAmount
+                        };
+                    };
+                    
+                    calculateInsuranceAmount();
+                },
+                error: function(arg1, arg2) {
+
+                }
+            });
+        }
+        
+        function onCloseEligibilityDialog() {
+            //debugger;
+            var eligibilityId = parseInt($("#EligibilityIdHiddenField").val());
+            var chargeCardId = parseInt($("#ChargeCardIdHiddenField").val());
+
+            saveTempCartforEligibility(eligibilityId, chargeCardId);
+            
+            if (eligibilityId <= 0 || chargeCardId <= 0) {
+                $("#EligibilityNoRadioButton").attr("checked", true);
+                $("#EligibilityYesRadioButton").attr("checked", false);
+                insurancePaymentMode(false);
+            } else {
+                $("#EligibilityNoRadioButton").attr("checked", false);
+                $("#EligibilityYesRadioButton").attr("checked", true);
+                getEligibilityDetail();
+            }
+            
+            if ($("#insurance-eligibility-div-dialog").dialog("isOpen") == true) {
+                $("#insurance-eligibility-div-dialog").dialog("close");
+            }
+        }
+        
+        function closeEligibilityDialog() {
+            if ($("#insurance-eligibility-div-dialog").dialog("isOpen") == true) {
+                $("#insurance-eligibility-div-dialog").dialog("close");
+            }
+        }
+        
+        function checkEligibility() {
+            $("#insurance-eligibility-div-dialog").html("<div style='width:90%; margin: 10px auto; text-align: center; padding: 30px 0px;'> <img src='/App/Images/loading.gif' alt=''> Loading.... </div>");
+            
+            $.ajax({
+                url: '/Scheduling/Insurance/Edit',
+                type: 'Post',
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: 'html',
+                data: "{}",
+                success: function(result) {
+                    //debugger;
+                    $("#insurance-eligibility-div-dialog").html(result);
+                    setSuccessandCloseMethod(saveEligibilityInfo, closeEligibilityDialog);
+                },
+                error: function(arg1, arg2) {
+
+                }
+            });
+        }
+
+    </script>
+        
+    <script id="paymentTemplate" type="text/x-jquery-tmpl">
+        <input type="hidden" name="Payments.Index" value="${Key}" />
+        <div style="display:none;">
+            <input type="text" name="Payments[${Key}].Amount" value="${Payment.Amount}" />
+            <input type="text" name="Payments[${Key}].IsProcessed" value="${Payment.IsProcessed}" />
+            <input type="text" name="Payments[${Key}].PaymentType" value="${Payment.PaymentType}" />
+        </div>                 
+    </script>
+    <script id="cardPaymentTemplate" type="text/x-jquery-tmpl">    
+        <div style="display:none;">
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.Id" value="${PaymentInstrument.Id}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.TypeId" value="${PaymentInstrument.TypeId}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.NameOnCard" value="${PaymentInstrument.NameOnCard}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.Number" value="${PaymentInstrument.Number}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.CVV" value="${PaymentInstrument.CVV}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.CardIssuer" value="${PaymentInstrument.CardIssuer}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.ExpirationDate" value="${PaymentInstrument.ExpirationDate}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCard.IsDebit" value="False" />        
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.PaymentId" value="${PaymentInstrument.PaymentId}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.Id" value="${PaymentInstrument.InstrumentPaymentId}" />        
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.Amount" value="${Payment.Amount}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.ChargeCardId" value="${PaymentInstrument.ChargeCardId}" />
+            <input type="text" name="Payments[${Key}].ChargeCard.ChargeCardPayment.ProcessorResponse" value="${PaymentInstrument.ProcessorResponse}" />
+        </div>     
+    </script>
+    <script id="checkPaymentTemplate" type="text/x-jquery-tmpl">    
+        <div style="display:none;">
+            <input type="text" name="Payments[${Key}].Check.Check.Id" value="${PaymentInstrument.Id}" />
+            <input type="text" name="Payments[${Key}].Check.Check.PayableTo" value="@(IoC.Resolve<ISettings>().CompanyName)" />
+            <input type="text" name="Payments[${Key}].Check.Check.CheckNumber" value="${PaymentInstrument.CheckNumber}" />
+            <input type="text" name="Payments[${Key}].Check.Check.CheckDate" value="${PaymentInstrument.CheckDate}" />
+            <input type="text" name="Payments[${Key}].Check.Check.BankName" value="${PaymentInstrument.BankName}" />
+            <input type="text" name="Payments[${Key}].Check.Check.AccountNumber" value="${PaymentInstrument.AccountNumber}" />
+            <input type="text" name="Payments[${Key}].Check.Check.AcountHolderName" value="${PaymentInstrument.AcountHolderName}" />
+            <input type="text" name="Payments[${Key}].Check.Check.IsElectronicCheck" value="${false}" />        
+            <input type="text" name="Payments[${Key}].Check.Check.Amount" value="${Payment.Amount}" />
+            <input type="text" name="Payments[${Key}].Check.CheckPayment.Amount" value="${Payment.Amount}" />
+            <input type="text" name="Payments[${Key}].Check.CheckPayment.PaymentId" value="${PaymentInstrument.PaymentId}" />
+            <input type="text" name="Payments[${Key}].Check.CheckPayment.CheckId" value="${PaymentInstrument.Id}" />
+        </div>     
+    </script>
+    <script id="eCheckPaymentTemplate" type="text/x-jquery-tmpl">    
+        <div style="display:none;">
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.Id" value="${PaymentInstrument.Id}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.PayableTo" value="@(IoC.Resolve<ISettings>().CompanyName)" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.CheckNumber" value="${PaymentInstrument.CheckNumber}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.CheckDate" value="${PaymentInstrument.CheckDate}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.RoutingNumber" value="${PaymentInstrument.RoutingNumber}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.BankName" value="${PaymentInstrument.BankName}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.AccountNumber" value="${PaymentInstrument.AccountNumber}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.AcountHolderName" value="${PaymentInstrument.AcountHolderName}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.IsElectronicCheck" value="${true}" />        
+            <input type="text" name="Payments[${Key}].ECheck.ECheck.Amount" value="${Payment.Amount}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheckPayment.Amount" value="${Payment.Amount}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheckPayment.PaymentId" value="${PaymentInstrument.PaymentId}" />
+            <input type="text" name="Payments[${Key}].ECheck.ECheckPayment.CheckId" value="${PaymentInstrument.Id}" />
+        </div>     
+    </script>
+    <script id="giftCertificatePaymentTemplate" type="text/x-jquery-tmpl">    
+        <div style="display:none;">
+            <input type="text" name="Payments[${Key}].GiftCertificate.GiftCertificate.Id" value="${PaymentInstrument.Id}" />
+            <input type="text" name="Payments[${Key}].GiftCertificate.GiftCertificate.ClaimCode" value="${PaymentInstrument.ClaimCode}" />
+            <input type="text" name="Payments[${Key}].GiftCertificate.GiftCertificate.Amount" value="${PaymentInstrument.Amount}" />
+            <input type="text" name="Payments[${Key}].GiftCertificate.GiftCertificate.BalanceAmount" value="${PaymentInstrument.BalanceAmount}" />
+            <input type="text" name="Payments[${Key}].GiftCertificate.GiftCertificate.Price" value="${PaymentInstrument.Price}" />
+            <input type="text" name="Payments[${Key}].GiftCertificate.GiftCertificatePayment.Amount" value="${Payment.Amount}" />
+            <input type="text" name="Payments[${Key}].GiftCertificate.GiftCertificatePayment.PaymentId" value="${PaymentInstrument.PaymentId}" />
+            <input type="text" name="Payments[${Key}].GiftCertificate.GiftCertificatePayment.GiftCertificateId" value="${PaymentInstrument.Id}" />
+        </div>     
+    </script>
+    <script id="insurancePaymentTemplate" type="text/x-jquery-tmpl">    
+        <div style="display:none;">
+            <input type="text" name="Payments[${Key}].Insurance.EligibilityId" value="${PaymentInstrument.EligibilityId}" />
+            <input type="text" name="Payments[${Key}].Insurance.ChargeCardId" value="${PaymentInstrument.ChargeCardId}" />
+            <input type="text" name="Payments[${Key}].Insurance.CoPayAmount" value="${PaymentInstrument.CoPayAmount}" />            
+            <input type="text" name="Payments[${Key}].Insurance.InsurancePayment.Amount" value="${Payment.Amount}" />
+            <input type="text" name="Payments[${Key}].Insurance.InsurancePayment.PaymentId" value="${PaymentInstrument.PaymentId}" />
+            <input type="text" name="Payments[${Key}].Insurance.InsurancePayment.AmountToBePaid" value="${PaymentInstrument.InsuranceAmount}" />
+        </div>     
+    </script>
+    <script id="billingAddressTemplate" type="text/x-jquery-tmpl">    
+        <div style="display:none;">
+            <input type="text" name="Payments[${Key}].BillingAddress.Id" value="${BillingAddress.Id}" />
+            <input type="text" name="Payments[${Key}].BillingAddress.StreetAddressLine1" value="${BillingAddress.StreetAddressLine1}" />
+            <input type="text" name="Payments[${Key}].BillingAddress.StreetAddressLine2" value="${BillingAddress.StreetAddressLine2}" />
+            <input type="text" name="Payments[${Key}].BillingAddress.City" value="${BillingAddress.City}" />
+            <input type="text" name="Payments[${Key}].BillingAddress.StateId" value="${BillingAddress.StateId}" />
+            <input type="text" name="Payments[${Key}].BillingAddress.CountryId" value="${BillingAddress.CountryId}" />
+            <input type="text" name="Payments[${Key}].BillingAddress.ZipCode" value="${BillingAddress.ZipCode}" />
+        </div>     
+    </script>    
+    
+</div>

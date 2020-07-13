@@ -1,0 +1,120 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.UI.HtmlHelpers
+
+@model ClinicalTestQualificationCriteriaEditModel
+<fieldset class="templateRow">
+    <legend>@Model.GroupName</legend>
+    @Html.HiddenFor(x => x.GroupName)
+    @Html.HiddenFor(x => x.TestId)
+    @Html.HiddenFor(x => x.TemplateId)
+    <div class="editor-row">
+        <div class="criteria editor-column-twoinrow">
+            <div class="editor-row">
+                @Html.CheckBoxFor(x => x.OnMedication, new { @class = "setCriteria medicationCheckBox" }) Currently on medication? &nbsp;
+            </div>
+            <div class="operator editor-row">
+                @Html.ValidationMessageFor(m => m.MedicationQuestionId)
+                <div class="editor-label">Medication Question</div>
+                @Html.DropDownListFor(x => x.MedicationQuestionId, DropDownHelper.GetClinicalCriteiraQuestionList(Model.TemplateId, Model.TestId, Model.MedicationQuestionId), new { disabled = "disabled", @class = "MedicationQuestionDdl", style = "width:345px;margin-left:5px;" })
+                <a class="on-medication-tooltip" style="vertical-align: middle; max-width: 300px;" aria-describedby="ui-tooltip-2">
+                    <img src="/App/Images/info-icon.gif" />
+                </a>
+                <div style="display: none;">
+                    <ul>
+                        <li style="max-width: 300px">
+                            Answer to question selected for this field will not be considered when validating the count of Yes/No answers for "Response to question(s)" field.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="criteria editor-column-twoinrow">
+            <div style="float: left">
+                @Html.CheckBoxFor(m => m.AgeCriteriaSelected, new { @class = "setCriteria" }) Age &nbsp;
+            </div>
+            <div class="operator" style="float: left">
+                <div class="editor-row">
+                    @Html.ValidationMessageFor(m => m.AgeCondition)
+                    @Html.DropDownListFor(x => x.AgeCondition, DropDownHelper.GetComparisonOperatorsList(), new { disabled = "disabled", @class = "comparisionDdl" })
+                </div>
+                <div class="editor-row">
+                    <div class="editor-column-twoinrow min-age-text">
+                        @Html.ValidationMessageFor(m => m.AgeMin)
+                        <div class="editor-label" style="width:120px;">
+                            Min Age (yrs)
+                        </div>
+                        @Html.TextBoxFor(x => x.AgeMin, new { @class = "small-textbox editor-field ageMinTextBox", maxlength = "3" })
+
+                    </div>
+                    <div class="editor-column-twoinrow max-age-text">
+                        @Html.ValidationMessageFor(m => m.AgeMax)
+                        <div class="editor-label" style="width:120px;">
+                            Max Age (yrs)
+                        </div>
+                        @Html.TextBoxFor(x => x.AgeMax, new { @class = "small-textbox editor-field ageMaxTextBox", maxlength = "3" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="criteria editor-column-twoinrow">
+            @Html.ValidationMessageFor(m => m.Gender)
+            <div class="editor-row">
+                @Html.CheckBoxFor(m => m.GenderCriteriaSelected, new { @class = "setCriteria genderCheckBox" }) Gender
+            </div>
+            <div class="operator editor-row">
+                @Html.RadioButtonFor(m => m.Gender, Gender.Male, new { disabled = "disabled" })
+                @Gender.Male.GetDescription()
+                @Html.RadioButtonFor(m => m.Gender, Gender.Female, new { disabled = "disabled" })
+                @Gender.Female.GetDescription()
+            </div>
+        </div>
+        <div class="criteria editor-column-twoinrow">
+
+            <div class="editor-row">
+                @Html.CheckBoxFor(m => m.NumberOfQuestionCriteriaSelected, new { @class = "setCriteria answerCheckBox" }) Response to question(s)
+            </div>
+            @Html.ValidationMessageFor(m => m.Answer)
+            @Html.ValidationMessageFor(m => m.NumberOfQuestion)
+            <div class="operator editor-row">
+                @Html.DropDownListFor(m => m.Answer, DropDownHelper.GetYesNoDropdownList(Model.Answer), new { @class = "YesNoAnswerDdl", style = "width:85px;margin-left:5px;" })
+                Response to
+                @Html.DropDownListFor(m => m.NumberOfQuestion, DropDownHelper.GetNumericList(Model.TotalQuestionCount, Model.NumberOfQuestion), new { disabled = "disabled", @class = "noOfQuestionDdl", style = "width:85px;margin-left:5px;" }) question(s)
+                @Html.HiddenFor(x => x.TotalQuestionCount)
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="criteria">
+            <div class="editor-row">
+                @Html.CheckBoxFor(x => x.DisqualifierQuestionSelected, new { @class = "setCriteria disqualifierCheckBox" }) Disqualifier Question &nbsp;
+            </div>
+            <div class="operator editor-row">
+                <div style="float:left">
+                    @Html.ValidationMessageFor(m => m.DisqualifierQuestionId)
+                    <div class="editor-row">
+                        @Html.DropDownListFor(x => x.DisqualifierQuestionId, DropDownHelper.GetClinicalCriteiraQuestionList(Model.TemplateId, Model.TestId, Model.DisqualifierQuestionId), new { disabled = "disabled", @class = "DisqualifierQuestionDdl", style = "width:345px;margin-left:5px;" })
+                    </div>
+                </div>
+                <div style="float: left;margin-left: 8%">
+                    @Html.ValidationMessageFor(m => m.DisqualifierQuestionAnswer)
+                    <div class="editor-row">Response to disqualify @Html.DropDownListFor(m => m.DisqualifierQuestionAnswer, DropDownHelper.GetYesNoDropdownList(Model.DisqualifierQuestionAnswer))</div>
+                </div>
+                <a class="on-medication-tooltip" style="vertical-align: middle; max-width: 300px;" aria-describedby="ui-tooltip-2">
+                    <img src="/App/Images/info-icon.gif" >
+                </a>
+
+                <div style="display: none;">
+                    <ul>
+                        <li style="max-width: 300px">
+                            Answer to question selected for this field will not be considered when validating the count of Yes/No answers for "Response to question(s)" field.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</fieldset>

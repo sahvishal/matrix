@@ -1,0 +1,54 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.ValueTypes.PhoneNumber
+<div class="editor-label">
+    @Html.LabelFor(m => m)
+    <div class="address-validation-messgae-top" style="display:none;">
+        @Html.ValidationMessageFor(m => m) @Html.ValidationMessageFor(m => m.AreaCode) @Html.ValidationMessageFor(m => m.Number)
+    </div>
+</div>
+<div class="phone-number-div" style="overflow: hidden; margin: 3px 0px 12px 3px;">
+    <div class="editor-column" id="countryCodeInput" style="width: 11%; min-width: 60px;">
+        @Html.DropDownListFor(m => m.CountryCode, DropDownHelper.CountryPhoneCodes(), new { @style = "min-width:95%;" })
+        <div class="small-text">
+            @Html.LabelFor(m => m.CountryCode)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 12%; min-width: 60px;">
+        @Html.TextBoxFor(m => m.AreaCode, new { @style = "min-width:90%;", size = 3, maxlength = 3 })
+        <div class="small-text">
+            @Html.LabelFor(m => m.AreaCode)
+        </div>
+    </div>
+    <div class="editor-column">
+        @Html.TextBoxFor(m => m.Number, new { @style = "min-width:95%;", @class = "number-after-areacode" })
+        <div class="small-text">
+            @Html.LabelFor(m => m.Number)
+        </div>
+    </div>
+    <div class="address-validation-messgae-bottom" style="clear:both;">
+        @Html.ValidationMessageFor(m => m) @Html.ValidationMessageFor(m => m.AreaCode) @Html.ValidationMessageFor(m => m.Number)
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+
+    function hideCountryCode() {
+        $("#countryCodeInput").hide();
+    }
+
+    function autoTabPhoneAreaCodeonKeyUp(elementRef) {
+        if (elementRef.val().length >= 3) {
+            var parent = elementRef.parents("div.phone-number-div:first");
+            parent.find("input[type=text].number-after-areacode").focus();
+        }
+    }
+
+    function showTopValidationMessage() {
+        $(".address-validation-messgae-top").show();
+        $(".address-validation-messgae-bottom").hide();
+    }
+
+    $(document).ready(function () {
+        $("div.phone-number-div input[type=text][id*='AreaCode']").keyup(function () { autoTabPhoneAreaCodeonKeyUp($(this)); });
+    });
+
+</script>

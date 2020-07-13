@@ -1,0 +1,39 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.PreAssessmentReportFilter
+
+<h2>
+    Search Records 
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 16%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.EventDateFrom, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.EventDateTo, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Health Plan
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:95%;" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Disposition
+        </div>
+        @Html.DropDownListFor(m => m.Disposition, DropDownHelper.PreAssessmentDispositions(Model.Disposition), new { @style = "width:100%;" })
+    </div>
+
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "PreAssessmentReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>

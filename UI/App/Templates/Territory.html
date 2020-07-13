@@ -1,0 +1,130 @@
+﻿{#param name=PageType}
+<table id="TerritoryTable" class="divgrid_clnew" cellspacing="0" cellpadding="0" width="100%" style="font-size: xx-small">
+    <tr>
+        <th>
+            <b>Details</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Territory Name</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Description</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Type</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Action</b>
+        </th>
+    </tr>
+    {#foreach $T as TerritoryViewData}
+    <tr>
+        <td><a href="#{$T.TerritoryViewData.TerritoryId}" onclick="ToggleTerritoryDetailsDiv({$T.TerritoryViewData.TerritoryId}, '{$P.PageType}')">
+            <img id="ExpandBoxImage{$T.TerritoryViewData.TerritoryId}" src="/App/Images/Plus-signbox.gif" style="border: none" />
+        </a></td>
+        <td style="white-space:nowrap;">
+            {#if $T.TerritoryViewData.TerritoryName.length > 50}
+                {$T.TerritoryViewData.TerritoryName.substring(0, 50)}...
+            {#else}
+                {$T.TerritoryViewData.TerritoryName}
+            {#/if}
+        </td>
+        <td style="white-space:nowrap;">
+            {#if $T.TerritoryViewData.Description.length > 50}
+                {$T.TerritoryViewData.Description.substring(0, 50)}...
+            {#else}
+                {$T.TerritoryViewData.Description}
+            {#/if}
+        </td>
+        <td style="white-space:nowrap;">
+            {$T.TerritoryViewData.TerritoryTypeName}
+        </td>
+        <td style="white-space:nowrap;">
+            {#if $P.PageType == 'Franchisor' && ($T.TerritoryViewData.TerritoryTypeName == 'Franchisee' || $T.TerritoryViewData.TerritoryTypeName == 'HospitalPartner'
+                || $T.TerritoryViewData.TerritoryTypeName == 'ReadingPhysician' || $T.TerritoryViewData.TerritoryTypeName == 'Advertiser' || $T.TerritoryViewData.TerritoryTypeName == 'Pod')}
+                <a class="SmallLinks" href="Edit.aspx?tid={$T.TerritoryViewData.TerritoryId}">Edit</a>
+            {#elseif $P.PageType == 'Franchisee' && $T.TerritoryViewData.TerritoryTypeName == 'SalesRep'}
+                <a class="SmallLinks" href="Edit.aspx?tid={$T.TerritoryViewData.TerritoryId}&ftid={$T.TerritoryViewData.ParentTerritoryId}">Edit</a>
+                <a class="SmallLinks" href="Edit.aspx?ftid={$T.TerritoryViewData.TerritoryId}">Add Subterritory</a>
+            {#elseif $P.PageType == 'Franchisee' && $T.TerritoryViewData.TerritoryTypeName == 'Franchisee'}
+                <a class="SmallLinks" href="Edit.aspx?ftid={$T.TerritoryViewData.TerritoryId}">Add Subterritory</a>
+            {#else}
+                -
+            {#/if}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5" style="border: none">
+            <div id="TerritoryDetailsDiv{$T.TerritoryViewData.TerritoryId}" style="display:none">
+                <div id="TerritorySummaryDiv{$T.TerritoryViewData.TerritoryId}"></div>
+                <h4>Subterritories</h4>
+                <div id="ChildTerritoriesDiv{$T.TerritoryViewData.TerritoryId}" style="width: 600px"></div>
+            </div>
+        </td>
+    </tr>
+    {#/for}
+</table>
+
+{#literal}
+<script type="text/javascript">
+function ToggleTerritoryDetailsDiv(territoryId, pageType)
+{
+    var territoryDetailsDiv = $("#TerritoryDetailsDiv" + territoryId);
+    territoryDetailsDiv.toggle
+    (
+        function()
+        {
+            if (territoryDetailsDiv.is(':visible'))
+            {
+                $('#ExpandBoxImage' + territoryId).attr('src', '/App/Images/Minus-signbox.gif');
+                LoadTerritorySummary(territoryId);
+                LoadChildTerritories(territoryId, pageType);
+            }
+            else
+            {
+                $('#ExpandBoxImage' + territoryId).attr('src', '/App/Images/Plus-signbox.gif');
+                $('#TerritorySummaryDiv' + territoryId).html('');
+                $('#ChildTerritoriesDiv' + territoryId).html('');
+            }
+        }
+    );
+}
+
+function LoadTerritorySummary(territoryId)
+{
+    var territorySummaryDiv = $('#TerritorySummaryDiv' + territoryId);
+    territorySummaryDiv.addClass('loading');
+    var messageUrl = '/App/Controllers/TerritoryController.asmx/GetTerritoryAndOwnerNames';
+    var parameter = "{'territoryId':'" + territoryId + "'}";
+    var successFunction = function(returnData)
+    {
+        territorySummaryDiv.setTemplateURL('/App/Templates/TerritorySummary.html');
+        territorySummaryDiv.processTemplate(returnData.d);
+    };
+    var numberOfRecordsFunction = function(returnData) { if (returnData.d != null) { return 1; } else { return 0; } };
+    var noRecordsFunction = function() { territorySummaryDiv.append("This territory's summary information could not be found."); };
+    var completeFunction = function() { territorySummaryDiv.removeClass('loading'); };
+    var errorFunction = function() { alert('Territory summary information could not be loaded due to an internal server error.'); };
+    LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction);
+}
+
+function LoadChildTerritories(territoryId, pageType)
+{
+    var childTerritoriesDiv = $('#ChildTerritoriesDiv' + territoryId);
+    childTerritoriesDiv.addClass('loading');
+    var messageUrl = '/App/Controllers/TerritoryController.asmx/GetChildTerritories';
+    var parameter = "{'parentTerritoryId':'" + territoryId + "'}";
+    var successFunction = function(returnData)
+    {
+        childTerritoriesDiv.setTemplateURL('/App/Templates/Territory.html');
+        childTerritoriesDiv.setParam('PageType', pageType);
+        childTerritoriesDiv.processTemplate(returnData.d);
+    };
+    var numberOfRecordsFunction = function(returnData) { return returnData.d.length; };
+    var noRecordsFunction = function() { childTerritoriesDiv.append('There are no subterritories for this territory.'); };
+    var completeFunction = function() { childTerritoriesDiv.removeClass('loading'); };
+    var errorFunction = function() { alert('Child territories could not be loaded due to an internal server error.'); };
+    LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction);
+}
+</script>
+{#/literal}

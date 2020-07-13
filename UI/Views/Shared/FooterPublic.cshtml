@@ -1,0 +1,27 @@
+﻿@using Falcon.App.Core.Interfaces
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+
+<div class="footer">
+    <div class="left-float pt5">
+        <img src="/Config/Content/Images/header_logo.png" width="234" height="53" alt="" />
+    </div>
+    <div class="right-float">
+        @RenderPage("/Config/Content/Html/JointCommission.cshtml")
+        <img src="/Config/Content/Images/footer_divider.png" width="2" height="75" alt="" align="top" class="mr5 pr5 ml5 pl5" />  
+        <a href="http://www.instantssl.com" target="_blank" style="text-decoration:none;">
+            <img src="/Config/Content/Images/comodo_secure.png" alt="" width="203" height="58" align="texttop" />
+        </a>
+        @*@RenderPage("/Config/Content/Html/comodo.cshtml")*@
+        <img src="/Config/Content/Images/footer_divider.png" width="2" height="75" alt="" align="top" class="mr5 pr5 ml5 pl5" />        
+        @RenderPage("/Config/Content/Html/BBB.cshtml")
+    </div>
+    <div class="clearfix">
+    </div>
+</div>
+<div class="p10 txt-grey">
+    <center>
+        &copy; 2007 - @DateTime.Today.Year @(IoC.Resolve<ISettings>().CompanyName) All rights reserved. <a target="_blank" href="@(IoC.Resolve<ISettings>().PrivacyPolicyUrl)">Privacy Policy</a>
+       <span style="display: none"> | </span><a target="_blank" href="@(IoC.Resolve<ISettings>().TermsConditionsUrl)" style="display: none">Terms and Conditions</a>
+    </center>
+</div>

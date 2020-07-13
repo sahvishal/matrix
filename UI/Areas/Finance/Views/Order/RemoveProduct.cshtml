@@ -1,0 +1,217 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Enum
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Finance.Interfaces
+@using Falcon.App.Core.Application.Enum
+@model Falcon.App.Core.Finance.ViewModels.ProductOrderItemEditModel
+@{
+    ViewBag.Title = "Remove Product - " + Model.CustomerName;
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml";
+}
+@{Html.BeginForm();}
+@if (Model.FeedbackMessage != null)
+{
+    <div style="width: 550px;">
+        @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+    </div>
+    
+    if (Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success || Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Warning)
+    {
+    <script language="javascript" type="text/javascript">
+        window.setTimeout(function () {
+            closeWindow();
+            if (parent.location == window.location) {
+                window.opener.location.reload();
+            }
+            else {
+                parent.location.reload();
+            }
+        }, 1000);
+        
+    </script>
+    }
+    else
+    {
+    <script language="javascript" type="text/javascript">
+            function SetSelectedOrders() {
+                @foreach (var id in Model.ProductOrderDetailIds)
+                {
+                    <text> 
+                        $(".product-orderid[value=@id]").parent().find(".product-item").attr("checked", true); 
+                        setOrderDetail(@id);
+                        $("#Submit").show();
+                    </text>
+                }        
+            }
+                        
+    </script>
+    }
+
+}
+<div style="float: left; width: 500px;">
+    @Html.EditorFor(m => m.EventId)
+    @Html.EditorFor(m => m.CustomerId)
+    <h2>
+        @Model.CustomerName (Id: @Model.CustomerId)
+    </h2>
+    @Html.HiddenFor(m => m.CustomerName)
+    <br />
+    @if (Model == null)
+    {
+        <h3>
+            No Valid Order found!
+        </h3>
+    }
+    else if (Model.Order.OrderDetails == null || Model.Order.OrderDetails.Count() < 1 || Model.Order.OrderDetails.Where(od => od.OrderItemStatus.OrderStatusState == OrderStatusState.FinalSuccess && od.DetailType == OrderItemType.ProductItem).Count() < 1)
+    {
+        <h3>
+            This Order does not contain a Product Item!
+        </h3>
+    }
+    else
+    {
+        foreach (var od in Model.Order.OrderDetails.Where(od => od.OrderItemStatus.OrderStatusState == OrderStatusState.FinalSuccess && od.DetailType == OrderItemType.ProductItem).ToArray())
+        {
+        <div class="editor-row" style="clear: both;">
+            <input type="checkbox" id="product-@od.Id" onclick="setOrderDetail(@od.Id);" class="product-item" />
+            <span>Purchased @(IoC.Resolve<IElectronicProductRepository>().GetElectronicProductNameForOrder(od.OrderItemId))
+                at $@od.Price.ToString("0.00") </span>
+            <input type="hidden" value="@od.Price.ToString("0.00")" class="product-price" />
+            <input type="hidden" value="@od.Id" class="product-orderid" />
+        </div>
+        }
+        
+        <div class="order-details-div">
+        </div>
+
+        <input type="hidden" id="total-amount-paid" value="@Model.Order.TotalAmountPaid" />
+        <input type="hidden" id="discounted-total" value="@Model.Order.DiscountedTotal" />
+        
+        <div id="payment-action-div" style="display: none; margin-top: 10px; margin-bottom: 10px;">
+            @if (IoC.Resolve<Falcon.App.Core.Application.ISettings>().IsRefundQueueEnabled)
+            {     
+                <fieldset>
+                    <legend>
+                        <h4>
+                            Refund Request
+                        </h4>
+                    </legend>
+                    @Html.EditorFor(m => m.RefundRequest)
+                </fieldset>       
+            }
+            else
+            {
+                <fieldset>
+                    <legend></legend>
+                    @Html.Partial("/Views/Shared/EditorTemplates/PaymentEditModel.cshtml", new ViewDataDictionary(Model.Payments))
+                </fieldset>
+            }
+        </div>
+        
+            var refundRequests = IoC.Resolve<Falcon.App.Core.Finance.IRefundRequestRepository>().GetbyOrderId(Model.Order.Id);
+            decimal requestSum = 0;
+            if (refundRequests != null)
+            {
+                requestSum = refundRequests.Where(
+                    rr => rr.RefundRequestType != Falcon.App.Core.Finance.Enum.RefundRequestType.CDRemoval).Sum(
+                        rr => rr.RequestedRefundAmount);
+            }
+        
+        <script language="javascript" type="text/javascript">
+            var requestSum = Number('@requestSum');
+        </script>      
+         
+         
+    }
+    <hr />
+    <div class="submit-button-row">
+        <a href="javascript:void(0);" onclick="closeWindow();">Close </a>&nbsp; &nbsp;
+        @Html.SubmitButton("Remove Product")
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+    
+    function closeWindow() {//debugger;
+        if(parent.ClosePopUp != null)
+            parent.ClosePopUp();
+        else
+        {
+            window.close();
+        }
+    }
+    
+    function setOrderDetail(orderDetailId) 
+    {
+        if ($(".product-item:checked").length > 0) {
+            $("#payment-action-div").show();
+            $("#Submit").show();
+        }
+        else {
+            $("#payment-action-div").hide();
+            $("#Submit").hide();            
+            clearSection();   
+            return;
+        }
+
+        var amount = setAmount();   
+        if(amount == 0){
+            $("#payment-action-div").hide();
+        }
+
+        $(".order-details-div").html("");
+        var index = 0;
+        $(".product-item:checked").each(function(){
+            var htmlString = "<input name='ProductOrderDetailIds.Index' id='detailIdIndex' value='" + index + "' type='hidden' /> <input id='detailId' name='ProductOrderDetailIds["+ index + "]' value='" + $(this).parent().find(".product-orderid").val() + "' type='hidden' />  ";
+            $(".order-details-div").append(htmlString);
+            index++;
+        });
+    }
+
+    function setAmount(){
+        var amount = 0.00;
+        $(".product-item:checked").each(function(){
+            amount += Number($(this).parent().find(".product-price").val());
+        });
+
+        var totalAmountPaid = Number($("#total-amount-paid").val());
+        var discountedTotal = Number($("#discounted-total").val());
+
+        if(totalAmountPaid < (discountedTotal - amount)) return 0;
+
+        var setAmount = totalAmountPaid - (discountedTotal - amount);
+        setAmount -= requestSum;
+               
+        @if (IoC.Resolve<Falcon.App.Core.Application.ISettings>().IsRefundQueueEnabled)
+        {  
+            <text> setRequestAmount(setAmount); </text>
+        }
+        else
+        {
+            <text> setPaymentAmount(setAmount); </text>            
+        }  
+           
+        return setAmount;
+    }
+
+    function clearSection() {
+        @if (IoC.Resolve<Falcon.App.Core.Application.ISettings>().IsRefundQueueEnabled)
+        {  
+            <text> clearRefundRequestSection(); </text>
+        }
+        else
+        {
+            <text> clearPaymentSection(true); </text>            
+        }
+    }
+        
+    $("#Submit").hide();
+
+    $("#Submit").bind("click", function() { $(this).hide(); });
+
+    @if (Model != null && Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Error)
+    {
+        <text> SetSelectedOrders(); </text>
+    }
+
+</script>
+@{Html.EndForm();}

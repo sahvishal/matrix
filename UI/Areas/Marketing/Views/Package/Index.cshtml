@@ -1,0 +1,104 @@
+﻿@model Falcon.App.Core.Marketing.ViewModels.PackageListModel
+@{
+    ViewBag.Title = "Index";
+}
+<h2>
+    Index <span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New", "Create")
+    </span>
+</h2>
+<div id="list-filter">
+    @{Html.BeginForm("Index", "Package", FormMethod.Get);}
+    @Html.Partial("PackageListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Packages != null && Model.Packages.Count() > 0)
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                PackageType
+            </th>
+            <th style="width: 60px;">
+                Price
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+            </th>
+        </tr>
+        @foreach (var item in Model.Packages)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PackageType)
+                </td>
+                <td style="width: 60px;">
+                    $@Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <a href="javascript:setIsActiveState(@item.Id, false); void(0);">Deactivate </a>
+                        @*@Html.ActionLink("Edit", "Edit", new { id = item.Id })*@
+                        <a href="/marketing/package/edit?id=@item.Id">
+                            Edit
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="javascript:setIsActiveState(@item.Id, true); void(0);">Activate </a>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+<script language="javascript" type="text/javascript">
+
+    function setIsActiveState(packageId, isActive) {
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Marketing/Package/SetPackageIsActiveState?packageId=" + packageId + "&isActive=" + isActive,
+            data: "{}",
+            success: function (result) {
+                window.location.reload();
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for the action!");
+                }
+                else {
+                    if (isActive)
+                    alert("Some error occured while activating the Package! \nPlease contact the support team!");
+                    else
+                    alert("Some error occured while de-activating the Package! \nPlease contact the support team!");
+
+                    window.location.reload();
+                }
+            }
+        });
+    }
+</script>

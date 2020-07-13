@@ -1,0 +1,22 @@
+﻿<div class="block-flat">
+    <div class="header">
+        <h4 style="color:red;">{{Title}}</h4>
+    </div>
+    <div class="content">
+        <div class="form-group">
+
+            {{Message}} <a href="" ng-show="!!showSkipLink" ng-click="skipOption()">Skip the registration. </a>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-sm-11" ng-hide="hafPopupButtons">
+                <a href="" ng-show="!!showSkipOption" ng-click="skipOption()">No I Don't want to schedule </a>
+                <input type="button" ng-click="close();" value="OK" class="pull-right btn btn-primary">
+            </div>
+            <div class="col-sm-11" ng-show="hafPopupButtons">
+                <a href="" ng-click="Cancel()">Yes, I will fill it now.</a>
+                <input type="button" ng-click="OKbutton()" class="pull-right btn btn-primary" value="No, I will fill it later." />
+            </div>
+        </div>
+    </div>
+</div>

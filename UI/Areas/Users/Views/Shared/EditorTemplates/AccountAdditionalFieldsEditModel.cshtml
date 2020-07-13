@@ -1,0 +1,19 @@
+﻿@using Falcon.App.Core.Users.ViewModels;
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Users.Enum;
+@model AccountAdditionalFieldsEditModel
+@{
+    string AdditionalName = ((AdditionalFieldsEnum)Model.AdditionalFieldId).GetDescription();
+    string divName = "miniContainer" + Model.AdditionalFieldId.ToString();
+}
+<div class='mini-container' id="@divName" style="border: 1px solid gray !important;">
+    <div style="float: left; margin-right: 20px; white-space:nowrap">
+        @Html.Label("", AdditionalName) &nbsp;  @Html.TextBoxFor(m => m.DisplayName, new { @class = "displaynameclass", @onblur = "updateDisplayName(this)", @maxlength = "200" }) &nbsp; [<a href="javascript:void(0)" data-key="@Model.AdditionalFieldId" onclick="RemoveAdditionalFields(this);"  class="unAssignAdditionalfield">Remove</a>]
+        @Html.ValidationMessageFor(m => m.DisplayName)
+    </div>
+
+    <div style="display:none;">
+        @Html.HiddenFor(m => m.AdditionalFieldId)
+        <input type="hidden" name="@Model.FieldName" value="@Model.FieldName value=" @Model.FieldName />
+    </div>
+</div>

@@ -1,0 +1,60 @@
+﻿
+/* simple menu - used in switch role */
+.rollover-menu
+{
+    margin: 0;
+    padding: 0;
+}
+
+.rollover-menu li
+{
+    list-style: none;
+    font-weight: bold;
+    overflow: visible;
+}
+
+.rollover-menu li a
+{
+    display: block;
+    padding: 3px 15px 3px 3px;
+    white-space: nowrap;
+    background: url('/Content/Images/Icons/navlist_arrow_down.png') no-repeat 52px 6px;
+}
+
+.rollover-menu li a:hover
+{
+}
+
+.rollover-menu li ul
+{
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    visibility: hidden;
+    border: 1px solid #ababab;
+}
+
+.rollover-menu li ul li
+{
+    float: none;
+    margin: 0px;
+    padding: 0px;
+    overflow: visible;
+    border-bottom: 1px solid #ababab;
+}
+
+.rollover-menu li ul li a
+{
+    display: block;
+    padding: 8px 10px 8px 25px;
+    background: #ffffff url('/Content/Images/arrow-bulletbig.gif') no-repeat 5px 7px;
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.rollover-menu li ul li a:hover
+{
+    background-color: #ededed;
+    color: #F7943A;
+}

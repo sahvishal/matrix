@@ -1,0 +1,80 @@
+﻿@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+
+@model UserLoginModel
+
+@{
+    ViewBag.Title = "Login";
+}
+
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/GoogleAnalytics.cshtml")))
+{
+    @Html.Partial("/Config/Content/Views/Shared/GoogleAnalytics.cshtml")
+}
+
+@{Html.BeginForm();}
+
+<style type="text/css">
+    .forgot-password a:link, a:visited {
+    font: 18px arial;
+    text-decoration: none;
+}
+
+    .forgot-password a:hover {
+    font: 18px arial;
+    text-decoration: underline;
+}
+   
+</style>
+
+<div style="text-align: right;width:97%;margin-top:50px;">
+    @(IoC.Resolve<ISystemInformationRepository>().GetSystemVersionNumber())
+</div>
+
+<div class="login">
+    <h2>Log in</h2> 
+    <div class="input-wrapper">
+        @Html.LabelFor(x => x.UserName) &nbsp; @Html.ValidationMessageFor(x => x.UserName)
+        @Html.TextBoxFor(x => x.UserName, new {@class="text-box"})
+    </div>
+
+    <div class="input-wrapper">
+        @Html.LabelFor(x => x.Password) &nbsp; @Html.ValidationMessageFor(x => x.Password)
+        @Html.PasswordFor(x => x.Password, new {@class="text-box",autocomplete="off"})
+    </div>
+
+    <div class="submit-button-row forgot-password">
+        <a href="/Public/Account/ResetPasswordStep1.aspx">Forgot username or password</a> &nbsp; &nbsp;   @Html.SubmitButton("Login")
+    </div>    
+</div>
+
+<div class="login">
+     <h2>Trouble Logging in?</h2>
+     <p style="color:red;">
+        Note: If you have registered for or attended a @(IoC.Resolve<ISettings>().CompanyName) screening, you <u>already</u> have an account with us.                                                         
+      </p>
+      
+      <h3>Step 1: Try to recover your username or password</h3>
+      <p>        
+        Please <a href="/Public/Account/ResetPasswordStep1.aspx"><b>Click Here</b></a>
+        and follow the instructions to recover your username and/or password.
+      </p>
+
+      
+      <h3>Step 2: Customer Service Call</h3>
+      <p>        
+        If you are not able to log in to your account after following the instructions in Step 1, please email us at <a href="mailto:@(IoC.Resolve<ISettings>().SupportEmail.ToString())" target="_blank"> @(IoC.Resolve<ISettings>().SupportEmail.ToString()) </a>
+        OR call us at <strong>@(!string.IsNullOrEmpty(IoC.Resolve<ISettings>().CustomerPortalPhoneTollFree) ? IoC.Resolve<ISettings>().CustomerPortalPhoneTollFree : IoC.Resolve<ISettings>().PhoneTollFree).</strong>
+      </p>    
+</div>
+
+
+
+@{ Html.EndForm(); }

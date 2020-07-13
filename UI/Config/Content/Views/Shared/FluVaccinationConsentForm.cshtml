@@ -1,0 +1,282 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model FluVaccinationConsentViewModel
+@{
+    Layout = null;
+
+    var settings = IoC.Resolve<ISettings>();
+
+    var todayDate = DateTime.Today.Date;
+}
+<style type="text/css">
+    .row-div {
+        float: left;
+        width: 95%;
+        margin-bottom: 5px;
+    }
+
+    .customer-info input[type="text"] {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+</style>
+<div style="margin-left: 40px; clear: both; margin-top: 20px">
+    <img src="@settings.MediumLogo"/>
+</div>
+<div>
+    <div style="color: #49AA40; font-size: 30px; width: 100%; text-align: left; border-bottom: solid 3px #49AA40;"><b>FLU VACCINATION CONSENT FORM</b></div>
+    <div style="margin-top: 10px; margin-bottom: 10px;">
+
+        <div class="customer-info">
+            <div class="row-div readonly-input">
+                <div style="float: left; width: 40%;">
+                    <b>Customer Id:</b>
+                    <input type="text" style="width: 100px;" readonly="readonly" value="@Model.CustomerId" />
+                </div>
+            </div>
+            <div class="row-div readonly-input">
+                <div style="float: left; width: 25%;">
+                    Today's Date:
+            <input type="text"  style="width: 20px;" value="@(DateTime.Now.Month)" />/<input type="text"
+                 style="width: 20px;" value="@(DateTime.Now.Day)" />/<input type="text"
+                    style="width: 30px;" value="@(DateTime.Now.Year)" />
+                </div>
+                <div style="float: left; width: 73%;">
+                    <div style="float: left; width: 28%; text-align: right;">
+                        Location of Screening:&nbsp;
+                    </div>
+                    <div style="float: left; width: 70%;">
+                        <input type="text" style="width: 98%;" value="@Model.EventAddress.ToShortAddressString(false)" />
+                    </div>
+                </div>
+            </div>
+            <div class="row-div">
+                <div style="float: left; width: 5%;">
+                    Name
+                </div>
+                <div style="float: left; width: 4%;">
+                    Last:
+                </div>
+                <div style="float: left; width: 30%;">
+                    <input type="text" style="width: 90%" value="@Model.CustomerName.LastName"/>
+                </div>
+                <div style="float: left; width: 4%;">
+                    First:
+                </div>
+                <div style="float: left; width: 30%;">
+                    <input type="text" style="width: 90%" value="@Model.CustomerName.FirstName"/>
+                </div>
+                <div style="float: left; width: 5%;">
+                    Middle:
+                </div>
+                <div style="float: left; width: 20%;">
+                    @{
+                        var middleName = string.IsNullOrWhiteSpace(Model.CustomerName.MiddleName) ? "" : Model.CustomerName.MiddleName;
+                    }
+                    <input type="text" style="width: 90%" value="@middleName"/>
+                </div>
+            </div>
+            <div class="row-div">
+                <div style="float: left; width: 25%;">
+                    Date of Birth: @Html.TextBoxFor(m => m.DateofBirth, new { @class = "datePicker-dob", @style = "width: 70px;" })
+                </div>
+                <div style="float: left; width: 30%;" class="readonly-input">
+                    Age:
+            @{
+                var ageString = "";
+                if (Model.DateofBirth.HasValue)
+                {
+                    ageString = Model.DateofBirth.Value.GetDetailAge();
+                }
+            }
+                    <input type="text" id="AgeTextbox" value="@ageString" style="width: 170px;" />
+                </div>
+                <div style="float: left;">
+                    <div style="float: left; width: 20%;">
+                        Gender:
+                    </div>
+                    <div style="float: left; width: 80%;">
+                        @{
+                            var gender = ((Gender)Model.Gender).ToString();
+                        }
+                    </div>
+                    <input type="text" id="AgeTextbox" value="@gender" style="width: 170px;" />
+                </div>
+            </div>
+            <div class="row-div">
+                <div style="float: left; width: 40%;">
+                    Address:
+            @Html.TextBoxFor(m => m.Address.StreetAddressLine1, new { @style = "width: 80%;" })
+                </div>
+                <div style="float: left; width: 25%;">
+                    Apt #/Suite #
+            @Html.TextBoxFor(m => m.Address.StreetAddressLine2, new { @style = "width: 40%;" })
+                </div>
+                <div style="float: left; width: 26%;">
+                    City:
+            @Html.TextBoxFor(m => m.Address.City, new { @style = "width: 60%" })
+                </div>
+            </div>
+            <div class="row-div">
+                <div style="float: left; width: 40px;">State:</div>
+                <div style="width: 90px; float: left;">
+                    <input type="text" value="@Model.Address.State" style="width: 90%;" />
+                </div>
+                <div style="float: left; width: 30px;">
+                    Zip:
+                </div>
+                <div style="float: left; width: 100px;">
+                    @Html.TextBoxFor(m => m.Address.ZipCode, new { @style = "width: 90%;" })
+                </div>
+                <div style="float: left; width: 40px;">
+                    Email:
+                </div>
+                <div style="float: left; width: 270px;">
+                    @Html.TextBoxFor(m => m.Email, new { @style = "width: 260px;" })
+                </div>
+                <div style="float: left; width: 30%;">
+                    Phone Number:
+            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "mask-phone", @style = "width: 110px;" })
+                </div>
+            </div>
+            <div class="row-div">
+                <div style="float: left; width: 195px">
+                    Contact in case of Emergency:
+                </div>
+                <div style="width: 20%; float: left;">
+                    <input type="text" style="width: 90%" />
+                </div>
+                <div style="float: left; width: 10%;">
+                    Relationship:
+                </div>
+                <div style="width: 20%; float: left;">
+                    <input type="text" style="width: 90%" />
+                </div>
+                <div style="float: left; width: 12%;">
+                    Phone Number:
+                </div>
+                <div style="width: 11%; float: left;">
+                    <input type="text" style="width: 90%" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div style="height: 10px; width: 100%; border-bottom: solid 1px black; background-color: #D9EDD8; clear: both; margin-bottom: 10px;"></div>
+    <div style="margin-bottom: 10px;">
+        <ul>
+            <li>
+                <b>What is flu shot?</b> <i>Afluria/Fluvirin</i>is a single dose, thimerosal free, inactivated flu virus, vaccine, containing influenza virus subtypes A and B. The virus material is designed to cause an immune response which should help the host (you) resist infection from the live virus.
+            </li>
+            <li><b>How is it administered?</b> The flu shot is designed for intramuscular injection as a one time per year dose of 0.5 cc.</li>
+            <li><b>What are the contraindications?</b> Allergy to eggs or egg products, Guillain-Barre Syndrome, decreased immuno-competence, immuno-suppressive therapy, and pregnancy. Not advised for children 5 years of age or under.</li>
+            <li><b>Is it potentially harmful?</b> As with any medication an adverse reaction is always possible. The vast majority of patients have very little or no reaction to the medication. Other have reported local discomfort at the injection site. Isolated occurences of headache, myalgia, low grade fever, etc. have been reported.</li>
+        </ul>
+
+        <div class="row-div" style="text-align: center; font-size: 20px;"><b>Health Questions (please circle your response)</b></div>
+
+        <div class="row-div" style="margin-left: 10%; width: 85%; padding-bottom: 5px; padding-top: 5px;">
+            <div style="width: 50%; float: left;">1. Have you had a flu shot before?</div>
+            <div style="float: left; width: 60px">Yes</div>
+            <div style="float: left; width: 60px">No</div>
+        </div>
+        <div class="row-div" style="margin-left: 17%; width: 80%; padding-bottom: 5px;">
+            <div style="float: left; width: 5%;">When?</div>
+            <div style="width: 20%; height: 20px; float: left; border-bottom: solid 1px black; margin-right: 20px;"></div>
+            <div style="float: left; width: 20%">Any negative reaction?</div>
+            <div style="width: 20%; float: left; height: 20px; border-bottom: solid 1px black;"></div>
+        </div>
+        <div class="row-div" style="margin-left: 10%; width: 85%; padding-bottom: 5px;">
+            <div style="width: 50%; float: left;">2. Are you allergic to eggs or egg products?</div>
+            <div style="float: left; width: 60px">Yes</div>
+            <div style="float: left; width: 60px">No</div>
+        </div>
+        <div class="row-div" style="margin-left: 10%; width: 85%; padding-bottom: 5px;">
+            <div style="width: 50%; float: left;">3. If you are female, are you pregnant?</div>
+            <div style="float: left; width: 60px">Yes</div>
+            <div style="float: left; width: 60px">No</div>
+        </div>
+        <div class="row-div" style="margin-left: 10%; width: 85%; padding-bottom: 5px;">
+            <div style="width: 50%; float: left;">4. Have you been diagnosed with Guillain-Barre Syndrome?</div>
+            <div style="float: left; width: 60px">Yes</div>
+            <div style="float: left; width: 60px">No</div>
+        </div>
+        <div class="row-div" style="margin-left: 10%; width: 85%; padding-bottom: 5px;">
+            <div style="width: 50%; float: left;">5. Are you currently taking an antibiotic for infection?</div>
+            <div style="float: left; width: 60px">Yes</div>
+            <div style="float: left; width: 60px">No</div>
+        </div>
+        <div class="row-div" style="margin-left: 10%; width: 85%; padding-bottom: 5px;">
+            <div style="width: 50%; float: left;">6. Do you feel ill today or do you have fever?</div>
+            <div style="float: left; width: 60px">Yes</div>
+            <div style="float: left; width: 60px">No</div>
+        </div>
+    </div>
+    <div style="height: 10px; width: 100%; border-bottom: solid 1px black; background-color: #D9EDD8; clear: both; margin-bottom: 10px;"></div>
+    <div style="margin-bottom: 10px;">
+        <p>I have read and understood the information offered above. I attest that I have no known contraindications to administration of the flu vaccine. I authorize Matrix Medical Network to administer flu vaccine on today's date listed below. I further understand the benefits, risks and limitations of the flu vaccine, Aflurial/Fluvirin. All my questions have been answered to my satisfaction.</p>
+        <div class="row-div" style="margin-top: 20px;">
+            <div style="width: 231px; float: left">Signature of person to recevive vaccine:</div>
+            <div style="width: 350px; height: 15px; float: left; border-bottom: solid 1px black;"></div>
+            <div style="float: left; width: 39px;">Date:</div>
+            <div style="width: 150px; float: left; border-bottom: solid 1px black;">@todayDate.ToShortDateString()</div>
+
+        </div>
+    </div>
+    <div style="height: 10px; width: 100%; border-bottom: solid 1px black; background-color: #D9EDD8; clear: both; margin-bottom: 10px;"></div>
+    <div>
+        <div style="font-size: large; clear: both; margin-bottom: 10px;">For Clinic Use</div>
+
+        <div class="row-div">
+            <div style="float: left;">Influenza:</div>
+            <div style="float: left; width: 20%; border-bottom: solid 1px black; height: 6px; margin: 10px;"></div>
+            <div style="float: left; width: 26%;">
+                <div style="float: left; width: 120px;">Date Vaccinated:</div>
+                <div style="float: left; border-bottom: solid 1px black; height: 15px; width: 30px"></div>
+                <div style="float: left;">/</div>
+                <div style="float: left; border-bottom: solid 1px black; height: 15px; width: 30px"></div>
+                <div style="float: left">/</div>
+                <div style="float: left; border-bottom: solid 1px black; height: 15px; width: 30px"></div>
+            </div>
+            <div style="width: 17%; float: left; margin-left: 10px">
+                Site of Injection: Right
+            </div>
+            <div style="float: left; width: 50px; border-bottom: solid 1px black; height: 15px;"></div>
+            <div style="float: left; width: 20px">Left</div>
+            <div style="float: left; width: 50px; border-bottom: solid 1px black; height: 15px;"></div>
+            Deltoid
+        
+        </div>
+
+        <div class="row-div">
+            <div style="float: left; width: 65%;">
+                <div style="float: left; width: 36%">Manufacturer and Lot Number:</div>
+                <div style="width: 63%; border-bottom: solid 1px black; height: 15px; float: left"></div>
+            </div>
+            <div style="float: left; width: 34%;">
+                <div style="float: left;">Expiration Date:</div>
+                <div style="float: left; border-bottom: solid 1px black; height: 15px; width: 10%;"></div>
+                <div style="float: left;">/</div>
+                <div style="float: left; border-bottom: solid 1px black; height: 15px; width: 10%;"></div>
+                <div style="float: left">/</div>
+                <div style="float: left; border-bottom: solid 1px black; height: 15px; width: 10%;"></div>
+            </div>
+        </div>
+
+        <div class="row-div">
+            <div style="width: 70%; float: left;">
+                <div style="float: left; width: 45%">Signature & title of vaccine administrator:</div>
+                <div style="float: left; border-bottom: solid 1px black; width: 50%; height: 15px;"></div>
+            </div>
+            <div style="width: 30%; float: left;">
+                <div style="float: left; width: 13%">Date</div>
+                <div style="float: left; border-bottom: solid 1px black; width: 85%; height: 15px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+

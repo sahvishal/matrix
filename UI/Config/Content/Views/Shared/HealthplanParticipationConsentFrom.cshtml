@@ -1,0 +1,163 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical.ViewModels
+@model HealthAssessmentHeaderEditModel
+@{
+    Layout = null;
+
+    var settings = IoC.Resolve<ISettings>();
+}
+<style type="text/css">
+    .full-width {
+        float: left;
+        width: 865px;
+        margin-top: 5px;
+    }
+
+    .threeColmn-width {
+        float: left;
+        width: 250px;
+    }
+
+    .bold-underline {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .underline {
+        text-decoration: underline;
+    }
+
+    .row-margin {
+        margin-top: 3px;
+        margin-bottom: 2px;
+        padding-left: 20px;
+    }
+
+    .healthplan-participationConcentForm ul li {
+        margin-left: 0;
+        padding-left: 15px;
+    }
+
+    .healthplan-participationConcentForm ul {
+        margin-left: 0;
+        padding-left: 15px;
+    }
+
+    .healthplan-participationConcentForm input {
+        font-size: 11.5pt;
+        font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+    }
+
+    .healthplan-participationConcentForm {
+        font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+        font-size: 11.5pt;
+    }
+</style>
+
+<div id="info" class="healthplan-participationConcentForm" style="float: left; width: 97%;  margin-top: 10px; font-size: 17px; line-height:18px;">
+    <div class="full-width">
+        <div style="float: left;">
+            <img src="@settings.SmallLogo" style="text-align: center" />
+        </div>
+    </div>
+    <div class="full-width row-margin" style="margin-top: 10px;">
+        <div style="width: 300px;float: left;">
+            <b>Name: Last</b> <input type="text" style="width: 170px;" value="@Model.CustomerName.LastName" />
+        </div>
+        <div class="threeColmn-width">
+            <b>First</b> <input type="text" style="width: 175px" value="@Model.CustomerName.FirstName" />
+        </div>
+        <div class="threeColmn-width">
+            <b>DOB:</b>
+            <input type="text" style="width: 25px" value="@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("MM") : "")" /> /
+            <input type="text" style="width: 25px" value="@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("dd") : "")" /> /
+            <input type="text" style="width: 40px" value="@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("yyyy") : "")" />
+        </div>
+    </div>
+    <div class="full-width row-margin" style="margin-top: 10px;">
+        @*<div style="width: 549px;float: left;">
+            <b>Physician Name:</b> <input type="text" style="width: 300px" value="@Model.PhysicianName" />
+        </div>*@
+        <div style="width: 300px;float: left;">
+            <b>Testing Date:</b>
+            <input type="text" style="width: 25px" value="@Model.EventDate.ToString("MM")" /> / <input type="text" style="width: 25px" value="@Model.EventDate.ToString("dd")" /> / <input type="text" style="width: 40px" value="@Model.EventDate.ToString("yyyy")" />
+        </div>
+    </div>
+    <div class="full-width" style="text-align: center;padding-top: 10px;margin-left: 15px;padding-bottom: 10px;">
+        <b>INFORMED CONSENT TO PARTICIPATE IN HEALTH SCREENING</b>
+        </div>
+        <div class="full-width row-margin">
+            <div>
+                You have been referred by your health plan to participate in Matrix Medical Network's preventive health screening services ("Health Screening").
+                This form includes information about the Health Screening and Matrix Medical Network's related obligation to disclose a
+                Health Screening report to your treating physician for appropriate follow-up care.
+            </div>
+            <p>
+                <b>
+                    I wish to participate in the Health Screening being offered by Matrix Medical Network and my health plan. 
+                    By signing this consent form, I understand that I am requesting and agree to allow Matrix Medical Network to perform the 
+                    Health Screening and provide a report of my results to my treating physician.
+                </b>
+            </p>
+            <div style="width: 100%">
+                <ul style="margin-bottom: 3px; padding-bottom: 3px;">
+                    <li style="margin-top: 5px;">
+                        I understand that Matrix Medical Network is under a legal obligation to disclose the results of the Health Screening in the form of a report to a treating physician, whether it be my primary physician or the physician I listed above.
+                    </li>
+                    <li style="margin-top: 5px;">
+                        I understand that a screening does not replace a consultation, physical examination, or evaluation from a physician or other appropriate healthcare provider. I am responsible for any follow-up examinations with my physician that may be indicated from the results of this screening. 
+                </li>
+                <li style="margin-top: 5px;">
+                    I understand that screenings have limitations and may not find many abnormalities. While screenings are a helpful diagnostic tool, it should not be considered absolute proof of the presence or absence of an abnormality. I will discuss my screening results with a physician and will not use my results as an indicator for medication dosing.
+                </li>
+                <li style="margin-top: 5px;">
+                    I understand that the recommendation to contact a physician about the result of the screening is not a medical diagnosis or assessment of good health as only a physician can make such a judgment, and more information would be needed to establish or rule out a diagnosis or assessment of good health.
+                </li>
+                <li style="margin-top: 5px;">
+                    I understand that participation in this screening will not protect me from disease.
+                </li>
+            </ul>
+        </div>
+        </div>
+    <div class="full-width row-margin">
+        Confidentiality Statement: Confidentiality of data relating to individual clients and visitors to Matrix Medical Network, including their identity, is respected by Matrix Medical Network. Matrix Medical Network makes every effort possible not only to honor, but to exceed the legal requirements of medical/health information privacy that applies to the Health Insurance Portability Act of 1996, public law 104-191. 
+    </div>
+    <div class="full-width row-margin">
+        I hereby release Matrix Medical Network and its affiliates and subsidiaries, and all of their past and present officers, employees and agents, and the successors of each, from any liability and responsibility for any and manner of actions, causes of action (individual and class), claims or demands of any kind whatsoever, whether known, suspected or unknown, in law or in equity including, but not limited to, all claims or potential claims arising out of my voluntary participation in or any injury, loss or death sustained from arising as result of, this screening program, and any claim that this screening ailed to identify or incorrectly identified any health condition. By signing below, I acknowledge that I have read, understand, and accept all of the statements on this consent form.
+    </div>
+    <div class="full-width row-margin" style="padding-top: 10px; padding-bottom: 10px;">
+        @if (Model.ParticipationConsent != null && !string.IsNullOrWhiteSpace(Model.ParticipationConsent.SignatureImageUrl))
+        {
+            <div style="background-color: #ccc; width: 660px;">
+                <b>Signature:</b><img src="@Model.ParticipationConsent.SignatureImageUrl" style="height: 90px; vertical-align: middle;" /><b>Date:</b><span>@Model.ParticipationConsent.ConsentSignedDate</span>
+            </div>
+        }
+        else
+        {
+            <div style="background-color: #ccc; width: 660px;">
+                <b>Signature:</b><input type="text" style="width: 300px; background-color: #ccc; border: 0; border-bottom: 1px solid black; " /><b>Date:</b><input type="text" style="width: 30px; background-color: #ccc; border: 0; border-bottom: 1px solid black;" />/<input type="text" style="width: 30px; background-color: #ccc; border: 0; border-bottom: 1px solid black;" />/<input type="text" style="width: 30px;background-color: #ccc; border: 0; border-bottom: 1px solid black;" />
+            </div>
+        }
+    </div>
+    <div class="full-width row-margin" style="padding-top: 25px;">
+        <center><b>INSURANCE, PAYMENT INFORMATION, AND ASSIGNMENT OF BENEFITS</b></center>
+    </div>
+    <div class="full-width row-margin">
+        I request Matrix Medical Network to submit claims on my behalf to my insurance company or other third party payor for my care and authorize the disclosure of health information to the extent necessary to obtain payment for those services. I recognize and accept that there may be a co-pay for selected testing services.
+    </div>
+    <div class="full-width row-margin" style="padding-top: 10px;">
+        @if (Model.ParticipationConsent != null && !string.IsNullOrWhiteSpace(Model.ParticipationConsent.InsuranceSignatureImageUrl))
+        {
+            <div style="background-color: #ccc; width: 660px;">
+                <b>Signature:</b><img src="@Model.ParticipationConsent.InsuranceSignatureImageUrl" style="height: 90px; vertical-align: middle;" /> <b>Date:</b><span>@Model.ParticipationConsent.InsuranceConsentSignedDate</span>
+            </div>
+        }
+        else
+        {
+            <div style="background-color: #ccc; width: 660px;">
+                <b>Signature:</b><input type="text" style="width: 300px; background-color: #ccc; border: 0; border-bottom: 1px solid black; " /> <b>Date:</b><input type="text" style="width: 30px; background-color: #ccc; border: 0; border-bottom: 1px solid black;" />/<input type="text" style="width: 30px; background-color: #ccc; border: 0; border-bottom: 1px solid black;" />/<input type="text" style="width: 30px;background-color: #ccc; border: 0; border-bottom: 1px solid black;" />
+            </div>
+        }
+    </div>
+</div>

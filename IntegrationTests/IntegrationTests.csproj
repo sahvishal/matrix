@@ -1,0 +1,358 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{726062A1-7D87-4363-B6AE-CE09798B1845}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Falcon.Web.IntegrationTests</RootNamespace>
+    <AssemblyName>Falcon.Web.IntegrationTests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Testing\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\Falcon.Web.IntegrationTests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;d:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;d:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'qa-hf|AnyCPU'">
+    <OutputPath>bin\qa-hf\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'prod-hf|AnyCPU'">
+    <OutputPath>bin\prod-hf\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v100|AnyCPU'">
+    <OutputPath>bin\v100\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip1-hf|AnyCPU'">
+    <OutputPath>bin\hip1-hf\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip3-hf|AnyCPU'">
+    <OutputPath>bin\hip3-hf\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev-hf|AnyCPU'">
+    <OutputPath>bin\dev-hf\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ABCpdf, Version=10.1.0.7, Culture=neutral, PublicKeyToken=a7a0b3f5184f2169, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\WebSupergoo\ABCpdf .NET 10.1 x64\Common\ABCpdf.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\lib\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a82054b837897c66, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FluentValidation.5.5.0.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a82054b837897c66, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FluentValidation.MVC5.5.5.0.0\lib\Net45\FluentValidation.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\..\lib\Unity\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\NUnit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses.NET20, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SD.LLBLGen.Pro.ORMSupportClasses.NET20.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DependencyResolution\InterfaceImplementationTester.cs" />
+    <Compile Include="Fakes\FakeSessionContext.cs" />
+    <Compile Include="Fakes\FakeSettings.cs" />
+    <Compile Include="Fakes\FakeSmtpCredentials.cs" />
+    <Compile Include="Infrastructure\Application\ConfigurationSettingRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Application\PasswordGenerator.Tester.cs" />
+    <Compile Include="Infrastructure\Application\PdfToImageConverterTester.cs" />
+    <Compile Include="Infrastructure\Application\DiacomExtratorTester.cs" />
+    <Compile Include="Infrastructure\Application\ExportableDataGeneratorTester.cs" />
+    <Compile Include="Infrastructure\Application\MediaRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Application\PdfGeneratorTester.cs" />
+    <Compile Include="Infrastructure\Application\SftpUploaderTester.cs" />
+    <Compile Include="Infrastructure\Application\SvgToImageConverterTester.cs" />
+    <Compile Include="Infrastructure\Application\SystemInformationRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Application\ZipHelperTester.cs" />
+    <Compile Include="Infrastructure\CallCenter\CallCenterRepMetricRepositoryTester.cs" />
+    <Compile Include="Infrastructure\CallCenter\CallCenterRepRepositoryTester.cs" />
+    <Compile Include="Infrastructure\CallCenter\CallQueueTester.cs" />
+    <Compile Include="Infrastructure\Communication\NotificationRepositoryTests\GetTester.cs" />
+    <Compile Include="Infrastructure\Communication\NotifierTester.cs" />
+    <Compile Include="Infrastructure\Communication\EmailTemplateFormatterTester.cs" />
+    <Compile Include="Infrastructure\Communication\EmailTemplateRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Communication\NotificationEmailSenderTester.cs" />
+    <Compile Include="Infrastructure\Communication\NotificationMediumRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Communication\NotificationRepositoryTests\SaveTester.cs" />
+    <Compile Include="Infrastructure\Finance\AuthorizeNetCreditCardPaymentGatewayTester.cs" />
+    <Compile Include="Infrastructure\Finance\ChargeCardPaymentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\CheckPaymentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\CombinedPaymentInstrumentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningAggregateRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningCustomerAggregateRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningServiceTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorInvoiceItemRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorInvoiceRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorInvoiceStatisticRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorPaymentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorPaymentServiceTester.cs" />
+    <Compile Include="Infrastructure\Finance\OrderDetailRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\OrderItemRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\OrderRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\PaymentInstrumentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\PaymentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\PaymentServiceTester.cs" />
+    <Compile Include="Infrastructure\Finance\RefundRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\RefundRequestRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\ShoppingCartServiceTester.cs" />
+    <Compile Include="Infrastructure\Geo\AddressRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Geo\AddressServiceTester.cs" />
+    <Compile Include="Infrastructure\Geo\StateRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Geo\TerritoryRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Geo\ZipCodeRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Marketing\CustomCampaignContentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Marketing\GiftCertificateRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Marketing\HospitalPartnerRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Marketing\MarketingSourceServiceTester.cs" />
+    <Compile Include="Infrastructure\Marketing\PackageRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Marketing\PrintOrderItemRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Marketing\PrintOrderItemShippingStatusRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Marketing\SourceCodeApplyEditModelValidatorTester.cs" />
+    <Compile Include="Infrastructure\Marketing\SourceCodeRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\BioSoundAaaParserTester.cs" />
+    <Compile Include="Infrastructure\Medical\BioSoundStrokeParserTester.cs" />
+    <Compile Include="Infrastructure\Medical\BloodTestResultParserTester.cs" />
+    <Compile Include="Infrastructure\Medical\CardiovisionParserTester.cs" />
+    <Compile Include="Infrastructure\Medical\EKGTestResultRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\EventCustomerResultRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\FinalPdfTester.cs" />
+    <Compile Include="Infrastructure\Medical\KynAppLipidParserTester.cs" />
+    <Compile Include="Infrastructure\Medical\LipidTestRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\LiverTestRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\PhysicianPartnerResultExportServiceTester.cs" />
+    <Compile Include="Infrastructure\Medical\ResultArchiveParserTester.cs" />
+    <Compile Include="Infrastructure\Medical\ResultArchiveUploadRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\ResultPacketGeneratorPollingAgentTester.cs" />
+    <Compile Include="Infrastructure\Medical\TestRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\TestResultRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\TestResultServiceTester.cs" />
+    <Compile Include="Infrastructure\Medical\UltrasoundTransducerResultParserTester.cs" />
+    <Compile Include="Infrastructure\Operations\CdContentGeneratorTrackingTester.cs" />
+    <Compile Include="Infrastructure\Operations\EventRoleRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Operations\EventStaffAssignmentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Operations\PodRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Operations\PodStaffAssignmentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Operations\PodTeamAssignmentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Operations\ShippingDetailRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Operations\ShippingOptionRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Operations\EventStaffAssignmentServiceTester.cs" />
+    <Compile Include="Infrastructure\Sales\CorporateAccountRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Sales\HostRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Sales\ProspectCustomerRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\AppointmentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventAppointmentServiceTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventCustomerRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventCustomerServiceTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventPackageRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventPackageSelectorServiceTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventReportingServiceTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventServiceTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\EventTestRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\GenerateKynXmlPollingAgentTester.cs" />
+    <Compile Include="Infrastructure\Scheduling\PollForAppointmentReminderViaSmsTester.cs" />
+    <Compile Include="Infrastructure\Users\CustomerRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Users\MedicalVendorRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Users\MergeCustomerTester.cs" />
+    <Compile Include="Infrastructure\Users\OrganizationRoleUserRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Users\PhysicianRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Users\RoleRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Users\UserCreateModelValidatorTester.cs" />
+    <Compile Include="Infrastructure\Users\UserListModelRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Users\UserLoginRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Users\UserRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Users\UserServiceTester.cs" />
+    <Compile Include="Infrastructure\Users\UserSessionFactoryTester.cs" />
+    <Compile Include="Infrastructure\Users\UserLoginServiceTester.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\CallCenter\CallCenterRepMetricControllerTester.cs" />
+    <Compile Include="UI\Finance\OrderControllerTester.cs" />
+    <Compile Include="UI\Finance\PaymentControllerTester.cs" />
+    <Compile Include="UI\Geo\TerritoryControllerTester.cs" />
+    <Compile Include="UI\Operations\ScheculeControllerTester.cs" />
+    <Compile Include="UI\Users\UserControllerTester.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{A170C6CA-FC12-4074-A822-027DEE8218A1}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Falcon.Data.csproj">
+      <Project>{2E11C425-09CE-48D8-9A9B-58F3816A58E3}</Project>
+      <Name>Falcon.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Falcon.Data.Sql.csproj">
+      <Project>{4E3F35B2-CD71-473A-9442-EFC18D2883D8}</Project>
+      <Name>Falcon.Data.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DependencyResolution\DependencyResolution.csproj">
+      <Project>{1FD7D18D-EE02-4AB8-91E7-C4F40FB4C591}</Project>
+      <Name>DependencyResolution</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
+      <Project>{674848DB-9FE6-4C62-BA79-F77A69E1FFC0}</Project>
+      <Name>Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UI\UI.csproj">
+      <Project>{7e630385-fe3f-455e-b0dd-8975216ea564}</Project>
+      <Name>UI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UI\Application\" />
+    <Folder Include="UI\Communication\" />
+    <Folder Include="UI\Marketing\" />
+    <Folder Include="UI\Medical\" />
+    <Folder Include="UI\Sales\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y ..\..\..\..\lib\PDfGenerator $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

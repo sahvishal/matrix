@@ -1,0 +1,64 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.RescheduleApplointmentListModelFilter
+
+<h2>
+    Search Records
+</h2>
+
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 17%">
+        <div class="small-text">
+            <b>Reschedule </b>From
+        </div>
+        @Html.TextBoxFor(m => m.RescheduleFrom, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.RescheduleTo, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Customer Name:
+        </div>
+        @Html.TextBoxFor(m => m.CustomerName)
+    </div>
+    <div class="editor-column" style="width: 20%;">
+        <div class="small-text">
+            Customer Id
+        </div>
+        @Html.TextBoxFor(m => m.CustomerId)
+    </div>
+    <div class="editor-column" style="width: 40%; padding-top:5px;">
+        <div class="editor-column" style="width: 49%">
+            <div class="small-text">
+                Hospital Partners:
+            </div>
+            @Html.DropDownListFor(m => m.HospitalPartnerId, DropDownHelper.HospitalPartners(), new { @style = "width:100%;" })
+        </div>
+        <div class="editor-column" style="width: 48%">
+            <div class="small-text">
+                Corporate Sponsors:
+            </div>
+            @Html.DropDownListFor(m => m.CorporateAccountId, DropDownHelper.GetCorporateAccounts(), new { @style = "width:100%;" })
+        </div>
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    @*<div class="editor-column" style="width: 17%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.EventFrom, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.EventTo, new { @class = "datePicker" })
+    </div>*@
+    <div class="editor-column" style="padding-top: 10px; width: 20%; float: right; text-align: right;">
+        @Html.ActionLink("Clear", "RescheduleAppointment", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>

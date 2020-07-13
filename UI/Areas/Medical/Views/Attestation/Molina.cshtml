@@ -1,0 +1,308 @@
+﻿@using Falcon.App.Core.Medical.Enum
+@model Falcon.App.Core.Medical.ViewModels.MolinaAttestationListModel
+
+
+<style type="text/css">
+    input[type=text], select {
+        width: 137px;
+    }
+</style>
+@{
+    ViewBag.Title = "Molina Attestation Form";
+}
+<h2>
+    Attestation Form
+</h2>
+
+@{Html.BeginForm();}
+<div>
+    <div class="eventdetail-row">
+        <div class="fieldLabelValue" style="width: 45%;">
+            <label style="width: 70px;">
+                Patient Name:
+            </label>
+            @Model.CustomerName
+        </div>
+        <div class="fieldLabelValue" style="width: 25%;">
+            <label>
+                Patient DOB :
+            </label>
+            @(Model.CustomerDob.HasValue ? Model.CustomerDob.Value.ToString("MM/dd/yyyy") : "")
+        </div>
+        <div class="fieldLabelValue" style="width: 25%;">
+            <label>
+                DOS :
+            </label>
+            @Model.EventDate.ToString("MM/dd/yyyy")
+        </div>
+    </div>
+    <div class="editor-row" style="width: 99%;">
+        <div style="float: left;">
+        </div>
+        <div style="float: right">
+        </div>
+    </div>
+    <div class="editor-row" style="float: right">
+        <div style="float:right; margin-right:20px;">
+            <a href="javascript:void(0);" onclick="createBlankTemplate(1);renderRegistrations();"> + Add few more</a>
+        </div>
+        @*<div style="float:right; margin-right:20px;">
+                <a href="/Scheduling/MassRegistration/Upload">Upload File</a>
+            </div>*@
+    </div>
+    <div id="AttestationTemplate" style="clear: both; width: 99%; height: 600px; overflow-y: auto; overflow-x: hidden;">
+    </div>
+
+</div>
+<div class="submit-button-row">
+    <a href="/Medical/Results/ResultStatusList?EventId=@Model.EventId">Close</a>
+    &nbsp; &nbsp;
+    @*<input type="button" value="Save and Continue" onclick="SetSaveAndContinue(true);"/>*@
+    &nbsp;&nbsp;<input type="button" value="Save and Close" onclick="SetSaveAndContinue(false);" />
+</div>
+<input type="submit" style="display: none" id="Submit" />
+<input type="hidden" name="saveAndContinue" id="saveAndContinue" />
+@Html.HiddenFor(x => x.CustomerId)
+@Html.HiddenFor(x => x.EventId)
+@Html.HiddenFor(x => x.EventCustomerResultId)
+
+@{Html.EndForm();}
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+<script type="text/javascript" language="javascript">
+
+    function createBlankTemplate(numberOfTemplate) { //debugger;
+        attestations = new Object();
+        var count = key_index;
+        for (; key_index < Number(count + numberOfTemplate) ;) {
+            registerAttestation = new Object();
+            registerAttestation.EventCustomerResultId = "@Model.EventCustomerResultId";
+            registerAttestation.Icd9Code = "";
+            registerAttestation.Icd9CodeDescription = "";
+            registerAttestation.Icd10Code = "";
+            registerAttestation.Icd10CodeDescription = "";
+            registerAttestation.Condition = "";
+            registerAttestation.StatusId = "";
+            registerAttestation.WhyNoDiagnosis = "";
+            registerAttestation.DateResolved = "";
+            registerAttestation.Key = key_index + "_" + count;
+            attestations[key_index] = registerAttestation;
+            key_index++;
+        }
+    }
+
+    var attestations = new Object();
+    var key_index = 0;
+    var registerAttestation = new Object();
+
+    @if (Model.Attestations != null)
+    {
+        foreach (var attestations in Model.Attestations)
+        {
+            <text>
+    registerAttestation = new Object();
+    registerAttestation.EventCustomerResultId = "@attestations.EventCustomerResultId";
+    registerAttestation.Icd9Code = "@( string.IsNullOrEmpty(attestations.Icd9Code)?string.Empty: attestations.Icd9Code.Replace("'", "\'"))";
+    registerAttestation.Icd9CodeDescription = "@attestations.Icd9CodeDescription";
+    registerAttestation.Icd10Code = "@(string.IsNullOrEmpty(attestations.Icd10Code) ? string.Empty: attestations.Icd10Code.Replace("'", "\'"))";
+    registerAttestation.Icd10CodeDescription = "@attestations.Icd10CodeDescription";
+    registerAttestation.Condition = "@(string.IsNullOrEmpty(attestations.Condition)? string.Empty: attestations.Condition.Replace("'", "\'"))";
+    registerAttestation.StatusId = "@attestations.StatusId";
+    registerAttestation.WhyNoDiagnosis = "@(string.IsNullOrEmpty(attestations.WhyNoDiagnosis) ? string.Empty : attestations.WhyNoDiagnosis.Replace("'", "\'"))";
+    registerAttestation.DateResolved = "@(attestations.DateResolved == DateTime.MinValue ? "" : (attestations.DateResolved.HasValue? attestations.DateResolved.Value.ToString("MM/dd/yyyy"):""))";
+
+    registerAttestation.ErrorMessage = "@Html.Raw(attestations.FeedbackMessage != null ? attestations.FeedbackMessage.Message : string.Empty)";
+
+    registerAttestation.Key = key_index + "_" + "0";
+    attestations[key_index] = registerAttestation;
+    key_index++;
+    </text>
+        }
+    }
+    else
+    {
+        <text>
+    createBlankTemplate(1);
+    </text>
+    }
+
+    function renderRegistrations() {
+        $.each(attestations, function (key, registerCustomer) {
+            $("#registerMolinaTemplate").tmpl(registerCustomer).appendTo("#AttestationTemplate");
+            $("#AttestationTemplate fieldset:last .error-message").html(registerCustomer.ErrorMessage);
+
+            $("#AttestationTemplate fieldset:last .auto-Search").each(function () {
+                var contextKeyControl = $(this).parent().parent().find(".state-class").attr("id");
+                $(this).autoComplete({
+                    autoChange: true,
+                    url: '/App/AutoCompleteService.asmx/GetCityByContextKeyAndPrefixText',
+                    type: "POST",
+                    data: "prefixText",
+                    pickContextKeyfrom: contextKeyControl
+                });
+            });
+        });
+
+        setDatePicker();
+
+        $('.submit-button-row [type="button"]').show();
+        $('.mask-phone').unmask();
+        $('.mask-phone').mask('(999)-999-9999');
+
+        $('.mask-ssn').unmask();
+        $('.mask-ssn').mask('***-**-****');
+    }
+
+    $(document).ready(function () {
+        renderRegistrations();
+
+        $("a.deleteAttestationTemplate").live("click", function () {
+            $(this).parents("fieldset:first").remove();
+
+            if ($("#AttestationTemplate fieldset").length == 0) {
+                $('.submit-button-row [type="button"]').hide();
+            }
+            else {
+                $('.submit-button-row [type="button"]').show();
+            }
+            return false;
+        });
+
+        $(".datePicker-dob").bind("blur", function () { validateDob(this); });
+
+    });
+</script>
+
+
+<script type="text/javascript" language="javascript">
+    function SetSaveAndContinue(continueFlag) {
+        if (continueFlag)
+            $("#saveAndContinue").val('@(Boolean.TrueString)');
+        else
+            $("#saveAndContinue").val('@(Boolean.FalseString)');
+        $('#Submit').click();
+    }
+
+    function validateDob(dobTextbox) {//debugger;
+        var dateStr = $.trim($(dobTextbox).val());
+        if (dateStr != "") {
+            var RegExPattern = /^(?=\d)(?:(?:(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})|(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))|(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2}))($|\ (?=\d)))?(((0?[1-9]|1[012])(:[0-5]\d){0,2}(\ [AP]M))|([01]\d|2[0-3])(:[0-5]\d){1,2})?$/;
+            if (!dateStr.match(RegExPattern)) {
+                alert("Please provide a valid Date Of Birth in mm/dd/yyyy format.");
+                $(dobTextbox).val("");
+                $(dobTextbox).focus();
+            }
+        }
+    }
+
+
+
+
+
+
+</script>
+
+<style>
+    input + div.max_tickets {
+        display: none;
+    }
+
+    input:checked + div.max_tickets {
+        display: block;
+    }
+</style>
+<script id="registerMolinaTemplate" type="text/x-jquery-tmpl">
+    <fieldset>
+        <legend>Condition Review</legend>
+        <a href="#" class="deleteAttestationTemplate" data-key="${Key}" style="float: right;">Remove</a>
+        {{if ErrorMessage}}
+        <div class="error-message" style="clear: both;"></div>
+        {{/if}}
+        <input type="hidden" name="attestations.Index" value="${Key}" />
+
+        <table>
+            <tr>
+                <td style="width:40%">
+                    <div class="editor-label">ICD-9 Code </div>
+                    <input name="attestations[${Key}].Icd9Code" type="text" value="${Icd9Code}" />
+                    <input name="Attestations[${Key}].EventCustomerResultId" type="text" value="${EventCustomerResultId}" hidden="" />
+                </td>
+                <td>
+                    <div class="editor-label">ICD-9 Description</div>
+                    <textarea name="attestations[${Key}].Icd9CodeDescription" rows="2" cols="70" disabled="disabled">${Icd9CodeDescription}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="editor-label">ICD-10 Code</div>
+                    <input name="attestations[${Key}].Icd10Code" type="text" value="${Icd10Code}" />
+                </td>
+                <td>
+                    <div class="editor-label">ICD-10 Description</div>
+                    <textarea name="attestations[${Key}].Icd10CodeDescription" disabled="disabled" rows="2" cols="70">${Icd10CodeDescription}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="editor-label">Condition</div>
+                    <input name="attestations[${Key}].Condition" type="text" value="${Condition}" />
+
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    {{if StatusId=='@((int)MolinaAttestationStatus.Existed)'}}
+                    <input name="attestations[${Key}].StatusId" type="radio" value="@((int) MolinaAttestationStatus.Existed)" checked="" />Existed
+                    {{else}}
+                    <input name="attestations[${Key}].StatusId" type="radio" value="@((int) MolinaAttestationStatus.Existed)" />Existed
+                    {{/if}}
+                </td>
+            </tr>
+            <tr>
+                <td style="float: left">
+
+                    {{if StatusId=='@((int)MolinaAttestationStatus.Resolved)'}}
+
+                    <input name="attestations[${Key}].StatusId" type="radio" class="maxtickets_enable_cb" value="@((int) MolinaAttestationStatus.Resolved)" checked="" />Resolved
+
+                    {{else}}
+                    <input name="attestations[${Key}].StatusId" type="radio" class="maxtickets_enabmax_ticketsle_cb" value="@((int) MolinaAttestationStatus.Resolved)" />Resolved
+                    {{/if}}
+
+                    <div class="max_tickets" style="margin-left: 50px">
+                        Date resolved <input name="attestations[${Key}].DateResolved" type="text" value="${DateResolved}" class='datePicker-dob' placeholder="mm/dd/yyyy" />
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{if StatusId=='@((int)MolinaAttestationStatus.UnabletodetermineDiagnosis)'}}
+                    <input name="attestations[${Key}].StatusId" type="radio" class="maxtickets_enable_cb" value="@((int) MolinaAttestationStatus.UnabletodetermineDiagnosis)" checked="" />Unable to determine Diagnosis
+                    {{else}}
+                    <input name="attestations[${Key}].StatusId" type="radio" class="maxtickets_enable_cb" value="@((int) MolinaAttestationStatus.UnabletodetermineDiagnosis)" />Unable to determine Diagnosis
+                    {{/if}}
+                    <div class="max_tickets">
+                        <div style="padding-left:50px;padding-top:10px">
+                            <div style="clear:both;">Explanation of why diagnosis cannot be made:</div>
+                            <textarea name="attestations[${Key}].WhyNoDiagnosis" cols="70" rows="3" maxlength="500">${WhyNoDiagnosis}</textarea>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{if StatusId=='@((int)MolinaAttestationStatus.Confirmed)'}}
+                    <input name="attestations[${Key}].StatusId" type="radio" value="@((int) MolinaAttestationStatus.Confirmed)" checked="" />Confirmed
+                    {{else}}
+                    <input name="attestations[${Key}].StatusId" type="radio" value="@((int) MolinaAttestationStatus.Confirmed)" />Confirmed
+                    {{/if}}
+                </td>
+            </tr>
+        </table>
+
+
+
+    </fieldset>
+</script>

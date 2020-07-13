@@ -1,0 +1,400 @@
+﻿{#param name=franchiseeId}
+<table id="SalesRepTerritoriesTable" class="divgrid_clnew" cellspacing="0" cellpadding="0" width="100%" style="font-size: xx-small">
+    <tr>
+        <th style="white-space:nowrap; width:20%;">
+            <b>Sales Rep</b>
+        </th>
+        <th style="white-space:nowrap; width:40%;">
+            <b>Assigned Territories</b>
+        </th>
+        <th style="white-space:nowrap; width:30%;">
+            <b>Profile Properties</b>
+        </th>
+        <th style="white-space:nowrap; width:10%;">
+            <b>Actions</b>
+        </th>
+    </tr>
+    {#foreach $T as SalesRep}
+    <tr>
+        <td style="white-space:nowrap;">
+            {$T.SalesRep.NameAsString}
+        </td>
+        <td style="white-space:nowrap;">
+            <div id="SalesRep{$T.SalesRep.SalesRepresentativeId}AssignedTerritoriesDiv">
+                <a href="#{$T.SalesRep.SalesRepresentativeId}" onclick="LoadAssignedTerritoriesForSalesRep({$T.SalesRep.SalesRepresentativeId})">See Assigned Territories</a>
+            </div>
+        </td>
+        <td>
+            <div id="SalesRep{$T.SalesRep.SalesRepresentativeId}AssignedPodsDiv">
+                <a href="#{$T.SalesRep.SalesRepresentativeId}" onclick="LoadAssignedPodsForSalesRep({$T.SalesRep.SalesRepresentativeId})">See Assigned Pods</a>
+            </div>
+        </td>
+        <td style="white-space:nowrap;">
+            <a href="#{$T.SalesRep.SalesRepresentativeId}" onclick="ShowAssignTerritoryDialog({$T.SalesRep.SalesRepresentativeId}, {$P.franchiseeId})">Assign Territory</a><br />
+            <a href="#{$T.SalesRep.SalesRepresentativeId}" onclick="ShowAssignPodDialog({$T.SalesRep.SalesRepresentativeId})">Assign Pod</a>
+        </td>
+    </tr>
+    {#/for}
+</table>
+<div id="AssignTerritoryDialogDiv" title="Assign Territory to Sales Rep" style="display: none">
+    Territory: <div id="TerritoryToAssignDiv"></div><br />
+    Event Type:
+    <select id="EventTypeDDL" style="height:25px">
+        <option value="3">Private</option>
+        <option value="2">Public</option>
+        <option value="0">Public and Private</option>
+    </select>
+</div>
+<div id="AssignPodDialogDiv" title="Assign Pod to Sales Rep" style="display: none;">
+    Pod: <div id="PodToAssignDiv"></div>
+</div>
+
+{#literal}
+<script type="text/javascript">
+    var territoryIdToUnassignFrom = 0;
+    var salesRepIdToUnassign = 0;
+
+    function AssignPodToSalesRep(podId, salesRepId)
+    {
+        if (podId == 0)
+        {
+            alert('Please select a valid territory.');
+            return false;
+        }
+        var salesRepAssignedPodsDiv = $('#SalesRep' + salesRepId + 'AssignedPodsDiv');
+        salesRepAssignedPodsDiv.addClass('loading');
+        var messageUrl = '/App/Controllers/PodController.asmx/AssignPodToSalesRep';
+        var parameter = "{'podId':'" + podId + "',";
+        parameter += "'salesRepId':'" + salesRepId + "'}";
+        var successFunction = function(returnData)
+        {
+            if (returnData.d == true)
+            {
+                alert('The pod has been assigned successfully.');
+                LoadAssignedPodsForSalesRep(salesRepId);
+            }
+            else
+            {
+                alert('Assignment of pod failed.');
+            }
+        };
+        var numberOfRecordsFunction = function(returnData) { return 1; };
+        var noRecordsFunction = function() { };
+        var completeFunction = function() { salesRepAssignedPodsDiv.removeClass('loading'); };
+        var errorFunction = function() { alert('Could not assign sales rep to pod due to an internal server error.'); };
+        LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction);
+        return true;
+    }
+
+    function LoadPodToAssignDDL(salesRepId)
+    {
+        var podToAssignDiv = $('#PodToAssignDiv');
+        podToAssignDiv.html('');
+        podToAssignDiv.append('<select id="PodToAssignDDL"><option value="0">Select Pod</option></select>');
+        var podToAssignDDL = $('#PodToAssignDDL');
+        podToAssignDDL.hide();
+        podToAssignDiv.addClass('loading');
+        var messageUrl = '/App/Controllers/PodController.asmx/GetPodsAvailableForSalesRep';
+        var parameter = "{'salesRepId':'" + salesRepId + "'}";
+        var successFunction = function(returnData)
+        {
+            $.each(returnData.d, function()
+            {
+                podToAssignDDL.append('<option value="' + this.Id + '">' + this.Name + '</option>');
+            });
+            podToAssignDDL.show();
+        };
+        var numberOfRecordsFunction = function(returnData) { return returnData.d.length; };
+        var noRecordsFunction = function() { podToAssignDiv.append('There are no pods available to assign to this sales rep.'); };
+        var completeFunction = function() { podToAssignDiv.removeClass('loading'); };
+        var errorFunction = function() { podToAssignDiv.append('Could not load available pods for this sales rep due to an internal server error.'); };
+        LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction, false);
+    }
+
+    function ShowAssignPodDialog(salesRepId)
+    {
+        var salesRepIdToAssign = salesRepId;
+        LoadPodToAssignDDL(salesRepId);
+        $('#AssignPodDialogDiv').dialog(
+        {
+            autoOpen: false,
+            bgiframe: true,
+            resizable: false,
+            modal: true,
+            overlay:
+            {
+                backgroundColor: '#000',
+                opacity: 0.5
+            },
+            buttons:
+            {
+                'Assign Pod': function () {
+
+                   
+                    var dialogFinished = AssignPodToSalesRep($('#PodToAssignDDL').val(), salesRepIdToAssign);
+                    if (dialogFinished == true) {
+                        $(this).dialog('destroy');
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog('destroy');
+                }
+            }
+        });
+        $('#AssignPodDialogDiv').dialog('open');
+    }
+
+    function ShowPodUnassignConfirmation(podId, salesRepId)
+    {
+        var podIdToUnassign = podId;
+        salesRepIdToUnassign = salesRepId;
+
+        $('#ConfirmPodUnassignmentDialogDiv').dialog(
+        {
+            autoOpen: false,
+            bgiframe: true,
+            resizable: false,
+            height: 140,
+            modal: true,
+            overlay:
+            {
+                backgroundColor: '#000',
+                opacity: 0.5
+            },
+            buttons:
+            {
+                'Unassign Pod': function()
+                {
+                    UnassignPodFromSalesRep(podIdToUnassign, salesRepIdToUnassign);
+                    $(this).dialog('destroy');
+                },
+                Cancel: function()
+                {
+                    $(this).dialog('destroy');
+                }
+            }
+        });
+        $('#ConfirmPodUnassignmentDialogDiv').dialog('open');
+    }
+
+    function UnassignPodFromSalesRep(podId, salesRepId)
+    {
+        var salesRepAssignedPodsDiv = $('#SalesRep' + salesRepId + 'AssignedPodsDiv');
+        salesRepAssignedPodsDiv.addClass('loading');
+        var messageUrl = '/App/Controllers/PodController.asmx/UnassignPodFromSalesRep';
+        var parameter = "{'podId':'" + podId + "',";
+        parameter += "'salesRepId':'" + salesRepId + "'}";
+        var successFunction = function(returnData)
+        {
+            if (returnData.d == true)
+            {
+                alert('The pod has been unassigned from the sales rep successfully.');
+                LoadAssignedPodsForSalesRep(salesRepId);
+            }
+            else
+            {
+                alert('Unassignment failed.');
+            }
+        };
+        var numberOfRecordsFunction = function(returnData) { return 1; };
+        var noRecordsFunction = function() { };
+        var completeFunction = function() { salesRepAssignedPodsDiv.removeClass('loading'); };
+        var errorFunction = function() { alert('Could not unassign pod from sales rep due to an internal server error.'); };
+        LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction);
+    }
+
+
+    function ShowAssignTerritoryDialog(salesRepId, franchiseeId)
+    {
+        var salesRepIdToAssign = salesRepId;
+        LoadTerritoryToAssignDDL(salesRepId, franchiseeId);
+        $('#AssignTerritoryDialogDiv').dialog(
+        {
+            autoOpen: false,
+            bgiframe: true,
+            resizable: false,
+            modal: true,
+            width: 450,
+            height: 250,
+            overlay:
+            {
+                backgroundColor: '#000',
+                opacity: 0.5
+            },
+            buttons:
+            {
+                'Assign Territory': function()
+                {
+                    var dialogFinished = AssignTerritoryToSalesRep($('#TerritoryToAssignDDL').val(), salesRepIdToAssign, $('#EventTypeDDL').val());
+                    if (dialogFinished == true)
+                    {
+                        $(this).dialog('destroy');
+                    }
+                },
+                Cancel: function()
+                {
+                    $(this).dialog('destroy');
+                }
+            }
+        });
+        $('#AssignTerritoryDialogDiv').dialog('open');
+    }
+
+    function AssignTerritoryToSalesRep(territoryId, salesRepId, eventType)
+    {
+        if (territoryId == 0)
+        {
+            alert('Please select a valid territory.');
+            return false;
+        }
+        var salesRepAssignedTerritoriesDiv = $('#SalesRep' + salesRepId + 'AssignedTerritoriesDiv');
+        salesRepAssignedTerritoriesDiv.addClass('loading');
+        var messageUrl = '/App/Controllers/TerritoryController.asmx/AssignSalesRepToTerritory';
+        var parameter = "{'salesRepId':'" + salesRepId + "',";
+        parameter += "'territoryId':'" + territoryId + "',";
+        parameter += "'eventType':'" + eventType + "'}";
+        var successFunction = function(returnData)
+        {
+            if (returnData.d == true)
+            {
+                alert('The sales rep has been assigned successfully.');
+                LoadAssignedTerritoriesForSalesRep(salesRepId);
+            }
+            else
+            {
+                alert('Territory assignment failed.');
+            }
+        };
+        var numberOfRecordsFunction = function(returnData) { return 1; };
+        var noRecordsFunction = function() { };
+        var completeFunction = function() { salesRepAssignedTerritoriesDiv.removeClass('loading'); };
+        var errorFunction = function() { alert('Could not assign sales rep to territory due to an internal server error.'); };
+        LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction);
+        return true;
+    }
+
+    function LoadTerritoryToAssignDDL(salesRepId, franchiseeId)
+    {
+        var territoryToAssignDiv = $('#TerritoryToAssignDiv');
+        territoryToAssignDiv.html('');
+        territoryToAssignDiv.append('<select id="TerritoryToAssignDDL"><option value="0">Choose One...</option></select>');
+        var territoryToAssignDDL = $('#TerritoryToAssignDDL');
+        territoryToAssignDDL.hide();
+        territoryToAssignDiv.addClass('loading');
+        var messageUrl = '/App/Controllers/TerritoryController.asmx/GetTerritoryViewDataAvailableForSalesRep';
+        var parameter = "{'franchiseeId':'" + franchiseeId + "',";
+        parameter += "'salesRepId':'" + salesRepId + "'}";
+        var successFunction = function(returnData)
+        {
+            $.each(returnData.d, function()
+            {
+                territoryToAssignDDL.append('<option value="' + this.TerritoryId + '">' + this.TerritoryName + '</option>');
+            });
+            territoryToAssignDDL.show();
+        };
+        var numberOfRecordsFunction = function(returnData) { return returnData.d.length; };
+        var noRecordsFunction = function() { territoryToAssignDiv.append('There are no territories available to assign to this sales rep.'); };
+        var completeFunction = function() { territoryToAssignDiv.removeClass('loading'); };
+        var errorFunction = function() { territoryToAssignDiv.append('Could not load available territories for this sales rep due to an internal server error.'); };
+        LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction, false);
+    }
+
+    function LoadAssignedTerritoriesForSalesRep(salesRepId)
+    {
+        var salesRepDiv = $('#SalesRep' + salesRepId + 'AssignedTerritoriesDiv');
+        salesRepDiv.html('');
+        salesRepDiv.addClass('loading');
+        var messageUrl = '/App/Controllers/TerritoryController.asmx/GetTerritoriesAndAssignmentsForSalesRep';
+        var parameter = "{'salesRepId':'" + salesRepId + "'}";
+        var successFunction = function(returnData)
+        {
+            salesRepDiv.setTemplateURL('/App/Templates/SalesRepTerritoryAssignments.html');
+            salesRepDiv.processTemplate(returnData.d);
+        };
+        var numberOfRecordsFunction = function(returnData) { return returnData.d.length; };
+        var noRecordsFunction = function() { salesRepDiv.append('There are no territories assigned to this sales rep.'); };
+        var completeFunction = function() { salesRepDiv.removeClass('loading'); };
+        var errorFunction = function() { salesRepDiv.append('Could not load assigned territories for this sales rep due to an internal server error.'); };
+        LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction);
+    }
+
+    function LoadAssignedPodsForSalesRep(salesRepId)
+    {
+        var salesRepDiv = $('#SalesRep' + salesRepId + 'AssignedPodsDiv');
+        salesRepDiv.html('');
+        salesRepDiv.addClass('loading');
+        var messageUrl = '/App/Controllers/PodController.asmx/GetPodsAssignedToSalesRep';
+        var parameter = "{'salesRepId':'" + salesRepId + "'}";
+        var successFunction = function(returnData)
+        {
+            salesRepDiv.setTemplateURL('/App/Templates/SalesRepPodAssignments.html');
+            salesRepDiv.setParam('salesRepId', salesRepId);
+            salesRepDiv.processTemplate(returnData.d);
+        };
+        var numberOfRecordsFunction = function(returnData) { return returnData.d.length; };
+        var noRecordsFunction = function() { salesRepDiv.append('There are no pods assigned to this sales rep.'); };
+        var completeFunction = function() { salesRepDiv.removeClass('loading'); };
+        var errorFunction = function() { salesRepDiv.append('Could not load assigned pods for this sales rep due to an internal server error.'); };
+        LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction);
+    }
+
+    function ShowUnassignConfirmation(territoryId, salesRepId)
+    {
+        $('#ConfirmUnassignmentDialogDiv').dialog(
+        {
+            autoOpen: false,
+            bgiframe: true,
+            resizable: false,
+            height: 140,
+            modal: true,
+            overlay:
+            {
+                backgroundColor: '#000',
+                opacity: 0.5
+            },
+            buttons:
+            {
+                'Unassign Sales Rep': function()
+                {
+                    UnassignSalesRepFromTerritory(territoryIdToUnassignFrom, salesRepIdToUnassign);
+                    $(this).dialog('destroy');
+                },
+                Cancel: function()
+                {
+                    $(this).dialog('destroy');
+                }
+            }
+        });
+
+        territoryIdToUnassignFrom = territoryId;
+        salesRepIdToUnassign = salesRepId;
+        $('#ConfirmUnassignmentDialogDiv').dialog('open');
+    }
+
+    function UnassignSalesRepFromTerritory(territoryId, salesRepId)
+    {
+        var salesRepAssignedTerritoriesDiv = $('#SalesRep' + salesRepId + 'AssignedTerritoriesDiv');
+        salesRepAssignedTerritoriesDiv.addClass('loading');
+        var messageUrl = '/App/Controllers/TerritoryController.asmx/UnassignSalesRepFromTerritory';
+        var parameter = "{'salesRepId':'" + salesRepId + "',";
+        parameter += "'territoryId':'" + territoryId + "'}";
+        var successFunction = function(returnData)
+        {
+            if (returnData.d == true)
+            {
+                alert('The sales rep has been unassigned successfully.');
+                LoadAssignedTerritoriesForSalesRep(salesRepId);
+            }
+            else
+            {
+                alert('Unassignment failed.');
+            }
+        };
+        var numberOfRecordsFunction = function(returnData) { return 1; };
+        var noRecordsFunction = function() { };
+        var completeFunction = function() { salesRepAssignedTerritoriesDiv.removeClass('loading'); };
+        var errorFunction = function() { alert('Could not unassign sales rep from territory due to an internal server error.'); };
+        LoadAjax(messageUrl, parameter, successFunction, errorFunction, completeFunction, numberOfRecordsFunction, noRecordsFunction);
+    }
+</script>
+{#/literal}

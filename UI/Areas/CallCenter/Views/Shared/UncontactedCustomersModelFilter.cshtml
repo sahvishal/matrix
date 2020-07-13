@@ -1,0 +1,58 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.UncontactedCustomersReportModelFilter
+<h2>
+   Search Records 
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 40%">
+        <div class="small-text">
+            HealthPlan
+        </div>
+        <div>
+            @Html.DropDownListFor(m => m.HelathPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width: 355px" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 55%; float: right; ">
+        <div class="small-text" style="clear: both;">
+            Eligiblity Status
+        </div>
+        <div style="float: left; width: 17%">
+            <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.All) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.All)');" />Show All
+        </div>
+        <div style="float: left; width: 20%">
+            <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.OnlyEligible) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.OnlyEligible)');" />Only Eligible
+        </div>
+        <div style="float: left; width: 20%">
+            <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.NotEligible) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.NotEligible)');" />Not Eligible
+        </div>
+        <div style="float: left; width: 26%">
+            <input type="radio" name="EligibleStatusRbtn" @((Model.EligibleStatus == EligibleFilterStatus.NotMentioned) ? "checked" : "") onclick="setEligibleStatus('@((long)EligibleFilterStatus.NotMentioned)');" />Not Mentioned
+        </div>
+    </div>
+</div>
+
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 80%; padding-top: 10px;">
+        <div class="small-text">
+            Custom Tag
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllCustomTags(), new { @multiple = "multiple", @style = "width: 300px" })
+        </div>
+    </div>
+</div>
+@Html.HiddenFor(m => m.EligibleStatus)
+<div style="padding-left: 5px; overflow: hidden;">
+
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "UncontactedCustomersReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+
+<script type="text/javascript" language="javascript">
+  
+    function setEligibleStatus(status) {
+        $("#EligibleStatus").val(status);
+    }  
+</script>

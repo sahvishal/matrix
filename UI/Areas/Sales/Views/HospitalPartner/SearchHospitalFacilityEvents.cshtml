@@ -1,0 +1,32 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Sales.ViewModels
+@model HospitalPartnerEventListModel
+           
+@{
+    ViewBag.Title = "Search Events";
+}
+
+<h1>
+    Events
+    @if (Model != null && Model.Collection != null)
+    {
+        var userSession = Falcon.App.DependencyResolution.IoC.Resolve<ISessionContext>().UserSession;
+        if (Request.QueryString["HospitalPartnerId"] != null)
+        {
+            <span style="float:right; font-size:11px;"><a target="_blank" href="/Sales/ExportableReports/SearchHospitalFacilityEvents?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export Events To CSV</a></span>
+        }
+        else
+        {
+            <span style="float:right; font-size:11px;"><a target="_blank" href="/Sales/ExportableReports/SearchHospitalFacilityEvents?id=@System.Guid.NewGuid().ToString()&HospitalFacilityId=@userSession.CurrentOrganizationRole.OrganizationId">Export Events To CSV</a></span>
+        }
+    }
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("SearchHospitalFacilityEvents", "HospitalPartner", FormMethod.Get);}
+    @Html.Partial("HospitalPartnerEventListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@Html.Partial("HospitalPartnerEvents", new ViewDataDictionary(Model))
+
+

@@ -1,0 +1,172 @@
+@model Falcon.App.Core.CallQueues.ViewModels.CallQueueListModel
+@{
+    ViewBag.Title = "Index";
+}
+<h2>
+    Manage Call Queues
+    <span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New", "Create")
+    </span>
+</h2>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<div id="list-filter">
+    @{Html.BeginForm("Index", "CallQueue", FormMethod.Get);}
+    @Html.Partial("CallQueueListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Collection != null && Model.Collection.Any())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th style="width:130px;">
+                Name
+            </th>
+            <th style="width:300px;">
+                Description
+            </th>
+            <th style="width:120px;">Customers</th>
+            <th style="text-align: center;">Criteria(s)</th>
+            <th style="width:130px;">Assignment(s)</th>
+            <th>Created On</th>
+            <th>Action
+            </th>
+        </tr>
+        @foreach (var item in Model.Collection)
+        {
+            <tr>
+                <td style="width:130px;">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td style="width:300px;">
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td style="width:120px;">
+                    In Queue: @item.TotalCustomersInQueue<br />
+                    Contacted: @(item.CustomerContacted)%
+                </td>
+                <td style="text-align: center;">
+                    <a href="javascript:void(0);" class="criteria">View</a>
+                    <div class="criteria-div" style="width:300px; display: none;">
+                        @if (item.Criterias != null && item.Criterias.Any())
+                        {
+                            var index = 1;
+                            foreach (var criteria in item.Criterias)
+                            {
+                                if (criteria.Condition && index > 1)
+                                {
+                                    <div style="margin-left: 50px;"><b>OR</b></div>
+                                }
+                                else if (index > 1)
+                                {
+                                    <div style="margin-left: 50px;"><b>AND</b></div>
+                                }
+                                <div>
+                                    @(criteria.Criteria) within @(criteria.Radius) miles of @(criteria.Zipcode)
+                                </div>
+                                <br />
+                                index++;
+                            }
+                        }
+                    </div>
+                </td>
+                <td style="width:130px;">
+                    @if (item.Assignments != null && item.Assignments.Any())
+                    {
+                        foreach (var assignment in item.Assignments)
+                        {
+                            <div>
+                                @assignment.Name (@(assignment.Percentage)%)
+                            </div>
+                            <br/>
+                        }
+                    }
+                </td>
+                <td>
+                    @item.DateCreated.ToShortDateString()
+                </td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <a href="javascript:setIsActiveState(@item.Id, false); void(0);">Deactivate </a><br/>
+                        @*@Html.ActionLink("Edit", "Edit", new { id = item.Id })*@
+                        <a href="/callcenter/callqueue/edit?id=@item.Id">Edit</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:setIsActiveState(@item.Id, true); void(0);">Activate </a>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function() {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function() {
+            $("tr:not(:has(th))").hover(function() {
+                    $(this).addClass('row-hover');
+                },
+                function() {
+                    $(this).removeClass('row-hover');
+                });
+        });
+
+        $(document).ready(function() {
+            $("a.criteria").each(function(index) {
+                $(this).qtip({
+                    position: {
+                        my: 'right top'
+                    },
+                    content: {
+                        title: "Criteria(s)",
+                        text: function(api) {
+                            return $(this).parent().find(".criteria-div").html();
+                        }
+                    }
+                });
+            });
+
+        });
+
+        function setIsActiveState(callQueueId, isActive) {
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/CallCenter/CallQueue/SetCallQueueIsActiveState?callQueueId=" + callQueueId + "&isActive=" + isActive,
+                data: "{}",
+                success: function(result) {
+                    window.location.reload();
+                },
+                error: function(a, b, c) {
+                    if (a.status == 401) {
+                        alert('You do not have permission to perform the action!');
+                    } else {
+                        if (isActive)
+                            alert("Some error occured while activating the Call Queue! \nPlease contact the support team!");
+                        else
+                            alert("Some error occured while de-activating the Call Queue! \nPlease contact the support team!");
+
+                        window.location.reload();
+                    }
+            }
+        });
+    }
+    </script>
+}

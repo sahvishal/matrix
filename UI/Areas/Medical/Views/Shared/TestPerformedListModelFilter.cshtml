@@ -1,0 +1,71 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+
+@model TestPerformedListModelFilter
+
+<h2>Search Records</h2>
+
+<div style="padding-left: 5px; overflow: hidden; padding-bottom:10px;">
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text"><b>Event</b> From: </div>
+        @Html.TextBoxFor(m => m.EventDateFrom, new { @class = "datePicker", @value = String.Format("{0:yyyy-MM-dd}", Model.EventDateFrom.HasValue ? Model.EventDateFrom : DateTime.Now), @style = "width:160px;" })            
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">To: </div>
+        @Html.TextBoxFor(m => m.EventDateTo, new { @class = "datePicker", @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">Technician:</div>
+        @Html.DropDownListFor(m => m.TechnicianId, DropDownHelper.GetAllTechnicians(), new { @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">Event Id:</div>
+        @Html.TextBoxFor(m => m.EventId, new {  @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">
+            Pod:
+        </div>
+        @Html.TextBoxFor(m => m.Pod, new { @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 250px;clear:both;width: 36%">
+        <div class="small-text">Health Plan:</div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:240px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">
+            Test:
+        </div>
+        @Html.DropDownListFor(m => m.TestId, DropDownHelper.AllTests(), new { @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 170px;">
+        <div class="small-text">PDF Generated:</div>
+        @Html.DropDownListFor(m => m.IsPdfGenerated, DropDownHelper.GetPdfGeneratedStatus(Falcon.App.Core.Medical.Enum.PdfGeneratedStatus.Yes), new { @style = "width:100px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">
+            Event Type:
+        </div>
+        <div>
+            <input type="checkbox" id="is-retail-event" @(Model.IsRetailEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsRetailEvent');" />Retail
+            <input type="checkbox" id="is-corporate-event" @(Model.IsCorporateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsCorporateEvent');" />Corporate<br />
+            <input type="checkbox" id="is-healthPlan-event" @(Model.IsHealthPlanEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsHealthPlanEvent');" />Health Plan
+        </div>
+        @Html.HiddenFor(m => m.IsRetailEvent)
+        @Html.HiddenFor(m => m.IsCorporateEvent)
+        @Html.HiddenFor(m => m.IsHealthPlanEvent)
+    </div>
+    <div class="editor-column" style="float: right; padding-top:12px; text-align: right;">
+        @Html.ActionLink("Clear", "TestPerformed", "Reports") | @Html.SubmitButton("Search")
+    </div> 
+</div>
+<script type="text/javascript">
+    function onCheckEventType(checkBox, hiddenBox) {
+        if ($(checkBox).attr("checked")) {
+            $("#" + hiddenBox).val('@Boolean.TrueString');
+        }
+        else {
+            $("#" + hiddenBox).val('@Boolean.FalseString');
+        }
+    }
+</script>

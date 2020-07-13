@@ -1,0 +1,86 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallCenter.ViewModels.CallSkippedReportFilter
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Health Plan
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:100%;" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Customer Id
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.CustomerId)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 18%; padding-left: 20px;">
+        <div class="small-text">
+            From
+        </div>
+        @Html.TextBoxFor(m => m.DateFrom, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.DateTo, new { @class = "datePicker" })
+    </div>
+</div>
+
+<div style="padding-left: 5px; padding-top: 3px; overflow: hidden;">
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Call Queue
+        </div>
+        @Html.DropDownListFor(m => m.CallQueueId, DropDownHelper.GetHealthPlanCallQueueForReport(), new { @style = "width:100%;" })
+    </div>
+
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Agent Name
+        </div>
+        @Html.TextBoxFor(x=>x.AgentName, "", new { @class = "auto-search-agents", id = "AgentName", @style = "width:98%;" })
+        @Html.HiddenFor(x => x.AgentId)
+    </div>
+</div>
+
+
+<div style="padding-left: 5px; overflow: hidden;">
+
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align: right;">
+        @Html.ActionLink("Clear", "CallSkippedReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(".auto-search-agents").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '@Url.Action("GetAgentsList", "Reports")',
+                dataType: "json",
+                type: "POST",
+                data: {
+                    searchText: $("#AgentName").val()
+                },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.label,
+                            val: item.id
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 3,
+        select: function (event, ui) {
+            $("#AgentName").val(ui.item.label);
+            $("#AgentId").val(ui.item.val);
+        }
+    });
+</script>

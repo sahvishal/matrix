@@ -1,0 +1,112 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentTemplateListModel
+
+@{
+    ViewBag.Title = "Manage Health Assessment Templates";
+}
+<h2>
+    Manage Health Assessment Templates<span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New", "Create")
+    </span>
+</h2>
+
+<div id="list-filter">
+    @{Html.BeginForm("Index", "HealthAssessment", FormMethod.Get);}
+    @Html.Partial("HealthAssessmentTemplateListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && Model.HealthAssessmentTemplates != null && Model.HealthAssessmentTemplates.Count() > 0)
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Type
+            </th>
+            <th style="text-align:right;">
+                Action
+            </th>
+        </tr>
+        @foreach (var template in Model.HealthAssessmentTemplates)
+        {
+            <tr>
+                <td>
+                    @template.Name
+                </td>
+                <td>
+                    @template.TemplateType
+                </td>
+                <td style="text-align:right">
+                    @if (template.IsActive)
+                    {
+                        <a href="javascript:setIsActiveState(@template.Id, false); void(0);" style="margin-right:5px;">Deactivate</a>
+
+                    }
+                    else
+                    {
+                        <a href="javascript:setIsActiveState(@template.Id, true); void(0);" style="margin-right:5px;">Activate </a>
+                    }
+                    <a href="javascript:void(0);" style="margin-right:5px;" onclick="viewHealthAssessmentTemplateQuestion(@template.Id);">View</a>
+                    @if (template.IsPublished)
+                    {
+
+                        @Html.ActionLink("Create Copy", "Create", new { templateId = template.Id })
+                    }
+                    else
+                    {
+                        @*@Html.ActionLink("Edit", "Edit", new { id = template.Id })*@
+                        <a href="/medical/healthassessment/edit?id=@template.Id">Edit</a>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+<script language="javascript" type="text/javascript">
+
+    function setIsActiveState(templateId, isActive) {
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            url: "/Medical/HealthAssessment/SetTemplateIsActiveState?templateId=" + templateId + "&isActive=" + isActive,
+            data: "{}",
+            success: function (result) {
+                if (result.IsSuccess) {
+                    alert(result.Message);
+                    window.location.reload();
+                }
+                else {
+                    alert(result.Message);
+                }
+            },
+            error: function (a, b, c) {
+                if (a.status == 401) {
+                    alert("You do not have the permission for the action!");
+                }
+                else if (isActive)
+                    alert("Some error occured while activating the Template! \nPlease contact the support team!");
+                else
+                    alert("Some error occured while de-activating the Template! \nPlease contact the support team!");
+
+                window.location.reload();
+            }
+        });
+    }
+
+    function viewHealthAssessmentTemplateQuestion(templateId) {
+        window.open("/Medical/HealthAssessment/View?id=" + templateId, "Template_Question", "width=1080, height=620, scrollbars=1");
+    }
+</script>

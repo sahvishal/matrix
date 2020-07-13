@@ -1,0 +1,364 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@using Roles = Falcon.App.Core.Enum.Roles
+@{
+    var sessionContext = IoC.Resolve<ISessionContext>();
+
+    var loggedinRole = (Roles)sessionContext.UserSession.CurrentOrganizationRole.GetSystemRoleId;
+
+    var customerItem = ViewData["Customer"] as EventCustomerViewModel;
+    var appointmentItem = ViewData["Appointment"] as EventAppointmentViewModel;
+    var eventId = ViewData["EventId"];
+    var eventDate = Convert.ToDateTime(ViewData["EventDate"]);
+    var availableProductCount = Convert.ToInt32(ViewData["AvailableProductCount"]);
+    var clientNoticeFileExists = Convert.ToBoolean(ViewData["ClientNoticeFileExists"]);
+    var isKynIntegrationEnabled = Convert.ToBoolean(ViewData["IsKynIntegrationEnabled"]);
+
+    var abnFileExists = Convert.ToBoolean(ViewData["AbnFileExists"]);
+    var pcpConsentFormExists = Convert.ToBoolean(ViewData["PcpConsentFormExists"]);
+    var captureAbnStatus = Convert.ToBoolean(ViewData["CaptureAbnStatus"]);
+
+    var isBloodworkFormAttached = Convert.ToBoolean(ViewData["IsBloodworkFormAttached"]);
+    var fluVacinationFormExists = Convert.ToBoolean(ViewData["FluVacinationFormExists"]);
+    var captureHaf = Convert.ToBoolean(ViewData["CaptureHaf"]);
+    var bookPcpAppointment = Convert.ToBoolean(ViewData["BookPcpAppointment"]);
+    var printScreeningInfo = Convert.ToBoolean(ViewData["PrintScreeningInfo"]);
+    var printPatientWorkSheet = Convert.ToBoolean(ViewData["PrintPatientWorkSheet"]);
+    var isHealthPlanEvent = Convert.ToBoolean(ViewData["IsHealthPlanEvent"]);
+    var showHraQuestionnaire = Convert.ToBoolean(ViewData["ShowHraQuestionnaire"]);
+    var showBarrier = Convert.ToBoolean(ViewData["ShowBarrier"]);
+    var showCheckListForm = Convert.ToBoolean(ViewData["ShowCheckListForm"]);
+    var showMicroalbuminForm = Convert.ToBoolean(ViewData["ShowMicroalbuminForm"]);
+    var showIFOBTForm = Convert.ToBoolean(ViewData["ShowIFOBTForm"]);
+    var isEawvPurchased = Convert.ToBoolean(ViewData["IsEawvPurchased"]);
+    var isEawvMarkedAsTestNotPerformed = Convert.ToBoolean(ViewData["IsEawvMarkedAsTestNotPerformed"]);
+    var resultFlowChangeDate = IoC.Resolve<ISettings>().ResultFlowChangeDate;
+
+    var isNewResultFlow = eventDate >= resultFlowChangeDate;
+
+    var showChatQuestionnaire = Convert.ToBoolean(ViewData["ShowChatQuestionnaire"]);
+    var chatQuestionerAppUrl = Convert.ToString(ViewData["ChatQuestionerAppUrl"]);
+
+    var participationFormExists = Convert.ToBoolean(ViewData["ParticipationFormExists"]);
+    var giftCardFormExists = Convert.ToBoolean(ViewData["GiftCardFormExists"]);
+    var showChaperonForm = Convert.ToBoolean(ViewData["ShowChaperonForm"]);
+
+    string reshedApptUrl = "";
+    string cancelApptUrl = "";
+    string editCustomerUrl = "";
+    string customerDetailUrl = "";
+
+    var isNoShow = Convert.ToBoolean(ViewData["IsNoShow"]);
+
+    switch (loggedinRole)
+    {
+        case Roles.Technician:
+        case Roles.NursePractitioner:
+            reshedApptUrl = "/App/Franchisee/Technician/TechnicianRescheduleCustomerAppointment.aspx?EventID=" + eventId + "&CustomerID=" + customerItem.CustomerId + "&EventCustomerID=" + customerItem.EventCustomerId + "&CustomerList=true";
+            cancelApptUrl = "/App/Franchisee/Technician/TechnicianCancelAppointment.aspx?EventCustomerID=" + customerItem.EventCustomerId;
+            editCustomerUrl = "/App/Franchisee/Technician/TechnicianEditCustomer.aspx?CustomerID=" + customerItem.CustomerId + "&Master=EventCustomerList";
+            customerDetailUrl = "/App/Franchisee/Technician/TechnicianCustomerDetails.aspx?CustomerID=" + customerItem.CustomerId;
+            break;
+
+        case Roles.FranchisorAdmin:
+            reshedApptUrl = "/App/Franchisor/FranchisorRescheduleCustomerAppointment.aspx?EventID=" + eventId + "&CustomerID=" + customerItem.CustomerId + "&EventCustomerID=" + customerItem.EventCustomerId + "&CustomerList=true";
+            cancelApptUrl = "/App/Franchisor/FranchisorCancelAppointment.aspx?EventCustomerID=" + customerItem.EventCustomerId;
+            editCustomerUrl = "/App/Franchisor/FranchisorEditCustomer.aspx?CustomerID=" + customerItem.CustomerId + "&Master=EventCustomerList";
+            customerDetailUrl = "/App/Franchisor/FranchisorCustomerDetails.aspx?CustomerID=" + customerItem.CustomerId;
+            break;
+    }
+}
+<li>
+    <a href="@editCustomerUrl">Edit Customer</a>
+</li>
+@if (loggedinRole != Roles.NursePractitioner)
+{
+    <li>
+        <a href="@customerDetailUrl">Customer Detail</a>
+    </li>
+}
+
+@if (eventDate.Date <= DateTime.Now.Date)
+{
+    if (appointmentItem.CheckInTime != null && appointmentItem.CheckOutTime != null)
+    {
+        <li>
+            <a href="javascript:void(0);" title="Results are beyond Pre-Audit state. Cannot reshedule now.">
+                Reschedule Appointment
+            </a>
+        </li>
+        <li>
+            <a href="javascript:void(0);" title="Results are beyond Pre-Audit state. Cannot cancel appointment now.">
+                Cancel Appointment
+            </a>
+        </li>
+    }
+    else
+    {
+        <li><a href="@reshedApptUrl">Reschedule Appointment </a></li>
+        <li>
+            <a href="@cancelApptUrl">
+                Cancel Appointment
+            </a>
+        </li>
+    }
+
+    if ((long)customerItem.TestResultStateNumber >= 4)
+    {
+        <li>
+            <a href="javascript:void(0);" title="Results are beyond Pre-Audit state. Cannot change package now">
+                Adjust Order
+            </a>
+        </li>
+    }
+    else
+    {
+        <li>
+            <a href="/App/Common/ChangePackage.aspx?EventId=@eventId&CustomerId=@customerItem.CustomerId&guid=@Guid.NewGuid()">
+                Adjust Order
+            </a>
+        </li>
+    }
+
+
+    <li>
+        <a href="/App/Common/ApplyCoupon.aspx?EventCustomerID=@customerItem.EventCustomerId">
+            Apply Source Code
+        </a>
+    </li>
+
+    if (availableProductCount > 0)
+    {
+        if (customerItem.IsProductPurchased)
+        {
+            <li>
+                <a href="javascript:ShowAddOnProductMessage(); void(0);">Add On Product </a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" onclick="OpenPopUpforProductRemove(@customerItem.CustomerId);">
+                    Remove Product
+                </a>
+            </li>
+        }
+        else if (customerItem.IsCancelProductRequestPending)
+        {
+            <li><a href="javascript:ShowRefundRequestProductMessage(); void(0);">Add On Product </a></li>
+        }
+        else
+        {
+            <li>
+                <a href="/App/Franchisee/Technician/AdditionalProductRequest?id=@customerItem.CustomerId&EventId=@eventId">
+                    Add On Product
+                </a>
+            </li>
+        }
+    }
+
+    if (customerItem.AmountPaid > 0)
+    {
+        <li>
+            <a href="javascript:void(0);" onclick="OpenPopUpforManualRefund(@customerItem.CustomerId);">
+                Manual Refund
+            </a>
+        </li>
+    }
+    if (captureHaf)
+    {
+        <li>
+            <a href="/Medical/Results/GetHealthAssessment?CustomerId=@customerItem.CustomerId&EventId=@eventId">
+                Health Assessment Form
+                @if (customerItem.IsHealthAssessmentFormFilled)
+                {
+                    <img src='/App/Images/customer/hands-up.gif' alt='' />
+                }
+            </a>
+        </li>
+    }
+
+    if (clientNoticeFileExists && customerItem.IsMammoPurchased)
+    {
+        <li>
+            <a href="/Medical/Results/PrintMammoConsent?CustomerId=@customerItem.CustomerId&EventId=@eventId" target="_blank">Mammo Consent Form</a>
+        </li>
+    }
+    if (customerItem.IsMammoPurchased)
+    {
+        <li>
+            <a href="/Medical/Results/PrintMammogramHistoryForm?CustomerId=@customerItem.CustomerId&EventId=@eventId" target="_blank">Mammo Worksheet</a>
+        </li>
+    }
+
+    if (abnFileExists && captureAbnStatus)
+    {
+        <li>
+            <a href="/Medical/Results/PrintAbnConsent?eventCustomerId=@customerItem.EventCustomerId" target="_blank">ABN Form</a>
+        </li>
+    }
+    if (pcpConsentFormExists && customerItem.ShowAwvPcpForm)
+    {
+        <li>
+            <a href="/Medical/Results/PrintAwvPcpConsent?customerId=@customerItem.CustomerId&eventId=@eventId" target="_blank">PCP Consent Form</a>
+        </li>
+    }
+    if ((long)customerItem.TestResultStateNumber < 4)
+    {
+        <li>
+            <a href="/App/Franchisee/Technician/AuditResultEntry.aspx?ModeEntry&CustomerID=@customerItem.CustomerId&EventId=@eventId">
+                Results
+                @if ((long)customerItem.TestResultStateNumber > 1)
+                {
+                    <img src='/App/Images/customer/work-in-progress-icon.gif' alt='' />
+                }
+            </a>
+        </li>
+    }
+
+    <li>
+        <a href="javascript:void(0);" onclick="GenerateBloodworksLabelinPrintableFormat(@customerItem.CustomerId);">
+            Bloodworks label
+        </a>
+    </li>
+    if (customerItem.IsUndeliveredShippinginOrder)
+    {
+        <li>
+            <a href="/App/Franchisee/Technician/CancelShippingDetail.aspx?orderId=@customerItem.OrderId">
+                Cancel Shipping
+            </a>
+        </li>
+    }
+
+    if (isBloodworkFormAttached)
+    {
+        <li>
+            <a href="/Operations/Reports/BloodworkRequisitionFormPdf?eventId=@eventId&customerId=@customerItem.CustomerId" target="_blank">
+                Bloodworks Requisition Form
+            </a>
+        </li>
+    }
+}
+@if (customerItem.IsUndeliveredShippinginOrder)
+{
+    <li>
+        <a href="javascript:void(0);" onclick="ShowFullfillmentMessage();">
+            Fulfillment Option
+            <img src='/App/Images/customer/hands-up.gif' alt='' />
+        </a>
+    </li>
+}
+else if (customerItem.IsCancelShippingRequestPending)
+{
+    <li><a href="javascript:void(0);" onclick="ShowRefundRequestShippingMessage();">Fulfillment Option</a></li>
+}
+else
+{
+    <li>
+        <a href="javascript:void(0);" onclick="OpenPopUpforShippingPurchase(@customerItem.EventCustomerId, @customerItem.CustomerId);">
+            Fulfillment Option
+            @if (customerItem.IsShippingPurchased)
+            {
+                <img src='/App/Images/customer/hands-up.gif' alt='' />
+            }
+        </a>
+    </li>
+}
+
+@if (customerItem.ShowMedicareForm)
+{
+    <li><a href="/medical/medicareQuestion/index?eventcustomerid=@customerItem.EventCustomerId">Medicare Questionnaire</a></li>
+}
+
+@if (isKynIntegrationEnabled && customerItem.ShowLipidPrint)
+{
+    <li><a href="/Medical/Results/PrintLipid?eventCustomerId=@customerItem.EventCustomerId" target="_blank">Basic Biometric Sheet</a></li>
+}
+
+@if ((isKynIntegrationEnabled && customerItem.ShowKynPrint) || (customerItem.ShowMyBioCheckAssessmentPrint))
+{
+    <li><a href="/Medical/Results/PrintKyn?eventCustomerId=@customerItem.EventCustomerId" target="_blank">Basic Biometric Sheet</a></li>
+}
+@if (showCheckListForm)
+{
+    var checkListFormurl = string.Format("/Scheduling/EventCustomerList/CustomerCheckListForm?customerId={0}&eventId={1}", customerItem.CustomerId, eventId);
+    <li><a href="@checkListFormurl">Customer Check List Form</a></li>
+}
+
+@if (fluVacinationFormExists && customerItem.IsFluShotTestPurchased)
+{
+    var url = string.Format("/Medical/Results/PrintFluPneumoniaConsent?customerId={0}&eventId={1}", customerItem.CustomerId, eventId);
+    <li><a href="@url" target="_blank">Flu Vaccination Form</a></li>
+}
+
+@if (participationFormExists && customerItem.ShowParticipationConsent)
+{
+    var url = string.Format("/Medical/Results/PrintParticipationConsent?customerId={0}&eventId={1}", customerItem.CustomerId, eventId);
+    <li><a href="@url" target="_blank">Matrix Consent Form</a></li>
+}
+
+@if (giftCardFormExists && customerItem.ShowGiftCard)
+{
+    var url = string.Format("/Medical/Results/PrintGiftCard?customerId={0}&eventId={1}", customerItem.CustomerId, eventId);
+    <li><a href="@url" target="_blank">Gift Card</a></li>
+}
+@if (printPatientWorkSheet || printScreeningInfo)
+{
+    var worksheeturl = string.Format("/Operations/Reports/PatientWorksheet?customerId={0}&eventId={1}&printPatientWorkSheet={2}&printScreeningInfo={3}", customerItem.CustomerId, eventId, printPatientWorkSheet, printScreeningInfo);
+    <li><a href="@worksheeturl" target="_blank">Patient Worksheet</a></li>
+}
+@if (bookPcpAppointment)
+{
+    <li><a href="javascript:void(0)" onclick="ShowPcpAppointmentPopup(@customerItem.EventCustomerId) ">PCP Appointment</a></li>
+}
+
+@if (showBarrier)
+{
+    <li><a href="javascript:void(0)" onclick="ShowBarrierPopup(@customerItem.EventCustomerId) ">Add Barrier</a></li>
+}
+@if (isNoShow == false)
+{
+    if (isNewResultFlow && isHealthPlanEvent && showHraQuestionnaire)
+    {
+        if (isEawvPurchased && !isEawvMarkedAsTestNotPerformed && (loggedinRole == Roles.Technician || loggedinRole == Roles.NursePractitioner))
+        {
+            <li>
+                <a href="javascript:void(0)" onclick="addColorboxWrapper1(@customerItem.EventCustomerId,@customerItem.CustomerId,@(customerItem.AwvVisitId.HasValue ? customerItem.AwvVisitId.Value.ToString() : "0")) ">HRA Questionnaire</a>
+                <a id="hraLink_@customerItem.EventCustomerId" style="display: none;"></a>
+                <input type="hidden" id="hraVisitId_@customerItem.EventCustomerId" value="" />
+            </li>
+        }
+    }
+    else if (isHealthPlanEvent && showChatQuestionnaire)
+    {
+        <li>
+            <a href='@chatQuestionerAppUrl' target="_blank">CHAT Questionnaire</a>
+        </li>
+    }
+    else
+    {
+        if (isHealthPlanEvent && showHraQuestionnaire && (loggedinRole == Roles.Technician || loggedinRole == Roles.NursePractitioner))
+        {
+            <li>
+                <a href="javascript:void(0)" onclick="addColorboxWrapper1(@customerItem.EventCustomerId,@customerItem.CustomerId,@(customerItem.AwvVisitId.HasValue ? customerItem.AwvVisitId.Value.ToString() : "0")) ">HRA Questionnaire</a>
+                <a id="hraLink_@customerItem.EventCustomerId" style="display: none;"></a>
+                <input type="hidden" id="hraVisitId_@customerItem.EventCustomerId" value="" />
+            </li>
+        }
+
+    }
+}
+
+@if (showMicroalbuminForm && customerItem.IsUrineMicroalbumineTestPurchased)
+{
+    var microalbuminFormurl = string.Format("/Medical/LabForm/PrintMicroalbuminLabForm?customerId={0}&eventId={1}", customerItem.CustomerId, eventId);
+    <li><a href="@microalbuminFormurl" target="_blank">Microalbumin Lab Form</a></li>
+}
+@if (showIFOBTForm && customerItem.IsIfobtTestPurchased)
+{
+    var ifobtFormurl = string.Format("/Medical/LabForm/PrintIFobtLabForm?customerId={0}&eventId={1}", customerItem.CustomerId, eventId);
+    <li><a href="@ifobtFormurl" target="_blank">IFOBT Lab Form</a></li>
+} 
+@if (showChaperonForm)
+{
+    var url = string.Format("/Medical/Results/PrintChaperoneForm?customerId={0}&eventId={1}", customerItem.CustomerId, eventId);
+    <li><a href="@url" target="_blank">Chaperone Form</a></li>
+}

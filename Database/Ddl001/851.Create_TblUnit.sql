@@ -1,0 +1,19 @@
+USE [$(dbname)]
+GO
+
+
+CREATE Table dbo.[TblUnit]
+(
+[Id] [bigint] Identity(1,1) NOT NULL,
+[Name] [varchar](500) NOT NULL,
+[Alias] [varchar](500) NOT NULL,
+[IsActive] [bit] NOT NULL,
+CONSTRAINT [PK_TblUnit] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[TblUnit] ADD  CONSTRAINT [DF_TblUnit_IsActive] DEFAULT ((1)) FOR [IsActive]
+GO

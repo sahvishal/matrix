@@ -1,0 +1,88 @@
+﻿@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.CallCenter.ViewModels
+@using Falcon.App.Core.Extensions
+@model HealthPlanCriteriaTeamListEditModel
+@{
+    Layout = null;
+}
+<script language="javascript" type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+<style type="text/css">
+    .my-qtip {
+        max-width: 320px;
+    }
+
+    #team-assignment-container a {
+        color: #287AA8 !important;
+        cursor: pointer;
+    }
+
+    #team-assignment-container a:hover {
+        text-decoration: underline;
+    }
+</style>
+@if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+{
+    <div>
+        @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+    </div>
+}
+<div class="editor-row" id="team-assignment-container" tabindex="1">
+    <table id="list-view">
+        <thead>
+            <tr>
+                <th>Team Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>View Agents</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Collection.IsNullOrEmpty())
+            {
+                <tr>
+                    <td colspan="4">
+                        No Team Assigned
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @Html.EditorFor(m => m.Collection)
+            }
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    function closePopup() {
+        $('#edit-assignment').dialog("close");
+    }
+
+    $(".startDateDatePicker").focusin(function () {
+        $(this).data('val', $(this).val());
+    });
+
+    $(".teamstartDate").click(function () {
+        $(this).closest('tr').find("[name$='IsEdited']").val('true');
+    });
+    $(".teamEndDate").click(function () {
+        $(this).closest('tr').find("[name$='IsEdited']").val('true');
+    });
+
+    $(".assignedAgentInfo").qtip({
+        position: {
+            viewport: $("#team-assignment-container")
+        },
+        content: {
+            title: function (api) {
+                return "Agent(s) Assigned";
+            },
+            text: function (api) {
+                return $(this).parent().find('.assignedAgentInfoText').html();
+            }
+        },
+        style: {
+            classes: "my-qtip"
+        }
+    });
+
+</script>

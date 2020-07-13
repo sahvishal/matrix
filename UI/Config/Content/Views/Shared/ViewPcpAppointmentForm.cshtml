@@ -1,0 +1,161 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@model EventCustomerPcpAppointmentViewModel
+<style type="text/css">
+    .pcpAppointmentInfo .editor-row {
+        overflow: hidden;
+        margin-bottom: 5px;
+    }
+
+    .pcpAppointmentInfo .editor-column {
+        float: left;
+        width: 32%;
+        margin-right: 5px;
+    }
+
+    .pcpAppointmentInfo .editor-column-twoinrow {
+        float: left;
+        width: 45%;
+        margin-right: 5px;
+    }
+
+    .pcpAppointmentInfo .div-with-roundborder {
+        float: left;
+        width: 98%;
+        border: solid 1px #72BDDB;
+        padding: 5px;
+        border-radius: 4px;
+    }
+</style>
+<div class="pcpAppointmentInfo">
+    <div class="editor-row" style="font-size: 20px;">
+        @if (!string.IsNullOrEmpty(Model.AccountLogoUrl))
+        {
+            <div style="float: right; clear: both">
+                <img src="@Model.AccountLogoUrl" style="text-align: center;height: 100px;" />
+            </div>
+        }
+        <div style="clear:both;margin-top: 20px;margin-bottom: 50px">
+            <div style="text-align: center;font-size: 25px;">
+                <b>Appointment Reminder</b>
+            </div>
+        </div>
+        <div style="margin:20px 0 15px 0; ">
+            Dear @Model.CustomerName.FirstName @Model.CustomerName.LastName,
+        </div>
+        <div style="margin:0 0 15px 0;line-height: 150%; ">
+            This is a friendly reminder that you have an appointment to follow up on your health assessment results.
+            A copy of your results will be mailed to your physician in preparation for this appointment.
+            During your appointment, your physician will review the results and discuss an appropriate treatment plan, if needed.
+        </div>
+        <div style="margin:0 0 15px 0;line-height: 150%; display: none;">
+            As part of your Comprehensive Exam, you were assessed for the following:
+            <ul style="margin-left: 80px;">
+                <li>
+                    Physical Activity and Exercise
+                </li>
+                <li>
+                    Bone Health
+                </li>
+                <li>
+                    Depression
+                </li>
+                <li>
+                    Chronic Pain
+                </li>
+                <li>
+                    Bladder Function
+                </li>
+            </ul>
+        </div>
+        <div style="margin: 0 0 15px 0; line-height: 150%; ">
+            Below are details of your upcoming appointment.  If you need to change your appointment, please contact your physician directly.
+        </div>
+        <div style="margin: 40px 0 0px 100px">
+            <div style="margin: 0 20px 15px 0; clear: both">
+                <span style="width: 200px; float: left;"><b>Appointment Date:</b> </span><span style="width: 400px; border-bottom: solid 1px #000000;float: left">@(Model.AppointmentDateTime.HasValue ? Model.AppointmentDateTime.Value.Date.ToShortDateString() : " ")&nbsp;&nbsp;</span>
+                <br />
+                <div style="padding-left:200px; width: 600px; float: left;"> <i style="font-size:16px;">(Note: Suggested date for Appointment would be after @Model.EventDate.AddDays(Model.BookAfterNumberOfDays).ToShortDateString() )</i></div>
+            </div>
+            <div style="margin: 0 20px 15px 0; clear: both;float: left;">
+                <span style="width: 200px; float: left;"><b>Appointment Time:</b> </span><span style="width: 375px; border-bottom: solid 1px #000000; float: left">@(Model.AppointmentDateTime.HasValue ? Model.AppointmentDateTime.Value.ToString("hh:mm tt") : "")&nbsp;&nbsp;</span>
+            </div>
+            <div style="margin: 0 20px 25px 0; float: left;">
+                <span style="width: 200px; float: left;"><b>Physician Name:</b> </span><span style="width: 375px; border-bottom: solid 1px #000000; float: left">@(Model.Pcp != null ? Model.Pcp.Name.ToString() : string.Empty)</span>
+            </div>
+            @if (Model.Pcp != null && Model.Pcp.Address != null)
+            {
+                <div style="float: left; margin: 0 20px 15px 0;">
+                    <span style="float: left; width: 200px;"><b>Physician Address:</b></span>
+                    <span style="float: left; width: 400px; border-bottom: solid 1px #000000;">
+                        @Model.Pcp.Address.StreetAddressLine1
+                    </span>
+                </div>
+                if (!string.IsNullOrEmpty(Model.Pcp.Address.StreetAddressLine2))
+                {
+                    <div style="float: left; margin: 0 20px 10px 0; ">
+                        <span style="float: left; width: 400px; margin-left: 200px; border-bottom: solid 1px #000000; ">
+                            @Model.Pcp.Address.StreetAddressLine2
+                        </span>
+                    </div>
+                    <div style="float: left; margin: 0 20px 10px 0; ">
+                        <span style="float: left; width: 375px; margin-left: 200px; border-bottom: solid 1px #000000;">
+                            @Model.Pcp.Address.City, @Model.Pcp.Address.State - @Model.Pcp.Address.ZipCode
+                        </span>
+                    </div>
+                }
+                else
+                {
+                    <div style="float: left; margin: 0 20px 10px 0; clear: both;">
+                        <span style="float: left; width: 400px; margin-left: 200px; border-bottom: solid 1px #000000;">
+                            @Model.Pcp.Address.City, @Model.Pcp.Address.State - @Model.Pcp.Address.ZipCode
+                        </span>
+                    </div>
+                    <div style="float: left; margin: 0 20px 10px 0; clear: both;">
+                        <span style="float: left; width: 400px; margin-left: 200px; border-bottom: solid 1px #000000;">&nbsp;
+                        </span>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="float: left; margin: 0 20px 15px 0; ">
+                    <span style="float: left; width: 200px;"><b>Physician Address:</b></span>
+                    <span style="float: left; width: 400px; border-bottom: solid 1px #000000;">
+                    </span>
+                </div>
+                <div style="float: left; margin: 0 20px 10px 0;">
+                    <span style="float: left; width: 400px; margin-left: 200px; border-bottom: solid 1px #000000;">&nbsp;
+                    </span>
+                </div>
+                <div style="float: left; margin: 0 20px 10px 0; ">
+                    <span style="float: left; width: 400px; margin-left: 200px; border-bottom: solid 1px #000000;">&nbsp;
+                    </span>
+                </div>
+            }
+
+            <div style="float: left; margin: 10px 0px;padding-bottom: 15px;">
+                <span style="float: left; width: 255px;">
+                    <b>Physician Phone Number:</b>
+                </span>
+                <span style="float: left; width:345px; border-bottom: solid 1px #000000;">
+                    @{
+                        if (Model.Pcp != null && Model.Pcp.Primary != null && Model.Pcp.Primary.AreaCode.Length > 0)
+                        {
+                            <span>@Model.Pcp.Primary.FormatPhoneNumber</span>
+                        }
+                        else
+                        {
+                            <span style="width:30px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }
+                    }
+                </span>
+            </div>
+
+        </div>
+
+        <div style="margin: 0 0 15px 0; line-height: 150%; clear: both; ">
+            Thank you for participating in this special health testing event.  We wish you the best of health for years to come.
+        </div>
+
+    </div>
+</div>

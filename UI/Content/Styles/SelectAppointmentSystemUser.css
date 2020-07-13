@@ -1,0 +1,48 @@
+﻿#selectedappointmentdiv
+{
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+#selectedappointmentdiv span
+{
+    width: 46%; 
+}
+
+#selectedappointmentdiv .selected-time-span
+{
+    padding: 5px;
+    border: solid 1px;
+    border-radius: 4px;
+    background-color: #66C5DB;
+    margin-left: 5px;
+    width: 80px;
+}
+
+#selectedappointmentdiv .change-appointment-link-span
+{
+    text-align: right;
+}
+
+
+#slots-div
+{
+    padding: 5px;
+    width: 95%;
+}
+
+#slots-div table td
+{
+    font-weight: bold;
+    padding: 2px;
+    border: solid 1px;
+    background-color: #F7983B;
+}
+
+#slots-div table td.blank
+{
+    padding: 2px;
+    border: none;
+    background-color: #ffffff;
+}

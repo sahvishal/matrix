@@ -1,0 +1,53 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+<div class="mini-container">
+    <h2>Assign Staff</h2>
+
+    <div style="overflow:hidden;border-right:1px solid red;width:61%;margin-right:7px;float:left;">
+        <div class="editor-row">
+            Select staff: <br />
+            @try
+            {
+                IEnumerable<SelectListItem> techs = DropDownHelper.TechnicianStaffforEvent(Model.Event.Id);
+                @Html.DropDownList("staff", techs, new { @style = "width:98%;" })
+            }
+            catch
+            {
+                @Html.DropDownList("staff", DropDownHelper.UsersHavingTechnicianRole(true), new { @style = "width:98%;" })
+            }
+        </div>
+    </div>
+
+    <div style="overflow:hidden;border-right:1px solid red;width:61%;margin-right:7px;float:left;">
+        <div class="editor-row">
+            Select Role: <br />
+            @Html.DropDownList("role", DropDownHelper.EventRoles(), new { @style = "width:98%;" })
+        </div>
+    </div>
+
+    <div style="overflow:hidden;width:36%;float:left;margin-top:25px;">
+        <input type="button" id="assignStaff" value="Assign Staff" />
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $("#staff").change(function () {
+        $("#role option:first").attr("selected", true);
+        checkIfKeyExists();
+    });
+
+    function checkIfKeyExists() {
+        $("#role option").each(function () {
+            if (assignedStaff[$("#staff").val() + "_" + $(this).val()] != null)
+                $(this).attr("disabled", "disabled");
+            else
+                $(this).removeAttr("disabled");
+        });
+    }
+
+    function selectDefault() {
+        $("#role option:first").attr("selected", true);
+        $("#staff option:first").attr("selected", true);
+    }
+</script>

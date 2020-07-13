@@ -1,0 +1,445 @@
+﻿@model Falcon.App.Core.Sales.ViewModels.CallOutComeEditModel
+@using Falcon.App.Core.CallCenter.Enum;
+@using Falcon.App.Core.Enum;
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Users.Enum;
+
+<div class="small-section">
+    <h2>Call Outcome</h2>
+    <div class="clearfix small-section-inner">
+        <div class="info-row" style="padding-top:10px">
+
+            <div style="float:left; width:50%">
+
+                <div class="info-text-col-50">
+                    @Html.RadioButton("CallStatusId", (long)CallStatus.Attended, new { @onclick = "setStatus();" }) Talked To Patient <br />
+                    @Html.RadioButton("CallStatusId", (long)CallStatus.VoiceMessage, new { @onclick = "setStatus();" }) Left Voice Mail <br />
+                    @Html.RadioButton("CallStatusId", (long)CallStatus.LeftMessageWithOther, new { @onclick = "setStatus();" }) Left Message With Other <br />
+                    @Html.RadioButton("CallStatusId", (long)CallStatus.NoAnswer, new { @onclick = "setStatus();" }) No Answer / Busy /Mail Full <br />
+                    @Html.RadioButton("CallStatusId", (long)CallStatus.InvalidNumber, new { @onclick = "setStatus();" }) Invalid Number <br />
+                </div>
+
+                <div class="info-text-col-100" style="margin-top: 10px">
+                    <label>Disposition</label>
+                    <select name="Disposition" id="ddlDisposition" disabled="disabled" style="width: 90%;" onchange=" dispositionChange() ">
+                        <option value="-1">--Select--</option>
+                    </select>
+
+                    <span class="create-info-tip" id="showOnTalkedToPatient" style="vertical-align: middle; display: none; font-size: 30px; width: 500px;">
+                        <img alt="Info" src="/App/Images/info-icon.gif">
+                    </span>
+                    <div class="create-prop-tip-info" style="display: none;">
+                        <ul>
+                            @*<li><b>Cancel Appointment: </b>Patient had requested the appointment be cancelled.</li>
+                            <li><b>Patient Not Sure, Call Back Later: </b>Patient has requested a call back later.</li>
+                            <li><b>Reschedule Appointment: </b>Patient has requested appointment be rescheduled.</li>
+                            <li><b>CHAT completed: </b> CHAT completed</li>
+                            <li><b> Requested CHAT Mailed</b>:Requested CHAT Mailed</li>
+                            <li><b> Member Doesn't have time for questions</b>:Member Doesn't have time for questions</li>
+                            <li><b> Member Does not feel comfortable answering Questions</b>:Member Does not feel comfortable answering Questions</li>
+                            <li><b> Not Interested</b>:Not Interested</li>
+                            <li><b> Follow up - Call Escalated</b>:Follow up - Call Escalated</li>*@
+
+                            <li><b>Cancel Appointment: </b>Patient had requested the appointment be cancelled.</li>
+                            <li><b>Confirmed, HRA not complete: </b>Patient has confirmed but HRA not completed.</li>
+                            <li><b>Language Barrier: </b>Patient in not comfortable with English.</li>
+                            <li><b>Patient Confirmed: </b>Patient has agreed to the visit and has the questionnaires completed.</li>
+                            <li><b>Patient Not Sure, Call Back Later: </b>Patient has requested a call back later.</li>
+                            <li><b>Reschedule Appointment: </b>Patient has requested appointment be rescheduled.</li>
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-text-col-100" id="dvNotInterestedReason" style="display: none; margin-top: 10px">
+                    <label>Reason <span class="reqiredmark">*</span></label>
+                    <select name="Reason" id="ddlNotInterestedReason" style="width: 90%;">
+                        <option value="-1">--Select--</option>
+                    </select>
+                </div>
+                <div class="info-text-col-100" style="margin-top:10px">
+                    <span>Date: </span>
+                    @Html.TextBoxFor(m => m.CallBackDateTime, "", new { @style = "width:30%; margin-left:35px;", @class = "datePicker", @id = "txtCallBackDate", @disabled = "disabled" })
+                    &nbsp;at &nbsp;
+                    @Html.TextBox("CallBackDateTime", "", new { @style = "width:21%", @id = "txtCallBackTime", @disabled = "disabled" })
+                </div>
+
+            </div>
+            <div style="float:left; width:48%">
+                <div class="info-text-col-100">
+                    <label>Notes <sup class="reqiredmark" style="display: none;">*</sup></label>
+                    @Html.TextArea("Note", new { @id = "CallOutcomeNote", @cols = "50", @rows = "7" })
+                </div>
+            </div>
+            <div id="consentDiv" style="padding-top: 15px; display: none; clear: both; width: 100%; ">
+                <fieldset style="width: 95%;">
+                    <legend>Phone Consent</legend>
+                    <table>
+                        <tr>
+                            <td>Phone Home:</td>
+                            <td>@Html.TextBoxFor(x => x.PhoneHome, new { @placeholder = "Home", @class = "consent-mask-phone", @style = "width:100px;" })</td>
+                            <td>Consent:</td>
+                            <td>@Html.DropDownList("homeConsent", DropDownHelper.GetPatientPhoneConsent(Model.PhoneHomeConsent), new { @style = "width:100px;" })</td>
+                        </tr>
+                        <tr>
+                            <td>Phone Office:</td>
+                            <td>@Html.TextBoxFor(x => x.PhoneOffice, new { @placeholder = "Office", @class = "consent-mask-phone", @style = "width:100px;" })</td>
+                            <td>Consent:</td>
+                            <td>@Html.DropDownList("officeConsent", DropDownHelper.GetPatientPhoneConsent(Model.PhoneOfficeConsent), new { @style = "width:100px;" })</td>
+                        </tr>
+                        <tr>
+                            <td>Phone Cell:</td>
+                            <td>@Html.TextBoxFor(x => x.PhoneCell, new { @placeholder = "Mobile", @class = "consent-mask-phone", @style = "width:100px;" })</td>
+                            <td>Consent:</td>
+                            <td>@Html.DropDownList("cellConsent", DropDownHelper.GetPatientPhoneConsent(Model.PhoneCellConsent), new { @style = "width:100px;" })</td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+            <div class="info-row" style="margin:0">
+                <div class="info-text-col-100" style="margin-top:20px">
+                    <input type="button" class="pull-right" onclick="saveOutCome();" value="Save" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var dispositionAlias = '@Model.DispositionAlias';
+    var notInterestedResonId = '@(Model.NotIntrestedReasonId > 0 ? Model.NotIntrestedReasonId : -1)';
+    var callBackDateTime = '@Model.CallBackDateTime';
+
+    function setStatus() {
+        
+        if ($("#CallStatusId:checked").val() == '@((long) CallStatus.Attended)' || $("#CallStatusId:checked").val() == '@((long) CallStatus.LeftMessageWithOther)') {
+            $("#ddlDisposition").val("-1");
+            $("#ddlDisposition").removeAttr("disabled");
+            getCallDispositionTags($("#CallStatusId:checked").val());
+        } else {
+            $("#ddlDisposition").val('-1');
+            $("#ddlDisposition").attr("disabled", "disabled");
+        }
+
+        //for Info tooltip
+        if ($("#CallStatusId:checked").val() == '@((long)CallStatus.Attended)') {
+            $('#showOnTalkedToPatient').show();
+            $("#consentDiv").show();
+        } else {
+            $('#showOnTalkedToPatient').hide();
+            $("#consentDiv").hide();
+        }
+
+        dispositionChange();
+    }
+
+    function dispositionChange() {
+        var reason = $("#ddlDisposition").val();
+        $("#txtCallBackDate").val('');
+        $("#txtCallBackTime").val('');
+        $("#txtCallBackDate").attr("disabled", "disabled");
+        $("#txtCallBackTime").attr("disabled", "disabled");
+
+        if (reason == '@ProspectCustomerTag.CallBackLater.ToString()') {
+            $("#txtCallBackDate").removeAttr("disabled");
+            $("#txtCallBackTime").removeAttr("disabled");
+        }
+
+        if (isNotesMandatory(reason)) {
+            $(".reqiredmark").show();
+        } else {
+            $(".reqiredmark").hide();
+        }
+    }
+
+    function isNotesMandatory() {
+        var id = $("#ddlDisposition").val();
+
+        if (id == '@ProspectCustomerTag.RecentlySawDoc.ToString()' || id == '@ProspectCustomerTag.NotInterested.ToString()' ||
+            id == '@ProspectCustomerTag.DateTimeConflict.ToString()' || id == '@ProspectCustomerTag.HomeVisitRequested.ToString()' ||
+            id == '@ProspectCustomerTag.LanguageBarrier.ToString()' || id == '@ProspectCustomerTag.InLongTermCareNursingHome.ToString()' ||
+            id == '@ProspectCustomerTag.LeftMessage.ToString()') {
+
+            return true;
+        }
+        return false;
+    }
+
+    function getCallDispositionTags(statusId) {
+     
+        $.ajax({
+            url: '@Url.Action("GetCallDispositionTags")',
+            type: 'GET',
+            cache: false
+        }).done(function (result) {
+            $("#ddlDisposition").html("");
+            var options = '';
+            options = '<option value="-1">-- Select --</option>';
+            if (statusId == '@((long) CallStatus.Attended)') {
+                $.each(result, function (index, item) {
+                    if (item.CallStatus == statusId && (item.ForAppointmentConfirmation == true || item.Alias == '@ProspectCustomerTag.CallBackLater.ToString()')) {
+                        if (item.Alias == 'CallBackLater') {
+                            options += '<option value="' + item.Alias + '">' + 'Patient Not Sure, Call Back Later' + '</option>';
+                        } else {
+                            options += '<option value="' + item.Alias + '">' + item.Name + '</option>';
+                        }
+                    }
+                });
+            }
+            else if (statusId == '@((long) CallStatus.LeftMessageWithOther)') {
+                $.each(result, function (index, item) {
+                    if (item.CallStatus == statusId) {
+                        options += '<option value="' + item.Alias + '">' + item.Name + '</option>';
+                    }
+                });
+            }
+            $("#ddlDisposition").html(options);
+
+            setCallOutcome();
+        });
+    };
+
+    function saveOutCome() {
+        if ($("#CallStatusId:checked").val() == '@((long) CallStatus.Initiated)' || $("#CallStatusId:checked").val() == '' || $("#CallStatusId:checked").val() == null) {
+            alert("Please select call status.");
+            return;
+        }
+        var showConfirmMsg = false;
+        var PhoneHome = "";
+        var PhoneHomeConsent = "";
+        var PhoneOffice = "";
+        var PhoneOfficeConsent = "";
+        var PhoneCell = "";
+        var PhoneCellConsent = "";
+
+        if ($("#CallStatusId:checked").val() == '@((long) CallStatus.Attended)') {
+            if ($("#ddlDisposition").val() == "-1") {
+                alert("Please select call disposition.");
+                return;
+            }
+            if ($("#ddlDisposition").val() == '@ProspectCustomerTag.CallBackLater.ToString()') {
+                if ($("#txtCallBackDate").val() == "" || $("#txtCallBackTime").val() == "") {
+                    alert("Call Back date and time is mandatory for Call Back Later.");
+                    return;
+                }
+            }
+            if ($("#homeConsent").val() == '@((long)PatientConsent.Unknown)' && $("#officeConsent").val() == '@((long)PatientConsent.Unknown)' && $("#cellConsent").val() == '@((long)PatientConsent.Unknown)') {
+                showConfirmMsg = true;
+            }
+            if ($("#homeConsent").val() != '@((long)PatientConsent.Unknown)' && $("#PhoneHome").val() == "") {
+                alert("Enter Phone Home before saving consent");
+                return;
+            }
+            if ($("#officeConsent").val() != '@((long)PatientConsent.Unknown)' && $("#PhoneOffice").val() == "") {
+                alert("Enter Phone Office before saving consent");
+                return;
+            }
+            if ($("#cellConsent").val() != '@((long)PatientConsent.Unknown)' && $("#PhoneCell").val() == "") {
+                alert("Enter Phone Cell before saving consent");
+                return;
+            }
+
+
+        } else if ($("#CallStatusId:checked").val() == '@((long) CallStatus.LeftMessageWithOther)') {
+            if ($("#ddlDisposition").val() == "-1") {
+                alert("Please select call disposition.");
+                return;
+            }
+        }
+
+        if (isNotesMandatory($("#ddlDisposition").val())) {
+            if ($("#CallOutcomeNote").val() == "") {
+                alert("Please enter notes.");
+                return;
+            }
+        }
+
+        var callBackDateTime = "";
+        if ($("#ddlDisposition").val() == '@ProspectCustomerTag.CallBackLater.ToString()') {
+            callBackDateTime = $("#txtCallBackDate").val() + " " + $("#txtCallBackTime").val();
+            if (new Date(callBackDateTime) <= new Date()) {
+                callBackDateTime = "";
+                alert("Please select a future date time.");
+                return;
+            }
+        }
+
+        var dispositionVal = $("#ddlDisposition").val();
+        if (dispositionVal == "-1") {
+            dispositionVal = '@ProspectCustomerTag.Unspecified';
+        }
+
+        if ($("#CallStatusId:checked").val() == '@((long) CallStatus.Attended)') {
+            PhoneHome = $("#PhoneHome").val();
+            PhoneHomeConsent = $("#homeConsent").val();
+            PhoneOffice = $("#PhoneOffice").val();
+            PhoneOfficeConsent = $("#officeConsent").val();
+            PhoneCell = $("#PhoneCell").val();
+            PhoneCellConsent = $("#cellConsent").val();
+        }
+
+        var model = {
+            CallStatusId: $("#CallStatusId:checked").val(),
+            CallId: callId,
+            CustomerId: customerId,
+            CallQueueCustomerId: callQueueCustomerId,
+            Note: $("#CallOutcomeNote").val(),
+            ProspectCustomerId: prospectCustomerId,
+            DispositionAlias: dispositionVal,
+            CallBackDateTime: callBackDateTime,
+            CallQueueId: '@Model.CallQueueId',
+            RemoveFromQueue: false,
+            PhoneHome: PhoneHome,
+            PhoneHomeConsent: PhoneHomeConsent,
+            PhoneOffice: PhoneOffice,
+            PhoneOfficeConsent: PhoneOfficeConsent,
+            PhoneCell: PhoneCell,
+            PhoneCellConsent: PhoneCellConsent,
+        }
+
+        //used on main PAGE AppointmentConfirmation.cshtml
+        selectedCallStatusId = $("#CallStatusId:checked").val();
+        selectedDisposition = dispositionVal;
+        if (showConfirmMsg) {
+            var msgConfirm = confirm("Consent for all phone numbers is set to Unknown. Do you want to continue?");
+            if (msgConfirm == true) {
+                $.ajax({
+                    url: '@Url.Action("SaveCallOutComeAppointmentConfirmation")',
+                    type: "POST",
+                    data: model,
+                    success: function (response) {
+                        isCallOutComeSaved = true;
+                        alert("Call outcome saved successfully.");
+                        if ($("#CallStatusId:checked").val() == '@((long) CallStatus.Attended)') {
+                            //UpdateConsentPhoneNumber(PhoneHome, PhoneOffice, PhoneCell);
+                            $("#dvPatientInfo").html(response);
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            $.ajax({
+                url: '@Url.Action("SaveCallOutComeAppointmentConfirmation")',
+                type: "POST",
+                data: model,
+                success: function (response) {
+                    isCallOutComeSaved = true;
+                    alert("Call outcome saved successfully.");
+                    if ($("#CallStatusId:checked").val() == '@((long) CallStatus.Attended)') {
+                        //UpdateConsentPhoneNumber(PhoneHome, PhoneOffice, PhoneCell);
+                        $("#dvPatientInfo").html(response);
+                    }
+                }
+            });
+        }
+    }
+
+    function setCallOutcome() {
+        if ($("#CallStatusId:checked").val() == '@((long) CallStatus.Attended)') {
+
+            if (dispositionAlias != "" && dispositionAlias != "-1" && dispositionAlias != '@ProspectCustomerTag.Unspecified.ToString()') {
+                $("#ddlDisposition").removeAttr("disabled");
+                $("#ddlDisposition").val(dispositionAlias);
+            }
+            if (dispositionAlias == '@ProspectCustomerTag.NotInterested.ToString()') {
+                $("#dvNotInterestedReason").show();
+                $("#ddlNotInterestedReason").removeAttr("disabled");
+                $("#ddlNotInterestedReason").val(notInterestedResonId);
+            }
+            if (dispositionAlias == '@ProspectCustomerTag.CallBackLater.ToString()') {
+                var callBackDateObject = new Date(callBackDateTime);
+                var callBackDate = (callBackDateObject.getUTCMonth() + 1) + "/" + callBackDateObject.getUTCDate() + "/" + callBackDateObject.getUTCFullYear();
+
+                var hours = callBackDateObject.getHours();
+                var minutes = callBackDateObject.getMinutes();
+                var ampm = hours >= 12 ? 'pm' : 'am';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                var strTime = hours + ':' + minutes + ' ' + ampm;
+
+                $("#txtCallBackDate").removeAttr("disabled");
+                $("#txtCallBackTime").removeAttr("disabled");
+                $("#txtCallBackDate").val(callBackDate);
+                $("#txtCallBackTime").val(strTime);
+            }
+        }
+
+        if ($("#CallStatusId:checked").val() == '@((long) CallStatus.LeftMessageWithOther)') {
+            if (dispositionAlias != "" && dispositionAlias != "-1" && dispositionAlias != '@ProspectCustomerTag.Unspecified.ToString()') {
+                $("#ddlDisposition").removeAttr("disabled");
+                $("#ddlDisposition").val(dispositionAlias);
+            }
+        }
+
+        if (isNotesMandatory(dispositionAlias)) {
+            $(".reqiredmark").show();
+        } else {
+            $(".reqiredmark").hide();
+        }
+    }
+
+    function setOutcome() {
+        if ('@Model.CallStatusId' != '@((long) CallStatus.Initiated)') {
+            isCallOutComeSaved = true;
+            selectedCallStatusId = '@Model.CallStatusId';
+            selectedDisposition = '@Model.DispositionAlias';
+        }
+    }
+
+    function isNotesMandatory(disposition) {
+        if (disposition == '@ProspectCustomerTag.RecentlySawDoc' || disposition == '@ProspectCustomerTag.NotInterested' ||
+            disposition == '@ProspectCustomerTag.DateTimeConflict' || disposition == '@ProspectCustomerTag.HomeVisitRequested' ||
+            disposition == '@ProspectCustomerTag.LanguageBarrier' || disposition == '@ProspectCustomerTag.InLongTermCareNursingHome' ||
+            disposition == '@ProspectCustomerTag.LeftMessage') {
+
+            return true;
+        }
+        return false;
+    }
+
+    function UpdateConsentPhoneNumber(homePhone, officePhone, mobilePhone) {
+        if (homePhone == '')
+            homePhone = "N/A";
+        if (officePhone == '')
+            officePhone = "N/A";
+        if (mobilePhone == '')
+            mobilePhone = "N/A";
+        $("#divHomePhoneNumber").find("span").html(homePhone);
+        $("#divOfficePhoneNumber").find("span").html(officePhone);
+        $("#divMobilePhoneNumber").find("span").html(mobilePhone);
+    }
+
+    $(document).ready(function () {
+        setOutcome();
+        $('.consent-mask-phone').mask('(999)-999-9999');
+        getCallDispositionTags('@Model.CallStatusId');
+        if ('@Model.CallStatusId' == '@((long)CallStatus.Attended)') {
+            $("#consentDiv").show();
+        }
+        var myMask = "29:69ghi";
+        $('#txtCallBackTime').mask(myMask, { message: "Please provide a valid input. The valid format is XX.XX AM/PM." });
+    });
+</script>
+
+
+<script type="text/javascript">
+    $(".create-info-tip").qtip({
+        content: {
+            title: function (api) {
+                return "Help";
+            },
+            text: function (api) {
+                return $(this).parent().find('.create-prop-tip-info').html();
+            }
+        },
+        style: {
+            width: '300px'
+        },
+        position: {
+            adjust: {
+                method: 'shift'
+            }
+        },
+    });
+</script>

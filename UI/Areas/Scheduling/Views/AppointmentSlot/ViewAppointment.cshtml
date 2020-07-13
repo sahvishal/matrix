@@ -1,0 +1,104 @@
+﻿@model Falcon.App.Core.Scheduling.ViewModels.EventAppointmentListModel
+@{
+    Layout = null;
+}
+<div style="float: left; width: 370px; padding-bottom:5px;">
+    <span style="float: left; width: 150px;">
+        <b>EventId:</b>
+            @Model.EventId
+    </span>
+    <span style="float: left; width: 220px;">
+        <b>Event Date:</b>
+            @Model.EventDate.ToShortDateString()
+    </span>    
+</div>
+<div style="float: left; width: 370px; padding-bottom:5px;">
+    <span style="float: left; width: 370px;">
+        <b>Event Name:</b>
+            @Model.EventName
+    </span>
+</div>
+
+<div style="float: left; width: 250px; background: #eee; margin-left:20px;" class="appointment-container-div">
+    <div id="selectable" style="width: 250px; min-height: 120px;">
+        @if (Model.EventAppointmentViewModel == null || !Model.EventAppointmentViewModel.Any())
+        {
+            <h2>
+                No Slots for the Event
+            </h2>
+        }
+        else
+        {
+            if (Model.EventPodRooms != null && Model.EventPodRooms.Any())
+            {
+                foreach (var eventPodRoom in Model.EventPodRooms)
+                {
+                    var appointments = Model.EventAppointmentViewModel.Where(m => m.EventPodRoomId == eventPodRoom.Id).Select(m => m).ToArray();
+                    <fieldset>
+                        <legend>Room @eventPodRoom.RoomNo (Duration:@eventPodRoom.Duration min) </legend>
+                            @foreach (var appointment in appointments)
+                            {
+                                var className = appointment.CustomerId > 0
+                                                            ? "Booked"
+                                                            : appointment.AppointmentStatus.ToString();         
+                                       
+                            <span class="@className appointment-area @("qtip_" + appointment.CustomerId + "_" + appointment.AppointmentId)">
+                                @(appointment.CustomerId > 0 ? appointment.StartTime.ToShortTimeString() + " (" + appointment.CustomerId.ToString() + ")" : appointment.StartTime.ToShortTimeString())
+                            </span>
+                            <span class="delete-area">
+                                @if (appointment.CustomerId < 1)
+                                {
+                                    <a href="javascript:void(0);" onclick="DeleteAppointment(@appointment.AppointmentId);">Del</a>
+                            
+                                }
+                            </span>
+                                if (appointment.CustomerId > 0)
+                                {
+                                    <span style="display:none;" class="customer-package-info"> </span>
+                                    <script type="text/javascript" language="javascript">
+                                        $(".qtip_" + '@appointment.CustomerId' + "_" + '@appointment.AppointmentId').qtip({
+                                            position: { my: 'left top' }, content: {
+                                                title: '@appointment.Name', text:
+                                                function (api) { return '@appointment.OrderPurchased'; }
+                                        }
+                                        });
+                                    </script>
+                                }
+                            }
+                    </fieldset>
+                }
+            }
+            else
+            {
+                foreach (var appointment in Model.EventAppointmentViewModel)
+                {
+                    var className = appointment.CustomerId > 0
+                                                ? "Booked"
+                                                : appointment.AppointmentStatus.ToString();         
+                                       
+                <span class="@className appointment-area @("qtip_" + appointment.CustomerId + "_" + appointment.AppointmentId)">
+                    @(appointment.CustomerId > 0 ? appointment.StartTime.ToShortTimeString() + " (" + appointment.CustomerId.ToString() + ")" : appointment.StartTime.ToShortTimeString())
+                </span>
+                <span class="delete-area">
+                    @if (appointment.CustomerId < 1)
+                    {
+                        <a href="javascript:void(0);" onclick="DeleteAppointment(@appointment.AppointmentId);">
+                            Del</a>
+                            
+                    }
+                </span>
+                    if (appointment.CustomerId > 0)
+                    {
+                        <span style="display:none;" class="customer-package-info"> </span>
+                        <script type="text/javascript" language="javascript"> 
+                            $(".qtip_" + '@appointment.CustomerId' + "_" + '@appointment.AppointmentId').qtip({
+                            position: { my: 'left top' }, content: { title: '@appointment.Name', text:
+                            function (api) { return '@appointment.OrderPurchased'; } }
+                            }); 
+                        </script>
+                    }
+                }
+            }
+        }
+    </div>
+</div>

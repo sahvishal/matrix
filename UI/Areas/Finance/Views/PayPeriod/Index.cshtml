@@ -1,0 +1,174 @@
+﻿@using System
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.Core.Finance.Enum
+@model PayPeriodListModel
+@{
+    ViewBag.Title = "Pay Period";
+}
+<h1>
+    Pay Period
+    <span style="float: right; font-size: 12px;">
+        <a href="/Finance/PayPeriod/Edit">Create New Pay Period</a>
+    </span>
+</h1>
+<div id="list-filter">
+    @{Html.BeginForm("Index", "PayPeriod", FormMethod.Get);}
+    @Html.Partial("PayPeriodFilter", Model.Filter)
+    @{Html.EndForm();}
+</div>
+@if (!Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Start Date
+            </th>
+            <th>
+                Period
+            </th>
+            <th >
+                Action
+            </th>
+            <th>
+                Active
+            </th>
+        </tr>
+        @foreach (var lineItem in Model.Collection)
+        {
+            <tr>
+                <td>
+                    @lineItem.Name
+                </td>
+                <td>
+                    @lineItem.StartDate.ToShortDateString()
+                </td>
+                <td>
+                    @( lineItem.NumberOfWeek == 1 ? lineItem.NumberOfWeek + " Week" : lineItem.NumberOfWeek + " Weeks" )
+                </td>
+                <td>
+                    <a href="javascript:void(0);" class="payperiod-detail">Detail</a>
+                    @if (!lineItem.IsPublished)
+                    {
+                        <text> | <a href="/Finance/PayPeriod/Edit?payPeriodId=@lineItem.PayPerioidId">Edit</a>  </text>
+                        <text> | <a href="javascript:void(0);" onclick="deletePayPeriod(@lineItem.PayPerioidId);">Delete</a>  </text>
+                    } 
+
+                    <div class="payperiod-detail-div" style="display: none;width: 300px;">
+                        <div style="float: left; width: 300px;">
+                            <div class="row" style="width: 300px;">
+                                <p><span><b>Effective Date :</b>@lineItem.StartDate.ToShortDateString() </span>&nbsp;&nbsp;<span><b>Period :</b> @lineItem.NumberOfWeek Week </span></p>
+                                <fieldset>
+                                    <legend>Tier:</legend>
+                                    @foreach (var criteria in lineItem.Criteria)
+                                    {
+
+                                        if (criteria.TypeId == ((long)PayPeriodCriteriaType.LessThanEqualTo))
+                                        {
+                                            <div style="float: left; white-space:nowrap; width: 165px;" class="less_than">
+                                                Less than equal to @criteria.MaxCustomer
+                                            </div>
+                                        }
+
+                                        if (criteria.TypeId == ((long)PayPeriodCriteriaType.GreaterThanEqualTo))
+                                        {
+                                            <div style="float: left; white-space: nowrap; width: 165px;" class="greater_than">
+                                                Greater than equal to @criteria.MinCustomer
+                                            </div>
+                                        }
+
+
+                                        if (criteria.TypeId == ((long)PayPeriodCriteriaType.Between))
+                                        {
+                                            <div style="float: left; white-space: nowrap; width: 165px;" class="between">
+                                                Between @criteria.MinCustomer - @criteria.MaxCustomer
+                                            </div>
+                                        }
+                                        <div style="float: right; width: 100px; white-space: nowrap;">
+                                            Amount $@criteria.Ammount
+                                        </div><br />
+                                    }
+                                </fieldset>
+                            </div>
+
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    @if (lineItem.IsActive)
+                    {
+                        <span><b>Yes</b></span>
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+        $('.payperiod-detail').qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: "Pay Period Detail",
+                text: function (api) {
+                    return $(this).parent().find('.payperiod-detail-div').html();
+                }
+            },
+            style: {
+                width: '450px'
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function deletePayPeriod(payPeriodId) {
+            $.ajax({
+                url:"/Finance/PayPeriod/DeletePayPeriod?payPeriodId="+payPeriodId,
+                type:"GET",
+                success:function(data) {
+                    if (data == '@Boolean.TrueString') {
+                        alert("Pay Period deleted successfully.");
+                        window.location.reload();
+                    } else {
+                        alert("Some error occurred while deleting Pay Period.");
+                    }
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,26 @@
+﻿@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model ShippingRevenueListModelFilter
+           
+<h2>Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden; padding-bottom:10px;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">From: @Html.ValidationMessageFor(m=>m.FromDate)</div>
+        @Html.TextBoxFor(m => m.FromDate,new { @class = "datePicker", @value=String.Format("{0:yyyy-MM-dd}", Model.FromDate.HasValue ? Model.FromDate : DateTime.Now)})            
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">To: </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">Vehicle: </div>
+        @Html.DropDownListFor(m=>m.PodId,DropDownHelper.Pods())
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">Event Id: </div>
+        @Html.TextBoxFor(m => m.EventId)
+    </div>
+    <div class="editor-column" style="float: right; padding-top:12px; text-align: right;">
+        @Html.ActionLink("Clear", "ShippingRevenueSummary", "Reports") | @Html.SubmitButton("Search")
+    </div>  
+</div>

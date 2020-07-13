@@ -1,0 +1,64 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical.ViewModels
+@model PreQualifiedQuestionTemplateEditModel
+
+@{
+    ViewBag.Title = "PreQualified Question Templates";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml";
+}
+
+<div class="content-main-column" style="padding: 20px 0 0 10px; width: 95%; pointer-events:none">
+    <div class="editor-row">
+        <div class="editor-column" style="width: 42%">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Name)
+            </div>
+            @Html.TextBoxFor(m => m.Name, new { @style = "width:95%" })
+        </div>
+        <div class="editor-column">
+            <div class="editor-label">
+                Test
+            </div>
+            @Html.DropDownListFor(m => m.TestId, DropDownHelper.GetAllTest())
+        </div>
+    </div>
+
+    <div id="checklist-Question-Container" style="clear: both;">
+        <fieldset>
+            <legend>
+                <h2>
+                    Questions
+                </h2>
+            </legend>
+            <table id="templateQuestions">
+                @if (Model.Questions != null && Model.Questions.Any())
+                {
+                    foreach (var quest in Model.Questions)
+                    {
+                        <tr>
+                            <td>
+                                @if(quest.IsSelected)
+                                { 
+                                    <input type="checkbox" checked="checked" />
+                                }
+                                else
+                                { 
+                                    <input type="checkbox" />
+                                }
+                            </td>
+                            <td>
+                                <span>@quest.Question</span>
+                            </td>
+                        </tr>
+                    }                    
+                }
+                else
+                {
+                    <tr><td>No question(s) added to this template.</td></tr> 
+                }
+            </table>
+        </fieldset>
+    </div>
+</div>

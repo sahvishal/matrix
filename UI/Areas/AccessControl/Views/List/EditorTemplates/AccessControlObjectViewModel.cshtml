@@ -1,0 +1,92 @@
+﻿@using System.Web.Mvc.Html
+@model Falcon.App.Core.ACL.ViewModel.AccessControlObjectViewModel
+@{
+    var nestingLevel = ViewBag.nestingLevel ?? 0;
+    var width = nestingLevel > 0 ? 98 : 90;
+    var scopeOptions = (ViewBag.DataScopeOptions as IEnumerable<SelectListItem>).Where(x => Model.DataScopeOptions.Select(m => m.ToString()).Contains(x.Value)).ToArray();
+}
+@Html.HiddenFor(m => m.Id)
+@Html.HiddenFor(m => m.Title)
+@Html.HiddenFor(m => m.DataScopeId)
+@Html.HiddenFor(m => m.IsRootParent)
+@Html.HiddenFor(m => m.IsRequired)
+@{
+    int i = 0;
+    foreach (var opt in Model.DataScopeOptions)
+    {
+        @Html.Hidden("DataScopeOptions[" + i++ + "]", opt)
+    }
+}
+
+@if (!Model.IsRequired)
+{
+    if (Model.IsRootParent)
+    {
+        <br />
+        <br />
+    <div class="acl-parentrow parentCheckBoxRow">
+        <fieldset>
+            <div class="editor-row">
+                <div>
+                    <label>
+                        @if (Model.IsRequired)
+                        {
+                            <input type="checkbox" disabled="disabled" checked="checked" />
+                            @Html.HiddenFor(m => m.IsSelected)
+                        }
+                        else
+                        {
+                            @Html.CheckBoxFor(x => x.IsSelected, new { @class = "selectBox parentCheckBox", data_lbl = Model.Alias.Replace(' ', '_').Replace('/', '_') })
+                        }
+                        <b>@Model.Title</b>
+                    </label>
+                </div>
+            </div>
+
+            <br />
+            @if (Model.Children.Any())
+            {
+                @Html.EditorFor(m => m.Children, new { nestingLevel = ++nestingLevel })
+            }
+        </fieldset>
+    </div>
+    }
+    else
+    {
+        <div class="acl-parentrow" style="margin-left: 40px;">
+            <div class="editor-row">
+                <div>
+                    <label>
+                        @if (Model.IsRequired)
+                        {
+                            <input type="checkbox" disabled="disabled" checked="checked" />
+
+                            @Html.HiddenFor(m => m.IsSelected)
+                        }
+                        else
+                        {
+                            @Html.CheckBoxFor(x => x.IsSelected, new { @class = "selectBox", data_lbl = Model.Alias.Replace(' ', '_').Replace('/', '_') })
+                        }
+                        @Model.Title
+                    </label>
+                </div>
+            </div>
+            <hr />
+
+            @if (Model.Children.Any())
+            {
+                @Html.EditorFor(m => m.Children, new {nestingLevel = ++nestingLevel})
+            }
+
+        </div>
+    }
+
+}
+else
+{
+    @Html.HiddenFor(m => m.IsSelected)
+    if (Model.Children.Any())
+    {
+        @Html.EditorFor(m => m.Children, new {nestingLevel = ++nestingLevel})
+    }
+}

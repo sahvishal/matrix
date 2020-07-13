@@ -1,0 +1,125 @@
+﻿@using Falcon.App.Core.Finance.Domain
+@model Check 
+<div id="checksection">
+    @Html.HiddenFor(m => m.Id)
+    <ul style="padding-bottom:0px; padding-top:0px;">
+        <li><h4 class="title_blue"><strong><span id="check-label">Check </span></strong></h4></li>
+        <li>
+            <div class="left-float" id="check-payableto-div">
+                @Html.LabelFor(m => m.PayableTo)
+                @Html.TextBoxFor(m => m.PayableTo, new { @class = "textbox no-mouseflow" })
+            </div>
+        </li>
+        <li>
+            <div class="left-float half">
+                @Html.LabelFor(m => m.BankName)
+                @Html.TextBoxFor(m => m.BankName, new { @class = "textbox no-mouseflow" })
+            </div>
+            <div class="right-float half" id="routingnumberdiv">
+                @Html.LabelFor(m => m.RoutingNumber)
+                @Html.TextBoxFor(m => m.RoutingNumber, new { @class = "textbox no-mouseflow" })
+            </div>
+            <div class="clearfix"></div>
+        </li>
+        <li>
+            <div class="left-float half">
+                @Html.LabelFor(m => m.CheckNumber)
+                @Html.TextBoxFor(m => m.CheckNumber, new { @class = "textbox no-mouseflow" })
+            </div>
+            <div class="right-float half">
+                @Html.LabelFor(m => m.CheckDate)
+                @Html.TextBoxFor(m => m.CheckDate, new { @class = "textbox datePicker no-mouseflow" })
+            </div>
+            <div class="clearfix"></div>
+        </li>
+        <li>
+            <div class="left-float half">
+                @Html.LabelFor(m => m.AccountNumber)
+                @Html.TextBoxFor(m => m.AccountNumber, new { @class = "textbox no-mouseflow" })
+            </div>
+            <div class="right-float half">
+                @Html.LabelFor(m => m.AcountHolderName)
+                @Html.TextBoxFor(m => m.AcountHolderName, new { @class = "textbox no-mouseflow" })
+            </div>
+            <div class="clearfix"></div>            
+        </li>
+        <li>
+            <div style="text-align:right;" id="view-sample-div" class="editor-row">
+                <a href="javascript:void(0);" onclick="$('#echeck-sample-div').dialog('open');"> View Sample </a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div id="echeck-sample-div" style="display: none;">
+    <img src="/Content/Images/check-routing-sample.gif" style="width:540px;" alt="" />
+</div>
+    
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function(){ 
+        $("#echeck-sample-div").dialog({ width: 580, autoOpen: false, title: 'E-Check Sample', modal: true, resizable: false, draggable: true });
+    });
+
+    $(document).ready(function () {
+        clearCheck();
+    });
+
+    function clearCheck() {
+        $("#checksection input").val("");
+        $("#checksection input[type=hidden][id*='Id']").val("0");
+        $("#checksection select option:first").attr("selected", true);
+        $("#checksection input, #checksection select").attr("disabled", "");
+    }
+
+    function setCheckDetails(checkDetails) {
+        clearCheck();
+        $("#checksection [id*='BankName']").val(checkDetails.BankName);
+        $("#checksection [id*='CheckNumber']").val(checkDetails.CheckNumber);
+        $("#checksection [id*='CheckDate']").val(checkDetails.CheckDate);
+        $("#checksection [id*='RoutingNumber']").val(checkDetails.RoutingNumber);
+        $("#checksection [id*='AccountNumber']").val(checkDetails.AccountNumber);
+        $("#checksection [id*='AcountHolderName']").val(checkDetails.AcountHolderName);
+        $("#checksection [id*='PayableTo']").val(checkDetails.PayableTo);
+        $("#checksection input[type=hidden][id*='Id']").val(checkDetails.Id);
+    }
+
+    function getCheckDetails() {
+        var checkDetails = new Object();
+
+        checkDetails.BankName = $("#checksection [id*='BankName']").val();
+        checkDetails.CheckNumber = $("#checksection [id*='CheckNumber']").val();
+        checkDetails.CheckDate = $("#checksection [id*='CheckDate']").val();
+        checkDetails.RoutingNumber = $("#checksection [id*='RoutingNumber']").val();
+        checkDetails.AccountNumber = $("#checksection [id*='AccountNumber']").val();
+        checkDetails.AcountHolderName = $("#checksection [id*='AcountHolderName']").val();
+        checkDetails.PayableTo = $("#checksection [id*='PayableTo']").val();
+        checkDetails.Id = $("#checksection input[type=hidden][id*='Id']").val();
+        
+        return checkDetails;
+    }
+
+    var _isECheck = false;
+
+    function setasEcheck(isECheck) {
+        _isECheck = isECheck;
+        if (isECheck) {
+            $("#routingnumberdiv").show();
+            $("#check-label").text("eCheck");
+            $("#view-sample-div").show();
+        }
+        else {
+            $("#routingnumberdiv").hide();
+            $("#check-label").text("Check");
+            $("#view-sample-div").hide();
+        }
+    }
+
+    function setPayableToDisabled(payableTo) {
+        $("#checksection [id*='PayableTo']").attr("disabled", "disabled").val(payableTo);
+    }
+
+    function setPayabletoHidden() {
+        $("#check-payableto-div").hide();
+    }
+
+</script>

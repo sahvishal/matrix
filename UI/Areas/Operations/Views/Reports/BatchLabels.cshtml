@@ -1,0 +1,50 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Operations.ViewModels
+@model IEnumerable<BatchLabelViewModel>
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <style type="text/css">
+        html, body {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        div.label {
+            page-break-after: always;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 11pt;
+            width: 310px;
+            display: inline-block;
+            text-align: left;
+            vertical-align: middle;
+            line-height: 22px;
+            padding-top: 22px;
+            padding-left: 22px;
+        }
+    </style>
+    <!--[if lte IE 7]>
+        <style type="text/css">
+            .label 
+            {
+              display: inline;
+            }            
+        </style>
+    <![endif]-->
+</head>
+<body>
+    @if (!Model.IsNullOrEmpty())
+    {
+        foreach (var customer in Model)
+        {<div class="label">
+            PID: @customer.CustomerId
+            <br />
+            NAME: @customer.CustomerName.FullName
+            <br />
+            Address: @(customer.CustomerAddress.ToString())
+        </div>
+        }
+    }</body>
+</html>

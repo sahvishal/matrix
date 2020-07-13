@@ -1,0 +1,175 @@
+﻿@model Falcon.App.Core.CallCenter.ViewModels.CallQueueCustomerNotesViewModel
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Scheduling.Enum;
+@using Falcon.App.Core.Enum;
+
+<div class="tab">
+    <button class="tablinks active" onclick="ShowTab(event, 'notesTab')">Notes</button>
+    <button class="tablinks" onclick="ShowTab(event, 'callHistoryTab')">Call History</button>
+    <button class="tablinks" onclick="ShowTab(event, 'directMailTab')">Direct Mail</button>
+</div>
+<div id="notesTab" class="tabcontent">
+    <div class="row-border notes-container">
+        <table style="width: 100%">
+            <tr>
+                <th style="width: 55%">Notes</th>
+                <th style="width: 15%">Type</th>
+                <th style="width: 10%">Created On</th>
+                <th style="width: 20%">Created By</th>
+            </tr>
+            @if (Model != null && Model.CustomerCallNotes != null && Model.CustomerCallNotes.Count() > 0)
+            {
+                foreach (var history in Model.CustomerCallNotes)
+                {
+                    <tr>
+                        <td>
+                            @if (history.NotesType == CustomerRegistrationNotesType.LeftWithoutScreeningNotes)
+                            {
+                                <span>Event ID: @history.EventId</span><span class="margin-left-5">Reason: @history.Reason</span><br /><span>Notes: @history.Notes</span>
+                            }
+                            else
+                            {
+                                <span>@history.Notes</span>
+                            }
+                        </td>
+                        <td>
+                            @if (history.NotesType == CustomerRegistrationNotesType.AppointmentNote && history.EventId > 0)
+                            {
+                                <span>Event Instructions</span>
+                            }
+                            else if (history.NotesType == CustomerRegistrationNotesType.PostScreeningFollowUpNotes)
+                            {
+                                <span>Post Screening Followup Notes</span>
+                            }
+                            else if ((history.NotesType == CustomerRegistrationNotesType.CustomerNote || history.NotesType == CustomerRegistrationNotesType.AppointmentNote) && history.EventId == null || history.EventId == 0)
+                            {
+                                <span>General Instructions</span>
+                            }
+                            else if (history.NotesType == CustomerRegistrationNotesType.CancellationNote)
+                            {
+                                <span>Cancellation Note</span>
+                            }
+                            else if (history.NotesType == CustomerRegistrationNotesType.LeftWithoutScreeningNotes)
+                            {
+                                <span>Left Without Screening Note</span>
+                            }
+                        </td>
+                        <td>
+                            @history.DateCreated.ToShortDateString()
+                        </td>
+                        <td>
+                            @history.CreatedBy
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="4" style="text-align:center; padding-top:25px">No customer notes available</td></tr>
+            }
+        </table>
+    </div>
+</div>
+
+<div id="callHistoryTab" class="tabcontent">
+    <div class="row-border callHistory-container" style="height:200px; padding:15px">
+        @if (Model != null && !Model.CallHistory.IsNullOrEmpty())
+        {
+            @*<div class="info-row" style="margin-bottom:10px">
+                <div class="info-text-col-100">
+                    <strong><span>Requested Call back Date: ToDisplayCallBackDateTime</span></strong>
+                </div>
+            </div>*@
+            foreach (var history in Model.CallHistory)
+            {
+                <div class="info-row">
+                    <div class="info-text-col-50">
+                        <span>Date of Call: @history.DateCreated.ToShortDateString()</span>
+                    </div>
+                    <div class="info-text-col-50">
+                        <span>Agent Name: @(history.CreatedBy ?? "")</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-text-col-50">
+                        <span>Call Outcome: @history.CallOutcome</span>
+                    </div>
+                    <div class="info-text-col-50">
+                        <span>Call Disposition: @history.Disposition</span>
+                    </div>
+                    @if (history.Disposition == ProspectCustomerTag.NotInterested.ToString())
+                    {
+                        <div class="info-text-col-50">
+                            <span>Reason: @history.NotInterestedReason</span>
+                        </div>
+                    }
+                </div>
+                <div class="info-row">
+                    @if (!history.Notes.IsNullOrEmpty())
+                    {
+                        foreach (var item in history.Notes)
+                        {
+                            <div class="info-text-col-100">
+                                <span>Notes: @(item.Note != null ? item.Note : "")</span>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="draw-line"></div>
+            }
+        }
+        else
+        {
+            <span style="text-align:center; padding-top:25px">No previous calls</span>
+        }
+    </div>
+</div>
+<div id="directMailTab" class="tabcontent">
+    <div class="row-border directMail-container" style="height:200px; padding:15px">
+        @if (Model != null && Model.DirectMail != null && Model.DirectMail.Count() > 0)
+        {
+            foreach (var mail in Model.DirectMail)
+            {
+                if (mail.DateCreated < DateTime.Today)
+                {
+                    <div class="info-row">
+                        <div class="info-text-col-25">
+                            <span>Mail Sent On: @mail.DateCreated.ToShortDateString()</span>
+                        </div>
+                        <div class="info-text-col-25">
+                            <span>Mail Sent By: @(mail.CreatedBy != null ? mail.CreatedBy : "")</span>
+                        </div>
+                        <div class="info-text-col-25">
+                            <span>Mail Type: @mail.DirectMailType</span>
+                        </div>
+                        <div class="info-text-col-25">
+                            <span>Notes: @mail.Notes</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="info-row">
+                        <div class="info-text-col-25">
+                            <span>Mail Scheduled On: @mail.DateCreated.ToShortDateString()</span>
+                        </div>
+                        <div class="info-text-col-25">
+                            <span>Mail Scheduled By: @(mail.CreatedBy != null ? mail.CreatedBy : "")</span>
+                        </div>
+                        <div class="info-text-col-25">
+                            <span>Mail Type: @mail.DirectMailType</span>
+                        </div>
+                        <div class="info-text-col-25">
+                            <span>Notes: @mail.Notes</span>
+                        </div>
+                    </div>
+                }
+                <div class="draw-line"></div>
+            }
+        }
+        else
+        {
+            <span style="text-align:center; padding-top:25px;">No Direct Mail</span>
+        }
+    </div>
+</div>

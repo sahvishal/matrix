@@ -1,0 +1,23 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+<div class="mini-container">
+    <div style="overflow: hidden; border-right: 1px solid red; width: 61%; margin-right: 7px;
+        float: left;">
+        <div class="editor-row" style="width:50%; float:left">
+            Select State:
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">Select State.</div>
+            <br />
+            @Html.DropDownList("ddlStates", DropDownHelper.States(), new { @style = "width:80%;" })
+        </div>
+        <div class="editor-row" style="width:50%; float:left">
+            Checkout Phone Number
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">The number entered here will be displayed as helpline number for customers registering online for the corporate account sponsored event.</div>
+            <br />
+            <input type="text" id="txtCheckoutPhoneNumber" class="mask-phone checkout-phone-number" />
+        </div>
+    </div>
+    <div style="overflow: hidden; width: 36%; float: left; margin-top: 10px;">
+        <input type="button" id="btnCheckOutPhoneNumber" value="Add" />
+    </div>
+</div>

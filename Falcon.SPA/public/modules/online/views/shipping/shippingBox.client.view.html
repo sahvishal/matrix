@@ -1,0 +1,19 @@
+﻿<div class="pull-left text-justify upsale-block delivery-option clearfix" ng-show="(EventType.Corporate == shipping.EventType) ||(shipping.IsHospitalPartnerEvent===true)|| (showProductwithFreeShippingPrice && shippingdetail.ShippingOptionId > 0 && shippingdetail.Price == 0) || shippingdetail.ShippingOptionId==0 || (showProductwithFreeShippingPrice==false && shippingdetail.ShippingOptionId > 0 && shippingdetail.Price > 0)">
+
+    <span class="delivery-image col-md-4 no-margin-x" ng-class="{'mail-report' : shippingdetail.ShippingOptionId !='0' , 'online-report' : shippingdetail.ShippingOptionId == '0' }"></span>
+    <div class="col-md-7 no-padding-x">
+        <h4 ng-bind="shippingdetail.Name" class="semibold"></h4>
+        <p ng-bind="shippingdetail.Description"></p>
+    </div>
+    <div class="col-md-12">
+        <h4 class="pull-left">Price: <span ng-bind="shippingdetail.Price | currency" class="price-text"></span></h4>
+        <div class="pull-right">
+            <div class="styled-radio small">
+                <input type="radio" name="shippingdetail_{{shippingdetail.ShippingOptionId}}" ng-disabled="shippingdetail.disabled" ng-checked="shippingdetail.isChecked === true" ng-click="changeShippingOption(shippingdetail.ShippingOptionId, true)" /> <label>Yes</label>
+            </div>
+            <div class="styled-radio small">
+                <input type="radio" name="shippingdetail_{{shippingdetail.ShippingOptionId}}" ng-disabled="shippingdetail.disabled" ng-checked="shippingdetail.isChecked !== true" ng-click="changeShippingOption(shippingdetail.ShippingOptionId,false)" /> <label>No</label>
+            </div>
+        </div>
+    </div>
+</div>

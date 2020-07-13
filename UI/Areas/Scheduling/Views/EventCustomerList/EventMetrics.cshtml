@@ -1,0 +1,52 @@
+﻿@using Falcon.App.Core.Scheduling.Enum;
+@model Falcon.App.Core.Scheduling.ViewModels.EventMetricsViewData
+<div class="row">
+    <span class="label">Customers:</span> <span class="data">Registered:&nbsp;<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.All));">@Model.RegisteredCustomersCount</a>
+        &nbsp;|&nbsp;Actual:&nbsp;<a
+        href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.Attended));">@Model.AttendedCustomersCount</a>&nbsp;|&nbsp;No
+        Show:&nbsp;<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.NoShow));">@Model.NoShowCustomersCount</a>&nbsp;|&nbsp;Canceled:&nbsp;<a
+            href="javascript:void(0);" onclick="openCanceledTab();">@Model.CancelledCustomersCount</a>&nbsp;|&nbsp;Paid:&nbsp;<a
+                href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.Paid));">@Model.PaidCustomersCount</a>&nbsp;|&nbsp;Unpaid:&nbsp;<a
+                    href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.Unpaid));">@Model.UnPaidCount</a> &nbsp;|&nbsp;Left Without Screening:&nbsp;<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.LeftWithoutScreening));">@Model.LeftWithoutScreeningCustomersCount</a> 
+    </span>
+</div>
+@*<div class="row">
+    <span class="label">Revenue:</span> <span class="data">Total:&nbsp;$@Model.TotalRevenue.ToString("0.00")
+        &nbsp;|&nbsp;CC:&nbsp;$@Model.ChargeCardRevenue.ToString("0.00") (<a href="javascript:void(0);"
+            onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.PaidviaCard));">@Model.ChargeCardCount</a>)&nbsp;|&nbsp;Checks:&nbsp;$@Model.CheckRevenue.ToString("0.00")
+        (<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.PaidviaCheck));">@Model.CheckCount</a>)&nbsp;|&nbsp;
+        Cash:&nbsp;$@Model.CashRevenue.ToString("0.00")
+        (<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.PaidviaCash));">@Model.CashCount</a>)&nbsp;|&nbsp;eChecks:&nbsp;$@Model.ECheckRevenue.ToString("0.00")
+        (<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.PaidviaeCheck));">@Model.ECheckCount</a>)&nbsp;|&nbsp;Unpaid:&nbsp;$@Model.UnPaidExcluedeNoShowRevenue.ToString("0.00")
+        (<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.UnpaidExcludingNoShow));">@Model.UnPaidExcluedeNoShowCount</a>)
+    </span>
+</div>*@
+<div class="row">
+    <div class="label">
+        Tests:</div>
+    <div class="data" style="width: 820px;">
+        @Html.Raw(string.Join(" | ", Model.TestOrderedPair.Select(op => op.FirstValue + " <b>(" + op.SecondValue + ")</b>")))
+    </div>
+</div>
+@{
+    int totalCustomerCount = Model.PaidCustomersCount + Model.UnPaidCount - Model.NoShowCustomersCount;
+    var totalHippaCount = Model.HipaaSignedCount + Model.HipaaUnSignedCount;
+}
+<div class="row">
+    <div class="label">
+        Metrics:</div>
+    <div class="data" style="width: 820px;">
+        @*Onsite:&nbsp;$@Model.OnsitePayments.ToString("0.00")
+        (<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.MetricsOnsite));">@Model.OnsitePaymentCount</a>)
+        &nbsp;|&nbsp;Upgrades:&nbsp;$@Model.UpGradePayments.ToString("0.00")
+        (<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.MetricsUpgrades));">@Model.UpGradePaymentCount</a>)&nbsp;|&nbsp;Downgrades:&nbsp;$@Model.DownGradePayments.ToString("0.00")
+        (<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.MetricsDowngrades));">@Model.DownGradePaymentCount</a>)&nbsp;|&nbsp;
+        Average Revenue / Client:&nbsp;$@Model.AverageRevenuePerClient.ToString("0.00")
+        (<a href="javascript:void(0);" onclick="refreshListwithMetricsFilter(@((long)EventCustomerListFilterOption.All));">@totalCustomerCount</a>)&nbsp;|&nbsp;*@
+        HIPAA:&nbsp;@(totalHippaCount > 0 ? (Model.HipaaSignedCount * 100) / totalHippaCount : 0)% (@Model.HipaaSignedCount/@(totalHippaCount))
+    </div>
+</div>
+@*<div class="row">
+    <span class="label">Deposits:</span> <span class="data">$@((Model.CashRevenue + Model.CheckRevenue).ToString("0.00"))
+        (Cash and Checks) </span>
+</div>*@

@@ -1,0 +1,13 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Medical.ViewModels
+@model TestListModelFilter
+<h2>Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">Name: </div>
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+    <div class="editor-column" style="float: right; padding-top:12px; text-align: right;">
+        @Html.ActionLink("Clear", "Index", "Test") | @Html.SubmitButton("Search")
+    </div>
+</div>

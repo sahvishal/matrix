@@ -1,0 +1,440 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.DependencyResolution
+@model EventEndofDayListModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <link rel='shortcut icon' href='/favicon.ico' type="image/x-icon" />
+    <link href="@Url.Content("/Content/Styles/Style.css")" rel="stylesheet" type="text/css" />
+    <link type="text/css" href="@Url.Content("~/Content/Styles/jquery-ui-1.8.12.custom.css")" rel="Stylesheet" />
+    <link href="@Url.Content("/Content/Styles/Menu.css")" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="@Url.Content("/Scripts/jquery-1.5.2.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("/Scripts/jquery-ui-1.8.12.custom.min.js")"></script>
+    <script type="text/javascript" src="/App/jquery/js/jquery.hoverIntent.js"></script>
+    <script type="text/javascript" src="/Content/JavaScript/Menu.js"></script>
+    <script type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+</head>
+<body style="overflow-x: hidden">
+    <style type="text/css">
+        tr {
+            height: 40px;
+            background: #d2ecf7;
+        }
+
+            tr .row-hover {
+                background: #d2ecf7;
+            }
+
+        th {
+            height: 40px;
+            background: #dedede;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        #customer-info {
+            float: left;
+        }
+
+            #customer-info th {
+                white-space: nowrap;
+                padding-left: 2px;
+                padding-right: 2px;
+                text-align: center;
+            }
+
+            #customer-info tr td {
+                white-space: nowrap;
+                padding-left: 2px;
+                padding-right: 2px;
+                text-align: center;
+            }
+    </style>
+    @if (Model != null)
+    {
+        <div style="float: left; padding-left: 10px;">
+            <div style="width: 800px; float: left;">
+                <h1>
+                    End Of Day <span style="float: right; font-weight: normal; font-size: 12px;">
+                        <a href="javascript: window.location.reload();">
+                            Refresh
+                        </a>&nbsp; <a href="javascript: printEOD();"> Print </a>
+                    </span>
+                </h1>
+            </div>
+            <div style="width: 400px; float: right; font-weight: normal; font-style: italic; font-size: 12px; padding-bottom:2px;">While printing please print in landscape orientation of the page.</div>
+            <div style=" width:800px;float: left; margin-bottom: 20px; border: 1px solid; border-radius: 4px;
+            padding: 10px 5px;">
+                <div style="width: 150px; float: left;">
+                    <b>Event Id: </b>@Model.EventId
+                </div>
+                <div style="width: 520px; float: right;">
+                    <span style="float: left; width: 80px;"><b>Location:</b></span> <span style="float: left;
+                    width: 440px">@Model.HostName-@Model.Address</span>
+                </div>
+            </div>
+            @if (Model.IsSignOff)
+            {
+                <div style="float: left; width: 95%; margin-bottom: 20px; color: Green;">
+                    <span style="float: left;"><b>Last Signed Off Date: @Model.SignOffDate </b></span>
+                    <span style="float: right;"><b>Last Signed Off By: @Model.SignOffBy</b> </span>
+                </div>
+            }
+            @if (Model.IsComplete)
+            {
+                <div style="float: left; width: 100%; margin-bottom: 20px; border: 1px solid; border-radius: 4px;
+                padding: 10px 5px;">
+                    <span style="float: left;">
+                        <b>Enter your password to Sign off current Event: </b>
+                        <input id="signoff-password" type="password" autocomplete='off' />
+                    </span><span style="float: right;">
+                        <button onclick="signOffEvent(); return false;">
+                            Sign Off
+                        </button>
+                    </span>
+                </div>
+            }
+            <table width="800px" id="customer-info">
+                <tr>
+                    <th style="text-align: left;">
+                        Id
+                    </th>
+                    <th style="text-align: left;">
+                        Customer
+                    </th>
+                    <th>
+                        Customer<br />
+                        Info
+                    </th>
+                    <th>
+                        Cond'ed By
+                    </th>
+                    <th>
+                        H.A.F
+                    </th>
+                    <th>
+                        Check <br /> In
+                    </th>
+                    <th>
+                        Check <br /> Out
+                    </th>
+                    <th>
+                        Is Paid
+                    </th>
+                    <th>
+                        HIPAA
+                    </th>
+                    @if (Model.IsHospitalPartnerAttached)
+                    {
+                        <th>
+                            Partner <br /> Release
+                        </th>
+                        if (Model.IsHospitalFacilityAttached)
+                        {
+                            <th>
+                                Hospital&nbsp;<br />&nbsp;Facility
+                            </th>
+                        }
+                    }
+                    <th>
+                        HbA1C
+                    </th>
+                    <th>
+                        H.Pylori
+                    </th>
+                    @if (Model.ShowBloodPressureColumn)
+                    {
+                        <th>
+                            Blood <br /> Pressure
+                        </th>
+                    }
+                    @if (Model.IsKynIntegrationEnabled)
+                    {
+                        <th>
+                            KYN
+                        </th>
+                    }
+                    @if (Model.IsKynIntegrationEnabled)
+                    {
+                        <th>
+                            HKYN
+                        </th>
+                    }
+                    <th>Cholesterol</th>
+                    <th>Glucose</th>
+                    @if (Model.IsMspFormEnabled)
+                    {
+                        <th>
+                            MSP Form
+                        </th>
+                        <th>
+                            Insurance <br /> Release
+                        </th>
+                    }
+                    @if (Model.ShowHemoglobinColumn)
+                    {
+                        <th>
+                            Hemoglobin
+                        </th>
+                    }
+                    @if (Model.ShowPhq9Column)
+                    {
+                        <th>
+                            PHQ-9
+                        </th>
+                    }
+                    @if (Model.ShowQualityMeasures)
+                    {
+                        <th>
+                            Quality Measures
+                        </th>
+                    }
+                    @if (Model.ShowFocAttestationColumn)
+                    {
+                        <th>
+                            Foc/Attestation
+                        </th>
+                    }
+                    @if (Model.ShowIfobtColumn)
+                    {
+                        <th>
+                            iFOBT
+                        </th>
+                    }
+                    @if (Model.ShowMyBioCheckAssessment)
+                    {
+                        <th>
+                            My Bio-Check Assessment
+                        </th>
+                    }
+                    @*@if (IoC.Resolve<ISettings>().EodGcCutoffDate <= Model.EventDate)*@
+                    @if (Model.IsShowGiftCertificateOnEod && (IoC.Resolve<ISettings>().EodGcCutoffDate <= Model.EventDate))
+                    {
+                        <th>
+                            Gift Card
+                        </th>
+                    }
+                </tr>
+                @{
+        var setImage = new Func<EndofDayStatus, string, string>((a, b) =>
+        {
+            if (a == EndofDayStatus.Complete) return "<img src='/App/Images/icon_check.png' alt='' border='1px'/>";
+            if (a == EndofDayStatus.Missing) return "<img src='/App/Images/close-icon-grid.gif' alt='' title='" + b + "' />";
+            return "-N/A-";
+        });
+
+
+                }
+                @foreach (var item in Model.Customers)
+                {
+                    <tr>
+                        <td style="text-align: left;">
+                            <b>@Html.DisplayFor(modelItem => item.CustomerId) </b>
+                        </td>
+                        <td style="text-align: left;">
+                            <b>@Html.DisplayFor(modelItem => item.CustomerName) </b>
+                        </td>
+                        <td>
+                            @((item.Kyn == EndofDayStatus.NotApplicable && item.HKyn == EndofDayStatus.NotApplicable && item.MybioStatus == EndofDayStatus.NotApplicable) ? Html.Raw(setImage(item.CustomerInfo, Model.IsHealthPlanEvent ? "" : "Following are mandatory: Height, Weight.")) : Html.Raw(setImage(item.CustomerInfo, Model.IsHealthPlanEvent ? "Following are mandatory: Race, Gender, DOB." : "Following are mandatory: Height, Weight, Race, Gender, DOB.")))
+                        </td>
+                        <td>
+                            @Html.Raw(setImage(item.TestConductedBy, "Conducted By should be set for each Test."))
+                        </td>
+                        <td>
+                            @Html.Raw(setImage(item.HealthAssesmentForm, "Health Assessment Form needs to be saved on the day of Event."))
+                        </td>
+                        <td>
+                            @Html.Raw(setImage(item.CheckInTime, "Check in/ Check Out Time should be there. Or mark it as No Show in case Customer did not attend."))
+                        </td>
+                        <td>
+                            @Html.Raw(setImage(item.CheckOutTime, "Check in/ Check Out Time should be there. Or mark it as No Show in case Customer did not attend."))
+                        </td>
+                        <td>
+                            @Html.Raw(setImage(item.IsPaid, "Customer payment is Pending."))
+                        </td>
+                        <td>
+                            @Html.Raw(setImage(item.SignedHipaa, "HIPAA Signed up is necessary."))
+                        </td>
+                        @if (Model.IsHospitalPartnerAttached)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.SignedPartnerRelease, "Partner Release signed up is necessary."))
+                            </td>
+                            if (Model.IsHospitalFacilityAttached)
+                            {
+                                <td>
+                                    @Html.Raw(setImage(item.HospitalFacilityStatus, "If Partner Release signed then mandaotry to have."))
+                                </td>
+                            }
+
+                        }
+                        <td>
+                            @Html.Raw(setImage(item.HbA1C, "Fill in HbA1C."))
+                        </td>
+                        <td>
+                            @Html.Raw(setImage(item.HPyloriStatus, "Fill in H.Pylori."))
+                        </td>
+                        @if (Model.ShowBloodPressureColumn)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.BloodPressure, "Blood Pressure is mandatory."))
+                            </td>
+                        }
+                        @if (Model.IsKynIntegrationEnabled)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.Kyn, "Fill Clinical and Lab values."))
+                            </td>
+                        }
+                        @if (Model.IsKynIntegrationEnabled)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.HKyn, "Fill Clinical and Lab values."))
+                            </td>
+                        }
+                        <td>
+                            @Html.Raw(setImage(item.CholesterolStatus, "Fill Cholesterol values."))
+                        </td>
+                        <td>
+                            @Html.Raw(setImage(item.GlucoseStatus, "Fill Glucose values."))
+                        </td>
+                        @if (Model.IsMspFormEnabled)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.MspFormFilled, "Fill MSP Form."))
+                            </td>
+                            <td>
+                                @Html.Raw(setImage(item.SignedInsuranceRelease, "Insurance Release signed up is necessary."))
+                            </td>
+                        }
+                        @if (Model.ShowHemoglobinColumn)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.HemoglobinStatus, "Fill in Hemoglobin."))
+                            </td>
+                        }
+                        @if (Model.ShowPhq9Column)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.Phq9Status, "Fill in PHQ 9."))
+                            </td>
+                        }
+
+                        @if (Model.ShowQualityMeasures)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.QualityMeasuresStatus, "Fill in Quality Measures."))
+                            </td>
+                        }
+
+                        @if (Model.ShowFocAttestationColumn)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.FocAttestation, "Fill in Foc/Attestation."))
+                            </td>
+                        }
+
+                        @if (Model.ShowIfobtColumn)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.Ifobt, "Fill in iFOBT."))
+                            </td>
+                        }
+
+                        @if (Model.ShowMyBioCheckAssessment)
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.MybioStatus, "Fill My Bio-Check Assessment & Height, Weight."))
+                            </td>
+                        }
+                        @* @if (IoC.Resolve<ISettings>().EodGcCutoffDate <= Model.EventDate)*@
+                        @if (Model.IsShowGiftCertificateOnEod && (IoC.Resolve<ISettings>().EodGcCutoffDate <= Model.EventDate))
+                        {
+                            <td>
+                                @Html.Raw(setImage(item.GiftCardStatus, "Fill Gift Card"))
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+    else
+    {
+        <h2>No Customers has been registered yet.</h2>
+    }
+    <script language="javascript" type="text/javascript">
+
+
+        $(document).ready(function () {
+
+            $(".inner-div-fortablewidth").css({ "width": $("#endofday-item").width() });
+            $(function () {
+
+                $("tr:not(:has(th))").hover(function () {
+                    $(this).addClass('row-hover');
+                },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+            });
+
+            $(function () {
+                $(".wrapper1").scroll(function () {
+                    $(".wrapper2").scrollLeft($(".wrapper1").scrollLeft());
+                });
+                $(".wrapper2").scroll(function () {
+                    $(".wrapper1").scrollLeft($(".wrapper2").scrollLeft());
+                });
+            });
+
+            $(".wrapper1").css({ "position": "absolute", "float": "none", "top": $(".wrapper1").offset().top - 20 });
+        });
+
+        function signOffEvent() {
+            var eventId = '@(Model!=null ? Model.EventId : 0)';
+
+            var data = { password: $("#signoff-password").val(), eventId: eventId };
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                //url: "/Scheduling/Event/SignOff?password=" + $("#signoff-password").val() + "&eventId=" + eventId,
+                url: "/Scheduling/Event/SignOff",
+                data: JSON.stringify(data),
+                success: function (result) {
+
+                    var resultObj = result;
+
+                    alert(resultObj.Message);
+                    if (resultObj.Result) {
+                        window.location.reload();
+                    }
+
+                },
+                error: function (a, b, c) {
+
+                    alert("Some error occured while signingoff the event! \nPlease contact the support team!");
+                    window.location.reload();
+                }
+            });
+
+        }
+        function printEOD() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

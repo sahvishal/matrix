@@ -1,0 +1,20 @@
+﻿<div class="block-flat">
+    <div class="header">
+        <h4 style="color:red;">Validation Failed!</h4>
+    </div>
+    <div class="content">
+        <div class="form-group">
+            <ul>
+                <li ng-repeat="item in validations">
+                     {{item.Error}}
+                </li>
+            </ul>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-sm-11">
+                <input type="button" ng-click="close();" value="OK" class="pull-right btn btn-primary">
+            </div>
+        </div>
+    </div>
+</div>

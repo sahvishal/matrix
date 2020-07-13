@@ -1,0 +1,42 @@
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Sales.ViewModels
+@model HospitalPartnerCustomerListModel
+@{
+    ViewBag.Title = "Customer Aggregate Result Summary";
+}
+<h1>
+    Customer Aggregate Result Summary
+    @if (Model != null && Model.Collection != null)
+    {
+        <span style="float: right; font-size: 11px;"><a target="_blank" href="/Sales/ExportableReports/CustomerAggregateResultSummary?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export Customer To CSV</a></span>      
+    }
+</h1>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<div id="list-filter">
+    @{Html.BeginForm("CustomerAggregateResultSummary", "HospitalPartner", FormMethod.Get);}
+    @Html.Partial("HospitalPartnerCustomerListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@Html.Partial("HospitalPartnerCustomers", new ViewDataDictionary(Model))
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

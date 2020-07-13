@@ -1,0 +1,104 @@
+﻿<div class="fillEventBody" data-ng-controller="healthplanFilledEventController" us-spinner spinner-key="online-spinner">
+    <div class="main-container border-default">
+        <h4>
+           {{CriteriaName}} | {{selectedCategory.text}}
+            <a ng-click="backToDashboard()" href="javascript:void(0)" style="float: right;">Back to Call Queue Selection</a><br />
+        </h4>
+        <div>
+            <div class="row" style="padding-top: 10px;">
+                <div class="col-xs-12 col-md-10"><healthplan-fill-event-criteria-view model="EventFilterCriteria" method="ClearData()"></healthplan-fill-event-criteria-view></div>
+            </div>
+            <div id="list-filter" style="margin-top: 15px ">
+                <form name="filterEventForm" data-ng-submit="filterEvent(filterEventForm)" novalidate autocomplete="off">
+
+                    <h2 style="color: black !important;"> Filter Customer Prospects</h2>
+                    <div style="padding-left: 5px; overflow: hidden;">
+                        <div class="editor-column callQueueCustomer-Search-filter-23">
+                            <div class="small-text">Event Id: </div>
+                            <input type="text" class="small-text-box" name="EventId" placeholder="Event Id" ng-model="eventFilters.EventId"/>
+                        </div>
+                        <div class="editor-column callQueueCustomer-Search-filter-23">
+                            <div class="small-text">Pod: </div>
+                            <input type="text" class="small-text-box" placeholder="Pod" name="Pod" ng-model="eventFilters.Pod" />
+                        </div>
+                        <div class="editor-column" style="padding-top: 10px; width: 40%; float: right; text-align:right;">
+                            <!--<a href="" ng-disabled="isPosted" ng-click="ManageCategory()">Change Category</a> |--> 
+                            <a href="" ng-disabled="isPosted" ng-click="GoToFillEventList()" ng-show="showEventCatory">Event List</a> <span ng-show="showEventCatory">|</span>  <a href="" ng-disabled="isPosted" ng-click="clearFilter()">Clear</a> | <button type="submit" ng-disabled="isPosted">Search<i class="spin spin-right" ng-show="loader_filter"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div>
+                <paging-model model="PagingModel" url="GetEventByPageNumber(number)"></paging-model>
+                <table id="list-view" style="margin-top: 5px; margin-bottom: 5px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th class="event-list-date">Info</th>
+                            <th class="event-list-distance">Address</th>
+                            <th class="event-list-available">Date</th>
+                            <th class="event-list-available">Pod</th>
+                            <th class="text-center event-list-select">Booked/Total Slots</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="alt-row">
+                        <tr ng-repeat="event in EventList" ng-if="EventList != null && EventList.length >= 1">
+                            <td class="event-list-location">
+                                <span ng-bind="event.Id"></span>
+                            </td>
+                            <td class="col-lg-2">
+                                <span ng-bind="event.HostName"></span>
+                                <br />
+                                <img ng-if="event.RegistrationMode != RegistrationMode.Private" src="/App/Images/public-icon.gif" alt="Public" />
+                                <img ng-if="event.RegistrationMode == RegistrationMode.Private" src="/App/Images/private-icon.gif" alt="Private" />
+                                <span ng-if="event.EventType == EventType.Corporate">
+                                    | <img src="/App/Images/corporate_icon_buy.jpg" alt="Corporate" style="height: 16px;width: 16px;" />
+                                </span>
+                                <span ng-if="event.InvitationCode !=null && event.InvitationCode !=''">
+                                    Code: <span ng-bind="event.InvitationCode"></span><br />
+                                </span>
+                                <div><b>Sponsor by: </b>{{event.Sponsor}}</div>
+                            </td>
+                            <td class="col-lg-3">
+                                <span ng-bind="event.HostAddress.StreetAddressLine1"></span>,
+                                <span ng-if="event.HostAddress.StreetAddressLine2 != null && event.HostAddress.StreetAddressLine2 != ''">
+                                    <span ng-bind="event.HostAddress.StreetAddressLine2"></span>,
+                                </span>
+                                <span ng-bind="event.HostAddress.City"></span>,<span ng-bind="event.HostAddress.State"></span>,<span ng-bind="event.HostAddress.Country"></span> - <span ng-bind="event.HostAddress.ZipCode"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="event.EventDate | date : 'MM/dd/yyyy'"></span>
+                            </td>
+                            <td>
+                                <span ng-repeat="pod in event.Pods" ng-bind="pod.SecondValue"></span>
+                            </td>
+                            <td class="text-center">
+                                <a id='Id_{{event.Id}}' href="javascript:void(0)" class="appointment-slots" custom-tool-tip tool-tip-header="Appointment Slots" tool-tip-container="appointment-slot-div">
+                                    <span ng-if="event.IsDynamicScheduling==true">Dynamic Scheduling</span>
+                                    <span ng-if="event.IsDynamicScheduling==false">{{event.BookedSlots}}/{{event.TotalAppointmentSlots}}</span>
+                                </a>
+                                <div class="appointment-slot-div qtip" style="width:300px; display: none;">
+                                    <div><b>Morning Slots: </b><span ng-bind="event.MorningAvailableSlots"></span> </div>
+                                    <div><b>Afternoon Slots: </b><span ng-bind="event.AfternoonAvailableSlots"></span> </div>
+                                    <div><b>Evening Slots: </b><span ng-bind="event.EveningAvailableSlots"></span> </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center no-margin startCallingButton">
+                                    <input ng-disabled="disableStartCallingButton" class="btn btn-primary " type="button" name="event" value="Start Call" ng-click="getCustomerForCall(event)">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr ng-if="showNoEventInList == true">
+                            <td colspan="7">
+                                <h4>No data found</h4>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <paging-model model="PagingModel" url="GetEventByPageNumber(number)"></paging-model>
+            </div>
+        </div>
+    </div>
+</div>

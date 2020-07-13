@@ -1,0 +1,24 @@
+﻿@using System.Web.Mvc.Html
+@using Falcon.App.Core.ACL.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.ACL.ViewModel.RoleAccessControlObjectEditModel
+@{
+    ViewBag.DataScopeOptions = DropDownHelper.GetLookupSelectListItems((long)DataScope.Self);
+}
+
+@Html.HiddenFor(m => m.RoleId)
+@Html.HiddenFor(m => m.RoleName)
+
+@Html.ValidationMessageFor(m => m.RoleId)
+@Html.ValidationMessageFor(m => m.AccessControlObjects)
+
+@if (Model != null && Model.AccessControlObjects != null && Model.AccessControlObjects.Any())
+{
+    @Html.EditorFor(m => m.AccessControlObjects, new {nestingLevel = 0})
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}

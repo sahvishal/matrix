@@ -1,0 +1,31 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Application.Impl
+@using Falcon.App.DependencyResolution
+
+@{
+    var userSession = IoC.Resolve<ISessionContext>().UserSession;
+    var setting = IoC.Resolve<ISettings>();
+    var moduleUrl = setting.AngularAppUrl + userSession.CurrentOrganizationRole.RoleAlias;
+    ViewBag.Title = "Call Queue Customers";
+}
+
+<link href="~/App/StyleSheets/CallCentre.css" rel="stylesheet" />
+
+<div id="callQueueAngular">
+    <img src="~/Content/Images/spinner.gif" style="position: fixed; height: 100px; width: 100px; top: 40%; left: 50%; margin: -30px 0 0 -30px;" /> 
+</div>
+
+<input type="hidden" value="@((Session.SessionID + "_" + userSession.UserId +"_" + userSession.CurrentOrganizationRole.RoleId + "_" + userSession.CurrentOrganizationRole.OrganizationId).Encrypt())" id="tokenText" />
+
+<script type="text/javascript" language="javascript">
+    window.localStorage.setItem('token', '@((Session.SessionID + "_" + userSession.UserId +"_" + userSession.CurrentOrganizationRole.RoleId + "_" + userSession.CurrentOrganizationRole.OrganizationId).Encrypt())');
+
+    var target = $('#callQueueAngular');
+    $.ajax({
+        url: '@(moduleUrl)',
+        type: 'GET'
+
+    }).success(function (result) {
+        target.html(result);
+    });
+</script>

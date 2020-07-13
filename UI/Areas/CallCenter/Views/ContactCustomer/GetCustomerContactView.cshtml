@@ -1,0 +1,825 @@
+@using System
+@using Falcon.App.Core.CallCenter.Enum
+@using Falcon.App.Core.Enum
+@model Falcon.App.Core.CallCenter.ViewModels.CustomerContactViewModel
+@{
+    ViewBag.Title = "Outbound Call " + Model.PatientInfomation.FirstName + " " + Model.PatientInfomation.LastName;
+}
+
+
+@section scripts {
+
+    <script type="text/javascript" src="/App/jquery/js/jQuery.autoCompleteExtender.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script language="javascript" type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+    <script language="javascript" type="text/javascript" src="/Scripts/date.js"></script>
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script src="/Content/JavaScript/PreQualifiedQuestionRules.js?v=@DateTime.Now.Ticks" type="text/javascript"></script>
+    <script src="/Content/JavaScript/PreQualificationQuestion.js?v=@DateTime.Now.Ticks" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        var dispositionList = null;
+        var customerId = '@Model.PatientInfomation.CustomerId';
+        var callQueueCustomerId = '@Model.PatientInfomation.CallQueueCustomerId';
+        var prospectCustomerId = '@(Model.PatientInfomation.ProspectCustomerId ?? 0)';
+        @*var readAndUnderstood = '@Model.ReadAndUnderstood';*@
+        var callId = '@Model.CallId';
+        var healthPlanId = '@Model.HealthPlanId';
+        var attemptId = '@Model.CallQueueCustomerAttempt.CallAttemptId';
+        var pageNumber = 1;
+        var isCallOutComeSaved = false;
+        var selectedCallStatusId = 0;
+        var selectedDisposition = '';
+        var hasMammo = '@Model.PatientInfomation.HasMammo';
+        var warmTransfer = '@Model.WarmTransfer' == "True" ? true : false;
+        var mammoTestAsPreApproved = '@Model.PatientInfomation.MammoTestAsPreApproved' == "True" ? true : false;
+        var selectedEventId = 0;
+
+        var isScriptOpen = false;
+        var scriptPopup = null;
+
+        function ShowTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        $(function () {
+            //getScreeningInfo(customerId);
+            getCallOutCome(callId, callQueueCustomerId, prospectCustomerId, customerId);
+            getCallHistoryDetails(callId, callQueueCustomerId);
+            //getCallDispositionTags();
+            $("#dvCallBackLater").attr('disabled', 'disabled');
+            showHidePCPMailingAddress();
+
+            if (window.localStorage.isScriptOpen === "true" && window.localStorage.scriptUrl != '') {
+                openScriptWindow('@Model.PatientInfomation.CallCenterScriptUrl');
+            }
+
+            pageNumber = 1;
+
+            var filter = {
+                ZipCode: '@Model.PatientInfomation.AddressViewModel.ZipCode',
+                Radius: 25,
+                PageNumber: pageNumber,
+                HealthPlanId: healthPlanId,
+                SortByOrder: 0,
+                SortOrderType: 0,
+                SearchMammoEvents: '@(Model.PatientInfomation.MammoTestAsPreApproved? true:false)',
+                CustomerZipCode: '@Model.PatientInfomation.AddressViewModel.ZipCode',
+                CustomerId: '@Model.PatientInfomation.CustomerId'
+            };
+
+            if ('@Model.PatientInfomation.HasMammo' == 'True') {
+                $("#showAllCheckbox").show();
+                $("#mammo-message-text").show();
+            }
+
+            getEventList(filter);
+
+            var vgCustomerId = window.localStorage.getItem("vgCustomerId");
+            if (vgCustomerId != customerId) {
+                window.localStorage.setItem("vgCustomerId", '@Model.PatientInfomation.CustomerId');
+                window.localStorage.setItem("vgActivityId", '@Model.PatientInfomation.ActivityId');
+            }
+        });
+
+        function getScreeningInfo(customerId) {
+            $.ajax({
+                url: '@Url.Action("GetScreeningInfo")',
+                type: 'GET',
+                cache: false,
+                data: { customerId: customerId }
+            }).done(function (result) {
+                $('#dvScreeningInfo').html(result);
+            });
+        }
+
+        function getCallHistoryDetails(callId, callQueueCustomerId) {
+            $.ajax({
+                url: '@Url.Action("GetCallHistoryDetails")',
+                type: 'GET',
+                cache: false,
+                data: { callId: callId, callQueueCustomerId: callQueueCustomerId }
+            }).done(function (result) {
+                $('#dvCallHistoryDetails').html(result);
+                document.getElementById("notesTab").style.display = "block";
+            });
+        }
+
+        function getCallOutCome(callId, callQueueCustomerId, prospectCustomerId, customerId) {
+            $.ajax({
+                url: '@Url.Action("GetCallOutCome")',
+                type: 'GET',
+                cache: false,
+                data: { callId: callId, callQueueCustomerId: callQueueCustomerId, prospectCustomerId: prospectCustomerId, customerId: customerId }
+            }).done(function (result) {
+                $('#dvCallOutCome').html(result);
+                setDatePicker();
+            });
+        }
+
+        @*function setReadAndUnderstood() {
+            if ($("#chkReadAndUnderstood").is(":checked")) {
+                $.ajax({
+                    url: '@Url.Action("SetReadAndUnderstoodNotes")' + '?callId=' + callId,
+                    type: 'GET',
+                    success: function () {
+                        $("#chkReadAndUnderstood").attr("disabled", true);;
+                    }
+                });
+            }
+        }*@
+
+        function showHidePCPMailingAddress() {
+            @if (Model.PatientInfoEditModel.PrimaryCarePhysician != null)
+            {
+            <text>
+            var chkHasSameAddress = $("#chkHasSameAddress");
+            $("#dvPCPMailingAddress").show();
+            if (chkHasSameAddress[0].checked) {
+                $("#dvPCPMailingAddress").hide();
+            }
+            </text>
+            }
+        }
+        function UpdatePatientInfo(update) {
+            if (update) {
+                $("#dvPatientInfoUpdate").show();
+                $("#dvPatientInfoView").hide();
+            }
+            else {
+                $("#dvPatientInfoUpdate").hide();
+                $("#dvPatientInfoView").show();
+            }
+            showHidePCPMailingAddress();
+        }
+        function SetConsentPhoneNumber() {
+            $("#txtHome").val($("#divHomePhoneNumber").find("span").html());
+            $("#txtOffice").val($("#divOfficePhoneNumber").find("span").html());
+            $("#txtMobile").val($("#divMobilePhoneNumber").find("span").html());
+        }
+
+
+        function setPage(currentPage) {
+            pageNumber = currentPage;
+            var filter = {
+                ZipCode: $("#dvEventList input[name*='ZipCode']").val(),
+                Radius: $("#dvEventList select[name*='Radius']").val(),
+                City: $("#dvEventList input[name*='City']").val(),
+                State: $("#dvEventList select[name*='State']").val(),
+                PageNumber: pageNumber,
+                HealthPlanId: healthPlanId,
+                SortByOrder: $("input[type='hidden'][name*='SortByOrder']").val(),
+                SortOrderType: $("input[type='hidden'][name*='SortOrderType']").val(),
+                SearchMammoEvents: $("#chkShowAll").is(":visible") && !($("#chkShowAll").is(":checked")),
+                CustomerZipCode: $("input[type='hidden'][id*='CustomerZipcodeHiddenField']").val(),
+                CustomerId: customerId
+            };
+
+            getEventList(filter);
+        }
+
+        function getEventList(filter) {
+            $.ajax({
+                url: '@Url.Action("GetEventList")',
+                type: 'POST',
+                cache: false,
+                data: filter
+            }).done(function (result) {
+                $('#dvEventList').html(result);
+                if ('@Model.PatientInfomation.HasMammo' == '@Boolean.TrueString') {
+                    $('#showAllCheckbox').show();
+                    $('#mammo-message-text').show();
+                }
+                //if (!filter.SearchMammoEvents)
+                //    $('#chkShowAll').attr("checked", true);
+                //else {
+                //    $('#chkShowAll').attr("checked", false);
+                //}
+            });
+        }
+
+        function registerCustomer(eventId, eventhasMammo, allowNonMammoPatients) {
+            selectedEventId = eventId;
+            var customerHasMammo = '@Model.PatientInfomation.MammoTestAsPreApproved';
+            $("#hfAllowNonMammoPatients").val(allowNonMammoPatients);
+
+
+            if (eventhasMammo == 'False' && customerHasMammo == 'True') {
+                if (!confirm("Warning: You are scheduling a Mammo Customer on Non-Mammo Event. Do you want to proceed?")) {
+                    return;
+                }
+            }
+
+            $.ajax({
+                url: '@Url.Action("DoesEventCustomerAlreadyExists")' + "?customerId=" + customerId + "&eventId=" + eventId,
+                type: "GET",
+                success: function (result) {
+                    if (result == "") {
+                        if (eventhasMammo == 'True' && customerHasMammo == 'True') {
+                            $.ajax({
+                                url: '@Url.Action("GetPreQualificationTemplateIds")',
+                                type: 'GET',
+                                cache: false,
+                                data: { customerId: customerId, eventId: selectedEventId }
+                            }).then(function (data) {
+                                if (typeof data != "undefined" && data != '' && data != null) {
+                                    getPreQualificationQuestion(data);
+                                } else {
+                                    redirectToRegistration();
+                                }
+                            });
+
+
+                        } else {
+                            redirectToRegistration();
+                        }
+
+                    } else {
+                        alert(result);
+                    }
+                }
+            });
+        }
+
+        function redirectToRegistration() {
+            window.location.href = '/CallCenter/CallQueue/RegisterForEvent?callQueueCustomerId=' + callQueueCustomerId + '&eventId=' + selectedEventId + "&callId=" + callId + "&attemptId=" + attemptId
+                        + "&isGmsCall=" + '@(Model.IsCalledForVici ? false : true)' + "&isViciCall=" + '@Model.IsCalledForVici' + "&previousEventId=" + $("#hfPreviousEventId").val();
+        }
+
+        function getPatientgInfo(customerId) {
+            $.ajax({
+                url: '@Url.Action("GetScreeningInfo")',
+                type: 'GET',
+                cache: false,
+                data: { customerId: customerId }
+            }).done(function (result) {
+                $('#dvScreeningInfo').html(result);
+            });
+        }
+
+        function endActiveCall() {
+
+            if (isCallOutComeSaved) {
+                closeScriptWindow();
+
+                var model = {
+                    CallQueueCustomerId: callQueueCustomerId,
+                    CallId: callId,
+                    SelectedDisposition: selectedDisposition,
+                    CallOutcomeId: selectedCallStatusId,
+                    AttemptId: attemptId
+                };
+
+                $.ajax({
+                    url: '@Url.Action("EndHealthPlanActiveCall")',
+                    type: 'POST',
+                    data: model,
+                    success: function () {
+                        window.location.href = "/CallCenter/CallCenterRepDashboard/Index";
+                    }
+                });
+            } else {
+                alert('Please save Call Outcome before ending call.');
+            }
+        }
+
+        function openScriptWindow(scriptUrl) {
+            var properties = "width=" + Number($(window).width() / 2) + ", height=" + Number($(window).height()) + ", resizable=1, scrollbars=1";
+            isScriptOpen = true;
+            if (scriptUrl != null && scriptUrl != '') {
+                scriptPopup = window.open(scriptUrl, "Call Center Script", properties);
+
+                window.localStorage.setItem("isScriptOpen", true);
+                window.localStorage.setItem('scriptUrl', scriptUrl);
+                checkScriptPopupOpen();
+            }
+        }
+
+        function checkScriptPopupOpen() {
+            if (scriptPopup && scriptPopup.closed) {
+                window.localStorage.setItem("isScriptOpen", false);
+                window.localStorage.removeItem("scriptUrl");
+            } else {
+                window.setTimeout(checkScriptPopupOpen, 500);
+            }
+        }
+
+        function closeScriptWindow() {
+            if (isScriptOpen && scriptPopup != null) {
+                scriptPopup.close();
+            }
+        }
+
+        function startOutboundCall(url, patientPhoneNumber) {
+            $.ajax({
+                url: '@Url.Action("UpdateCallersPhoneNumber")' + '?callId=' + callId + '&patientPhoneNumber=' + patientPhoneNumber,
+                type: 'GET',
+                success: function (result) {
+                    if (result == '@Boolean.TrueString') {
+                        window.open(url, '_blank');
+                    } else {
+                        alert(result);
+                    }
+                }
+            });
+        }
+
+        function getPreQualificationQuestion(templateIds) {
+
+            if ($('#hfIsSearchNonMammoEvent').val() == 'Yes') {
+                redirectToRegistration();
+                return;
+            }
+
+            var templateIdsArray = templateIds.split(',');
+            $(".saveWaitAnimationnew").show();
+            $.ajax({
+                url: '/CallCenter/CallQueue/GetPreQualificationQuestion',
+                type: 'POST',
+                cache: false,
+                data: { templateIds: templateIdsArray },
+                traditional: true,
+            }).done(function (result) {
+                $('#div_preQualificationQuestion').html(result);
+                if ($("input[type='hidden'][id='hfQuestionIdAnswerTestId']").val() == "") {
+                    $.ajax({
+                        url: '/CallCenter/CallQueue/GetEventCustomerQuestionAnswer',
+                        type: 'GET',
+                        cache: false,
+                        data: { customerId: customerId }
+                    }).done(function (data) {
+                        AnswerFilled(data);
+                    });
+                }
+                else {
+                    var prefilledQuestions = $("input[type='hidden'][id='hfQuestionIdAnswerTestId']").val();
+                    AnswerFilled(prefilledQuestions);
+                }
+                $('#div_preQualificationQuestion').dialog('open');
+                $(".saveWaitAnimationnew").hide();
+            });
+        }
+
+
+        var resultObject;
+        var disqualifiedTest = '';
+
+        $(document).ready(function () {
+            $('#div_preQualificationQuestion').dialog({
+                autoOpen: false, modal: true, width: 570, height: 330, closeOnEscape: false, open: function (event, ui) {
+                    //$(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                }, buttons: {
+                    'Save': function () {
+
+                        resultObject = CommonFunctionOfDisqualified();
+
+                        if (resultObject.isComplete == false) {
+                            alert("You have to attempt all Questions.");
+                            return;
+                        }
+
+                        if (resultObject.isComplete) {
+
+                            SaveDisqualifedTest();
+                        }
+                    }
+                }
+            });
+        });
+
+        function SaveDisqualifedTest() {
+            $("input[type='hidden'][id='hfQuestionIdAnswerTestId']").val(resultObject.answerStr);
+
+            var disqualifedTest = CheckIsEligibleForTest(resultObject.answerStr, $("#hfAllowNonMammoPatients").val());
+
+            $("input[type='hidden'][id='hfDisqualifedTest']").val(disqualifedTest);
+
+            var model = {
+                CustomerId: customerId,
+                EventId: selectedEventId,
+                QuestionAnswerTestIds: resultObject.answerStr,
+                DisqualifiedTests: disqualifedTest
+            };
+
+            $.ajax({
+                url: '/CallCenter/CallQueue/SavePreQualificationAnswers',
+                type: 'POST',
+                cache: false,
+                data: JSON.stringify(model),
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+            }).done(function () {
+                resultObject.answerStr = '';
+
+                $('#div_preQualificationQuestion').dialog('close');
+
+                if (isRedirectNonMammo == 'Yes') {
+                    alert("You are not eligible for " + $(".testName").html() + ".");
+                    $('#hfIsSearchNonMammoEvent').val(isRedirectNonMammo);
+                    $('#hfPreviousEventId').val(selectedEventId);
+
+                    getNonMammoEventList();
+                    // __doPostBack('redirectNonMammoEvent', '');
+                }
+                else if (isRedirectNonMammo == 'Continue') {
+                    alert("You are not eligible for " + $(".testName").html() + ".");
+                    redirectToRegistration();
+                    //getNonMammoEventList();
+                }
+                else {
+                    if (disqualifedTest != '') {
+                        alert("You are not eligible for " + $(".testName").html() + ".");
+                        $('#hfIsSearchNonMammoEvent').val('Yes');
+                        $('#hfPreviousEventId').val(selectedEventId);
+                        getNonMammoEventList();
+                    }
+                    else {
+                        redirectToRegistration();
+                    }
+                }
+            });
+        }
+        function getTemplateIds() {
+            var templateIdString = "";
+            $.ajax({
+                url: '@Url.Action("GetPreQualificationTemplateIds")',
+                type: 'GET',
+                cache: false,
+                data: { customerId: customerId, eventId: selectedEventId }
+            }).then(function (result) {
+                templateIdString = result;
+            });
+            return templateIdString;
+        }
+
+        function getNonMammoEventList() {
+
+            pageNumber = 1;
+            var filter = {
+                ZipCode: $("#dvEventList input[name*='ZipCode']").val(),
+                Radius: $("#dvEventList select[name*='Radius']").val(),
+                City: $("#dvEventList input[name*='City']").val(),
+                State: $("#dvEventList select[name*='State']").val(),
+                PageNumber: pageNumber,
+                HealthPlanId: healthPlanId,
+                SortByOrder: $("input[type='hidden'][name*='SortByOrder']").val(),
+                SortOrderType: $("input[type='hidden'][name*='SortOrderType']").val(),
+                SearchMammoEvents: false,
+                CustomerZipCode: $("input[type='hidden'][id*='CustomerZipcodeHiddenField']").val(),
+                CustomerId: customerId
+
+            };
+
+
+            $.ajax({
+                url: '@Url.Action("GetEventList")',
+                type: 'POST',
+                cache: false,
+                data: filter
+            }).done(function (result) {
+                $('#dvEventList').html(result);
+                if ('@Model.PatientInfomation.HasMammo' == '@Boolean.TrueString') {
+                    $('#showAllCheckbox').show();
+                    $('#mammo-message-text').show();
+                }
+                //if (!filter.SearchMammoEvents)
+                //    $('#chkShowAll').attr("checked", true);
+                //else {
+                //    $('#chkShowAll').attr("checked", false);
+                //}
+            });
+        }
+
+
+
+    </script>
+}
+
+
+<style>
+    body {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+    }
+
+    #list-view .tag, #list-view .history {
+        width: 125px;
+    }
+
+    .small-section {
+        border: 1px solid #cdcdcd;
+        border-radius: 5px;
+        overflow: hidden;
+        padding: 0 0 5px;
+        margin-bottom: 15px;
+        margin-left: 5px;
+    }
+
+    .small-section-inner {
+        padding: 10px;
+        /*min-height: 210px;*/
+    }
+
+        .small-section-inner b {
+            margin-right: 4px;
+        }
+
+        .small-section-inner label, .small-section-inner .table > thead > tr > th {
+            font-weight: 500;
+        }
+
+        .small-section-inner .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+
+        .small-section-inner div.pager .page-nav {
+            float: none;
+            width: auto;
+        }
+
+        .small-section-inner .outcome {
+            margin-right: 50px !important;
+            padding: 10px 0 !important;
+        }
+
+        .small-section-inner p, .small-section-inner span {
+            font-weight: 300;
+        }
+
+        .small-section-inner textarea {
+            width: 100%;
+        }
+
+    .small-section h2 {
+        background: none repeat scroll 0 0 #efefef;
+        border-bottom: 1px solid #cdcdcd;
+        color: #4292b0;
+        font-size: 10pt;
+        margin: 0 0 5px;
+        padding: 4px 10px;
+    }
+
+    .small-section .contact-screen-no-event {
+        font-size: 17px;
+        padding: 5px;
+    }
+
+    .middivrow_regcust a.glyphicon {
+        font-family: "Glyphicons Halflings";
+        text-decoration: none;
+        margin-top: 7px;
+        font-size: 16px;
+    }
+
+    .info-row {
+        display: block;
+        width: 100%;
+        margin: 5px 0 12px 0;
+        overflow: overlay;
+        float: left;
+    }
+
+    .info-text-col-25 {
+        width: 24%;
+        float: left;
+    }
+
+    .info-text-col-33 {
+        width: 33%;
+        float: left;
+    }
+
+    .info-text-col-50 {
+        width: 50%;
+        float: left;
+    }
+
+    .info-text-col-100 {
+        width: 98%;
+        float: left;
+    }
+
+    b {
+        font-weight: 700;
+    }
+
+    .info-heading {
+        color: #616161;
+        font-size: 15px;
+    }
+
+    fieldset {
+        margin-left: 5px;
+        border-radius: 5px;
+        border-color: #fefefe;
+        margin-bottom: 10px;
+    }
+    /* tab content css start*/
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 16px;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+    /* tab content css end*/
+    #dvCallHistoryDetails table {
+        border-collapse: collapse;
+    }
+
+        #dvCallHistoryDetails table tr {
+            padding: 3px;
+            border-bottom: 1px solid goldenrod;
+            margin-bottom: 2px;
+        }
+
+        #dvCallHistoryDetails table th, #dvCallHistoryDetails table td {
+            text-align: left;
+            padding: 10px 5px;
+        }
+
+    .row-border {
+        overflow-y: auto;
+        height: 230px;
+    }
+
+    .draw-line {
+        border: solid 0.5px burlywood;
+        width: 100%;
+        margin: 5px 0 15px 0;
+        clear: both;
+    }
+
+    textarea {
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    label {
+        display: block;
+        padding-bottom: 5px;
+    }
+
+    input[type='text'], select, textarea {
+        padding: 8px;
+        border-radius: 3px;
+        border: solid 1px #9f9f9f;
+        width: 94%;
+    }
+
+        input[disabled], select[disabled] {
+            background-color: #eee;
+        }
+
+    .pull-right {
+        float: right;
+        margin-left: 10px;
+    }
+
+    input[type='button'], input[type='submit'], button {
+        padding: 5px 15px;
+    }
+
+    .ui-datepicker-month, .ui-datepicker-year {
+        padding: 0px;
+    }
+
+    #ui-datepicker-div {
+        font-size: 13px;
+    }
+
+    .reqiredmark, .required-span {
+        color: red;
+    }
+
+    .required-field {
+        border: 1px solid red;
+    }
+
+    /*#consentDiv label {
+        display: inline;
+    }
+
+    .consentLabel{
+        width: 140px;
+         padding-left: 20px;
+        padding-right: 20px;
+    }*/
+</style>
+
+<link href="/App/jquery/css/JQuery-Selectable/Selectable.css" rel="stylesheet" />
+<link href="/App/jquery/css/AutoComplete/auto-search.css" rel="stylesheet" />
+<h1>
+    Outbound Call <span>@Model.PatientInfomation.FirstName</span> <span>@Model.PatientInfomation.LastName</span>
+    @if (!string.IsNullOrEmpty(Model.PatientInfomation.HealthPlan))
+    { <span> | @Model.PatientInfomation.HealthPlan</span> }
+
+    @if (Model.IsCalledForVici && !string.IsNullOrEmpty(Model.PatientInfomation.CallCenterScriptUrl))
+    {
+        <div class="clearfix row" style="text-align: right; float: right;">
+            <div class="col-sm-12">
+                <button style="font-size: 15px;" href="javascript:void(0);" onclick="openScriptWindow('@Model.PatientInfomation.CallCenterScriptUrl');">View Script</button>
+            </div>
+        </div>
+    }
+</h1>
+
+@if (Model.WarmTransfer)
+{
+    <div style="color: #4F8A10; background-color: #DFF2BF; padding: 10px; border: 1px solid #4f8a10; margin: 5px; width: 940px; font-weight: bold; font-style: italic">
+        "This patient is eligible for home visit transfer"
+    </div>
+}
+
+<div id="dvPatientInfo">
+    @Html.Partial("GetPatientInfo", Model)
+</div>
+@*<div id="dvScreeningInfo">
+
+    </div>*@
+
+
+@*<div id="dvReadAndUnderstood" style="padding:4px">
+        $1$<input type="checkbox" id="chkReadAndUnderstood" onchange="setReadAndUnderstood();" />#1#
+        @if (Model.ReadAndUnderstood)
+        {
+            @Html.CheckBoxFor(m => m.ReadAndUnderstood, new { @id = "chkReadAndUnderstood", @onclick = "setReadAndUnderstood();", disabled = "disabled" })
+        }
+        else
+        {
+            @Html.CheckBoxFor(m => m.ReadAndUnderstood, new { @id = "chkReadAndUnderstood", @onclick = "setReadAndUnderstood();" })
+        }
+        <b>I have read and understood these notes</b>
+    </div>*@
+
+
+<div id="dvCallHistoryDetails" style="margin-left: 5px; margin-bottom: 15px;">
+
+</div>
+
+<div id="dvCallOutCome">
+
+</div>
+
+<div id="dvEventList">
+
+</div>
+
+
+<div class="row" style="margin-right: 2px;margin-top: 14px">
+    <div class="pull-right">
+        <button type="button" onclick="endActiveCall(false)">End Call</button>
+    </div>
+    @*<div class="pull-right margin-right-10">
+            <button type="button" onclick="saveSkipCallNotes()">Skip Call</button>
+        </div>*@
+</div>
+
+<input type="hidden" id="hfTemplateIds" />
+<input type="hidden" id="hfQuestionIdAnswerTestId" />
+<input type="hidden" id="hfDisqualifedTest" />
+<input type="hidden" id="hfAllowNonMammoPatients" />
+<input type="hidden" id="hfIsSearchNonMammoEvent" />
+<input type="hidden" id="hfPreviousEventId" value="0" />
+
+<div class="saveWaitAnimationnew" style="display: none">
+</div>
+<div id="div_preQualificationQuestion" title="Pre Qualification Test Questions" style="display: none; background: #fff; padding: 10px;">
+</div>
+

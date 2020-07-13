@@ -1,0 +1,35 @@
+﻿<div style="padding: 10px;" >
+    <fieldset>
+        <legend> Order Details/Payment Details </legend>
+        <div id="ViewOrderDetailsDialogDiv">
+            <div id="ViewOrderDetailsTemplateDiv">
+                <customer-order-detail></customer-order-detail>
+            </div>
+            <br />
+            <div id="ViewPaymentDetailsTemplateDiv" ng-if="PaymentTotal > 0">
+                <customer-payment-detail></customer-payment-detail>
+            </div>
+            <br />
+            <h4 class="rgt orngbold16_default">
+                Amount Due:  {{AmountOwed | currency}}
+            </h4>
+        </div>
+        <div class="col-sm-12">
+            <button class="pull-right" ng-click="ClosePopup()">Close</button>
+        </div>
+    </fieldset>
+</div>
+<style >
+    .divgrid_cl .smalltxt11 {
+        background: #EFF8FD;
+        font: normal 11px arial;
+        color: #333;
+        vertical-align: top;
+    }
+    .divgrid_cl .smalltxt12 {
+        background: #F8FCFF;
+        font: normal 11px arial;
+        color: #333;
+        vertical-align: top;
+    }
+</style>

@@ -1,0 +1,148 @@
+﻿@using System
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Medical.ViewModels.LoincLabDataViewModel
+
+@{
+    const int maxRowCount = 24;
+}
+
+<style>
+    .loinc-lab-data .full-width {
+        float: left;
+        width: 99%;
+        margin-bottom: 25px;
+        clear: both;
+    }
+
+    .lab-data-container {
+        width: 99%;
+        border: 1px solid black;
+        font-size: 12pt;
+        clear: both;
+        float: left;
+    }
+
+    .loinc-lab-data .three-in-row {
+        width: 31%;
+        float: left;
+        padding: 10px 0 10px 4px;
+        margin-left: 15px;
+    }
+
+    .loinc-lab-data .label {
+        font-weight: bold;
+    }
+
+    .lab-data {
+        width: 96%;
+        border: solid 1px #ababab;
+        border-collapse: collapse;
+        margin: 22px;
+    }
+
+        .lab-data tr {
+            border-bottom: 1px solid #cdcdcd;
+        }
+
+        .lab-data td {
+            padding: 5px;
+            border-width: 0px;
+            border: none;
+            font-size: 11pt;
+            vertical-align: top;
+        }
+
+        .lab-data th {
+            background: #dedede;
+            border-bottom: #ababab;
+            text-align: left;
+            padding: 5px;
+            font-size: 12pt;
+        }
+</style>
+
+<div class="loinc-lab-data" style="float: left; clear: both; width: 100%; font-size: 18px; margin-top: 30px;">
+    <div class="full-width" style="font-size:18px; text-align:center;">
+        <b style="text-decoration: underline;">Patient Lab Data</b>
+    </div>
+    <div class="lab-data-container">
+        <div id="header">
+            <div style="float: left; clear: both; width: 99%; margin-top: 20px;">
+                <div class="three-in-row" style="width: 40%;">
+                    <span class="label">Patient Name : </span>@Model.Name
+                </div>
+                <div class="three-in-row" style="width: 26%;">
+                    <span class="label">DOB : </span>@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("MM/dd/yyyy") : "")
+                </div>
+                <div class="three-in-row" style="width: 26%;">
+                    <span class="label">Patient ID : </span>@Model.CustomerId
+                </div>
+            </div>
+            <div style="float: left; clear: both; width: 99%;">
+                <div class="three-in-row" style="width: 40%;">
+                    <span class="label">Member ID : </span>@Model.MemberId
+                </div>
+                <div class="three-in-row" style="width: 26%;">
+                    <span class="label">GMPI : </span>@Model.Gmpi
+                </div>
+                <div class="three-in-row" style="width: 26%;">
+                    <span class="label">Gender : </span>@Model.Gender.GetDescription()
+                </div>
+            </div>
+            <div style="float: left; clear: both; width: 99%;">
+                <div class="three-in-row" style="width: 40%;">
+                    <span class="label">Event ID : </span>@Model.EventId
+                </div>
+            </div>
+        </div>
+        <div style="float: left; clear: both; width: 99%;">
+            <table class="lab-data">
+                <thead>
+                    <tr>
+                        <th style="width: 15%">LOINC Code</th>
+                        <th style="width: 20%">LOINC Description</th>
+                        <th style="width: 20%">Results Value</th>
+                        <th style="width: 15%">Results Units</th>
+                        <th style="width: 15%">Ref Range</th>
+                        <th style="width: 10%">DoS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var index = 0;}
+                    @foreach (var labData in Model.LabDataList)
+                    {
+                        if (index >= maxRowCount)
+                        {
+                            index = 0;
+                            @Html.Raw("</tbody></table></div></div></div>")
+                            @Html.Raw("<div class='loinc-lab-data' style='float: left; clear: both; width: 99%; font-size: 18px; margin-top: 50px; page-break-before: always;'>")
+                            @Html.Raw("<div class='full-width' style='font-size:18px; text-align:center; margin-top: 30px;'><b style='text-decoration: underline;'>Patient Lab Data</b></div>")
+                            @Html.Raw("<div class='lab-data-container'>")
+                            @Html.Raw("<div class='page-break-header'></div>")
+                            @Html.Raw("<div style='float: left; clear: both; width: 99%;'><table class='lab-data'><thead><tr>")
+                            @Html.Raw("<th style='width: 15%'>LOINC Code</th><th style='width: 20%'>LOINC Description</th><th style='width: 20%'>Results Value</th><th style='width: 15%'>Results Units</th><th style='width: 15%'>Ref Range</th><th style='width: 10%'>DoS</th>")
+                            @Html.Raw("</tr></thead><tbody>")
+                        }
+                        <tr>
+                            <td>@labData.Loinc </td>
+                            <td>@labData.LongDescription</td>
+                            <td>@labData.ResultValue</td>
+                            <td>@labData.ResultUnits</td>
+                            <td>@labData.RefRange</td>
+                            <td>@(labData.DoS.HasValue ? labData.DoS.Value.ToString("MM/dd/yyyy") : "N/A")</td>
+                        </tr>
+                        index += (labData.LongDescription.Length > 0 ? (int)Math.Ceiling((double)labData.LongDescription.Length / 37) : 1);
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    copyHeader();
+
+    function copyHeader() {
+        $(".page-break-header").html($("#header").html());
+    }
+</script>

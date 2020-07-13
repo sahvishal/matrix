@@ -1,0 +1,112 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Sales.ViewModels
+
+@model CustomTagEditViewModel
+
+@{
+    ViewBag.Title = "Create Custom Tag";
+}
+<h1>
+    Create Custom Tag
+</h1>
+<div class="option-links">
+    <a href="/Sales/CorporateAccount/ManageCustomTag">Manage Custom Tag </a>
+</div>
+@if (Model.FeedbackMessage != null)
+{
+    @Html.Partial("Message", Model.FeedbackMessage)
+}
+@{Html.BeginForm();}
+<div class="editor-row">
+    <div style="width: 100%;float: left">
+        @Html.HiddenFor(m => m.TagId)
+        <fieldset>
+            @if (Model.TagId > 0)
+            {
+                 @Html.HiddenFor(m => m.CustomTag)
+                @Html.HiddenFor(m => m.HealthPlanId)
+                <div class="editor-row">
+                    <div class="editor-label">
+                        Custom Tag :
+                    </div>
+                    @Html.TextBoxFor(m => m.CustomTag, new { @style = "width:25%;", @disabled = "disabled" })
+                </div>
+                <br />
+                <div class="editor-row">
+                    <div class="editor-label">
+                        Health Plan :
+                    </div>
+                    
+                    @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:25%;", @disabled="disabled"})
+                </div>
+                <br />
+                <div class="editor-row">
+                    @if (Model.StartDate.Value.Date >= DateTime.Now.Date)
+                    {
+                        <div class="editor-label">
+                            Start Date : @Html.ValidationMessageFor(m => m.StartDate)
+                        </div>
+                        @Html.TextBoxFor(m => m.StartDate, new { @class = "datePicker", @style = "width:25%;"})
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.StartDate)
+                        <div class="editor-label">
+                            Start Date :
+                        </div>
+                        @Html.TextBoxFor(m => m.StartDate, new { @style = "width:25%;", @disabled = "disabled" , @Value =@Model.StartDate.Value.ToString("MM/dd/yyyy")} )
+                    }
+                </div>
+                <br />
+                <div class="editor-row">
+                    <div class="editor-label">
+                        End Date : @Html.ValidationMessageFor(m => m.EndDate)
+                    </div>
+                    @Html.TextBoxFor(m => m.EndDate, new { @class = "datePicker", @style = "width:25%;" })
+                </div>
+            }
+            else
+            {
+                <div class="editor-row">
+                    <div class="editor-label">
+                        Custom Tag : @Html.ValidationMessageFor(m => m.CustomTag)
+                    </div>
+                    @Html.TextBoxFor(m => m.CustomTag, new { @style = "width:25%;" })
+                </div>
+                <br />
+                <div class="editor-row">
+                    <div class="editor-label">
+                        Health Plan : @Html.ValidationMessageFor(m => m.HealthPlanId)
+                    </div>
+                    @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:25%;" })
+                </div>
+                <br />
+                <div class="editor-row">
+                    <div class="editor-label">
+                        Start Date : @Html.ValidationMessageFor(m => m.StartDate)
+                    </div>
+                    @Html.TextBoxFor(m => m.StartDate, new { @class = "datePicker", @style = "width:25%;" })
+
+                </div>
+                <br />
+                <div class="editor-row">
+                    <div class="editor-label">
+                        End Date : @Html.ValidationMessageFor(m => m.EndDate)
+                    </div>
+                    @Html.TextBoxFor(m => m.EndDate, new { @class = "datePicker", @style = "width:25%;" })
+                </div>
+            }
+            <div class="editor-row">
+                <div class="submit-button-row">
+                    <a href="/Sales/CorporateAccount/ManageCustomTag">Close</a> &nbsp;&nbsp; @Html.SubmitButton("Save Custom Tag")
+                </div>
+            </div>
+
+        </fieldset>
+    </div>
+</div>
+@{Html.EndForm();}
+
+<script type="text/javascript">
+    $("#StartDate").datepicker("option", "dateFormat", "mm/dd/yyyy");
+</script>

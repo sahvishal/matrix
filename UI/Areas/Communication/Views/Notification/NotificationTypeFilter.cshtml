@@ -1,0 +1,67 @@
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Communication.ViewModels.NotificationTypeListFilter
+<h2>
+    Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Name:</div>
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+    <div class="editor-column" style="width: 25%;">
+        <div class="small-text">
+            &nbsp;
+        </div>
+        <b>Serving:&nbsp;</b>
+        <input type="radio" name="serving-radio" onclick="setServiceEnabled();" @(Model.IsServiceEnabled == null ? "checked=checked" : "") />&nbsp;All&nbsp;&nbsp;
+        <input type="radio" name="serving-radio" onclick="setServiceEnabled(true);" @(Model.IsServiceEnabled != null && Model.IsServiceEnabled.Value ? "checked=checked" : "") />&nbsp;Yes&nbsp;&nbsp;
+        <input type="radio" name="serving-radio" onclick="setServiceEnabled(false);" @(Model.IsServiceEnabled != null && !Model.IsServiceEnabled.Value ? "checked=checked" : "") />&nbsp;No
+        @Html.HiddenFor(x => x.IsServiceEnabled)
+    </div>
+    <div class="editor-column" style="width: 25%;">
+        <div class="small-text">
+            &nbsp;
+        </div>
+        <b>Queuing:&nbsp;</b>
+        <input type="radio" name="queuing-radio" onclick="setQueuingEnabled();" @(Model.IsQueuingEnabled == null ? "checked=checked" : "") />&nbsp;All&nbsp;&nbsp;
+        <input type="radio" name="queuing-radio" onclick="setQueuingEnabled(true);" @(Model.IsQueuingEnabled != null && Model.IsQueuingEnabled.Value ? "checked=checked" : "") />&nbsp;Yes&nbsp;&nbsp;
+        <input type="radio" name="queuing-radio" onclick="setQueuingEnabled(false);" @(Model.IsQueuingEnabled != null && !Model.IsQueuingEnabled.Value ? "checked=checked" : "") />&nbsp;No
+        @Html.HiddenFor(x => x.IsQueuingEnabled)
+    </div>
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align: right;">
+        @Html.ActionLink("Clear", "Index", "Notification") | @Html.SubmitButton("Search")
+    </div>
+    <script language="javascript" type="text/javascript">
+        function setServiceEnabled(isChecked) {
+            if (isChecked == null)
+                $("#IsServiceEnabled").val("");
+            else 
+                $("#IsServiceEnabled").val(isChecked);
+        }
+
+        function setQueuingEnabled(isChecked) {
+            if (isChecked == null)
+                $("#IsQueuingEnabled").val("");
+            else
+                $("#IsQueuingEnabled").val(isChecked);
+        }
+        function setMediumFilter(notificationMediumValue) {
+            if (notificationMediumValue == 0)
+                $("#NotificationMedium").val(0);
+            else
+                $("#NotificationMedium").val(notificationMediumValue);
+        }
+    </script>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 30%;margin-left: 198px">
+        <div class="small-text">
+            &nbsp;
+        </div>
+        <b>Medium:&nbsp;</b>
+        <input type="radio" name="medium-radio" onclick="setMediumFilter();" @(Model.NotificationMedium == 0 ? "checked=checked" : "") />&nbsp;All&nbsp;&nbsp;
+        <input type="radio" name="medium-radio" onclick="setMediumFilter(1);" @(Model.NotificationMedium == 1 ? "checked=checked" : "") />&nbsp;Email&nbsp;&nbsp;
+        <input type="radio" name="medium-radio" onclick="setMediumFilter(3);" @(Model.NotificationMedium == 3 ? "checked=checked" : "") />&nbsp;Sms&nbsp;&nbsp;
+        @Html.HiddenFor(x => x.NotificationMedium)
+    </div>
+</div>

@@ -1,0 +1,34 @@
+﻿@model Falcon.App.Core.Application.ViewModels.FileModel
+@{
+    var showRemove = Model != null && (!string.IsNullOrEmpty(Model.FileName) || Model.Id > 0);
+    var fileTypeExtention = ViewData["fileTypeExtention"] != null ? (string)ViewData["fileTypeExtention"] : string.Empty;
+
+}
+<div id="@(ViewData.TemplateInfo.HtmlFieldPrefix)" class="image-container">
+    <div id="@(ViewData.TemplateInfo.HtmlFieldPrefix)-filemodeldiv">
+        <div id="@(ViewData.TemplateInfo.HtmlFieldPrefix)-fileuploader">
+            <noscript>
+                <p>
+                    Please enable JavaScript to use file uploader.
+                </p>
+            </noscript>
+        </div>
+        <div class="file-display-div">
+            @Html.Partial("FileView", Model)
+        </div>
+        @Html.EditorForModel()
+    </div>
+</div>
+<script type="text/javascript">
+    var allowedExts=[];
+    @if (!string.IsNullOrEmpty(fileTypeExtention))
+    {
+        var allowedExts = fileTypeExtention.Split(',');
+        foreach (string ext in allowedExts)
+        {
+            <text>allowedExts.push('@ext')</text>
+        }
+    }
+    
+    fu_createUploader('@(ViewData.TemplateInfo.HtmlFieldPrefix)', allowedExts);
+</script>

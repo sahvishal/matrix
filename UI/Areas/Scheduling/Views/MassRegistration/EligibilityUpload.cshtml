@@ -1,0 +1,65 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@model CustomerEligibilityUploadEditModel
+@{
+    ViewBag.Title = "Eligibility Upload";
+    var sampleUrl=IoC.Resolve<IMediaRepository>().GetSamplesLocation().Url;
+}
+<h2>
+    Eligibility Upload (*.csv)
+</h2>
+
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{Html.BeginForm("EligibilityUpload", "MassRegistration", FormMethod.Post, new { enctype = "multipart/form-data" });}
+
+<div style="float: left; width: 80%; margin-right: 5px; padding: 1%">
+    <div class="editor-row">
+        <label>Corporate Account:</label>
+        @Html.DropDownListFor(m => m.CorporateAccountId, DropDownHelper.GetCorporateAccounts())
+        <input type="button" value="Select" onclick="CheckCorporateAccount();" />
+    </div>
+    <div class="editor-row account-detail" id="upload-div" style="display: none; margin-top: 20px;">
+        Upload file:
+        <input type="file" name="EligibilityUploadFile" />
+        <input type="submit" id="FileSubmit" value="Upload" onclick="checkUploadFile();" />
+        <a style="margin-left: 20px;" href='@(sampleUrl + "Eligibility_Upload_Sample.csv")'>Sample CSV</a>
+        <h4 style="width:250px;"> Please upload a csv file! </h4>
+    </div>
+    <div id="parse-in-progress-div" style="display: none;">
+        <br /><h4 style="width:250px;"> Upload in progress </h4><br />
+        <img src="/Content/Images/pbar-ani.gif" style="width:400px; height: 40px;" />
+    </div>
+</div>
+<div class="editor-row account-detail" style="display : none;clear:both;float: left;margin: 10px;">
+    <b>Instruction:</b>
+    <ul>
+        <li>
+            Refer to the "Sample CSV" file to view the format for file to be uploaded.
+        </li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+
+    function checkUploadFile() {
+        $("#upload-div").hide();
+        $("#parse-in-progress-div").show();
+        return true;
+    }
+
+    function CheckCorporateAccount() {
+        var accountId = parseInt($("#CorporateAccountId").val());
+        if (accountId > 0) {
+            $(".account-detail").show();
+        } else {
+            $(".account-detail").hide();
+            alert("Please select  corporate account.");
+        }
+    }
+</script>
+@{Html.EndForm();}

@@ -1,0 +1,211 @@
+﻿@using System
+@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.AddNotesListModel
+@{
+    ViewBag.Title = (Model.Filter.Id <= 0 ? "Add" : "Edit") + " Event Notes";
+}
+
+<style type="text/css">
+    .margin-5 {
+        margin: 10px !important;
+        width: 278px;
+        float: left;
+    }
+
+    .event-row {
+        float: left;
+        clear: both;
+    }
+
+    .checkbox-div {
+        float: left;
+        width: 10%;
+    }
+
+    .event-div {
+        float: left;
+        width: 90%;
+    }
+</style>
+
+<h2>
+    @(Model.Filter.Id <= 0 ? "Add" : "Edit") Event Notes
+    <span style="float: right; font-size:12px;">
+        <a href="/Scheduling/Event/ManageEventNotes">Manage Event Notes</a>
+    </span>
+</h2>
+
+@if (Model != null)
+{
+    if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Error)
+    {
+        @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+    }
+
+    <div id="list-filter">
+        @{Html.BeginForm("AddEventNotes", "Event", FormMethod.Get);}
+        @Html.Partial("AddNotesModelFilter", new ViewDataDictionary(Model.Filter))
+        @{Html.EndForm();}
+    </div>
+}
+
+@{Html.BeginForm("AddEventNotes", "Event", FormMethod.Post, new { @id = "event_selection_form" });}
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.HiddenFor(m => m.Filter.HealthPlanId)
+    @Html.HiddenFor(m => m.Filter.EventDateFrom)
+    @Html.HiddenFor(m => m.Filter.EventDateTo)
+    @Html.HiddenFor(m => m.Filter.PodId)
+    @Html.HiddenFor(m => m.Filter.Id)
+    @Html.HiddenFor(m => m.Note)
+    @Html.HiddenFor(m => m.IsPublish)
+    @Html.HiddenFor(m => m.EventIds)
+    <div class="row" style="margin-top:10px;">
+        @Html.CheckBoxFor(m => m.AllSelected, new { @onclick = "selectAll(this);" }) Select All
+    </div>
+    <fieldset style="margin: 10px 0 10px 0;">
+        <legend><b>Events</b></legend>
+        <div class="editor-row" style="max-height: 500px; overflow:auto;">
+            @{ var count = 0;}
+            <div class="event-row">
+                @foreach (var item in Model.Collection)
+                {
+                    count++;
+                    <div class="events margin-5">
+                        <div class="checkbox-div">
+                            @Html.CheckBoxFor(m => item.IsSelected, new { @onclick = "selectEvent(this);" })
+                        </div>
+                        <div class="event-div">
+                            <b>Event Id : </b>@item.EventId<br />
+                            @Html.HiddenFor(x => item.EventId)
+                            <span><b>Event Date : </b>@item.EventDate.ToShortDateString()</span><br />
+                            <span><b>Host : </b>@item.HostName</span><br />
+                            <span><b>Pod : </b>@item.PodNames()</span><br />
+                            <span><b>Health Plan : </b>@item.HealthPlan</span>
+                        </div>
+                    </div>
+                    if (count % 3 == 0)
+                    {
+                        @Html.Raw("</div><div class='event-row'>")
+                    }
+                }
+            </div>
+        </div>
+    </fieldset>
+    <div class="row" style="margin-top:10px;">
+        <div class="note-submit-buttons" style="padding-top:20px; float:right;">
+            <input type="button" style="float: right;" value="Click to @(Model.Filter.Id <= 0 ? "Add" : "Edit") Notes" onclick="openAddNotesPopup();" />
+            <a style="float: right; margin-right:10px;" href="/Scheduling/Event/ManageEventNotes">Close</a>
+        </div>
+        <div class="note-submit-buttons" style="display: none; padding-top:20px; text-align: right;">
+            <img src="/App/Images/loading.gif" alt="" />Updating
+        </div>
+    </div>
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+<div id="add-note-dialog" style="display: none;">
+    <div>
+        <div class="small-text">
+            Notes : <span id="notes_required_validation" style="display: none; color: red;">Required</span><br />
+            <span id="eventIds" style="display:none;"></span>
+        </div>
+        <textarea type="text" id="notes" style="width: 100%; height: 300px; border: "></textarea>
+    </div>
+    <div class="add-note-buttons" style="padding-top:20px; float:right;">
+        <button id="close-add-note" style="width: 70px; height: 25px;" onclick="closeAddNotePopup();">
+            Cancel
+        </button>
+        <button id="save-add-note" style="width: 70px; height: 25px;" onclick="saveNote(false);">
+            Save
+        </button>
+        <button id="publish-add-note" style="width: 70px; height: 25px;" onclick="saveNote(true)">
+            Publish
+        </button>
+    </div>
+</div>
+
+@{Html.EndForm();}
+
+@section scripts {
+    <script type="text/javascript">
+        var tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        $(".eventFilterDate").val(function (index, value) { return value.indexOf(" ") > 0 ? value.substr(0, value.indexOf(" ")) : value; }).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            minDate: tomorrow
+        });
+
+        function selectAll(element) {
+            if ($(element).is(':checked')) {
+                $('.events').find('input[type="checkbox"]').attr('checked', true);
+            } else {
+                $('.events').find('input[type="checkbox"]').removeAttr('checked');
+            }
+        }
+
+        function selectEvent() {
+            if ($('.events').find('input[type="checkbox"]:not(:checked)').length > 0) {
+                $('input[type="checkbox"][name*="AllSelected"]').attr('checked', false);
+            } else {
+                $('input[type="checkbox"][name*="AllSelected"]').attr('checked', true);
+            }
+        }
+
+        function openAddNotesPopup() {
+            var eventIds = [];
+            $('.events').find('input[type="checkbox"]:checked').each(function (index, item) {
+                var eventId = $(item).closest('div.events').find('input[name*="EventId"]').val();
+                eventIds.push(eventId);
+            });
+            if (eventIds.length > 0) {
+                $("#add-note-dialog #notes").val($('#Note').val());
+                $("#EventIds").val(eventIds.join());
+                $("#add-note-dialog #eventIds").text(eventIds.join());
+                $('#add-note-dialog').dialog('open');
+            }
+            else {
+                alert('Please select atleast one event.');
+            }
+        }
+
+        function closeAddNotePopup() {
+            $('#notes_required_validation').hide();
+            $('#add-note-dialog').dialog('close');
+        }
+
+        function saveNote(isPublish) {
+            var notes = $("#add-note-dialog #notes").val();
+
+            if (notes != null && notes != '') {
+                $('#Note').val(notes);
+                $('#IsPublish').val(isPublish);
+                $('#add-note-dialog').dialog('close');
+                $(".note-submit-buttons").toggle();
+                $('#event_selection_form').submit();
+            } else {
+                $('#notes_required_validation').show();
+            }
+        }
+
+        $(document).ready(function () {
+            if ('@Model.IsSavedSuccessfully' == '@Boolean.TrueString') {
+                alert('Notes saved successfully for selected events.');
+                window.location = "/Scheduling/Event/ManageEventNotes";
+            }
+
+            $('#add-note-dialog').dialog({ width: '500px', autoOpen: false, modal: true, title: '@(Model.Filter.Id <= 0 ? "Add" : "Edit") Event Notes', resizable: false, draggable: true });
+
+            $("#add-note-dialog").bind('dialogclose', function () {
+                $('#notes_required_validation').hide();
+            });
+        });
+    </script>
+}

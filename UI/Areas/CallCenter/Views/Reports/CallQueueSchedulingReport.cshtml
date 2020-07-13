@@ -1,0 +1,124 @@
+﻿@using Falcon.App.Core.Extensions
+@using System.Linq
+@model Falcon.App.Core.CallQueues.ViewModels.CallQueueSchedulingReportListModel
+
+@{
+    ViewBag.Title = "Call Queue Scheduling Report";
+}
+
+<h1>Call Queue Scheduling Report</h1>
+<style>
+    #list-view td {
+        width: 100px !important;
+    }
+</style>
+<script src="/Scripts/reportexportqueue.js"></script>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("CallQueueSchedulingReport", "Reports", FormMethod.Get);}
+    @Html.Partial("CallQueueSchedulingReportFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 2000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/CallCenter/ReportsQueue/CallQueueSchedulingReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                Export CSV
+            </a>
+        }
+        else
+        {
+            <a target="_blank" href="/CallCenter/ExportableReports/CallQueueSchedulingReport?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+
+    </div>
+    var itemList = Model.Collection.ToArray();
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="margin-bottom: 10px; overflow: auto;">
+        <table id="list-view">
+            <tr>
+                <th nowrap>Call Queue</th>
+                <th nowrap>Customer Id</th>
+                <th nowrap>Customer Name</th>
+                <th nowrap>Member Id</th>
+                <th nowrap>DOB</th>
+                <th nowrap>Call Date</th>
+                <th nowrap>Call Start Time</th>
+                <th nowrap>Event Date</th>
+                <th nowrap>Event Id</th>
+                <th nowrap>Health Plan</th>
+                <th nowrap>Tag</th>
+                <th nowrap>Custom Tag(s)</th>
+                <th nowrap>Agent Name</th>
+            </tr>
+            @foreach (var item in itemList)
+            {
+                <tr>
+                    <td> @item.CallQueue</td>
+                    <td> @item.CustomerId </td>
+                    <td> @item.Name</td>
+                    <td> @item.MemberId</td>
+                    <td> @(item.DateOfBirth.HasValue ? item.DateOfBirth.Value.ToShortDateString() : "N/A") </td>
+
+                    <td> @(item.CallDate.ToShortDateString())</td>
+                    <td> @(item.CallTime) </td>
+                    <td> @(item.EventDate.HasValue ? item.EventDate.Value.ToShortDateString() : "N/A")</td>
+                    <td> @item.EventId</td>
+                    <td> @item.HealthPlan</td>
+                    <td> @item.Tag </td>
+                    <td> @item.CustomTags</td>
+                    <td> @item.Agent</td>
+                </tr>
+            }
+        </table>
+
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+
+@section scripts {
+    <link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+        $('.notes-detail').qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: "Notes",
+                text: function (api) {
+                    return $(this).parent().find('.notes-div').html();
+                }
+            },
+            style: {
+                width: '400px'
+            }
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

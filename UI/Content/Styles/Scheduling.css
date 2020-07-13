@@ -1,0 +1,513 @@
+﻿
+body, html, form
+{
+    letter-spacing: 1px;
+    font-size: 10pt;
+}
+.scheduling-main-container
+{
+    float: left;
+    width: 100%;
+}
+.scheduling-container
+{
+    float: left;
+    width: 98%;
+    background-color: #B3D4A7;
+    border: solid 1px #B3D4A7;
+    border-radius: 0px 5px 5px 5px;
+    min-height: 200px;
+    padding: 5px 10px;
+}
+
+.title
+{
+    font-size: 14pt;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.container-row
+{
+    float: left;
+    width: 99%;
+    margin: 10px 0px;
+}
+
+.flowstep-tab-container
+{
+    float: left;
+    width: 98%;
+    margin-top: 10px;
+}
+
+.flowstep-tab
+{
+    float: left;
+    width: 150px;
+    margin-right: 10px;
+    padding: 5px;
+    text-align: center;
+    border: solid 1px #1a5ea1;
+    border-radius: 5px 5px 0px 0px;
+    background-color: #1a5ea1;
+    font-size: 12pt;
+    font-weight: bold;
+    color: #fff;
+}
+
+.active-tab
+{
+    background-color: #B3D4A7;
+    border: solid 1px #B3D4A7;
+    color: #000;
+}
+
+.selected-slot-container
+{
+    padding: 10px;
+    width: 30%;
+    text-align: center;
+    float: right;
+    font-weight: bold;
+    line-height: 18px;
+}
+
+.slot-list-container
+{
+    width: 65%;
+    float: left;
+}
+.slot-list-view
+{
+    width: 100%;
+    float: left;
+    border: solid 2px #ffffff;
+}
+
+.slot-list-view th
+{
+    text-align: left;
+    padding: 5px;
+    background-color: #1a5ea1;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+}
+.slot-list-view td
+{
+    text-align: left;
+    padding: 10px 5px;
+    background-color: #fff;
+}
+
+.slot-list-view span
+{
+    text-align: center;
+}
+
+.slot-list-view span.round-button
+{
+    float: left;
+    width: 40px;
+}
+.slot-list-view span.slot-time
+{
+    float: left;
+    width: 80px;
+    padding-top: 5px;
+}
+
+.slot-list-view span.select-button
+{
+    float: left;
+    width: 150px;
+}
+.ol-list-view
+{
+    width: 100%;
+    border: solid 2px #ffffff;
+}
+.ol-list-view th
+{
+    text-align: left;
+    padding: 5px;
+    background-color: #1a5ea1;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+}
+.ol-list-view td
+{
+    text-align: left;
+    vertical-align: top;
+    padding: 5px;
+    background-color: #fff;
+    border: solid 1px #48A842;
+}
+
+input[type="text"]
+{
+    height: 20px;
+    border: solid 1px #fff;
+    min-width: 150px;
+}
+
+select
+{
+    height: 25px;
+    border: solid 1px #fff;
+    min-width: 150px;
+}
+
+input[type="button"].round-button-selected
+{
+    width: 20px;
+    border: solid 1px #000;
+    border-radius: 25px;
+    background: -moz-linear-gradient(center top, #fc838c, #e62b32) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0, #fc838c), color-stop(1, #e62b32)) repeat scroll 0 0 transparent;
+}
+
+input[type="button"].round-button
+{
+    width: 20px;
+    border: solid 1px #000;
+    font-weight: bold;
+    border-radius: 25px;
+    background: -moz-linear-gradient(center top, #98dcff, #0977c4) repeat scroll 0 0 transparent;
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(0, #98dcff), color-stop(1, #0977c4)) repeat scroll 0 0 transparent;
+}
+input[type="button"].action-button
+{
+    border: solid 1px #fff;
+    background: #69bae5;
+    color: #fff;
+    border-radius: 5px;
+    padding: 5px 15px;
+    text-align: center;
+    min-width: 120px;
+}
+
+input[type="button"].action-button-selected
+{
+    border: solid 1px #fff;
+    background: #1a5ea1;
+    border-radius: 5px;
+    color: #fff;
+    padding: 5px 15px;
+    text-align: center;
+    min-width: 120px;
+}
+
+.box-selected
+{
+    border: solid 1px #fff;
+    background: #1a5ea1;
+    border-radius: 5px;
+    color: #fff;
+    padding: 5px 15px;
+    text-align: center;
+    min-width: 120px;
+}
+
+
+input[type="button"].back-button
+{
+    border: solid 1px #1a5ea1;
+    text-align: left;
+    float: left;
+    font-weight: bold;
+}
+
+input[type="button"].next-button
+{
+    border: solid 1px #1a5ea1;
+    text-align: right;
+    float: right;
+    font-weight: bold;
+}
+
+input[type="button"].search-button
+{
+    border: solid 1px #1a5ea1;
+    text-align: right;
+    font-weight: bold;
+    min-width: 40px;
+}
+
+.section-payment-page
+{
+    color: #fff;
+    border: solid 1px #fff;
+    border-radius: 5px;
+    background-color: #1a5ea1;
+    padding: 10px;
+    float: left;
+    width: 40%;
+    font-weight: bold;
+}
+
+.box-cursor
+{
+    cursor: pointer;
+}
+
+/* def-background : #B3D4A7 */
+/* inactive-tab, table-header, selected-item background: #1a5ea1 */
+/* unselected-option background: #69bae5 */
+/* red color: #e62b32 #fc838c */
+/* blue color: #2385c2 #98dcff */
+
+.test-item
+{
+    float: left;
+    width: 31%;
+    margin: 0px 0.9%;
+    border: solid 2px #fff;
+    border-radius: 5px;
+    min-height: 100px;
+    background-color: #fff;
+}
+
+.test-item .header-strap
+{
+    width: 98%;
+    border-radius: 5px;
+    float: left;
+    padding: 5px 1%;
+    font-size: 11pt;
+    color: #fff;
+    background-color: #1a5ea1;
+    min-height: 40px;
+}
+
+.test-item .footer
+{
+    width: 99%;
+    float: left;
+    padding: 5px 0.5%;
+    font-size: 11pt;
+    border-top: solid 1px #000;
+}
+
+.test-item .content
+{
+    width: 99%;
+    float: left;
+    padding: 5px 0.5%;
+    font-size: 9pt;
+    text-align: justify;
+    line-height: 18px;
+    min-height: 80px;
+}
+
+.package-item
+{
+    float: left;
+    width: 24%;
+    padding: 0px 0.5%;
+}
+.package-item .content-block
+{
+    float: left;
+    border: solid 2px #fff;
+    border-radius: 5px;
+    background-color: #fff;
+}
+.package-item .content-block .header-footer-strap
+{
+    width: 98%;
+    border-radius: 5px;
+    float: left;
+    padding: 5px 1%;
+    font-size: 11pt;
+    color: #fff;
+    background-color: #1a5ea1;
+    min-height: 40px;
+}
+.package-item .content-block .footer
+{
+    padding: 10px 2%;
+    width: 96%;
+    min-height: 0px;
+}
+.package-item .content-block .content
+{
+    float: left;
+    padding: 10px 5px;
+    font-size: 9pt;
+    min-height: 350px;
+}
+.package-item .content-block .content ul
+{
+    padding-left: 15px;
+}
+.package-item .content-block .content ul li
+{
+    line-height: 20px;
+    padding: 0px;
+    margin: 0px;
+}
+.package-item .select-block
+{
+    width: 98%;
+    text-align: center;
+    padding: 10px 0px;
+    float: left;
+}
+
+.item-block
+{
+    width: 500px;
+    float: left;
+    border: solid 2px #fff;
+    border-radius: 5px;
+    min-height: 100px;
+    background-color: #fff;
+}
+
+.item-block .header-footer-strap
+{
+    width: 99%;
+    border-radius: 5px;
+    float: left;
+    padding: 5px 0.5%;
+    font-size: 11pt;
+    color: #fff;
+    background-color: #1a5ea1;
+}
+.item-block .content
+{
+    float: left;
+    padding: 10px 5px;
+}
+.item-block .description
+{
+    float: left;
+    padding: 10px 5px;
+    width: 60%;
+}
+.item-block .price
+{
+    float: right;
+    width: 30%;
+    padding-right: 1%;
+    padding-top: 20px;
+    font-weight: bold;
+    text-align: right;
+    text-align: center;
+}
+
+#appointmentexpired
+{
+    width: 95%;
+    padding: 10px;
+    font-size: 11pt;
+    font-weight: bold;
+    background: #dedede;
+    border: solid 1px #dedeff;
+}
+
+
+#appointmentcounter
+{
+    width: 97%;
+    padding: 1%;
+    font-size: 11pt;
+    font-weight: bold;
+    color: #F8953B;
+    background: #DFF1F8;
+    border: solid 1px #B8D7E6;
+    border-radius: 5px;
+}
+
+#appointmentcounter table
+{
+    width: 100%;
+    text-align: center;
+}
+
+.customertype-block
+{
+    width: 430px;
+    float: left;
+    border: solid 2px #fff;
+    border-radius: 5px;
+    background-color: #69bae5;
+    color: #fff;
+    padding: 5px;
+}
+.block-selected
+{
+    background-color: #1a5ea1;
+}
+.customertype-block .row-header
+{
+    width: 100%;
+    float: left;
+    margin-bottom: 5px;
+}
+.customertype-block .row-header .part-one
+{
+    width: 40px;
+    float: left;
+}
+
+.customertype-block .row-header .part-two
+{
+    width: 380px;
+    float: left;
+}
+
+.val-login
+{
+    float:left;
+    width: 430px;
+    padding: 10px;
+    margin: 10px auto;
+    border: solid 2px #fff;
+    border-radius: 5px;
+}
+
+.val-login .input-wrapper label
+{
+    display: inline-block;
+    margin-top: 7px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+}
+
+.val-login .text-box
+{
+    color: #6f6f6f;
+    border: 1px solid #838383;
+    font-size: 20px;
+    margin: 4px 0px 0px 10px;
+    padding: 6px;
+    width: 91%;
+    border-radius: 5px;
+    height: auto;
+}
+
+.val-login input[type="button"]
+{
+    font-size: 13pt;
+    color: #fff;
+    font-weight: bold;
+    color: #fef4e9;
+    border: solid 1px #da7c0c;
+    background: #f78d1d;
+    background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
+    background: -moz-linear-gradient(top,  #faa51a,  #f47a20);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
+}
+
+
+.val-login input[type="button"]:hover
+{
+    background: #f47c20;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
+    background: -moz-linear-gradient(top,  #f88e11,  #f06015);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
+}

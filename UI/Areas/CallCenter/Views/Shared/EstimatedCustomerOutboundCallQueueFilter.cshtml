@@ -1,0 +1,63 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallQueues.ViewModels.OutboundCallQueueFilter
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 13%">
+        <div class="small-text">
+            Zip Code
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.ZipCode, new { @style = "width: 110px" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 13%">
+        <div class="small-text">
+            Radius
+        </div>
+        <div>
+            @Html.DropDownListFor(m => m.Radius, DropDownHelper.Redius(), new { @style = "width: 110px" })
+        </div>
+    </div>
+    @if (Model.CampaignId.HasValue && Model.CampaignId.Value > 0)
+    {
+        <div class="editor-column" style="width: 17%">
+            <div class="small-text">
+                Direct Mail Date
+            </div>
+            <div>
+                @Html.DropDownListFor(m => m.DirectMailDate, DropDownHelper.GetDirectMailDate(Model.CampaignId.Value), new { @id = "directMailDateFilter", @style = "width: 150px" })
+            </div>
+        </div>
+    }
+    <div class="editor-column" style="width: 33%;">
+        <div class="small-text">
+            Custom Tag
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetCustomTagsByAccountIdForEditors(Model.HealthPlanId, Model.CustomTags), new { @multiple = "multiple", @style = "width: 300px" })
+        </div>
+    </div>
+
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+       @*<a href="javascript:void(0)" onclick="backtoCriteraSelection() ">Back</a> <span> | </span>*@
+       @Html.ActionLink("Clear", "CallQueueEstimatedCustomer", "Reports", new { Model.CampaignId, Model.CallQueueId, Model.CriteriaId, Model.HealthPlanId }, null) <span> | </span>
+       @Html.SubmitButton("Search")
+    </div>
+    @Html.HiddenFor(m => m.HealthPlanId)
+    @Html.HiddenFor(m => m.CallQueueId)
+    @Html.HiddenFor(m => m.CriteriaId)
+    @Html.HiddenFor(m => m.CampaignId)
+</div>
+<script type="text/javascript">
+    function backtoCriteraSelection() {
+        window.location.href = "/CallCenter/Reports/CallQueueEstimatedCustomer?HealthPlanId=@Model.HealthPlanId&CallQueueId=@Model.CallQueueId";
+    }
+    $(document).ready(function () {
+        @if (Model.DirectMailDate.HasValue)
+        {
+            <text>$("#directMailDateFilter").val('@Model.DirectMailDate.Value.ToString("MM/dd/yyyy")')</text>
+        }
+    });
+</script>

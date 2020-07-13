@@ -1,0 +1,45 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+
+@model TestNotPerformedListModelFilter
+
+<h2>Search Records</h2>
+
+<div style="padding-left: 5px; overflow: hidden; padding-bottom:10px;">
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text"><b>Event</b> From: </div>
+        @Html.TextBoxFor(m => m.EventDateFrom,new { @class = "datePicker", @value=String.Format("{0:yyyy-MM-dd}", Model.EventDateFrom.HasValue ? Model.EventDateFrom : DateTime.Now), @style="width:160px;"})            
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">To: </div>
+        @Html.TextBoxFor(m => m.EventDateTo, new { @class = "datePicker", @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">Technician:</div>
+        @Html.DropDownListFor(m => m.TechnicianId, DropDownHelper.GetAllTechnicians(), new { @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">Event Id:</div>
+        @Html.TextBoxFor(m => m.EventId, new { @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">
+            Pod:
+        </div>
+        @Html.TextBoxFor(m => m.Pod, new { @style = "width:160px;" })
+    </div>
+    <div class="editor-column" style="width: 250px">
+        <div class="small-text">Health Plan:</div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:240px;" })
+    </div>
+    <div class="editor-column" style="width: 170px">
+        <div class="small-text">
+            Test:
+        </div>
+        @Html.DropDownListFor(m => m.TestId, DropDownHelper.AllTests(), new { @style = "width:160px;" })
+    </div>
+
+    <div class="editor-column" style="float: right; padding-top:12px; text-align: right;">
+        @Html.ActionLink("Clear", "TestNotPerformed", "Reports") | @Html.SubmitButton("Search")
+    </div> 
+</div>

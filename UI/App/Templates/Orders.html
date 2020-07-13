@@ -1,0 +1,44 @@
+﻿<table id="OrderViewDataTemplateTable" class="divgrid_clnew">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th class="amt" style="text-align: right;">Undiscounted Amount</th>
+            <th class="amt" style="text-align: right;">Discounted Amount</th>
+            <th class="amt" style="text-align: right;">Paid Amount</th>
+            <th class="amt" style="text-align: right;">Amount Owed</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {#foreach $T as Order}
+        <tr>
+            <td style="white-space:nowrap;">
+               <span class="orderId">{$T.Order.Id}</span>
+            </td>
+            <td style="white-space:nowrap;">
+                {DateDeserialize($T.Order.DataRecorderMetaData.DateCreated).format("shortDate")}
+            </td>
+            <td style="white-space:nowrap;">
+                {#if $T.Order.OrderType == 1}Retail{#else}Corporate{#/if}
+            </td>
+            <td class="amt" style="white-space:nowrap;text-align: right;">
+                {FormatCurrency($T.Order.UndiscountedTotal)}
+            </td>
+            <td class="amt" style="white-space:nowrap;text-align: right;">
+                <span class="discountedTotal">{FormatCurrency($T.Order.DiscountedTotal)}</span>
+            </td>
+            <td class="amt" style="white-space:nowrap;text-align: right;">
+                <span class="amountPaid">{FormatCurrency($T.Order.TotalAmountPaid)}</span>
+            </td>
+            <td class="amt" style="white-space:nowrap;text-align: right;">
+                <span class="amountOwed">{FormatCurrency($T.Order.DiscountedTotal - $T.Order.TotalAmountPaid)}</span>
+            </td>
+            <td style="white-space:nowrap;">
+                <a href="#" class="viewOrderDetails">View Order Details</a>
+            </td>
+        </tr>
+        {#/for}
+    </tbody>
+</table>

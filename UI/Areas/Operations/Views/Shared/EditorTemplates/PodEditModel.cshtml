@@ -1,0 +1,412 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Operations.ViewModels.PodEditModel
+<div class="content-main-column">
+    <style type="text/css">
+        .editor-column
+        {
+            float: left;
+            width: 40%;
+            margin-right: 5px;
+        }
+        .editor-row input, .editor-row select
+        {
+            min-width: 175px;
+        }
+        textarea
+        {
+            width: 75%;
+        }
+    </style>
+    <fieldset style="padding-bottom: 10px; padding-left: 10px;">
+        <legend>
+            <h4>
+                Pod / Hub</h4>
+        </legend>
+        @Html.EditorFor(m => m.Id)
+        <div class="editor-row">
+            <div class="editor-column">
+                <div class="editor-label">
+                    @Html.LabelFor(m => m.Name) @Html.ValidationMessageFor(m => m.Name)
+                </div>
+                @Html.TextBoxFor(m => m.Name)
+            </div>
+            <div class="editor-column">
+                <div class="editor-label">
+                    @Html.LabelFor(m => m.AssignedToFranchiseeid)
+                </div>
+                @Html.DropDownListFor(m => m.AssignedToFranchiseeid, DropDownHelper.FranchiseeOrganizations())
+            </div>
+        </div>
+        <div class="editor-row">
+            <div class="editor-column">
+                <div class="editor-label">
+                    @Html.LabelFor(m => m.VanId) @Html.ValidationMessageFor(m => m.VanId)
+                </div>
+                @Html.DropDownListFor(m => m.VanId, DropDownHelper.UnUsedVans())</div>
+            @Html.EditorFor(m => m.ProcessingCapacity)
+        </div>
+        <div class="editor-row">
+            <div class="editor-column">
+                @Html.CheckBoxFor(m => m.EnableKynIntegration, new {@style="min-width:10px;"}) Enable Kyn Integration
+            </div>
+        </div>
+         <div class="editor-row">
+                @Html.CheckBoxFor(m => m.IsBloodworkFormAttached, new {@style="min-width:10px;"}) Enable Bloodwork Requisition Form
+        </div>
+        <div class="editor-field">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Description)  @Html.ValidationMessageFor(m => m.Description)
+            </div>
+            @Html.EditorFor(m => m.Description)
+        </div>
+    </fieldset>
+    <fieldset style="padding-bottom: 10px; padding-left: 10px;">
+        <legend>
+            <h4>
+                Territories</h4>
+        </legend>
+        @if (Model.Territories != null && Model.Territories.Count() > 0)
+        {
+            foreach (var territory in Model.Territories)
+            {
+                <div class="editor-column">
+                    @if (Model.AssignedTerritories != null && Model.AssignedTerritories.Contains(territory.FirstValue))
+                    {
+                    
+                        <input type="checkbox" id="@territory.FirstValue" onclick="onClickFill(this);" checked="checked" />
+                        @territory.SecondValue
+                    
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="@territory.FirstValue" onclick="onClickFill(this);" />
+                        @territory.SecondValue
+                    }
+                    <input type="hidden" value="@territory.FirstValue" />
+                </div>
+            }
+            if (Model.AssignedTerritories != null && Model.AssignedTerritories.Count() > 0)
+            {
+                <script type="text/javascript" language="javascript">                $(document).ready(function () { renderAssignedTerritories(); });        </script>
+                
+            }
+        }
+        else
+        {
+            <div class="editor-row">
+                <i>No Territories available </i>
+            </div>
+        }
+        <div id="assignedTerritoryContainer" style="display: none;">
+        </div>
+    </fieldset>
+    <div style="float:left; padding-top: 20px; padding-bottom: 5px; width: 99%;">
+        <div style="float:left; width: 50%;">
+            <h4>Room Details</h4>
+        </div>
+        <div style="float:left; width: 50%; text-align: right;">
+            <a href="javascript:void(0);" id="add-room">+ Add Room</a>
+        </div>
+    </div>
+    @Html.ValidationMessageFor(m=>m.Rooms)
+    <div class="all-rooms">
+        @if (Model.Rooms != null && Model.Rooms.Any())
+        {
+            int index = 0;
+            foreach (var room in Model.Rooms)
+            {
+                <div class="pod-room-div" style="float:left; width: 99%;">
+                    <fieldset>
+                        <legend id="room-index">Room @(index + 1)</legend>
+                        <div style="float:left; width: 99%; text-align: right;">
+                            <a href="javascript:setRoomIndex();" key="@index" class="clear-room">delete</a>
+                        </div>
+                        <div class="editor-row" style="float:left; width: 99%;">
+                            Duration: <input type="text" name="Rooms[@index].Duration" value="@room.Duration" style="min-width: 10px; width: 50px;"/>(minutes)
+                            @Html.ValidationMessageFor(m => m.Rooms[@index].Duration)
+                            <input type="hidden" name="Rooms[@index].RoomNo" value="@room.RoomNo"/>
+                            <input type="hidden" name="Rooms[@index].PodRoomId" value="@room.PodRoomId"/>
+                        </div>
+                        <div>
+                            <strong>Tests:</strong>
+                            @Html.ValidationMessageFor(m => m.Rooms[@index].RoomTests)
+                        </div>
+                        <div style="float:left; width:99%;">
+                            <input type="checkbox" class="all-select-test-checkbox" onclick="SelectAllTest(this);" /> All
+                        </div>
+                        <div class="test-div">
+                            @{ int testCount = 0; }
+                            @foreach (var test in Model.Tests)
+                            {
+                                <div style="float:left; width:25%;">
+                                    @if (room.RoomTests != null && room.RoomTests.Any(rt => rt.Test == test.Id && rt.IsSelected))
+                                    {
+                                        <input type="checkbox" checked="checked" name="Rooms[@index].RoomTests[@testCount].IsSelected" onclick="CheckTestCheckBox(this);" value="true"/> @test.Alias
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" name="Rooms[@index].RoomTests[@testCount].IsSelected" onclick="CheckTestCheckBox(this);" value="true"/> @test.Alias
+                                        
+                                    }
+                                    <input type="hidden" name="Rooms[@index].RoomTests[@testCount].IsSelected" value="false"/>
+                                    <input type="hidden" name="Rooms[@index].RoomTests[@testCount].Test" value="@test.Id"/>
+                                </div>
+                                testCount++;
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+                            index++;
+            }
+        }
+    </div>
+</div>
+<div class="content-side-column" style="margin-top: 4px;">
+    <h3>
+        Assign Default Staff</h3>
+    @Html.ValidationMessageFor(m => m.DefaultStaffAssigned)
+    @Html.Partial("AddStaffMiniForm")
+    <h3>
+        Staff Assignment To POD</h3>
+    <div id="userRolesContainer">
+        @if (Model.DefaultStaffAssigned == null)
+        {
+            <div class="info-box">
+                No staff have been defined for the POD yet. Please use the "Assign Staff" link about
+                to assign a staff to the POD. <b>Note:</b> Assigned staff will be treated as default
+                team for the POD.
+            </div>
+        }
+        else
+        {
+            <script type="text/javascript" language="javascript">                $(document).ready(function () { renderAssignedStaff(); });        </script>
+        }
+    </div>
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script language="javascript" type="text/javascript">
+    var assignedTerritories = new Object();
+    @if ((Model.AssignedTerritories != null) && (Model.AssignedTerritories.Count() > 0))
+    {
+        <text>
+            var territory = new Object();
+        </text>
+        foreach (var assignedTerritory in Model.AssignedTerritories)
+        {  
+                <text>
+                {
+                    territory = new Object();
+                    territory.Id = @assignedTerritory;
+                    assignedTerritories[territory.Id] = territory;
+                }
+                </text>
+        }
+    }
+        
+    function onClickFill(sourceCheckbox){
+        var checkedBox = $(sourceCheckbox);
+        var val = checkedBox.parent().find("input:hidden").val();
+        if(sourceCheckbox.checked){
+            territory = new Object();
+            territory.Id = val;
+            assignedTerritories[val] = territory;   
+        }
+        else{
+            if(assignedTerritories[val]  != null){
+                delete assignedTerritories[val];
+            }
+        }
+        renderAssignedTerritories();
+    }
+
+    function renderAssignedTerritories() {
+        $("#assignedTerritoryContainer").empty();
+        $.each(assignedTerritories, function (key, terr) {
+            $("#assignedTerritoryTemplate").tmpl(terr).appendTo("#assignedTerritoryContainer");
+        });
+    }
+
+</script>
+<script type="text/javascript" language="javascript">
+
+    var assignedStaff = new Object();
+    var k = 0;
+    @if ((Model.DefaultStaffAssigned != null) && (Model.DefaultStaffAssigned.Count() > 0))
+    {
+        <text>
+        var k = 0;
+        var staff = new Object();
+        </text>
+        foreach (var defaultStaff in Model.DefaultStaffAssigned)
+        {   
+                              
+                <text>
+                {
+                    staff = new Object();
+                    staff.OrganizationRoleUserId = @defaultStaff.OrganizationRoleUserId;               
+                    staff.Name = '@defaultStaff.Name';
+                    staff.PodId = @defaultStaff.PodId; 
+                    staff.Id = @defaultStaff.Id; 
+                    staff.EventRoleId = @defaultStaff.EventRoleId;  
+                    staff.EventRoleName = '@defaultStaff.EventRoleName';
+                    staff.Key = @defaultStaff.OrganizationRoleUserId + "_" + @defaultStaff.EventRoleId; 
+                    assignedStaff[staff.Key] = staff;
+                }
+                </text>
+        }
+    }
+
+        
+    $(document).ready(function () { 
+
+        
+        $("#assignStaff").click(assignStaffToThePOD); 
+
+        $("a.unAssign").live("click", function () {
+                
+            $(this).parents("div.mini-container:first").remove();
+                
+            delete assignedStaff[$(this).attr('data-key')];
+            if ($.isEmptyObject(assignedStaff)) {
+                $(".info-box").show();
+            }
+            selectDefault();
+            return false;
+        });
+
+        CheckAllTestSelected();
+    });
+
+    function assignStaffToThePOD() {
+            
+        var staffAssigned = new Object();
+        staffAssigned.OrganizationRoleUserId = $("#staff").val();
+        staffAssigned.Name = $("#staff option:selected").text();
+        staffAssigned.EventRoleId = $("#role").val();
+        staffAssigned.EventRoleName = $("#role option:selected").text();
+        staffAssigned.Id = 0;
+        staffAssigned.PodId = $("#Id").val();
+        staffAssigned.Key =   $("#staff").val() + "_" +$("#role").val(); 
+            
+        if(assignedStaff[staffAssigned.Key] != null){
+            return false;
+        }
+        if (staffAssigned.OrganizationRoleUserId == -1) {
+            alert("Please select a Staff Member.");
+            return false;
+        }
+        if (staffAssigned.EventRoleId == -1) {
+            alert("Please select a Role for the selected staff, before assigning it to a POD.");
+            return false;
+        }
+            
+        assignedStaff[staffAssigned.Key] = staffAssigned;
+                                     
+        $(".info-box").hide();
+        renderAssignedStaff();
+        selectDefault();
+        return false;
+    }
+
+    function renderAssignedStaff() {
+        $("#userRolesContainer div.mini-container").remove();
+        $.each(assignedStaff, function (key, staff) {
+            $("#assignedStaffTemplate").tmpl(staff).appendTo("#userRolesContainer");
+        });
+    }
+
+</script>
+<script id="assignedStaffTemplate" type="text/x-jquery-tmpl">
+    <div class='mini-container'>
+        <h4>${Name} - <i>${EventRoleName}</i></h4>
+        <div class="editor-row">
+            [<a href="#" data-key="${Key}" class="unAssign">Remove</a>]
+        </div>
+
+        <div style="display:none;">
+            <input type="hidden" name="DefaultStaffAssigned.Index" value="${Key}" />
+            <input type="text" name="DefaultStaffAssigned[${Key}].Id" value="${Id}" />
+            <input type="text" name="DefaultStaffAssigned[${Key}].PodId" value="${PodId}" />
+            <input type="text" name="DefaultStaffAssigned[${Key}].OrganizationRoleUserId" value="${OrganizationRoleUserId}" />
+            <input type="text" name="DefaultStaffAssigned[${Key}].Name" value="${Name}" />
+            <input type="text" name="DefaultStaffAssigned[${Key}].EventRoleId" value="${EventRoleId}" />
+            <input type="text" name="DefaultStaffAssigned[${Key}].EventRoleName" value="${EventRoleName}" />
+        </div> 
+    </div>                      
+</script>
+<script id="assignedTerritoryTemplate" type="text/x-jquery-tmpl">
+    <div style="display:none;">
+        <input type="hidden" name="AssignedTerritories.Index" value="${Id}" />
+        <input type="text" name="AssignedTerritories[${Id}]" value="${Id}" />
+    </div>                  
+</script>
+
+<script src="/Scripts/collection.model.js"></script>
+<script type="text/javascript" language="javascript">
+         var collectionModel = new collectionmodel($(".all-rooms"), ".pod-room-div", ".clear-room");
+         
+         //$(document).off("click", "#add-room");
+         //$(document).on("click", "#add-room", function () {
+         //        collectionModel.addItem();
+         //        setRoomIndex();
+         //});
+         
+         $("#add-room").bind("click", function () {
+             collectionModel.addItem();
+             setRoomIndex();
+         });
+
+
+         function setRoomIndex() {
+             var index = 0;
+             $(".all-rooms .pod-room-div").each(function() {
+                 index = index + 1;
+                 $(this).find('#room-index').html("Room " + index);
+             });
+         }
+         
+         function SelectAllTest(ctrlRef)
+         {//debugger;
+             if($(ctrlRef).is(':checked')) {
+                 $(ctrlRef).closest('.pod-room-div').find('.test-div :checkbox').each(function() {
+                     if ($(this).is(':checked') == false)
+                         $(this).attr('checked', true);
+                 });
+             }
+             else
+             {
+                 $(ctrlRef).closest('.pod-room-div').find('.test-div :checkbox').each(function() {
+                     if ($(this).is(':checked'))
+                         $(this).attr('checked',false);
+                 });
+             }
+         }
+
+         function CheckTestCheckBox(ctrlRef) {
+             //debugger;
+             if ($(ctrlRef).is(":checked") == false) {
+                 $(ctrlRef).closest('.pod-room-div').find('.all-select-test-checkbox').attr("checked", false);
+             } 
+             else {
+                 var allSelected = true;
+                 $(ctrlRef).closest('.pod-room-div').find('.test-div :checkbox').each(function() {
+                     if ($(this).is(':checked') == false)
+                         allSelected = false;
+                 });
+                 $(ctrlRef).closest('.pod-room-div').find('.all-select-test-checkbox').attr("checked", allSelected);
+             }
+         }
+
+         function CheckAllTestSelected() {
+             $('.pod-room-div').each(function() {
+                 var allSelected = true;
+                 $(this).find('.test-div :checkbox').each(function() {
+                     if ($(this).is(':checked') == false) {
+                         allSelected = false;
+                         return false;
+                     }
+                 });
+                 $(this).find('.all-select-test-checkbox').attr("checked", allSelected);
+             });
+         }
+</script>

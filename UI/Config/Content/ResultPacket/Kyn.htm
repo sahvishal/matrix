@@ -1,0 +1,549 @@
+<html>
+<body>
+    <style type="text/css">
+        .mainContainer-wopb {
+            width: 950px;
+            margin: 10px auto 10px auto;
+            padding: 10px 0px;
+            min-height: 940px;
+        }       
+
+        .seperator-img {
+            width: 786px;
+            height: 22px;
+        }
+
+        input[type="text"] {
+            background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+            border-color: -moz-use-text-color -moz-use-text-color #000000;
+            border-style: none none solid;
+            border-width: medium medium 1px;
+        }
+
+        .table {
+            width: 100%;            
+        }
+
+        .table tr td, td {
+            border: 1px solid #000000;
+        }
+
+        P.breakhere {
+            page-break-before: always;
+        }
+
+        div.normal {
+            width: 780px;
+            font-size: 18px;
+            text-align:justify;
+        }
+
+        li.normal {            
+            padding: 5px;
+            font-size: 18px;
+            margin: 0 10px;
+        }
+
+        .grid {
+            width: 100%;
+        }
+
+        .borderd-grid {
+            border-top: solid 5px #BFBFBF;
+            border-left: solid 5px #BFBFBF;
+            border-bottom: solid 5px #5A5A5A;
+            border-right: solid 5px #5A5A5A;
+        }
+
+        .grid-padding {
+            padding: 2px;
+        }
+
+
+        .grid-row {
+            width: 100%;
+            clear: both;
+        }
+
+        .grid-cell {
+            float: left;
+        }
+
+        .grid-cell-padding {
+            padding: 2px;
+        }
+
+        .grid-cell-border {
+            border: solid 1px grey;
+        }
+
+        .grid-colspan {
+            column-span: all;
+            -webkit-column-span: all; /* Safari & Chrome */
+            -moz-column-span: all; /* Firefox */
+            -ms-column-span: all; /* Internet Explorer */
+            -o-column-span: all; /* Opera */
+        }
+    </style>
+    <div class="mainContainer-wopb">
+        <div style="width:786px; margin-left:50px;">
+            <img src="../../content/images/hf_Logo.png" id="hflogo" alt="hflogo" width="786" height="451" />
+			<span style="font-family: Cambria; font-size: 30px; margin-left:176px; ">BASIC BIOMETRIC MEASUREMENTS</span>
+			<img class="seperator-img" src="../../content/images/green_line.png" alt="seprator" />
+            <table class="table" style="border: solid 1px #000000;" cellpadding="1">
+                <tr>
+                    <td width="398">
+                        <p>Patient ID: <label class="patient-id"></label></p>
+                        <p>Patient Name: <label class="patient-name"></label></p>
+                        <p>Today's Date: <label class="print-date"></label></p>
+                    </td>
+                    <td width="398">
+                        <p>Height: <label class="patient-h-ft"></label>&nbsp;ft&nbsp;<label class="patient-h-inch"></label>&nbsp;in</p>
+                        <p>Weight: <label class="patient-weight-lbs"></label>&nbsp;lb</p><p>Waist: <label class="patient-waist-in"></label>&nbsp;in</p>
+                    </td>
+                </tr>
+                <tr><td><p>Technician:&nbsp;<label class="technician-name"></label></td><td>Quality Check: <label id="quality-check" /></td></tr>
+            </table>
+
+            <img class="seperator-img" src="../../content/images/green_line.png" alt="seprator" />
+
+            <table id="letterTable" class="table" cellpadding="0" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <td>
+                            <table class="table" cellpadding="0" cellspacing="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <table border="1" cellspacing="0" class="table" id="risk_category_tbl" cellpadding="1">
+                                                <tbody>
+                                                    <tr>
+                                                        <th colspan="1" width="150px">
+                                                            <label>Clinical Measures</label>
+                                                        </th>
+                                                        <th colspan="2" width="240px">
+                                                            <label>Your Value</label>
+                                                        </th>
+                                                        <th colspan="1" width="377px">
+                                                            <label>Value Ranges</label>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="width:120px;" colspan="1" align="center">
+                                                            <label>Total Cholesterol<br>mg/dL</label>
+                                                        </td>
+                                                        <td width="120px" colspan="1" align="center">
+                                                            <label id="total-cholesterol-reading">&nbsp;</label>
+                                                        </td>
+                                                        <td width="120px" colspan="1" align="center">
+                                                            <label id="total-cholesterol-alert-level">&nbsp;</label>
+                                                        </td>
+                                                        <td width="" colspan="1" align="center">
+                                                            <img src="../../content/images/categoryCholesterolTotal.png" id="category-cholesterol-total" width="370" height="50">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label>HDL Cholesterol<br>mg/dL</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label id="hdl-cholesterol-reading">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center">
+                                                            <font>
+                                                                <label id="hdl-cholesterol-alert-level">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center"><img src="../../content/images/categoryCholesterolHDL.png" id="category-cholesterol-hdl" width="370" height="50"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label>LDL Cholesterol<br>mg/dL</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label id="ldl-cholesterol-reading">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label id="ldl-cholesterol-alert-level">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center"><img src="../../content/images/categoryCholesterolLDL.png" id="category-cholesterol-ldl" width="370" height="50"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label>Triglycerides<br>mg/dL</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label id="triglycerides-reading">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label id="triglycerides-alert-level">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center"><img id="category-triglycerides" src="../../content/images/categoryTrig.png" width="370" height="50"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label>Blood Glucose<br>mg/dL</label>
+                                                            </font>
+                                                        </td>
+                                                        <td colspan="1" align="center">
+                                                            <font>
+                                                                <label id="blood-sugar-reading">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center">
+                                                            <font>
+                                                                <label id="blood-glucose-alert-level">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center"><img id="category-glucose" src="../../content/images/categoryGlucose.png" width="370" height="50"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center">
+                                                            <font>
+                                                                <label>Blood Pressure<br>mmHg</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center">
+                                                            <font>
+                                                                <label class="blood-pressure-reading">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center">
+                                                            <font>
+                                                                <label id="blood-pressure-alert-level">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center"><img id='category-blood-pressure' src="../../content/images/categoryBP.png" width="370" height="50"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center">
+                                                            <font>
+                                                                <label>Body Mass Index (BMI)<br>lb/ft^2</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center">
+                                                            <font>
+                                                                <label id="bmi-reading">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center">
+                                                            <font>
+                                                                <label id="bmi-alert-level">&nbsp;</label>
+                                                            </font>
+                                                        </td>
+                                                        <td align="center"><img id="category-bmi" src="../../content/images/categoryBMI.png" width="370" height="50"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <img class="seperator-img" src="../../content/images/green_line.png" alt="greenline" />
+
+            <div style="page-break-before:always; padding-top:70px; text-align:left;" id="kyn-disclaimer-div">
+                <table>
+                    <tr>
+                        <td width="780" style="border:none;">
+                            <h2> Our Cardiochek machines have a high and low threshold limit for each measured lipid component. If your blood results fall out of one of these threshold ranges, we will not have an absolute number value for that component. </h2>
+                        </td>
+                    </tr>
+                </table>
+                <div class="normal">
+                    In order to have a KYN report processed for you, we will use an absolute value for that lipid component. A KYN report cannot be processed without absolute values. This practice does not affect your risk factors, modifiable risks, or disease probability calculations. In fact,
+                    our machine threshold limits are the same as the plateau limits for calculating risk for your KYN report.
+                </div>
+                <div class="normal">
+                    <ul style="list-style-type: disc;">
+                        <li class="normal">
+                            <div>
+                                If your Total cholesterol result was measured as (&gt;) greater than 400 or (&lt;) less than 100,
+                                then the absolute value we will input into your kyn report will be 401 or 99 respectively. your ldl result will also be calculated using this absolute value.
+                            </div>
+                        </li>
+                        <li class="normal">
+                            <div>
+                                If your HDL result was measured as (&gt;) greater than 100 or (&lt;) less than 15, then the absolute value we will input into your kyn report will be 101 or 14 respectively. your ldl result will also be calculated using this absolute value.
+                            </div>
+                        </li>
+                        <li class="normal">
+                            <div>
+                                If your Triglyceride result was measured as (&gt;) greater than 500 or (&lt;) less than 50,
+                                then the absolute value we will input into your kyn report will be 501 or 49 respectively. your ldl result will also be calculated using this absolute value.
+                            </div>
+                        </li>
+                        <li class="normal">
+                            <div>
+                                If your Glucose result was measured as (&gt;) greater than 600 or (&lt;) less than 20, then the absolute value we will input into your kyn report will be 601 or 19 respectively. please discuss with your doctor asap as these are considered critical values.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>            
+            <div style="page-break-before: always; width: 786px; padding-top:10px; display:none;" id="kyn-question-div">
+                <div style="width: 100%; text-align: center;">
+                    Know Your Number Multiple Disease Risk Questionnaire
+                </div>
+                <div class="borderd-grid grid-padding" style="width:800px;height:60px;">
+                    <div class="grid-row">
+                        <div class="grid-cell grid-cell-padding " style="width:389px;">
+                            <div class="grid-cell-border grid-cell-padding">
+                                <span> Your Name:&nbsp;<label class="patient-name"></label></span>
+                            </div>
+                        </div>
+                        <div class="grid-cell grid-cell-padding" style="width: 389px; ">
+                            <div class="grid-cell-border grid-cell-padding">
+                                <span> Today's Date:&nbsp;<label class="print-date"></label></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-row">
+                        <div class="grid-cell grid-cell-padding" style="width: 389px; ">
+                            <div class="grid-cell-border grid-cell-padding">
+                                <span> Name of Your Technician:&nbsp;<label class="technician-name"></label></span>
+                            </div>
+                        </div>
+                        <div class="grid-cell grid-cell-padding " style="width: 389px; ">
+                            <div class="grid-cell-border grid-cell-padding">
+                                <span> Participant ID #:&nbsp;<label class="patient-id"></label></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid borderd-grid" style="width: 800px; display: table">
+                    <div class="grid-row" style="display:table-row">
+                        <div class="grid-cell grid-cell-padding" style="width: 99%; ">
+                            <div class="grid-cell-border grid-cell-padding" style="text-align: center">
+                                Personal Information
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-row">
+                        <div class="grid-cell grid-cell-padding" style="width:32%;">
+                            <div class="grid-cell-border grid-cell-padding" style="text-align: left">
+                                <span> Date of Birth:&nbsp;<label id="dob-patient"></label></span>
+                            </div>
+                        </div>
+                        <div class="grid-cell grid-cell-padding" style="width: 34%; ">
+                            <div class="grid-cell-border grid-cell-padding" style="text-align: left">
+                                <span> Gender:&nbsp;<label id="patient-gender"></label></span>
+                            </div>
+                        </div>
+                        <div class="grid-cell grid-cell-padding" style="width: 33%; ">
+                            <div class="grid-cell-border grid-cell-padding" style="text-align: left">
+                                <span> Ethnic Group:&nbsp;<label id="patient-ethnic-group"></label></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table id="nametable" width="800" height="60" class="borderd-grid">
+                    <tr>
+                        <td colspan="2" style="text-align:center;">Personal Health </td>
+                    </tr>
+                    <tr>
+                        <td width="600"> <span> Diabetes (gestational diabetes not included)? </span> </td>
+                        <td> <span id="question-145">No</span></td>
+                    </tr>
+                    <tr>
+                        <td width="500"> <span> Coronary Heart Disease (angina, heart attack, angioplasty or by-pass surgery)? </span> </td>
+                        <td> <span id="question-146">No</span></td>
+                    </tr>
+                    <tr>
+                        <td width="500"> <span>   Stroke/TIA (mini strokes)?</span> </td>
+                        <td> <span id="question-147">No</span></td>
+                    </tr>
+                    <tr>
+                        <td width="500"> <span>  Congestive Heart Failure? </span> </td>
+                        <td> <span id="question-148">No</span></td>
+                    </tr>
+                    <tr>
+                        <td width="500"> <span>  Valve Disease or Heart Murmurs? </span> </td>
+                        <td> <span id="question-149">No</span></td>
+                    </tr>
+                    <tr>
+                        <td width="500"> <span> Other Cardiovascular Disease (atherosclerosis, peripheral arterial disease or aortic aneurysm)? </span> </td>
+                        <td> <span id="question-150">No</span></td>
+                    </tr>
+                    <tr>
+                        <td width="500"> <span> Left Ventricular Hypertrophy (enlargement of the left ventricle of the heart)? </span> </td>
+                        <td> <span id="question-151">No</span></td>
+                    </tr>
+                    <tr>
+                        <td width="500"> <span>  Atrial Fibrillation? </span> </td>
+                        <td> <span id="question-152">No</span></td>
+                    </tr>
+                </table>
+                <div id="medications&liestyle">
+                    <table>
+                        <tr>
+                            <td style="border:none;">
+                                <table width="350" class="borderd-grid">
+                                    <tr>
+                                        <td colspan="2" style="text-align:center;"> Medications </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="300"> Medication to lower your blood pressure?</td>
+                                        <td> <span id="question-165">No</span> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>  Medication to lower your cholesterol?</td>
+                                        <td> <span id="question-166">No</span> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>  At least one quarter of an adult aspirin (81 mg) daily? </td>
+                                        <td> <span id="question-167">No</span> </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="border:none;">
+                                <table width="443" class="borderd-grid">
+                                    <tr>
+                                        <td colspan="2" style="text-align:center;"> Lifestyle </td>
+                                    </tr>
+                                    <tr>
+                                        <td> Do you currently smoke cigarettes? </td>
+                                        <td> <span id="question-168">No</span> </td>
+                                    </tr>
+                                    <tr>
+                                        <td> Have you ever regularly smoked cigarettes? </td>
+                                        <td> <span id="question-169">No</span> </td>
+                                    </tr>
+                                    <tr>
+                                        <td>  Average times per week you exercise for at least 20 minutes </td>
+                                        <td> <span id="question-170">&nbsp;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>  While exercising, how hard are you breathing? </td>
+                                        <td> <span id="question-171">&nbsp;</span> </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="patient-gender-type">
+                    <table width="800" class="borderd-grid">
+                        <tr>
+                            <td colspan="2" style="text-align:center;"> For Women Only </td>
+                        </tr>
+                        <tr>
+                            <td> Are you currently pregnant? </td>
+                            <td><span id="question-153">No</span> </td>
+                        </tr>
+                        <tr>
+                            <td> How many live births have you had? </td>
+                            <td> <span id="question-154">&nbsp;</span></td>
+                        </tr>
+                        <tr>
+                            <td> Were you ever told by your doctor that you had gestational diabetes while pregnant?</td>
+                            <td> <span id="question-155">No</span></td>
+                        </tr>
+                        <tr>
+                            <td> If yes, how many years since you were last diagnosed?</td>
+                            <td><span id="question-156">&nbsp;</span> </td>
+                        </tr>
+                        <tr>
+                            <td> Have you passed through menopause (either naturally or have had your ovaries removed)? </td>
+                            <td><span id="question-157">No</span>  </td>
+                        </tr>
+                        <tr>
+                            <td>  Are you currently using any form of hormone replacement therapy (after menopause only)? </td>
+                            <td><span id="question-158">No</span> </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <table width="800" class="borderd-grid">
+                    <tr>
+                        <td colspan="2" style="text-align:center;"> For individuals who currently smoke cigarettes </td>
+                    </tr>
+                    <tr>
+                        <td> Lung cancer or COPD? </td>
+                        <td> <span id="question-159">No</span> </td>
+                    </tr>
+                    <tr>
+                        <td> Emphysema? </td>
+                        <td> <span id="question-160">No</span> </td>
+                    </tr>
+                    <tr>
+                        <td> Asthma? </td>
+                        <td> <span id="question-161">No</span> </td>
+                    </tr>
+                    <tr>
+                        <td>  Do you currently have asthma? </td>
+                        <td> <span id="question-162">No</span> </td>
+                    </tr>
+                    <tr>
+                        <td> What is the combined number of years you have smoked?</td>
+                        <td> <span id="question-163">&nbsp;</span> </td>
+                    </tr>
+                    <tr>
+                        <td> On average, how many cigarettes do you smoke daily? </td>
+                        <td> <span id="question-164">&nbsp;</span> </td>
+                    </tr>
+                </table>
+                <table width="800" class="borderd-grid">
+                    <tr>
+                        <td colspan="6" style="text-align:center;"> Clinical Information & Required Lab Values </td>
+                    </tr>
+                    <tr>
+                        <td> Height: </td>
+                        <td width="200"><label class="patient-h-ft">&nbsp;</label>&nbsp;ft&nbsp;<label class="patient-h-inch">&nbsp;</label>&nbsp;in </td>
+                        <td colspan="2" width="200"> Fasting Status </td>
+                        <td colspan="2" width="200"> <label id="fasting-status">&nbsp;</label></td>
+                    </tr>
+                    <tr>
+                        <td> Weight:&nbsp;</td>
+                        <td width="200"> <label class="patient-weight-lbs">&nbsp;</label>&nbsp;lb </td>
+                        <td colspan="2" width="200"> Fasting Glucose </td>
+                        <td colspan="2" width="200"> <label id="kyn-glucose-reading">&nbsp;</label>&nbsp;mg/dL </td>
+                    </tr>
+                    <tr>
+                        <td> Waist Measurement </td>
+                        <td width="200"> <label class="patient-waist-in">&nbsp;</label>&nbsp;in </td>
+                        <td colspan="2" width="200"> Total Cholesterol </td>
+                        <td colspan="2" width="200"> <label id="kyn-total-cholesterol-reading">&nbsp;</label>&nbsp;mg/dL </td>
+                    </tr>
+                    <tr>
+                        <td> Pulse Rate </td>
+                        <td width="200"> <label id="pulserate-reading"></label>&nbsp;bpm </td>
+                        <td colspan="2" width="200"> Triglycerides </td>
+                        <td colspan="2" width="200"><label id="kyn-triglycerides-reading">&nbsp;</label>&nbsp;mg/dL </td>
+                    </tr>
+                    <tr>
+                        <td> Blood Pressure </td>
+                        <td width="200"> <label class="blood-pressure-reading">&nbsp;</label>(systolic/diastolic) </td>
+                        <td width="100"> HDL </td>
+                        <td width="100"> <label id="kyn-hdl-cholesterol-reading">&nbsp;</label>&nbsp;mg/dL </td>
+                        <td width="100"> LDL </td>
+                        <td width="100"> <label id="kyn-ldl-cholesterol-reading">&nbsp;</label>&nbsp;mg/dL </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

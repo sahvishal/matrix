@@ -1,0 +1,16 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@model CheckListFormEditModel
+@{
+    ViewBag.Title = "CheckList Template Questions";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml"; ;
+}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/CheckListForm.cshtml")))
+{
+    using (Html.BeginForm())
+    {
+        @Html.Partial("/Config/Content/Views/Shared/CheckListForm.cshtml", Model)
+    }
+}
+
+

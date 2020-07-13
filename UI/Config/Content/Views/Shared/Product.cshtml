@@ -1,0 +1,34 @@
+﻿@model Falcon.App.Core.Marketing.ViewModels.OrderPlaceEditModel
+<div class="table_box image-upsell-div">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" id="product-list">
+        <tr>
+            <th colspan="2">Don’t forget the images</th>
+        </tr>
+        @foreach (var item in Model.AllProducts)
+        {
+            var selected = Model.SelectedProductIds != null ? Model.SelectedProductIds.Contains(item.ProductId) : false;
+            <tr class="upsell-block item-block">
+                <td valign="top" width="241" class="p15">
+                    <img src="/Config/Content/Images/imaging_img.png" width="241" height="167" alt="" />
+                </td>
+                <td valign="top" class="p15">
+                    <h2 class="txt-green"><strong> Digital Images </strong></h2>
+                    <div class="txt-grey">
+                        @item.ShortDescription 
+                    </div>
+                    <div class="mt10">
+                        <h3 class="left-float price">$ @item.Price.ToString("0.00") </h3>
+                        <div class="left-float price_btn">
+                            <input type="image" class="select-button" onclick="onClickSelectProductBox($(this), '@item.ProductId'); return false;" @(selected ? "style=display:none" : "") src="/Config/Content/Images/select_uncheck_btn.png" />
+                            <input type="image" class="select-button-selected" onclick="onClickRemoveProduct($(this), '@item.ProductId'); return false;" @(!selected ? "style=display:none" : "") src="/Config/Content/Images/selected_check_btn.png" />
+                        </div>
+                        <div class="clearfix"></div>
+                        <input type="text" style="display:none;" class="item-id" value="@item.ProductId" />
+                        <input type="text" style="display:none;" class="item-name" value="@item.Name" />
+                        <input type="text" style="display:none;" class="item-price" value="@item.Price.ToString("0.00")" />
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

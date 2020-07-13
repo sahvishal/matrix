@@ -1,0 +1,17 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Operations.ViewModels.StaffEventRoleEditModel
+@{
+    ViewBag.Title = "Edit Staff Event Role";
+}
+<h1>
+   Edit  Staff Event Role</h1>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{Html.BeginForm();}
+@Html.EditorForModel()
+<div class="submit-button-row" style="margin-right: 10px;">
+    @Html.ActionLink("Close", "Index", "StaffEventRole") &nbsp;&nbsp; @Html.SubmitButton("Edit Staff Event Role")
+</div>
+@{Html.EndForm();}

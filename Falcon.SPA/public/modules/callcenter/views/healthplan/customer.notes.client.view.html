@@ -1,0 +1,29 @@
+﻿
+<div class="row" style="padding: 10px;">
+    <div class="col-md-12">
+        <div class="small-section">
+            <h2>Customer Notes</h2>
+            <div class="clearfix small-section-inner">
+                <div class="row">
+                    <div class="row-border callcenter-call-history" ng-hide="customerNotes==null || customerNotes.length <=0">
+                        <div class="col-sm-12 " ng-repeat="history in (customerNotes | orderBy:'-DateCreated')" style="padding-bottom: 10px;">
+                            <div class="notes-block">
+                                <div class="row">
+                                    <div class="col-sm-12"> {{history.Notes}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 text-center contact-screen-no-event" ng-show="customerNotes==null || customerNotes.length <=0"> No notes.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <input type="button" ng-click="Cancel()" class="pull-right btn right-buffer-10" value="Cancel" />
+    </div>
+</div>
+
+
+
+

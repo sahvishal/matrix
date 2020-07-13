@@ -1,0 +1,63 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.DailyVolumeListModelFilter
+<h2>
+    Search Events
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.Pod)
+        </div>
+        @Html.TextBoxFor(m => m.Pod)
+    </div>
+    <div class="editor-column" style="width: 180px;">
+        <div class="small-text">
+            Health Plan
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:100%;" })
+    </div>
+    <div class="editor-column" style="width: 180px;">
+        <div class="small-text">
+            Event Type:
+        </div>
+        <div>
+            <input type="checkbox" id="is-retail" @(Model.IsRetailEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsRetailEvent');" />Retail
+            <input type="checkbox" id="is-corporate" @(Model.IsCorporateEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsCorporateEvent');" />Corporate<br />
+            <input type="checkbox" id="is-healthPlan" @(Model.IsHealthPlanEvent ? "checked" : "") onclick="onCheckEventType(this, 'IsHealthPlanEvent');" />Health Plan
+        </div>
+        @Html.HiddenFor(m => m.IsRetailEvent)
+        @Html.HiddenFor(m => m.IsCorporateEvent)
+        @Html.HiddenFor(m => m.IsHealthPlanEvent)
+    </div>
+    
+
+    <div style="padding-left: 5px; overflow: hidden;">
+        <div class="editor-column" style="padding-top: 10px; float: right;width: 80%; text-align: right;">
+            @Html.ActionLink("Clear", "DailyVolume", "Reports") | @Html.SubmitButton("Search")
+        </div>
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+
+    function onCheckEventType(checkBox, hiddenBox) {
+        if ($(checkBox).attr("checked")) {
+            $("#" + hiddenBox).val('@Boolean.TrueString');
+        }
+        else {
+            $("#" + hiddenBox).val('@Boolean.FalseString');
+        }
+    }
+
+</script>

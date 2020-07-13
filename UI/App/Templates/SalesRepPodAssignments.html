@@ -1,0 +1,5 @@
+﻿{#param name="salesRepId"}
+{#foreach $T as Pod}
+    {$T.Pod.PodName} |
+    <a href="#{$T.Pod.Id}" onClick="ShowPodUnassignConfirmation({$T.Pod.Id}, {$P.salesRepId})" class="SmallLinks">Unassign</a><br />
+{#/foreach}

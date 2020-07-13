@@ -1,0 +1,95 @@
+USE [$(dbName)]
+Go
+
+Create Table #MacroId (MacroId bigint)
+
+insert into #MacroId
+Select TemplateMacroId from TblEmailTemplateMacro where EmailTemplateId 
+in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer' )
+
+--select MacroId from #MacroId
+
+delete from TblEmailTemplateMacro where EmailTemplateId in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer')
+
+delete from TblTemplateMacro where Id in  (select MacroId from #MacroId) and Id Not in (select Id from TblTemplateMacro where CodeString like '%@Model.EmailCommunicationBaseInfo%' and IdentifierName like 'Company%')
+
+drop table #MacroId
+
+Declare @macroId bigint
+
+Insert Into TblTemplateMacro (IdentifierName, CodeString)
+values ('CustomerId', '@Model.CustomerId')
+
+Set @macroId = Scope_Identity()
+
+Insert Into TblEmailTemplateMacro(EmailTemplateId, TemplateMacroId, Sequence)
+Select EmailTemplateId, @macroId, 1 from TblEmailTemplate where EmailTemplateId 
+in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer' )
+
+Insert Into TblTemplateMacro (IdentifierName, CodeString)
+values ('EventId', '@Model.EventId')
+
+Set @macroId = Scope_Identity()
+
+Insert Into TblEmailTemplateMacro(EmailTemplateId, TemplateMacroId, Sequence)
+Select EmailTemplateId, @macroId, 2 from TblEmailTemplate where EmailTemplateId 
+in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer' )
+
+Insert Into TblTemplateMacro (IdentifierName, CodeString)
+values ('EventDate', '@Model.EventDate.ToString("MM/dd/yyyy")')
+
+Set @macroId = Scope_Identity()
+
+Insert Into TblEmailTemplateMacro(EmailTemplateId, TemplateMacroId, Sequence)
+Select EmailTemplateId, @macroId, 3 from TblEmailTemplate where EmailTemplateId 
+in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer' )
+
+
+Insert Into TblTemplateMacro (IdentifierName, CodeString)
+values ('PodName', '@Model.Pod')
+
+Set @macroId = Scope_Identity()
+
+Insert Into TblEmailTemplateMacro(EmailTemplateId, TemplateMacroId, Sequence)
+Select EmailTemplateId, @macroId, 4 from TblEmailTemplate where EmailTemplateId 
+in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer' )
+
+
+Insert Into TblTemplateMacro (IdentifierName, CodeString)
+values ('HospitalPartner_Name', '@Model.HospitalPartner')
+
+Set @macroId = Scope_Identity()
+
+Insert Into TblEmailTemplateMacro(EmailTemplateId, TemplateMacroId, Sequence)
+Select EmailTemplateId, @macroId, 5 from TblEmailTemplate where EmailTemplateId 
+in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer' )
+
+Insert Into TblTemplateMacro (IdentifierName, CodeString)
+values ('Urgent_Test', '@if(Model.Tests !=null && Model.Tests.Count()>0)                                 {                                                                                          <br />                                <u>Urgent Test(s) Detail</u>                                     @foreach (var test in Model.Tests) {                                                                                          <br />                                <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; font: 13px Arial; width:90%;">                                    <tr>                                        <td class="normaltxt_pw" style="font-size: 13px; vertical-align: top; width: 25%"><b>Test :</b></td>                                        <td class="normaltxt_pw" style="font-size: 13px; vertical-align: top; width: 75%">@test.TestName</td>                                    </tr>                                    <tr>                                        <td class="normaltxt_pw" style="font-size: 13px; vertical-align: top; width: 25%"><b>Physician :</b></td>                                        <td class="normaltxt_pw" style="font-size: 13px; vertical-align: top; width: 75%">@test.PhysicianName</td>                                    </tr>                                    <tr>                                        <td class="normaltxt_pw" style="font-size: 13px; vertical-align: top; width: 25%"><b>Physician Notes :</b></td>                                        <td class="normaltxt_pw" style="font-size: 13px; vertical-align: top; width: 75%">@test.PhysicianRemarks</td>                                    </tr>                                </table>                                <br />                                }                                 }')
+
+Set @macroId = Scope_Identity()
+
+Insert Into TblEmailTemplateMacro(EmailTemplateId, TemplateMacroId, Sequence)
+Select EmailTemplateId, @macroId, 6 from TblEmailTemplate where EmailTemplateId 
+in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer' )
+
+
+Insert Into TblTemplateMacro (IdentifierName, CodeString)
+values ('HospitalPartner_Release', '@Model.HospitalRelease')
+
+Set @macroId = Scope_Identity()
+
+Insert Into TblEmailTemplateMacro(EmailTemplateId, TemplateMacroId, Sequence)
+Select EmailTemplateId, @macroId, 7 from TblEmailTemplate where EmailTemplateId 
+in (select EmailTemplateId from TblEmailTemplate where EmailTitle = 'UrgentCustomer' )
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Insert Into TblEmailTemplateMacro (EmailTemplateId, TemplateMacroId, Sequence)
+Select EmailTemplateId, A.Id, ((Select Max(Sequence) from TblEmailTemplateMacro where EmailTemplateId = X.EmailTemplateId) + (Row_Number() over(partition by EmailTemplateId order by A.Id asc))) as Sequence_Val  
+from TblEmailTemplate X, 
+(select * from TblTemplateMacro where CodeString like '%@Model.EmailCommunicationBaseInfo%' and IdentifierName like 'Company%') A 
+where EmailTitle = 'UrgentCustomer' 
+	

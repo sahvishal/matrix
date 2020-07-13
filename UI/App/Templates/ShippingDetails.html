@@ -1,0 +1,77 @@
+﻿{#param name=TotalPrice}
+<h3>
+    Shipping Details History</h3>
+<table id="ShippingDetailsTemplateTable" class="divgrid_cl" style="width: 670px">
+    <thead>
+        <tr class="row1" style="font-size:11px">
+            <th>
+                Name
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Carrier Transaction Number
+            </th>
+            <th>
+                Ship To Name
+            </th>
+            <th>
+                Shipment Date
+            </th>
+            <th>
+                Shipped By
+            </th>
+            <th>
+                Delivery Date
+            </th>
+            <th>
+                Delivery Recipient Name
+            </th>
+            <th class="amt" style="text-align: right;">
+                Price
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {#foreach $T as ShippingDetail}
+        <tr class="smalltxt11">
+            <td>
+                {#if $T.ShippingDetail.ShippingOption != null}{$T.ShippingDetail.ShippingOption.Name}
+                {#else} N/A{#/if}
+            </td>
+            <td>
+                {#if $T.ShippingDetail.Status == 1}Processing{#/if} {#if $T.ShippingDetail.Status
+                == 2}Shipped{#/if} {#if $T.ShippingDetail.Status == 3}Delivered{#/if} {#if $T.ShippingDetail.Status
+                == 4}Returned{#/if}
+            </td>
+            <td>
+                {#if $T.ShippingDetail.CarrierTransactionNumber == ''}N/A {#else} {$T.ShippingDetail.CarrierTransactionNumber}{#/if}
+            </td>
+            <td>
+                {#if $T.ShippingDetail.ShipToName == ''}N/A {#else} {$T.ShippingDetail.ShipToName}{#/if}
+            </td>
+            <td>
+                {#if $T.ShippingDetail.ShipmentDate == null}N/A {#else} {correctDateExpression($T.ShippingDetail.ShipmentDate).format("mediumDate")}{#/if}
+            </td>
+            <td>
+                {#if $T.ShippingDetail.ShippedByName == '' ||$T.ShippingDetail.ShippedByName == null }N/A {#else} {$T.ShippingDetail.ShippedByName}{#/if}
+            </td>
+            <td>
+                {#if $T.ShippingDetail.DeliveryDate == null}N/A {#else} {correctDateExpression($T.ShippingDetail.DeliveryDate).format("mediumDate")}{#/if}
+            </td>
+            <td>
+                {#if $T.ShippingDetail.DeliveryRecipientName == ''}N/A {#else} {$T.ShippingDetail.DeliveryRecipientName}{#/if}
+            </td>
+            <td class="amt" style="text-align: right;">
+                {FormatCurrency($T.ShippingDetail.ActualPrice)}
+            </td>
+        </tr>
+        {#/for}
+        <tr>
+            <td colspan="8" style="text-align: right">
+                <strong>Total:</strong> ${$P.TotalPrice}
+            </td>
+        </tr>
+    </tbody>
+</table>

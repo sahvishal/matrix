@@ -1,0 +1,38 @@
+﻿@model Falcon.App.Core.Sales.ViewModels.ContentEditModel
+<link rel="stylesheet" type="text/css" href="/App/JavascriptFiles/markitup/skins/markitup/style.css" />
+<link rel="stylesheet" type="text/css" href="/App/JavascriptFiles/markitup/sets/html/style.css" />
+<script type="text/javascript" src="/App/JavascriptFiles/markitup/jquery.markitup.js"></script>
+<script type="text/javascript" src="/App/JavascriptFiles/markitup/sets/html/set.js"></script>
+<style>
+    input[type=text], textarea
+    {
+        width: 95%;
+    }
+</style>
+@Html.HiddenFor(m => m.Id)
+<div class="editor-row">
+    <div class="small-text">
+        @Html.LabelFor(m => m.Title) @Html.ValidationMessageFor(m => m.Title)
+    </div>
+    @Html.TextBoxFor(m => m.Title)
+</div>
+<div class="editor-row">
+    <div class="small-text">
+        @Html.LabelFor(m => m.Summary) @Html.ValidationMessageFor(m => m.Summary)
+    </div>
+    @Html.TextAreaFor(m => m.Summary)
+</div>
+<div class="editor-row">
+    <div class="small-text">
+        @Html.LabelFor(m => m.Content)
+    </div>
+    @Html.TextAreaFor(m => m.Content, new { rows = 20 })
+</div>
+
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function () {
+        $('#Content').markItUp(mySettings);
+    });
+
+</script>

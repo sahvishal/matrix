@@ -1,0 +1,83 @@
+﻿@using System.Globalization
+@model Falcon.App.Core.CallCenter.ViewModels.RegisteredEventViewModel
+<fieldset>
+    <legend>Event Registered On</legend>
+    <div class="clearfix small-section-inner" style="min-height: 85px;">
+        <div class="row" style="display: flex; flex-direction: row;">
+            <div class="col-sm-3" style="width: 30%">
+                <b>Event ID : </b>&nbsp;@Model.EventId
+            </div>
+            <div class="col-sm-3" style="width: 30%">
+                <b>Event Date : </b>&nbsp;@Model.EventDate.ToString("MM/dd/yyyy")
+            </div>
+            <div class="col-sm-4" style="width: 30%">
+                <b>Appointment Time : </b>&nbsp;@(Model.AppointmentTime == null ? "N/A" : Model.AppointmentTime.Value.ToString("hh:mm tt", CultureInfo.InvariantCulture))
+            </div>
+        </div>
+        <div class="row" style="display: flex; flex-direction: row;">
+            <div class="col-sm-6" style="width: 60%">
+                <b>Event Time Zone : </b>&nbsp;@Model.TimeZone
+            </div>
+            <div class="col-sm-6" style="width: 30%">
+                <b>Pod(s) : </b>&nbsp;@Model.Pods
+            </div>
+        </div>
+        <div class="col-sm-12" style="clear: both">
+            <b>Address: </b> <span>@Model.HostName, @Model.HostAddress</span>
+            <span style="margin-left: 15px;"> [ <a href="javascript:void(0);" onclick=" viewOnMap(); ">View Directions</a> ]</span>
+        </div>
+        @if (!Model.IsCanceled)
+        {
+            <div class="row" style="margin-top: 10px;display: flex; flex-direction: row;">
+                @if (Model.ShowHraQuestionnaire && Model.IsEawvPurchased)
+                {
+                    <div class="col-sm-3" style="width: 30%">
+                        <b>HRA Questionnaire : </b>
+                        <a href="javascript:void(0);" onclick="openHra();">Fill</a>
+                        <a id='hraLink_@Model.EventCustomerId' style="display: none;"></a>
+                    </div>
+                }
+                else if (Model.ShowChatQuestionnaire)
+                {
+                    <div class="col-sm-3" style="width: 30%">
+                        <b>CHAT Questionnaire : </b>
+                        <a href='@Model.ChatQuestionerAppUrl' target="_blank">CHAT</a>
+                       
+                    </div>
+                }
+                @if (Model.CaptureHaf)
+                {
+                    <div class="col-sm-4" style="width: 30%">
+                    <b>Health Assessment Form : </b>
+                    <a href="javascript:void(0);" onclick='openHaf()'>Fill</a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    @if (!(Model.IsCanceled || Model.IsRescheduled))
+    {
+        <div class="col-md-12">
+            <button class="pull-right" href="javascript:void(0);" onclick="cancelAppointment();">Cancel Appointment</button>
+            <button class="pull-right margin-right-10" href="javascript:void(0);" onclick="rescheduleAppointment();">Reschedule Appointment</button>
+        </div>
+    }
+    @if (Model.IsCanceled || Model.IsRescheduled)
+    {
+        <div class="col-md-12" style="padding: 10px;">
+            <div class="row">
+                <div class="col-sm-12 pull-left">
+                    @if (Model.IsCanceled)
+                    {
+                        <b>Appointment Canceled</b>
+                    }
+                    @if (Model.IsRescheduled)
+                    {
+                        <b>Appointment Rescheduled</b>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+</fieldset>

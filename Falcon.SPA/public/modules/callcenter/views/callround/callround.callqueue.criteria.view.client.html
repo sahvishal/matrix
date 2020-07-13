@@ -1,0 +1,11 @@
+﻿<div class="row-flat">
+    <div class="pad-o-8">
+        Showing list of all customers 
+        <span ng-show="model != null && model.RoundOfCalls > 0">having </span>
+        <span>{{CallRoundText(model)}}</span> 
+        <span ng-show="model != null && model.RoundOfCalls > 0" > number of outbound calls completed  </span> in last <span ng-bind="LastCallMadeText(model)"></span>.
+    </div>
+</div>
+<div class="row">
+
+</div>

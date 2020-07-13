@@ -1,0 +1,109 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.CallCenter.Enum
+@model Falcon.App.Core.CallQueues.ViewModels.OutreachCallReportModelFilter
+
+<h2>
+    Search Records 
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>From</b>
+        </div>
+        @Html.TextBoxFor(m => m.DateFrom, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>To</b>
+        </div>
+        @Html.TextBoxFor(m => m.DateTo, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Tag
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.Tag)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Customer Id
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.CustomerId)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Health Plan
+        </div>
+        @Html.DropDownListFor(m => m.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:100%;" })
+    </div>
+   
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Call Queue
+        </div>
+        @{
+            var userSession = IoC.Resolve<ISessionContext>().UserSession;
+        }
+        @Html.DropDownListFor(m => m.CallQueueId, DropDownHelper.GetAllHealthPlanCallQueue(userSession.CurrentOrganizationRole.GetSystemRoleId), new { @style = "width:77%;" })
+    </div>
+    <div class="editor-column" style="width: 373px">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllCustomTags(), new { @multiple = "multiple", @style = "width: 300px" })
+        </div>
+    </div>
+    <div class="editor-column" style="width: 36%">
+        <div class="small-text">
+            Event Id
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.EventId)
+        </div>
+        <div class="editor-column" style="width: 100%">
+            <div class="small-text">
+                Contact vs Attempt Calls
+            </div>
+            <div style="float: left; width: 24%">
+                <input type="radio" name="CallAttemptFilterRbtn" @((Model.CallAttemptFilter == CallAttemptFilterStatus.All) ? "checked" : "") onclick="setContactAttemptFilter('@((long)CallAttemptFilterStatus.All)');" />Show All
+            </div>
+            <div style="float: left; width: 33%">
+                <input type="radio" name="CallAttemptFilterRbtn" @((Model.CallAttemptFilter == CallAttemptFilterStatus.ContactsOnly) ? "checked" : "") onclick="setContactAttemptFilter('@((long)CallAttemptFilterStatus.ContactsOnly)');" />Contacts Only
+            </div>
+            <div style="float: left; width: 34%">
+                <input type="radio" name="CallAttemptFilterRbtn" @((Model.CallAttemptFilter == CallAttemptFilterStatus.AttemptsOnly) ? "checked" : "") onclick="setContactAttemptFilter('@((long)CallAttemptFilterStatus.AttemptsOnly)');" />Attempts Only
+            </div>
+        </div>
+        <div class="editor-column" style="width: 34%">
+            <div class="small-text">
+                Product
+            </div>
+            @Html.DropDownListFor(m => m.ProductTypeId, DropDownHelper.GetAllProductType(), new { @style = "width:100%;" })
+        </div>
+
+    </div>
+    
+    @Html.HiddenFor(m => m.CallAttemptFilter)
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "OutreachCallReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>
+
+<script type="text/javascript" language="javascript">
+  
+    function setContactAttemptFilter(status) {
+        $("#CallAttemptFilter").val(status);
+    }  
+</script>

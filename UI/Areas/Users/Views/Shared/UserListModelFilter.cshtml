@@ -1,0 +1,58 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Users.Enum
+@model Falcon.App.Core.Users.ViewModels.UserListModelFilter
+
+@{Html.BeginForm("Index","User",FormMethod.Get);}
+   <h2>Search Users</h2> 
+   <div style="padding-left:5px;overflow:hidden;">
+         <div class="editor-column" style="width:25%">
+            <div class="small-text">
+                @Html.LabelFor(m=> m.Keyword) 
+            </div>
+            @Html.TextBoxFor(m => m.Keyword, new {style = "width:95%;" }) 
+        </div>
+
+        <div class="editor-column" style="width:25%">        
+             <div class="small-text">
+                @Html.LabelFor(m=> m.Roles)
+            </div>
+            @Html.DropDownListFor(m => m.Roles, DropDownHelper.AllRoles())
+        </div>   
+        
+        <div class="editor-column" style="width: 25%">
+            <div class="small-text">
+                Users
+            </div>
+            @Html.CheckBoxFor(m=>m.ActiveUser) Active
+            @Html.CheckBoxFor(m => m.InActiveUser) InActive           
+        </div> 
+           
+   </div>   
+<div style="padding-left: 5px; padding-top:10px; overflow: hidden; " class="filter">
+    <div class="editor-column" style="width:13%;">
+        <div style="float: left;">
+            <input type="radio" name="UserTypeRbtn" @((Model.UserType == UserType.All) ? "checked" : "") onclick="setUserType('@((long)UserType.All)');" />All Users
+        </div>
+    </div>
+    <div class="editor-column" style="width:15%;">
+        <div>
+            <input type="radio" name="UserTypeRbtn" @((Model.UserType == UserType.CustomerOnly) ? "checked" : "") onclick="setUserType('@((long)UserType.CustomerOnly)');" />Customer Only
+        </div>
+    </div>
+    <div class="editor-column" style="width:40%;">
+        <div>
+            <input type="radio" name="UserTypeRbtn" @((Model.UserType == UserType.SystemUserOnly) ? "checked" : "") onclick="setUserType('@((long)UserType.SystemUserOnly)');" />System User Only
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.UserType)    
+    <div class="editor-column" style="width: 25%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "Index", "User") |  @Html.SubmitButton("Search")
+    </div>  
+</div>
+ 
+<script type="text/javascript" language="javascript">  
+    function setUserType(status) {
+        $("#UserType").val(status);
+    }
+</script>
+@{Html.EndForm();}

@@ -1,0 +1,85 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Marketing.ViewModels.ProspectCustomerListModelFilter
+<style type="text/css">
+    .small-text-box {
+        width: 135px;
+    }
+</style>
+@{
+    long agentOrganizationId = 0;
+    if (IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.GetSystemRoleId == (long) Falcon.App.Core.Enum.Roles.CallCenterRep)
+    {
+        agentOrganizationId = IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.OrganizationId;
+    }
+}
+<h2>
+    Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 16%">
+        <div class="small-text">From: </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker small-text-box", @value = String.Format("{0:yyyy-MM-dd}", Model.FromDate.HasValue ? Model.FromDate : DateTime.Now) })            
+    </div>
+    <div class="editor-column" style="width: 16%">
+        <div class="small-text">To: </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker small-text-box" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">&nbsp;</div>
+        Of @Html.DropDownListFor(m => m.DateType, DropDownHelper.GetProspectCustomerDateTypeFilter())
+    </div>
+    <div class="editor-column" style="width: 15%">
+        <div class="small-text">Source:</div>
+        @Html.DropDownListFor(m => m.Source, DropDownHelper.GetProspectCustomerSource())
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">Captured From:</div>
+        @Html.DropDownListFor(m => m.Tag, DropDownHelper.Tag())
+    </div>
+    
+</div>
+<div style="padding-left: 5px; overflow: hidden; margin-top:10px;">
+    <div class="editor-column" style="width: 10%">
+        <div class="small-text">Miles:</div>
+        @Html.DropDownListFor(m => m.Miles, DropDownHelper.Miles())
+    </div>
+    <div class="editor-column" style="width: 22%">
+        <div class="small-text" style="margin-left:17px;">Zip:</div>
+        Of @Html.TextBoxFor(m => m.Zipcode)
+    </div>
+    <div class="editor-column" style="width: 18%;">
+        <div class="small-text">Phone Number:</div>
+        @Html.TextBoxFor(m => m.PhoneNumber)
+    </div>
+    <div class="editor-column" style="width: 18%;">
+        <div class="small-text">State:</div>
+        @Html.DropDownListFor(m=>m.StateId,DropDownHelper.States())
+    </div>
+    <div class="editor-column" style="width: 20%;">
+        <div class="small-text">City:</div>
+        @Html.TextBoxFor(m => m.City, new { @style = "width:180px;"})
+    </div>
+      
+</div>
+<div style="padding-left: 5px; overflow: hidden; margin-top:10px;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Corporate Tag
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.CorporateTag)
+        </div>
+    </div> 
+    <div class="editor-column" style="width: 15%">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetCustomTagsForManageCustomerProspects(agentOrganizationId), new { @class = "tokenizer", @multiple = "multiple", @style = "width: 300px" })
+        </div>
+    </div>
+    <div class="editor-column" style="padding-top: 10px; width: 20%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "ProspectCustomerAbandonedReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>

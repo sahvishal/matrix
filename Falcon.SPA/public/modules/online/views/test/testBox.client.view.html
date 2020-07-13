@@ -1,0 +1,52 @@
+﻿<div class="" ng-if="!testdetail.NotAvailable">
+    <div class="test-block border-default clearfix hidden-xs">
+        <a class="test-block-add pull-left" href="javascript:void(0)">&nbsp;</a>
+        <div class="pull-left">
+            <h4>{{testdetail.Name}} <span class="text-danger">({{testdetail.Price | currency }})</span></h4>
+            <a href="javascript:void(0);" class="pull-left right-buffer-10" ng-click="learnMore(testdetail)">Learn More</a> <div ng-if="testdetail.TestId===TestTypes.KYN" class="pull-left left-buffer-10"><a href="javascript:void(0);" ng-click="openKynSampleReport()">Show Sample Report</a></div> 
+        </div>
+        <div class="pull-right top-buffer-14">
+            <div>
+                <div class="styled-radio small">
+                    <input type="radio" name="test_desktop_{{testdetail.TestId}}" ng-checked="testdetail.isChecked===true" ng-click="alacarteStatusChanged()" ng-model="testdetail.isChecked" ng-value="true" /> <label>Yes</label>
+                </div>
+                <div class="styled-radio small">
+                    <input type="radio" name="test_desktop_{{testdetail.TestId}}" ng-checked="testdetail.isChecked!=true" ng-click="alacarteStatusChanged()" ng-model="testdetail.isChecked" ng-value="false" /> <label>No</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="test-block border-default clearfix hidden-lg hidden-md hidden-sm">
+        <div class="clearfix">
+            <div class="single-event">
+                <div class="table-look">
+                    <div class="table-row">
+                        <div class="table-cell test-block-cell1" ng-if="testdetail.TestId!=TestTypes.Echocardiogram">
+                            <a class="test-block-add pull-left" href="javascript:void(0)">&nbsp;</a>
+                        </div>
+                        <div class="table-cell test-block-cell1" ng-if="testdetail.TestId===TestTypes.Echocardiogram">
+                            <img class="echo-image" src="/Images/small-ultrasound.gif" />
+                        </div>
+                        <div class="table-cell">
+                            <h4>{{testdetail.Name}} <span class="text-danger">({{testdetail.Price | currency }})</span></h4>
+                            <a href="javascript:void(0);" ng-click="learnMore(testdetail)" class="pull-left right-buffer-10">Learn More {{testdetail.TestId}}</a>
+                            <div ng-if="testdetail.TestId===TestTypes.KYN" class="pull-left left-buffer-10"><a href="javascript:void(0);" ng-click="openKynSampleReport()">Show Sample Report</a></div> 
+                        </div>
+
+                        <div class="table-cell">
+                            
+                        </div>
+                        <div class="table-cell test-block-cell4">
+                            <div class="styled-radio small">
+                                <input type="radio" name="test_{{testdetail.TestId}}" ng-checked="testdetail.isChecked===true" ng-click="alacarteStatusChanged()" ng-model="testdetail.isChecked" ng-value="true" /> <label>Yes</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" name="test_{{testdetail.TestId}}" ng-checked="testdetail.isChecked!=true" ng-click="alacarteStatusChanged()" ng-model="testdetail.isChecked" ng-value="false" /> <label>No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

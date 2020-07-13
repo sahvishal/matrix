@@ -1,0 +1,97 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.Core.Scheduling.ViewModels
+@model EventAppointSlotSummaryViewModel
+@{
+    Layout = null;
+}
+
+@{
+    IEnumerable<EventAppointmentBasicInfoModel> appointments = null;
+    IEnumerable<EventAppointmentBasicInfoModel> freeSlots = null; 
+    if(Model.IsDynamicScheduling)
+    {
+        appointments = Model.AppointmentSlots.Where(ap => ap.AppointmentStatus == AppointmentStatus.Booked);
+        freeSlots = Model.AppointmentSlots.Where(ap => ap.AppointmentStatus == AppointmentStatus.Free).OrderBy(a => a.StartTime);            
+    }
+    else
+    {
+        appointments = Model.AppointmentSlots;
+    }
+    
+}
+<div>
+    @if (Model.IsDynamicScheduling && Model.EventPodRooms != null && Model.EventPodRooms.Any())
+    {
+        if (freeSlots == null || freeSlots.Count() < 1)
+        {
+            <h2> No Slots Available</h2>
+        }
+        else
+        {
+            foreach (var eventPodRoom in Model.EventPodRooms)
+            {
+                var eventPodRoomSlots = freeSlots.Where(s => s.EventPodRoomId == eventPodRoom.Id).OrderBy(s => s.StartTime);
+                <fieldset>
+                    <legend>Room @eventPodRoom.RoomNo (Duration:@eventPodRoom.Duration min) </legend>
+                    @if (eventPodRoomSlots != null && eventPodRoomSlots.Any())
+                    {
+                        var fromTime = eventPodRoomSlots.First().StartTime;
+                        fromTime = fromTime.AddMinutes(-1 * fromTime.Minute).AddSeconds(-1 * fromTime.Second);
+
+                        var toTime = eventPodRoomSlots.Last().StartTime;
+                        toTime = toTime.AddMinutes(60 - toTime.Minute).AddSeconds(-1 * fromTime.Second);            
+            
+                        <table>
+                            <tr>
+                                <th>Times :</th>
+                                <th>Available slots</th>
+                            </tr>
+                            @while (fromTime < toTime)
+                            {
+                                var endTime = fromTime.AddHours(1);
+                                var count = eventPodRoomSlots.Count(fs => fs.StartTime >= fromTime && fs.StartTime < endTime);
+                                if (count > 0)
+                                {
+                                    <tr>
+                                        <td>@(fromTime.ToString("h tt")) - @(endTime.ToString("h tt"))</td>
+                                        <td style="text-align:center;">@count</td>
+                                    </tr>                       
+                                }
+                                fromTime = endTime;
+                            } 
+                        </table>
+                    }
+                    else
+                    {
+                        <h2> No Slots Available</h2>
+                    }
+                </fieldset>
+            }
+        }
+        <br/>
+        <h4>Booked Slots</h4><br />       
+    }
+    <div id="selectable" style="width: 335px; min-height: 120px;">
+        @if (appointments == null || appointments.Count() < 1)
+        {
+                
+            <h2>
+                No Bookings for the Event
+            </h2>
+        }
+        else
+        {
+            <ul class='ui-selectable'>
+                @foreach (var appointment in appointments)
+                {
+                    var className = appointment.AppointmentStatus == AppointmentStatus.Free && appointment.StartTime < DateTime.Now
+                                        ? "exhausted"
+                                        : appointment.AppointmentStatus.ToString();         
+                                       
+                    <li class="@className nonSelectable">@appointment.StartTime.ToShortTimeString()
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

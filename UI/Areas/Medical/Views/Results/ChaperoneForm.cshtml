@@ -1,0 +1,12 @@
+﻿
+@model Falcon.App.Core.Medical.ViewModels.ChaperoneFormViewModel
+@{
+    Layout = "LayoutPrintableHealthAssessment.cshtml";
+}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/ChaperoneForm.cshtml")))
+{
+    <div style="width: 900px">
+        @Html.Partial("/Config/Content/Views/Shared/ChaperoneForm.cshtml", Model)
+    </div>
+}

@@ -1,0 +1,308 @@
+﻿@using Falcon.App.Core.Medicare.ViewModels
+@model MedicationListModel
+
+    <style>
+        #CurrentMedication td, tr {
+            white-space: nowrap;
+        }
+
+        #CurrentMedication textarea {
+            resize: vertical;
+        }
+    </style>
+    @using (Ajax.BeginForm("SaveMedication", "Medication", new AjaxOptions { HttpMethod = "POST" }))
+    {
+        <div class="CurrentMedication">
+
+            <div id="medication-container" style="display: block; float: left; width: 100%;">
+
+                <table id="list-view" style="margin-top: 20px; width:1011px">
+                    <thead>
+                        <tr>
+                            <th>Medication Name</th>
+                            <th>Service Date</th>
+                            <th>Dose</th>
+                            <th>Unit</th>
+                            <th>Frequency</th>
+                            <th>Prescription</th>
+                            <th>O-T-C</th>
+                            <th>Indication</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tBodyMedication"></tbody>
+                </table>
+            </div>
+
+            <script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+            <script id="medicationTemplate" type="text/x-jquery-tmpl">
+                <tr class="medication-row">
+                    <td>
+                        <input type="hidden" class="isEdited" name="Medications[${Key}].IsEdited" value="${IsEdited}" />
+                        <input type="text" class="medicationName" name="Medications[${Key}].ProprietaryName" placeholder="Name" value="${ProprietaryName}"  onchange="changeIsEdited(this)" />
+                        <span class="reqiredmark" style="display:none; font-size:15px">*</span>
+                    </td>
+                    <td><input type="text" class="serviceDate date-picker"  name="Medications[${Key}].ServiceDate" placeholder="Service Date" value="${ServiceDate}" onchange="changeIsEdited(this)" /></td>
+                    <td><input type="text" class="dose" name="Medications[${Key}].Dose" placeholder="Dose" value="${Dose}" onchange="changeIsEdited(this)" onkeypress="return isNumberKey(event,this)" /></td>
+                    <td>
+                        @*<select class="unit" name="Medications[${Key}].Unit" id="ddlUnit">
+                            <option value="0">Select Unit</option>
+                            <option value="1" {{if Unit =='1' }}selected{{/if}}>Kg</option>
+                            <option value="2" {{if Unit =='2' }}selected{{/if}}>Mg</option>
+                            <option value="3" {{if Unit =='3' }}selected{{/if}}>Mtr</option>
+                        </select>*@
+                        <select class="unit" name="Medications[${Key}].Unit" style="width:140px" onchange="changeIsEdited(this)">
+                            <option value="0">--Select--</option>
+                            {{each(i, unit) Units}}
+                            {{if Unit == unit.Id }}
+                            <option value="${unit.Id}" selected="selected">${unit.Name}</option> 
+                            {{else}} 
+                            <option value="${unit.Id}">${unit.Name}</option>
+                            {{/if}}                              
+                            {{/each}}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="frequency" name="Medications[${Key}].Frequency" id="ddlUnit" style="width:140px" onchange="changeIsEdited(this)">
+                            <option value="0">--Select--</option>
+                           {{each(i, fr) Frequencies}}
+                            {{if Frequency == fr.Id }}
+                            <option value="${fr.Id}" selected="selected">${fr.Name}</option> 
+                            {{else}} 
+                            <option value="${fr.Id}">${fr.Name}</option>
+                            {{/if}}                                
+                            {{/each}}
+                        </select>
+                    </td>
+                    <td>
+                        <input value="${IsPrescribed}" type="checkbox" class="isPrescribed" onchange="changeIsEdited(this)" name="Medications[${Key}].IsPrescribed" {{if IsPrescribed ==true || IsPrescribed == 'true' }} checked {{/if}} />
+                    </td>
+                    <td>
+                        <input value="${IsOtc}" type="checkbox" class="isOtc" onchange="changeIsEdited(this)" name="Medications[${Key}].IsOtc" {{if IsOtc ==true || IsOtc =='true' }} checked {{/if}} />
+                    </td>
+                    <td><textarea class="indication" name="Medications[${Key}].Indication" placeholder="Indication" onchange="changeIsEdited(this)">${Indication}</textarea></td>
+                    <td>
+                        <input type="button" value="x" data-key="${Key}" class="removeMedication" title="Remove" />
+                        <input type="hidden" class="medicationId" name="Medications[${Key}].Id" value="${Id}" />
+                    </td>
+                </tr>
+            </script>
+
+            <div style="float: right; padding-right: 8px;">
+                <div class="editor-label">&nbsp;</div>
+                <input type="button" value="+" title="Add more" onclick="addMedication(); " />
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.CustomerId)
+        @*@Html.HiddenFor(m => m.ServiceDate)*@
+    }
+
+    <script type="text/javascript">
+    var medicationList = new Array();
+    var frequencies = new Array();
+    var units = new Array();
+
+    var customerId = @Model.CustomerId;
+    var serviceDate = '@Model.ServiceDate.ToString("MM/dd/yyyy")';
+    $(document).ready(function () {
+
+        @if (Model != null)
+        {
+            if (Model.Frequency != null && Model.Frequency.Count() > 0)
+            {
+                foreach (var frequency in Model.Frequency)
+                {
+                    <text>
+                        var f = new Object();
+                        f.Id = '@frequency.Alias';
+                        f.Name = "@frequency.DisplayName";
+                        frequencies.push(f);
+                    </text>
+                }
+            }
+
+            if (Model.Unit != null && Model.Unit.Count() > 0)
+            {
+                foreach (var unit in Model.Unit)
+                {
+                    <text>
+                        var u = new Object();
+                        u.Id = '@unit.Alias';
+                        u.Name = "@unit.Name";
+                        units.push(u);
+                    </text>
+                }                
+            }
+
+            if (Model.Medications != null && Model.Medications.Count() > 0)
+            {
+                int arrayCounter=0;
+                foreach (var item in Model.Medications)
+                {
+                    <text>
+                        var objMedication = new Object();
+                        objMedication.Id = '@item.Id';
+                        objMedication.Key = '@arrayCounter';
+                        objMedication.ProprietaryName = '@item.ProprietaryName';
+                        objMedication.ServiceDate = '@item.ServiceDate.ToString("MM/dd/yyyy")';
+                        objMedication.Dose = '@item.Dose';
+                        objMedication.Unit = '@item.Unit';
+                        objMedication.Frequency = '@item.Frequency';
+                        objMedication.IsPrescribed = ('@item.IsPrescribed').toLowerCase(); //@(item.IsPrescribed.HasValue ? item.IsPrescribed : false); //
+                        objMedication.IsOtc = ('@item.IsOtc').toLowerCase();//@(item.IsOtc.HasValue ? item.IsOtc : false);
+                        objMedication.Indication = '@item.Indication.Replace("\r\n", " ").Replace("\n", " ").Replace("\\", "\\\\").Replace("/", "\\/")';
+                        objMedication.IsEdited = false;
+                        objMedication.Units = units;
+                        objMedication.Frequencies = frequencies;
+                        medicationList.push(objMedication);
+
+                    </text>
+                    arrayCounter++;
+                }
+                <text>renderMedications();</text>
+            }
+            else {
+                <text> addNewObject(0); </text>
+            }           
+        }
+        else{
+                <text> addNewObject(0); </text>
+        }
+
+        $(".isPrescribed").live('click', function () {
+            if ($(this).is(':checked'))
+            { $(this).closest('tr').find(".isOtc").attr("checked", ''); }
+            $(this).val($(this).is(':checked'));
+
+        });
+
+        $(".isOtc").live('click', function () {
+            if ($(this).is(':checked'))
+            { $(this).closest('tr').find(".isPrescribed").attr("checked", ''); }
+            $(this).val($(this).is(':checked'));
+        });
+    });
+
+    $(".removeMedication").live("click", function () {
+
+        $(this).parents("tr.medication-row:first").remove();
+        fillModelList();
+        renderMedications();
+        return false;
+    });
+
+    function addNewObject(key) {
+        var objMedication = new Object();
+        objMedication.Id = 0;
+        objMedication.Key = key;
+        objMedication.ProprietaryName = "";
+        objMedication.ServiceDate = serviceDate;
+        objMedication.Dose = "";
+        objMedication.Unit = 0;
+        objMedication.Frequency = 0;
+        objMedication.IsPrescribed = false;
+        objMedication.IsOtc = false;
+        objMedication.Indication = "";
+        objMedication.IsEdited = false;
+        objMedication.Units = units;
+        objMedication.Frequencies = frequencies;
+        medicationList.push(objMedication);
+        renderMedications();
+    }
+
+    function addMedication() {
+        fillModelList();
+        addNewObject(medicationList.length);
+        return false;
+    }
+
+    function fillModelList() {
+        medicationList = [];
+
+        $('#tBodyMedication > tr.medication-row').each(function (index, item) {
+
+            var objMedication = new Object();
+            objMedication.ProprietaryName = $(this).find('.medicationName').val();
+            objMedication.ServiceDate = $(this).find('.serviceDate').val();
+            objMedication.Dose = $(this).find('.dose').val();
+            objMedication.Unit = $(this).find('.unit').val();
+            objMedication.Frequency = $(this).find('.frequency').val();
+            objMedication.IsPrescribed = $(this).find('.isPrescribed').is(":checked");
+            objMedication.IsOtc = $(this).find('.isOtc').is(":checked");
+            objMedication.Indication = escapeHtml($(this).find('.indication').val());
+            objMedication.Id = $(this).find('.medicationId').val();
+            objMedication.Key = index;
+            objMedication.Units = units;
+            objMedication.Frequencies = frequencies;
+            medicationList.push(objMedication);
+        });
+    }
+
+    function renderMedications() {
+        if (medicationList.length == 0) {
+            {
+                addNewObject(1);
+            }
+        }
+        else {
+            $("#tBodyMedication").empty();
+            $.each(medicationList, function (key, objMedication) {
+                $("#medicationTemplate").tmpl(objMedication).appendTo("#tBodyMedication");
+                $(".medicationName:last").each(function () {
+                    $(this).autoComplete({
+                        autoChange: true,
+                        url: '/Medical/Medication/GetMedicationName',
+                        type: "POST",
+                        data: "searchText",
+                        dataType: "json"
+                    });
+                });
+            });
+            $("#medication-container").show();
+        }
+
+        var currentDate = new Date();
+        $(".date-picker").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: currentDate,
+            minDate: new Date("01/01/1950")          
+        });        
+    }
+
+    function bindUnitDropdown()
+    {
+
+        $('.unit').append($('<option></option>').val(0).html('Select Unit'));
+        for (var i = 0; i < units.length; i++) {
+            $('.unit').append($('<option></option>').val(units[i].value).html(units[i].text));
+
+        }
+    }
+
+    function changeIsEdited(objControl)
+    {
+        $(objControl).closest('tr').find('.isEdited').val('true');
+    }
+
+    function escapeHtml(text) {
+        return text
+            .replace(/\n/g, " ");
+            //.replace(/'/gi, "\\\'")
+            //.replace(/\\\"/gi, "\\\\\"")
+            //.replace(/\?\?+/gi, "?");
+    }
+
+    function isNumberKey(evt, obj) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        var value = obj.value;
+        var dotcontains = value.indexOf(".") != -1;
+        if (dotcontains)
+            if (charCode == 46) return false;
+        if (charCode == 46) return true;
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+    </script>

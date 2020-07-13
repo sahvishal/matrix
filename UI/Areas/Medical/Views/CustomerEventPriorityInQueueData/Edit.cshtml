@@ -1,0 +1,78 @@
+﻿@using Falcon.App.Core.Medical.ViewModels   
+@model PriorityInQueueTestEditModel
+@{
+    ViewBag.Title = "Priority In Queue Note";
+    Layout = null;
+}
+ 
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+
+<div class="content-main-column priorityInQueue-edit" style="width: 99%;">
+    @*@Html.EditorFor(m => m.CustomerEventScreeningTestId)*@
+     
+    <div class="editor-row">
+        <div class="editor-label">
+            @Html.LabelFor(m => m.Note)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(m => m.Note, new { cols = "84",id="PriorityInQuetestNote", rows="5" })
+        </div>
+    </div>
+ 
+    <div style="float: right; margin-top: 10px;" class="editor-row priorityInQueue-button-div">
+        <input type="button" value="Cancel" onclick="piqPopupcloseMethod();" class="save-close-piqdata" /> 
+        <input type="button" value="Save " class="save-close-piqdata" onclick="SavePriorityInQueueDataModel();" /> 
+    </div>
+</div>
+<input type="text" id="hid-linebreak" value="\n" style="display: none;" />
+<script type="text/javascript" language="javascript">
+    var piqModel = null;
+
+    var piqPopupcloseMethod = null;
+    var piqPopupsetModel = null;
+
+    var isPriorityInQueueTestOpenForEdit = @(Model.CustomerEventScreeningTestId > 0 ? "true" : "false");
+
+
+     @{
+         if (Model != null)
+         {
+             Model.Note = string.IsNullOrEmpty(Model.Note) ? string.Empty : Model.Note.Replace("\n", "<br@>");
+         }
+         var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+         var modelSerialized = serializer.Serialize(Model);
+
+         <text>
+        var modelString = '@Html.Raw(modelSerialized.Replace("\"", "\\\""))';
+        modelString = modelString.replace(/<br@@>/gi, $("#hid-linebreak").val());            // todo , rectify this
+        eval("piqModel = " + modelString);
+        </text>
+     }
+
+    function loadPriorityinQueueTestPopup(setModelMethodRef, closeMethodRef, mode){
+        piqPopupsetModel = setModelMethodRef;
+        piqPopupcloseMethod = closeMethodRef; 
+        
+        if((mode == '@(Falcon.App.Core.Medical.Enum.TestResultStateNumber.Evaluated)') || (mode == '@(Falcon.App.Core.Medical.Enum.TestResultStateNumber.PostAudit)'))
+        { 
+            $("#PriorityInQuetestNote").attr("disabled", "disabled"); 
+            $(".save-close-piqdata").hide(); 
+        }
+    }
+</script>
+<script type="text/javascript" language="javascript">
+    function SavePriorityInQueueDataModel() { 
+        var note = $.trim($('#PriorityInQuetestNote').val());
+        if (note != "") {
+            piqModel.Note = note;
+
+            $(".save-close-piqdata").toggle();
+            piqPopupsetModel(piqModel);
+        } else {
+            alert("Please enter notes.");
+        }
+    }
+</script>

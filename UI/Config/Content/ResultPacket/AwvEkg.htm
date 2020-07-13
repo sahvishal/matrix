@@ -1,0 +1,339 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="Stylesheet" type="text/css" href="content/FinalPdf.css" />
+    <script type="text/javascript" src="content/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="content/jquery-ui-1.8.12.custom.min.js"></script>
+</head>
+<body>    
+    <div id="AwvEkg-rpp-section" style="display: none;" class="mainContainer-wopb">
+        <div class="centeralignimgtitlediv test-header-image">
+            <img src="content/yourelectrocardiogramscreening.jpg" alt="" />
+        </div>
+        <div class="centeralignimgtitlediv test-header-text" style="display: none;">
+            ELECTROCARDIOGRAM (EKG) RESULTS
+        </div>
+        <div class="divtestsection-withborder">
+            <div class="section">
+                <div class="section-left font-description">
+                    <div class="testsection-header">
+                        ELECTROCARDIOGRAM (EKG)
+                    </div>
+                    The electrocardiogram monitors the electrical activity of the heart. Abnormal EKG
+                    waves can show a heart rate that is too fast, slow or irregular. It can disclose
+                    a past silent heart attack and can assess pacemaker function, among many other problems.
+                </div>
+                <div class="section-right">
+                    <img src="content/yourelectrocardiogramimage.jpg" alt="" />
+                </div>
+            </div>
+            <div class="section">
+                <span class="testsection-header">RESULTS:</span><span id="AwvEkg-rpp-resultspan" class="test-resultspan-font">
+                </span>
+            </div>
+            <div class="section font-reading">
+                <div class="ekg-finding-div">
+                    <table cellspacing="0" cellpadding="0" id="AwvEkgFinding" class="ekg-finding-table"
+                           border="0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input name="AwvEkgFindingsRadioButton" class="ekg-radio rbt-finding" type="radio" />No
+                                    Significant Abnormalty Seen
+                                </td>
+                                <td>
+                                    <input name="AwvEkgFindingsRadioButton" class="ekg-radio rbt-finding" type="radio" />Mildly
+                                    Abnormal
+                                </td>
+                                <td>
+                                    <input name="AwvEkgFindingsRadioButton" class="ekg-radio rbt-finding" type="radio" />Abnormal
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="ekg-physicianvalue-div">
+                    <div class="ekg-physicianvalue-inner-div">
+                        <input type="checkbox" id="AwvEkgRepeatStudyInputCheck" />Repeat Study&nbsp;&nbsp;
+                        <input type="checkbox" id="AwvEkgArtifactInputCheck" />Artifact&nbsp;&nbsp;
+                        <input type="checkbox" id="AwvEkgReversedLeadInputCheck" />Reversed Leads&nbsp;&nbsp;
+                        <input type="checkbox" id="ComparetoPrevAwvEkgInputCheck" />Compare to Previous EKG
+                    </div>
+                </div>
+            </div>
+            <div class="section font-reading">
+                <div style="float: left; width: 100%; padding: 4px 0px; margin-top: 10px;">
+                    <table cellspacing="0" cellpadding="0" style="float: left; font-size: 11px;" width="260px"
+                           border="0">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgSinusRythmInputCheck" type="checkbox" />Sinus Rhythm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgSinusArrythmiaInputCheck" type="checkbox" />Sinus Arrhythmia
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgSinusBradycardiaInputCheck" type="checkbox" />Sinus Bradycardia
+                                    <input id="AwvEkgMarkedInputCheck" type="checkbox" />Marked &lt; 50
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgSinusTachycardiaInputCheck" type="checkbox" />Sinus Tachycardia
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgAtrialFibrillationInputCheck" type="checkbox" />Atrial Fibrillation&nbsp;&nbsp;
+                                    <input id="AwvEkgAtrialFlutterInputCheck" type="checkbox" />Atrial Flutter
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgSupraventriculaCheckbox" type="checkbox" />Supraventricular Arrhythmia
+                                    <input id="AwvEkgSvtInputCheck" type="checkbox" />SVT
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgPacInputCheck" type="checkbox" />PAC(s)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgPvcInputCheck" type="checkbox" />PVC(s)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgPacerRythmCheckbox" type="checkbox" />Pacer Rhythm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="AwvEkgBundleBranchBlockCheckbox" type="checkbox" />Bundle Branch Block
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <table cellspacing="0" cellpadding="0" style="border-collapse: collapse; padding-left: 15px;"
+                                           border="0" id="AwvEkgBundleBranchBlockFinding"></table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table cellspacing="0" cellpadding="0" border="0" width="290px" style="float: left; font-size: 11px">
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgQrsWideningInputCheck" />QRS widening
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgLeftAxisInputCheck" />&nbsp;Left Axis
+                                <input type="checkbox" id="AwvEkgRightAxisInputCheck" />
+                                &nbsp;Right Axis
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgAbnormalAxisInputCheck" />&nbsp;Abnormal Axis
+                                <input type="checkbox" id="AwvEkgLeftInputCheck" />Left
+                                <input type="checkbox" id="AwvEkgRightInputCheck" />Right
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgLeftAnteriorfasicularBlockCheckbox" />Left Anterior Fasicular
+                                Block
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgHeartBlockInputCheck" />AV Nodal Heart Block
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table cellspacing="0" cellpadding="0" border="0" style="padding-left: 15px;">
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="AwvEkgFirstDegreeBlockInputCheck" />
+                                        </td>
+                                        <td>
+                                            1st  Degree AV Block
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="AwvEkgSecondDegreeBlockCheckbox" />
+                                        </td>
+                                        <td>
+                                            2nd Degree Mobitz I AV Block
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="AwvEkgTypeIIInputCheck" />
+                                        </td>
+                                        <td>
+                                            2nd Degree Mobitz II AV Block
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="AwvEkgThirdDegreeBlockInputCheck" />
+                                        </td>
+                                        <td>
+                                            3rd Degree Complete AV Block
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                                <div>
+                                    <input type="checkbox" id="AwvEkgShortPrIntervalCheckbox" />
+                                    Short P-R interval for rate
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgVentricularCheckbox" />Consistent with Ventricular Hypertrophy
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgLeftVentricularCheckbox" />Left
+                                <input type="checkbox" id="AwvEkgRightVentricularCheckbox" />Right
+                            </td>
+                        </tr>
+                    </table>
+                    <table cellspacing="0" cellpadding="0" border="0" width="250px" style="float: left; font-size: 11px">
+                        <tr>
+                            <td>
+                                <input id="AwvEkgProlongedQTCheckbox" type="checkbox" />Prolonged QTc Interval
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="AwvEkgISchemicSttCheckbox" type="checkbox" />Consistent with Ischemic ST-T changes
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="AwvEkgNonSpecificSttCheckbox" type="checkbox" />Non Specific ST-T changes
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="AwvEkgPoorRWaveProgressionCheckbox" type="checkbox" />Poor R Wave Progression
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="AwvEkgInfarctionPatternCheckbox" type="checkbox" />Consistent with Infarction Pattern
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table cellspacing="0" cellpadding="0" id="AwvEkgInfarctionPatternFinding" style="border-collapse: collapse; padding-left: 15px;"
+                                       border="0"></table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="AwvEkgATypicalWaveCheckbox" type="checkbox" />Atypical Q Wave lead III
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="AwvEkgAtrialEnlargementCheckbox" type="checkbox" />Atrial Enlargement
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="AwvEkgLeftAtrialCheckbox" type="checkbox" />Left
+                                <input id="AwvEkgRightAtrialCheckbox" type="checkbox" />Right
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="AwvEkgRepolarizationCheckbox" type="checkbox" />Repolarization Variant
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgLowVoltageCheckbox" />Low Voltage
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="AwvEkgLimbLeadsCheckbox" />Limb leads
+                                <input type="checkbox" id="AwvEkgPrecordialLeadsCheckbox" />Precordial leads
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="section">
+                <div style="display: none;" class="rsleft">
+                    <table cellspacing="0" cellpadding="0" id="AwvEkgUnableToScreen"></table>
+                </div>
+            </div>
+            <div class="section top-border">
+                <div class="section">
+                    <span class="testsection-header">REMARKS: </span><span id="AwvEkgPhysicianNotesTextbox"></span>
+                </div>
+                <div class="section">
+                    <b>Technician: </b>
+                    <input type="text" id="techAwvEkg" style="width: 400px; border: none;" readonly="readonly" />
+                </div>
+                <div class="section">
+                    <div class="section" style="width: 20%;">
+                        <b>Physician Signature: </b>
+                        <div style="padding-top: 50px;">Electronically signed</div>
+                    </div>
+                    <div class="section" style="width: 75%;">
+                        <table cellspacing="13" class="physician-signature">
+                            <tr>
+                                <td id="AwvEkg-primaryEvalPhysicianSign" class="primaryEvalPhysicianSign" style="text-align: center;"></td>
+                                <td id="AwvEkg-overreadEvalPhysicianSign" class="overreadEvalPhysicianSign" style="text-align: center;"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="section top-border" id="AwvEkg-longdescription-div">
+                <span class="testsection-header">FOLLOW-UP: </span>
+                <p class="test-textcontent-rpp" id="longdescription-AwvEkg">
+                    <i>
+                        You have purchased the test, however due to technical reasons we could not perform
+                        this test on you. If you have any questions please feel free to call us.
+                    </i>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="mainContainer-img" id="AwvEkgReport" style="display: none;">
+        <div class="topcontainer-img">
+            <div class="sectionUpper page-title">
+                <h2>
+                    Your Electrocardiogram (EKG) Report.
+                </h2>
+            </div>
+            <div class="sectionUpper">
+                <img id="AwvEkgGraph" src="" alt="EKG Graph" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>

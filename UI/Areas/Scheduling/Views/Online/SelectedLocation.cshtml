@@ -1,0 +1,187 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@model Falcon.App.Core.Scheduling.ViewModels.OnlineSchedulingEventViewModel
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+@if (Model != null)
+{
+    var settings = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>();
+    <div id="current-selection" class="location_listing_box">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="location_list">
+            <tr>
+                <th colspan="6">
+                    SELECTED LOCATION
+                </th>
+            </tr>
+            <tr>                             
+                <td valign="top" style="width:340px;">
+                    <h3>
+                        @Model.HostName
+                        @if (Model.IsFemaleOnly)
+                        {
+                            <img src="/Content/Images/female-sign.png" width="20px" height="20px" alt="Female Only" />
+                        }
+                    </h3>
+                    <h4 class="txt-grey mt5">@Model.EventLocation</h4>                    
+                </td>
+                <td valign="top" style="width:120px;">
+                    <h3>@Model.EventDate.DayOfWeek.ToString()</h3>
+                    <h4 class="txt-grey mt5">@Model.EventDate.ToString("MMMM dd, yyyy")</h4>
+                </td>
+                <td valign="top" style="width:120px;">
+                    <h4>@Html.Raw(Model.DistanceFromZip > 0 ? Math.Round(Model.DistanceFromZip).ToString() + " miles " : "")</h4>
+                    <h5 class="mt5">
+                        <a id="aMapToLoc" href="http://maps.google.com/maps?f=q&hl=en&geocode=&q=@(Model.EventLocation.MaptoLocation())&ie=UTF8&z=16" class="location_icon" target="_blank">Map to Location</a>
+                    </h5>                    
+                </td>
+                <td valign="top" colspan="2">
+                   <div class="sponsor_logo" style="text-align:center;">
+                        @if (!string.IsNullOrEmpty(Model.SponsorImage))
+                        {
+                            <img src="@Model.SponsorImage" style="width:150px; height:50px;" alt="" />
+                        }
+                        else
+                        {
+                            <img src="@settings.SmallLogo" style="width:150px;" alt="" />   
+                        }
+                    </div>
+                </td>
+                <td valign="top">
+                    <input type="button" class="selected_btn select-time-selectedevent-action" value="Select Time" />
+                </td>
+            </tr>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="location_list">
+            <tr>
+                <td colspan="2" class="highlight_box"><strong>Possible slots available</strong></td>
+            </tr>
+            <tr>                
+                @{
+                    var freeSlots = Model.EventAppointSlotSummaryViewModel.AppointmentSlots.Where(ap => ap.AppointmentStatus == AppointmentStatus.Free).OrderBy(a => a.StartTime);
+                    if (freeSlots == null || freeSlots.Count() < 1)
+                    {
+                        <td colspan="4">
+                            <h2> No Slots Available</h2>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="time_slot_on_listing">
+                            <div class="ml15" style="float:left; width:48%;">
+                            @{
+                                var midTime = freeSlots.First().StartTime.Date.AddHours(12);
+                                
+                                var fromTime = freeSlots.First().StartTime;
+                                if(fromTime < midTime)
+                                {
+                                    <div style="float:left; width:100%;" class="main">
+                                        <div style="float:left; width:33%;"><h3>Times (AM) </h3></div>
+                                        <div style="float:left; width:33%; text-align:center;"><h3>Available slots</h3></div>
+                                        <div style="float:left; width:33%; text-align:center;"><h3>Action</h3></div>
+                                    </div>
+                                    fromTime = fromTime.AddMinutes(-1 * fromTime.Minute).AddSeconds(-1 * fromTime.Second);
+                                    while (fromTime < midTime)
+                                    {
+                                        var endTime = fromTime.AddHours(1);
+                                        var count = freeSlots.Where(fs => fs.StartTime >= fromTime && fs.StartTime < endTime).Count();
+                                        if (count > 0)
+                                        {
+                                            var isSelected = Model.PreliminarySelectedTime.HasValue && fromTime == Model.PreliminarySelectedTime.Value;
+                                            <div style="float:left;  width:100%; color:#333;" class="main">
+                                                <div style="float:left; width:33%;">@(fromTime.ToString("h tt")) - @(endTime.ToString("h tt"))</div>
+                                                <div style="float:left; width:33%; text-align:center;">@count</div>
+                                                <div style="float:left; width:33%; text-align:center; border:0px;" class="location_listing_box">
+                                                    <input type="button" class="button_grey" value="Select" onclick='setPreliminaryStartTime("@fromTime", this);' style='width:98px; @(isSelected?"display:none" : "")' />
+                                                    <input type="button" class="button_green" value="Selected" style='width:98px; @(!isSelected?"display:none" : "")' />
+                                                </div>
+                                            </div>                     
+                                        }
+                                        fromTime = endTime;
+                                    }
+                                }
+                                else
+                                {
+                                    <div style="float:left; width:100%;" class="main">
+                                        <div style="float:left; width:49%;"><h3>Times (AM) </h3></div>
+                                        <div style="float:left; width:49%; text-align:center;"><h3>Available slots</h3></div>
+                                    </div>
+                                    <h2> No Morning Slots Available</h2>
+                                }
+                            }
+                            </div>
+                        
+                            <div class="ml15" style="float:left; width:48%;">
+                            @{
+                                var toTime = freeSlots.Last().StartTime;
+                                if (midTime < toTime)
+                                {
+                                    <div style="float:left; width:100%;" class="main">
+                                        <div style="float:left; width:33%;"><h3>Times (PM)</h3></div>
+                                        <div style="float:left; width:33%; text-align:center;"><h3>Available slots</h3></div>
+                                        <div style="float:left; width:33%; text-align:center;"><h3>Action</h3></div>
+                                    </div>
+                                    toTime = toTime.AddMinutes(60 - toTime.Minute).AddSeconds(-1 * fromTime.Second);
+                                    fromTime = midTime;
+                                    while (fromTime < toTime)
+                                    {
+                                        var endTime = fromTime.AddHours(1);
+                                        var count = freeSlots.Where(fs => fs.StartTime >= fromTime && fs.StartTime < endTime).Count();
+                                        if (count > 0)
+                                        {
+                                            var isSelected = Model.PreliminarySelectedTime.HasValue && fromTime == Model.PreliminarySelectedTime.Value;
+                                            <div style="float:left; width:100%; color:#333;" class="main">
+                                                <div style="float:left; width:33%;">@(fromTime.ToString("h tt")) - @(endTime.ToString("h tt"))</div>
+                                                <div style="float:left; width:33%; text-align:center;">@count</div>
+                                                <div style="float:left; width:33%; text-align:center;">
+                                                    <input type="button" class="button_grey" value="Select" onclick='setPreliminaryStartTime("@fromTime", this);' style='width:98px; @(isSelected?"display:none" : "")' />
+                                                    <input type="button" class="button_green" value="Selected" style='width:98px; @(!isSelected?"display:none" : "")' />
+                                                </div>
+                                            </div>                     
+                                        }
+                                        fromTime = endTime;
+                                    }
+                                }
+                                else
+                                {
+                                    <div style="float:left; width:100%;" class="main">
+                                        <div style="float:left; width:49%;"><h3>Times (PM)</h3></div>
+                                        <div style="float:left; width:49%; text-align:center;"><h3>Available slots</h3></div>
+                                    </div>
+                                    <h2> No Evening Slots Available</h2>
+                                }
+                            }
+                            </div>
+                        </td>
+                    }
+                }
+            </tr>
+        </table>
+    </div>  
+    
+    <script type="text/javascript" language="javascript">
+        function setPreliminaryStartTime(startTime, controlRef) {//debugger;
+            $(".submit-btn-toggle").toggle();
+
+            var guid = getGuid();
+            $.ajax({ 'type': 'POST',
+                'dataType': 'json',
+                'url': '/Scheduling/Online/SaveTempCartforPreliminarySelectedTime?guid=' + guid + '&selectedTimeRange=' + startTime,
+                'data': '{}',
+                'success': function (result) {
+                    if (result.Result) {
+                        //debugger;
+                        $('.time_slot_on_listing input[type="button"].button_grey').show();
+                        $('.time_slot_on_listing input[type="button"].button_green').hide();
+
+                        $(controlRef).parent().find('.button_grey').hide();
+                        $(controlRef).parent().find('.button_green').show();
+                    }
+                    $(".submit-btn-toggle").toggle();
+                },
+                'error': function () {
+                    $(".submit-btn-toggle").toggle();
+                }
+            });
+        }
+    </script>
+    
+}

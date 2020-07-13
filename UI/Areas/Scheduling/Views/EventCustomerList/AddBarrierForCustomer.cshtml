@@ -1,0 +1,58 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.BarrierEditModel
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <title>Add Barrier For Customer</title>
+    <script type="text/javascript" src="@Url.Content("/Scripts/jquery-1.5.2.min.js")"></script>
+    <link href="/Content/Styles/Style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="container" width="980" height="562">
+        <div id="content">
+            <div class="editor-row">
+                <div class="editor-column" style="width:29%">
+                    <h1>
+                        Customer Barriers
+                    </h1>
+                </div>
+            </div>
+            @if (Model != null)
+            {
+                @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+            }
+            @using (Html.BeginForm())
+            {
+                @Html.HiddenFor(x => x.EventCustomerId)
+                <div class="row">
+                    <fieldset>
+                        <legend><b>Customer Info:</b></legend>
+                        <div style="padding: 10px 10px 10px 15px;">
+                            <div class="editor-row" style="margin-top: 5px;">
+                                <b>Category: </b>  <span class="reqiredmark"><sup>*</sup> </span> @Html.ValidationMessageFor(x => x.BarrierId)<br />
+                                @Html.DropDownListFor(m => m.BarrierId, DropDownHelper.GetBarrierCategory(), new { @class = "select", @style = "width:380px;" })
+                            </div>
+                            <div class="editor-row">
+                                <b>Reason: </b> <span class="reqiredmark"><sup>*</sup> </span> @Html.ValidationMessageFor(x => x.Reason) <br />
+                                @Html.TextAreaFor(x => x.Reason, new { @rows = "8", @cols = "50" ,@maxLength="1000"})
+                            </div>
+                            <div class="editor-row">
+                                <b>Resolution: </b>@Html.ValidationMessageFor(x => x.Resolution) <br />
+                                @Html.TextAreaFor(x => x.Resolution, new { @rows = "8", @cols = "50", @maxLength = "2000" })
+                            </div>
+                        </div>
+                        <div style="clear: both; float: right" class="btnrow save-settigs-btn">
+                            <input type="submit" value="Save" style="float: right; margin-right: 50px;margin-top: 5px;" class="btn">
+                        </div>
+                        <div style="display: none; text-align: right; float: right; margin-right: 50px; padding-top: 6px" class="save-settigs-btn">
+                            <img alt="" src="/App/Images/loading.gif">
+                        </div>
+                    </fieldset>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>

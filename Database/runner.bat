@@ -1,0 +1,1 @@
+sqlcmd -U sa -P sa@123 -i %1%2%3 -v dbName="%dbName%"dbFilePath="%dbFilePath%"

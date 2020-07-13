@@ -1,0 +1,65 @@
+﻿/*autocomplete*/
+.ui-autocomplete {
+    max-height: 180px;
+    overflow-y: auto;
+    border-radius: 0;
+    border: 1px solid #55A651;
+    /*margin-left: 0px !important;*/
+    padding: 0 !important;
+    border-top: 0;
+    position: absolute;
+    z-index: 5;
+    width: 100% !important;
+
+}
+
+
+    .ui-autocomplete li {
+        list-style: none;
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        line-height: 27px;
+        text-align: left;
+        text-transform: none;
+    }
+
+        .ui-autocomplete li a {
+            color: #496181;
+            padding: 0 12px;
+            font-family: "Lucida Sans";
+            font-size: 13px;
+            text-decoration: none;
+            display: block;
+        }
+        .ui-autocomplete li a.ui-state-focus,
+        .ui-autocomplete li a:hover {
+            background-color: #55A651;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .ui-autocomplete li a.ui-state-focus,
+        .ui-autocomplete li a:hover{
+            color: #fff;
+            cursor: pointer;
+        }
+        .auto-comp{ position: relative;}
+        .ui-autocomp-show-top {
+            top: auto !important;
+            bottom: 24px;
+            border-top: 1px solid #55A651;
+        }
+        
+        /*#ui-id-2, #ui-id-4{
+            top: auto !important;
+            bottom: 24px;
+            border-top: 1px solid #55A651;
+        }*/
+        #ui-id-1 a{
+            border-top: 0;
+        }
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    background: none;
+    border: 1px solid transparent;
+}

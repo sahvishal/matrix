@@ -1,0 +1,126 @@
+﻿@using Falcon.App.Core.Application.Enum
+@model Falcon.App.Core.Users.ViewModels.AccountVerificationEditModel
+
+@Html.HiddenFor(m => m.Tag)
+@Html.HiddenFor(m => m.InvitationCode)
+
+@Html.HiddenFor(m => m.FirstNameVerification)
+@Html.HiddenFor(m => m.LastNameVerification)
+@Html.HiddenFor(m => m.CustomerEmailVerification)
+@Html.HiddenFor(m => m.DateOfBirthVerification)
+@Html.HiddenFor(m => m.MemberIdVerification)
+@Html.HiddenFor(m => m.ZipCodeVerification)
+@Html.HiddenFor(m => m.CustomerId)
+@Html.HiddenFor(m => m.UrlSuffix)
+@Html.HiddenFor(m => m.Tag)
+@Html.HiddenFor(m=>m.MemberIdLabel)
+@if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+{
+    
+    <script type="text/javascript">
+        
+        $("#verification-confirm").html($(".Confirmation").html());
+        
+        $("#verification-confirm").dialog("open");
+        $(".failed-verfication-msg").hide();
+        function reloadForm() {
+            
+            window.location.href = "/private/Index?urlSuffix=@Model.UrlSuffix&invitationCode=@Model.InvitationCode&CustomerId=@Model.CustomerId";
+        }
+    </script>
+}
+else if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Error)
+{
+    <script type="text/javascript">
+        $(".failed-verfication-msg").show();
+    </script>
+}
+<div class="editor-row"><div class="editor-field"><b>Please provide the following information for verification</b></div> </div>
+@if (Model.FirstNameVerification)
+{
+    <div class="editor-row">
+        <div class="editor-field"><div style="width: 70px;font-weight: bold;float: left;">First Name:</div>@Html.TextBoxFor(m => m.FirstName) @Html.ValidationMessageFor(m => m.FirstName)</div>
+    </div>
+}
+
+@if (Model.LastNameVerification)
+{
+    <div class="editor-row">
+        <div class="editor-field"><div style="width: 70px;font-weight: bold;float: left;">Last Name:</div>@Html.TextBoxFor(m => m.LastName) @Html.ValidationMessageFor(m => m.LastName)</div>
+    </div>
+}
+
+@if (Model.CustomerEmailVerification)
+{
+    <div class="editor-row">
+        <div class="editor-field"><div style="width: 70px;font-weight: bold;float: left;">Email:</div>@Html.TextBoxFor(m => m.CustomerEmail) @Html.ValidationMessageFor(m => m.CustomerEmail)</div>
+    </div>
+}
+
+@if (Model.MemberIdVerification)
+{
+    <div class="editor-row">
+        <div class="editor-field"><div style="width: 70px;font-weight: bold;float: left;">@(string.IsNullOrEmpty(Model.MemberIdLabel) ? "Member Id" : Model.MemberIdLabel):</div>@Html.TextBoxFor(m => m.MemberId) @Html.ValidationMessageFor(m => m.MemberId)</div>
+    </div>
+}
+@if (Model.DateOfBirthVerification)
+{
+    <div class="editor-row">
+        <div class="editor-field">
+            <div style="width: 70px;font-weight: bold;float: left;">DOB:</div> <div style="width: 130px;font-weight: bold;float: left;"> @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "datePicker-dob small-dob-box" }) @Html.ValidationMessageFor(m => m.DateOfBirth)</div>
+        </div>
+    </div>
+}
+<div class="editor-row">
+
+    @if (Model.ZipCodeVerification)
+    {
+        <div class="editor-field">
+            <div style="width: 70px; font-weight: bold; float: left;">Zip Code:</div>@Html.TextBoxFor(m => m.ZipCode, new { @class = "small-zip-box" }) @Html.ValidationMessageFor(m => m.ZipCode) &nbsp; &nbsp;
+        </div>
+    }
+</div>
+<style type="text/css">
+    .small-zip-box {
+        width: 40px !important;
+    }
+
+    .small-dob-box {
+        width: 80px !important;
+    }
+</style>
+
+<div class="Confirmation" style="display: none;">
+    Please confirm your details
+    <hr/>
+    <div class="editor-row" style="margin-left: 10px;">
+        <div style="width: 48%;float: left">
+            <div class="editor-label">First Name: @Model.FirstName</div>
+        </div>
+        <div style="width: 48%;float: left">
+            <div class="editor-label">Last Name: @Model.LastName</div>
+        </div>
+    </div>
+    <div class="editor-row" style="margin-left: 10px;">
+        <div style="width: 48%;float: left">
+            <div class="editor-label">Date of Birth: @(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToShortDateString() : string.Empty)</div>
+        </div>
+        <div style="width: 48%;float: left">
+            <div class="editor-label">@Model.MemberIdLabel: @Model.MemberId</div>
+        </div>
+    </div>
+    @*<div class="editor-row" style="margin-left: 10px;">
+        <div style="width: 48%;float: left">
+            <div class="editor-label">Zip Code: @Model.ZipCode</div>
+        </div>
+        <div style="width: 48%;float: left">
+            <div class="editor-label">Email: @Model.CustomerEmail</div>
+        </div>
+    </div>*@
+</div>
+<div class="editor-row" style="text-align: right;padding-right: 50px">
+    <input type="submit" value="Continue to Verification" id="submit-verification">
+</div>
+<script type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+
+

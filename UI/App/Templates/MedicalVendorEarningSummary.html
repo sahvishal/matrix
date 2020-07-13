@@ -1,0 +1,51 @@
+﻿<div>
+    <div id="PagingDiv" style="text-align: right; padding: 5px">
+        <a id="PrevPage">Previous Page</a> <span id="PagingLinksSeparator">|</span>
+        <a id="NextPage">Next Page</a>
+    </div>
+    <div id="MedicalVendorEarningSummaryRepeaterDiv" runat="server">
+        <table id="MedicalVendorEarningSummaryTable" class="divgrid_clnew" cellspacing="3" width="100%">
+            <thead>
+                <tr>
+                    <th style="white-space:nowrap;text-align:left;">
+                        <b>Date Of Evaluation</b> 
+                    </th> 
+                    <th style="white-space:nowrap;text-align:left;">
+                        <b>Physician Name</b>
+                    </th>
+                    <th style="white-space:nowrap;text-align:left;">
+                        <b>Customer Name</b>
+                    </th>
+                    <th style="white-space:nowrap;text-align:left;">
+                        <b>Package Name</b>
+                    </th>
+                    <th style="white-space:nowrap;text-align:center;">
+                        <b>Amount Earned</b> 
+                    </th>                        
+                </tr>
+            </thead>
+            <tbody>
+                {#foreach $T as MedicalVendorEarningCustomerAggregate}
+                <tr>
+                    <td style="white-space:nowrap;text-align:left;">
+                        {DateDeserialize($T.MedicalVendorEarningCustomerAggregate.EvaluationDate).format("shortDate")} @
+                        {DateDeserialize($T.MedicalVendorEarningCustomerAggregate.EvaluationDate).format("shortTime")}
+                    </td>                        
+                    <td style="white-space:nowrap;text-align:left;">
+                        {$T.MedicalVendorEarningCustomerAggregate.PhysicianName.FullName}
+                    </td>
+                    <td style="white-space:nowrap;text-align:left;">
+                        {$T.MedicalVendorEarningCustomerAggregate.CustomerName.FullName}
+                    </td>
+                    <td style="white-space:nowrap;text-align:left;">
+                        {$T.MedicalVendorEarningCustomerAggregate.PackageName}
+                    </td>
+                    <td style="white-space:nowrap;text-align:center;">
+                        {FormatCurrency($T.MedicalVendorEarningCustomerAggregate.AmountEarned)}
+                    </td>                 
+                </tr>  
+                {#/for}
+            </tbody>
+        </table>
+    </div>
+</div>

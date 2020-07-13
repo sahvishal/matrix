@@ -1,0 +1,143 @@
+﻿@using Falcon.App.Core.Audit.ViewModel
+@model ActivityLoggedModelDetailsViewModel
+@{
+    ViewBag.Title = "Audit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+} 
+
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+
+<style>
+    /*.bordered-box {
+        z-index: 29;
+        background: #ffffff;
+        border: 1px ridge #899caa;
+        border-radius: 5px;
+        width: auto;
+        margin: auto;
+    }*/
+     .header {
+         font-weight: bold;
+         background-color: #B1C8DA;
+         color: #081E52;
+         padding: 5px;
+     }
+    .content {
+        padding: 10px 6px; 
+        width: 95%; 
+        margin: auto; 
+    }
+    .span6 {
+        float: left;
+        width: 48%;
+    }
+    .row-fluid {
+        width: 100%;
+    }
+    .well {
+        min-height: 20px;
+        padding: 19px;
+        margin-bottom: 20px;
+        background-color: #FDFDFD;
+        border: 1px solid #e3e3e3;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+        -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+    }
+
+
+    table {
+        max-width: 100%;
+        background-color: transparent;
+        border-collapse: collapse;
+        border-spacing: 0;
+        display: table;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .table-bordered {
+        border: 1px solid #ddd;
+        border-collapse: separate;
+        border-left: 0;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+    }
+    .table {
+        margin-bottom: 0px;
+    }
+   
+    th {
+        border: 1px solid #ddd;
+        border-left: none;
+        text-align: left;
+    }
+    td {
+        border: 1px solid #ddd;
+        border-left: none;
+        text-align: left;
+    }
+   
+
+    
+
+    
+
+  
+
+</style>
+
+<div id="detail-panel" class="bordered-box hide" style="min-height: 200px;">
+    @*<div class="header">Details</div>*@
+    <div class="content">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td><b>Accessed By : </b> @Model.ActivityLog.AccessedBy</td>
+                    <td><b>Client Ip : </b>@Model.ActivityLog.ClientIp</td>
+                    <td><b>Browser : </b> @Model.ActivityLog.ClientBrowser</td>
+                    <td><b>Customer : </b> @Model.ActivityLog.Customer</td>
+                </tr>
+                <tr>
+                    <td><b>Timestamp : </b> @Model.ActivityLog.Timestamp.ToLocalTime()</td>
+                    <td><b>Access Type : </b> @Model.ActivityLog.Action</td>
+                    <td colspan="2"><b>Resource Accessed : </b> @Model.ActivityLog.UrlAccessed</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="datail-panel-content" class="content">
+        <div class="editor-row">
+            @if (Model.ModelDetails.Simple.ToList().Any())
+            {
+                @Html.Partial("SimpleModel", Model.ModelDetails.Simple)
+            }
+
+            @if (Model.ModelDetails.Complex.ToList().Any())
+            {
+                @Html.Partial("ComplexModel", Model.ModelDetails.Complex)
+            }
+            @if (Model.ModelDetails.Collections.ToList().Any())
+            {
+                <text><b>Records:</b> <br /></text>
+                @Html.Partial("CollectionModels", Model.ModelDetails.Collections)
+            }
+            @if (Model.Collections.ToList().Any())
+            {
+                <text><b>Records:</b> <br /></text>
+                @Html.Partial("CollectionModels", Model.Collections)
+            }
+
+        </div>
+    </div>
+</div>
+

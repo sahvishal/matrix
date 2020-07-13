@@ -1,0 +1,21 @@
+﻿@using Falcon.App.Core.Sales.Domain
+@model List<CorporateCustomerCustomTag>
+
+@{
+    Layout = null;
+}
+@if (Model != null && Model.Any())
+{
+    foreach (var customTags in Model)
+    {
+        <div>
+            <span style="width: 50%">
+                <input type="checkbox" id="@customTags.Id" value="@customTags.Id" /> @customTags.Tag
+            </span>
+        </div>
+    }
+}
+else
+{
+    <span><b>No data found</b></span>
+}

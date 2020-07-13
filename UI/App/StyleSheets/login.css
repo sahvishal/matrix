@@ -1,0 +1,36 @@
+﻿html,body{font:normal 11px arial,helvetica,tahoma;padding:0;margin:0;color:#000}
+form{margin:0;padding:0}
+img{border:0}
+p{margin:0;padding:0}
+span{margin:0;padding:0}
+.login_bg{background:url('/app/images/login/login_bg.gif') no-repeat;height:240px;width:303px}
+.login_bg_left{background:#fff url('/app/images/login/login_panel_left.jpg') no-repeat;text-align:left;height:238px;width:390px}
+.join_now{margin:180px 20px 0 0}
+.signup{font-size:20px;color:#fff;font-weight:bold;text-align:right}
+.signup a:link{color:#fff;text-decoration:none}
+.signup a:visited{color:#fff;text-decoration:none}
+.signup a:hover{color:#bbe0f9;text-decoration:none}
+.txt_bold{font-size:11px;font-weight:bold;color:#FFE400;text-align:right;padding:0 20px 0 0}
+.Signin_txt{font-size:12px;color:#686868}
+.Signin_heading_txt{font-size:12px;color:#397DA8}
+.Signin_heading_txtS{font-size:11px;color:#397DA8}
+.Signin_heading_txtS a:link{font-size:11px;color:#397DA8;text-decoration:none}
+.Signin_heading_txtS a:visited{font-size:11px;color:#397DA8;text-decoration:none}
+.Signin_heading_txtS a:hover{font-size:11px;color:#397DA8;text-decoration:underline}
+.txt_fld{border:1px solid #cad2c3;width:290px;height:22px;color:#686868;font-size:14px;padding:3px 0 0 0}
+.txt_fldlogin{border:1px solid #cad2c3;width:290px;height:22px;color:#686868;font-size:14px;padding:2px 0 0 0}
+.txt_fldpass{border:1px solid #cad2c3;width:290px;height:22px;color:#686868;font-size:14px;padding:3px 0 0 0}
+.signin_heading{font-size:16px;color:#397da8;font-weight:bold}
+.rg_table_login{margin:10px 0 0 20px}
+.copyright{font-size:11px;color:#686868}
+.regtrademark{font-size:10px;color:#999}
+.back_btn{padding:0 20px 0 0;font-size:11px;color:#686868}
+a:link{color:#397da8;text-decoration:none}
+a:visited{color:#397da8;text-decoration:none}
+a:hover{color:#397da8;text-decoration:underline}
+.errrmsg_txt{font:normal 12px arial;color:red}
+.trbl_signin{font-size:16px;color:#fff;font-weight:bold}
+.note_txt{font-size:11px;color:#666;}
+.rgt_tbl{margin:10px 20px;}
+.steps_txt{font-size:11px;color:#397da8;font-weight:bold}
+.callno{color:#ed891e;font-size:18px;font-weight:bold;margin-left:5px;}

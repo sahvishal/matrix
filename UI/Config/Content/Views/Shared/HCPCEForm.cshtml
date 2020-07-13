@@ -1,0 +1,3322 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+@model QualityAssuranceResultViewModel
+<style type="text/css">
+    .hcpEc {
+        border: 1px solid #000000;
+        font-size: 14px;
+    }
+
+        .hcpEc .div-row {
+            width: 885px;
+        }
+
+        .hcpEc .div-row-new {
+            width: 889px;
+        }
+
+        .hcpEc .thickbox {
+            border: 2px solid #000000;
+        }
+
+        .hcpEc .thinbox {
+            border: 1px solid #000000;
+        }
+
+        .hcpEc .bg-grey {
+            background-color: #A8A8A8;
+        }
+
+    .left-float {
+        float: left;
+    }
+
+    .right-border-thick {
+        border-right: 2px solid #000000;
+    }
+
+    .right-border-thin {
+        border-right: 1px solid #000000;
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid #000000;
+    }
+
+    .border-bottom-thick {
+        border-bottom: 2px solid #000000;
+    }
+
+    .radio-img {
+        vertical-align: text-bottom;
+        padding-bottom: 1px;
+    }
+
+    .checkbox-img {
+        border: 1px solid #000000;
+        width: 10px;
+        height: 10px;
+        margin: 2px;
+    }
+
+    .small-column-left {
+        width: 52px;
+        padding-left: 5px;
+    }
+
+    .hcpEcbg-grey {
+        background-color: #A8A8A8;
+    }
+
+    .line-height {
+        padding-left: 3px;
+        height: 20px;
+        padding-top: 7px;
+        padding-bottom: 1px;
+    }
+
+    .hcpQuestion-Sectoin {
+        width: 889px;
+        margin-top: 15px;
+    }
+</style>
+
+@*Page 1*@
+<div class="section" style="page-break-before: always">
+    <div style="text-align: center; clear: both; margin-top: 20px; font-size: 20px">
+        <b>CHRONIC CONDITION EVALUATION FORM</b>
+    </div>
+    <div style="clear: both;">
+        <div class="left-float" style="width: 145px; padding-left: 5px;"><b>Customer Id:</b> @Model.CustomerId</div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin" style="border-top: 0 solid !important;">
+        <div class="left-float hcpEc" style="width: 889px;">
+            <div class="left-float div-row thickbox">
+                <div class="left-float right-border-thick line-height" style="width: 390px;"><b>Patient Name:</b> @Model.CustomerName</div>
+                <div class="left-float right-border-thick line-height" style="width: 120px;"><b>DOB: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")</div>
+                <div class="left-float right-border-thick line-height" style="width: 224px;"><b>Age: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.GetDetailAge() : "")</div>
+                <div class="left-float line-height"><b>DOS: </b>@Model.EventDate.Date.ToShortDateString()</div>
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height " style="width: 402px;">Allergies: </div>
+            <div class="left-float right-border-thin line-height " style="width: 122px;">BP:</div>
+            <div class="left-float right-border-thin line-height " style="width: 100px;">Pulse: </div>
+            <div class="left-float right-border-thin line-height" style="width: 96px;">Temp:</div>
+            <div class="left-float line-height ">Resp:</div>
+        </div>
+        <div class="left-float div-row" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 130px;">Weight: </div>
+            <div class="left-float right-border-thin line-height" style="width: 132px;">Height:</div>
+            <div class="left-float right-border-thin line-height" style="width: 132px;">BMI: </div>
+            <div class="left-float right-border-thin line-height" style="width: 122px;">O2 Sat %:</div>
+            <div class="left-float right-border-thin line-height" style="width: 200px;">% Oxygen/Lpm:</div>
+            <div class="left-float line-height ">LMP:</div>
+        </div>
+        <div class="left-float div-row thickbox hcpEcbg-grey">
+            <div class="line-height" style="padding-top: 2px; padding-bottom: 2px;">
+                <b>REASON FOR VISIT (Include Recent Hospitalizations, Chronic & Acute Conditions)&nbsp;&nbsp;&nbsp; PLACE OF VISIT    </b><span>
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Clinic</span>
+                <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                Home&nbsp;&nbsp;<img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                SNF/NF
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">1.</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">2.</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">3.</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">4.</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">5.</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">6.</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">7.</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">8.</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="line-height">9.</div>
+        </div>
+        <div class="left-float div-row" style="width: 889px;">
+            <div class="line-height">10.</div>
+        </div>
+
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row thickbox hcpEcbg-grey">
+            <div class="line-height">
+                <b>MEDICATIONS (List Current Prescription & Nonprescription Medicines, Vitamins, Home Remedies, Herbs, Etc.)</b>
+            </div>
+        </div>
+        <div class="left-float div-row thickbox hcpEcbg-grey" style="border-top: 0 solid !important;">
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                <b>Current Meds</b>
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                <b>Dose / Route / Frequency</b>
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                <b>Current Meds</b>
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                <b>Dose / Route / Frequency</b>
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                1.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                1.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                2.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                2.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                3.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                3.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                4.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                4.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                5.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                5.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                6.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                6.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float  line-height">
+                7.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                7.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                8.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                8.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                9.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                9.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                10.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                10.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                11.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                11.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                12.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                12.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                13.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                13.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                14.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                14.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                15.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                15.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                16.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                16.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                17.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                17.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                18.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                18.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                19.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                19.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                20.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                20.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                21.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                21.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                22.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                22.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                23.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                23.
+            </div>
+            <div style="width: 210px;" class="right-border-thin left-float line-height">
+                24.
+            </div>
+            <div style="width: 218px;" class="left-float line-height">
+                24.
+            </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div style="width: 212px;" class="right-border-thin left-float line-height">
+                25.
+            </div>
+            <div style="width: 218px;" class="right-border-thick left-float line-height">
+                25.
+            </div>
+            <div style="padding-left: 5px; height: 20px; padding-top: 3px" class="left-float line-height">
+                <span class="checkbox-img left-float">&nbsp;</span>
+                <b><span style="margin-top: 1px">Meds Reviewed and Reconciled</span></b>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row thinbox hcpEcbg-grey" style="width: 888px;">
+            <div class="left-float line-height" style="margin-right: 20px"><b>REVIEWED (Reviewed in Patient History or With Patient)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> </div>
+            <div class="left-float">
+                <div class="left-float  line-height" style="margin-right: 10px;"><span class="checkbox-img left-float" style="margin-right: 5px;">&nbsp;</span>Surgical Hx</div>
+                <div class="left-float line-height" style="margin-right: 10px;"><span class="checkbox-img left-float" style="margin-right: 5px;">&nbsp;&nbsp;</span> Social Hx</div>
+                <div class="left-float  line-height"><span class="checkbox-img left-float" style="margin-right: 5px;">&nbsp;&nbsp;</span> Family Hx</div>
+            </div>
+        </div>
+        <div class="left-float div-row thinbox hcpEcbg-grey" style="width: 888px;">
+            <div class="left-float line-height"><b>REVIEW OF SYSTEMS ("X" = NORMAL)</b> </div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;</span>Constitutional</div>
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>HEENT</div>
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>Cardio/Vasc</div>
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>Pulmonary</div>
+            <div class="left-float line-height" style="height: 20px;"><span class="checkbox-img left-float" style="margin-right: 5px;">&nbsp;&nbsp;</span>GI</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;</span>GU</div>
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>Muscloskeletal</div>
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>Skin</div>
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>Neuro</div>
+            <div class="left-float line-height " style="height: 20px; padding-top: 3px"><span class="checkbox-img left-float" style="margin-right: 5px;">&nbsp;&nbsp;</span>Psych</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;</span>Hem/Lymph</div>
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>Allergy/Immuno</div>
+            <div class="left-float right-border-thin line-height" style="width: 175px;"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>Endo</div>
+            <div class="left-float line-height " style="height: 20px; padding-top: 3px"><span class="checkbox-img left-float" style="margin-right: 5px; margin-left: 5px;">&nbsp;&nbsp;</span>All Other Negative</div>
+        </div>
+
+    </div>
+</div>
+
+@*Page 2*@
+<div class="section" style="page-break-before: always">
+    <div class="left-float hcpEc" style="width: 889px; margin-top: 5px;">
+        <div class="left-float div-row thickbox">
+            <div class="left-float right-border-thick line-height" style="width: 390px;"><b>Patient Name:</b> @Model.CustomerName</div>
+            <div class="left-float right-border-thick line-height" style="width: 120px;"><b>DOB: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")</div>
+            <div class="left-float right-border-thick line-height" style="width: 224px;"><b>Age: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.GetDetailAge() : "")</div>
+            <div class="left-float line-height"><b>DOS: </b>@Model.EventDate.Date.ToShortDateString()</div>
+        </div>
+    </div>
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row thinbox hcpEcbg-grey line-height" style="width: 884px;">
+            <div class="left-float"><b>LABS/DIAGNOSTIC DATA REVIEW</b> </div>
+            <div class="left-float" style="padding-left: 5px;"><b>Lab Date(s):</b></div>
+            <div class="left-float" style="width: 120px; text-align: right"><b>/</b></div>
+            <div class="left-float" style="width: 120px; text-align: right"><b>/</b></div>
+            <div class="left-float" style="width: 322px; text-align: right;"><b>(Include Date For Each Diagnositc)</b></div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 290px;">WBC:</div>
+            <div class="left-float right-border-thin line-height" style="width: 290px;">Hgb/HCT/Plt:</div>
+            <div class="left-float right-border-thin line-height" style="width: 170px;">FBS:</div>
+            <div class="left-float line-height">RBS:</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 290px;">HbA1C:</div>
+            <div class="left-float right-border-thin line-height" style="width: 290px;">Lipids:</div>
+            <div class="left-float line-height " style="width: 170px;">LDL:</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 290px;">BUN:</div>
+            <div class="left-float right-border-thin line-height" style="width: 290px;">Cr:</div>
+            <div class="left-float line-height" style="width: 170px;">K:</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 290px;">Proteinuria/Microalbuminuria:</div>
+            <div class="left-float right-border-thin line-height" style="width: 290px;">Albumin:</div>
+            <div class="left-float line-height " style="width: 170px;">eGFR:</div>
+        </div>
+        <div class="left-float div-row border-bottom" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 290px;">INR:</div>
+            <div class="left-float right-border-thin line-height" style="width: 290px;">PTH:</div>
+            <div class="left-float line-height" style="width: 170px;">RF/ANA:</div>
+        </div>
+        <div class="left-float div-row" style="width: 889px;">
+            <div class="left-float right-border-thin line-height" style="width: 290px;">TSH/T4:</div>
+            <div class="left-float right-border-thin line-height" style="width: 290px;">Anticonvulsant Level:</div>
+            <div class="left-float line-height" style="width: 170px;">Other:</div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float  line-height" style="width: 290px;">
+                Glaucoma Screening:
+            </div>
+            <div class="left-float line-height" style="width: 330px;">
+                Diabetic Eye Exam:
+            </div>
+            <div class="left-float line-height" style="height: 20px;">
+                Provider Name:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin" style="width: 260px; height: 20px; padding-top: 3px; padding-left: 5px">
+                EKG:
+            </div>
+            <div class="left-float right-border-thin" style="width: 200px; height: 20px; padding-top: 3px; padding-left: 5px">
+                Stress Test:
+            </div>
+            <div class="left-float right-border-thin" style="width: 200px; height: 20px; padding-top: 3px; padding-left: 5px">
+                Echo:
+            </div>
+            <div class="left-float right-border-thin" style="width: 100px; height: 20px; padding-top: 3px; padding-left: 5px">
+                EF:
+            </div>
+            <div class="left-float" style="height: 20px; padding-top: 3px; padding-left: 5px">
+                RVSP:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin" style="width: 430px; height: 20px; padding-top: 3px; padding-left: 5px">
+                Mammogram:
+            </div>
+            <div class="left-float" style="height: 20px; padding-top: 3px; padding-left: 5px">
+                PAP:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin" style="width: 320px; height: 20px; padding-top: 3px; padding-left: 5px">
+                Spirometry:
+            </div>
+            <div class="left-float" style="height: 20px; padding-top: 3px; padding-left: 5px">
+                PFTs:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin" style="width: 200px; height: 20px; padding-top: 3px; padding-left: 5px">
+                FOBT:
+            </div>
+            <div class="left-float right-border-thin" style="width: 290px; height: 20px; padding-top: 3px; padding-left: 5px">
+                Flex Sig:
+            </div>
+            <div class="left-float" style="height: 20px; padding-top: 3px; padding-left: 5px">
+                Colonoscopy:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin" style="width: 230px; height: 20px; padding-top: 3px; padding-left: 5px">
+                ABI:
+            </div>
+            <div class="left-float right-border-thin" style="width: 400px; height: 20px; padding-top: 3px; padding-left: 5px">
+                CXR:
+            </div>
+            <div class="left-float" style="height: 20px; padding-top: 3px; padding-left: 5px">
+                DEXA:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float" style="height: 20px; padding-top: 3px; padding-left: 5px">
+                CT Scan/US/MRI:
+            </div>
+        </div>
+        <div class="left-float div-row-new">
+            <div class="left-float" style="height: 20px; padding-top: 3px; padding-left: 5px">
+                Notes:
+            </div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+
+        <div class="left-float div-row-new thinbox hcpEcbg-grey" style="width: 888px">
+            <div class="left-float line-height" style="height: 20px;">
+                PHYSICAL EXAM
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <b><u>Overall Pain Scale</u></b>
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin" style="padding-left: 12px;">
+                <img src="/config/Content/Images/hcp_image.jpg" style="margin: 14px 6px 11px 6px" />
+            </div>
+            <div class="left-float border-bottom line-height" style="width: 642px;">Indicate Location of Pain:</div>
+            <div class="left-float border-bottom line-height" style="width: 642px;">Indicate Duration of Pain:</div>
+            <div class="left-float border-bottom line-height" style="width: 642px;">Indicate Overall Pain (Scale 0-10):</div>
+            <div class="left-float line-height" style="width: 642px;">Notes:</div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Gen:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>W/N&nbsp;
+                </span>
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>W/D&nbsp;
+                </span>
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>NAD&nbsp;
+                </span>
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>Cachectic&nbsp;
+                </span>
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>Thin&nbsp;
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Obese&nbsp;
+                </span>
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Morbidly Obese&nbsp;
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 210px;">
+                Hygiene:
+            </div>
+            <div class="left-float line-height">
+                <span style="width: 60px; float: left;">Using O2
+                </span>
+                <span style="width: 45px; float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Yes
+                </span>
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    No
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left  line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin  line-height">
+                <span style="width: 56px; float: left;">Hearing
+                </span>
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>&nbsp;Response to Voice&nbsp;&nbsp;
+                </span>
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>&nbsp;Response to Touch&nbsp;&nbsp;
+                </span>
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>&nbsp;Nonresponsive&nbsp;&nbsp;
+                </span>
+            </div>
+            <div class="left-float  line-height">
+                <span style="width: 60px; float: left; padding-left: 5px;">Speech
+                </span>
+                <span style="width: 65px; float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />&nbsp;Verbal
+                </span>
+                <span style="width: 90px; float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />&nbsp;Nonverbal
+                </span>
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />&nbsp;Incoherent
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="width: 46px; float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>Alert
+                </span>
+                <span style="width: 65px; float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>Drowsy
+                </span>
+                <span style="width: 95px; float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>Cooperative
+                </span>
+                <span style="width: 85px; float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>Combative
+                </span>
+                <span style="width: 95px; float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>Withdrawn
+                </span>
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height ">
+                <b><u>Eyes:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>PEPRRLA&nbsp;&nbsp;
+                </span>
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>EOMI&nbsp;&nbsp;
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Conjunctiva/Lids&nbsp;&nbsp;
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    N/L&nbsp;&nbsp;
+                </span>
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    ABNL&nbsp;&nbsp;
+                </span>
+            </div>
+            <div class="left-float right-border-thin  line-height" style="width: 105px;">
+                Fundus:
+            </div>
+            <div class="left-float right-border-thin  line-height">
+                <span style="width: 60px; float: left;">Cataracts
+                </span>
+                <span style="width: 36px; float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>RT
+                </span>
+                <span style="width: 36px; float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span>LT
+                </span>
+            </div>
+            <div class="left-float right-border-thin  line-height" style="width: 90px;">
+                Acuity RT:
+            </div>
+            <div class="left-float line-height">
+                Acuity LT:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom  line-height">
+            <div class="left-float small-column-left">
+                &nbsp;
+            </div>
+            <div class="left-float">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left  line-height">
+                <b><u>ENT:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="width: 60px; float: left; padding-left: 5px;">Ext Ears</span>
+                <span style="width: 37px; float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    NL
+                </span>
+                <span style="width: 54px; float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    ABNL
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="width: 20px; float: left; padding-left: 5px;">TM</span>
+                <span style="width: 37px; float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    NL
+                </span>
+                <span style="width: 54px; float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    ABNL
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="width: 50px; float: left; padding-left: 5px;">Hearing</span>
+                <span style="width: 37px; float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    NL
+                </span>
+                <span style="width: 54px; float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    ABNL
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="width: 50px; float: left; padding-left: 5px;">Mucosa</span>
+                <span style="width: 37px; float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    NL
+                </span>
+                <span style="width: 54px; float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    ABNL
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; padding-left: 5px;"><span class="left-float checkbox-img">&nbsp;</span>Pharynx Benign</span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Teeth Intact&nbsp;&nbsp;
+                </span>
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Teeth Missing&nbsp;&nbsp;
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="padding-left: 5px;">
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Dentures&nbsp;&nbsp;
+                </span>
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Edentulous&nbsp;&nbsp;
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="padding-left: 5px;">
+                <span style="width: 180px; float: left; padding-left: 5px;">
+                    <span style="float: left; padding-left: 5px;"><span class="left-float checkbox-img">&nbsp;</span>Poor Oral Hygiene</span>
+                </span>
+            </div>
+            <div class="left-float line-height" style="padding-left: 5px;">
+                Oral Lesions:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom line-height">
+            <div class="left-float small-column-left">
+                &nbsp;
+            </div>
+            <div class="left-float" style="padding-left: 5px;">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Neck:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height" style="padding-left: 5px;">
+                <span style="width: 65px; float: left;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span>Supple</span>
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left; padding-left: 5px;"><span class="left-float checkbox-img">&nbsp;</span>&nbsp;Thyroid NL&nbsp;&nbsp;</span>
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left; padding-left: 5px;"><span class="left-float checkbox-img">&nbsp;</span>&nbsp;Goiter&nbsp;&nbsp;</span>
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left; padding-left: 5px;"><span class="left-float checkbox-img">&nbsp;</span>&nbsp;Trachea Midline&nbsp;&nbsp;</span>
+                </span>
+                <span style="width: 100px; float: left; padding-left: 5px;">
+                    <span style="float: left; padding-left: 5px;"><span class="left-float checkbox-img">&nbsp;</span>No Masses</span>
+                </span>
+                <span style="width: 120px; float: left; padding-left: 5px;">
+                    <span style="float: left; padding-left: 5px;"><span class="left-float checkbox-img">&nbsp;</span>Tracheostomy</span>
+                </span>
+            </div>
+            <div class="left-float line-height" style="padding-left: 5px;">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Lymph:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height" style="padding-left: 5px; width: 350px">
+                <span style="float: left;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span>No Lymphadenopathy (Neck, Axilla, Groin, Other)</span>
+                </span>
+            </div>
+            <div class="left-float line-height" style="padding-left: 5px;">
+                Notes:
+            </div>
+        </div>
+    </div>
+</div>
+
+@*PAGE 3*@
+<div class="section" style="page-break-before: always">
+    <div class="left-float hcpEc" style="width: 889px; margin-top: 5px;">
+        <div class="left-float div-row thickbox">
+            <div class="left-float right-border-thick line-height" style="width: 390px;"><b>Patient Name:</b> @Model.CustomerName</div>
+            <div class="left-float right-border-thick line-height" style="width: 120px;"><b>DOB: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")</div>
+            <div class="left-float right-border-thick line-height" style="width: 224px;"><b>Age: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.GetDetailAge() : "")</div>
+            <div class="left-float line-height"><b>DOS: </b>@Model.EventDate.Date.ToShortDateString()</div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>CV:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 270px">
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    RRR
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Irreg w/o MGR
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> S1 S2 NL</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 160px;">
+                Murmur:
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; width: 35px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> S3</span>
+                </span>
+                <span style="float: left; width: 35px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> S4</span>
+                </span>
+                <span style="float: left; width: 125px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> No Carotid Bruits</span>
+                </span>
+                <span style="float: left; width: 85px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> No JVD</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height" style="padding-right: 5px;">
+                <span style="float: left;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    No Edema
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Edema LEs:
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="padding-right: 5px; width: 50px; text-align: right">
+                +
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Pitting
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Yes
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    No&nbsp;&nbsp;
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Capillary Refill
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    WNL
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Delayed&nbsp;&nbsp;
+                </span>
+            </div>
+            <div class="left-float  line-height">
+                <span style="float: left;">Hair/Skin Changes
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Yes
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    No
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                <b>Pulses:</b> Document the number out of 4 (0=Absent/1=Diminished/2=Normal/3=Increased/4=Bounding)
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                <b>RT:</b>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 130px;">
+                Radial
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 130px;">
+                Femoral
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 140px;">
+                Posterior Tibial
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 140px;">
+                Dorsalis Pedis
+            </div>
+            <div class="left-float line-height">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                <b>LT:</b>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 131px;">
+                Radial
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 130px;">
+                Femoral
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 140px;">
+                Posterior Tibial
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 140px;">
+                Dorsalis Pedis
+            </div>
+            <div class="left-float line-height">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Pulm:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> CTA Bilaterally</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="padding-right: 5px;">
+                <span style="float: left; padding-right: 5px;">Percussion
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-right: 5px;">Respiratory Effort
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; padding-right: 5px;">Wheezes/Crackles/Rhonchi
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Abd:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-right: 5px;">BS NL</span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin  line-height">
+                <span style="float: left; padding-right: 5px;">Abd Soft
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-right: 5px;">Abd Tender</span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin  line-height">
+                <span style="float: left; padding-right: 5px;">Abd Distended</span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> No Hepatosplenomegaly</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> No Masses&nbsp;</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-right: 5px;">Abd Aborta</span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Palp</span>
+                </span>
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Not Palp</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; padding-right: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> PEG</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Colostomy</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Cystostomy (Suprapubic)</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Ileostomy</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Nephrostomy</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Breast:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Masses</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Dimpling
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Discharge</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Nipple Everted</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left;">Nipple Inverted</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-left: 5px;">Lumpectomy</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        RT</span>
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        LT</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Bilat</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-left: 5px;">Mastectomy</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        RT</span>
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        LT</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Bilat</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; padding-left: 5px;">Notes:</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height right-border-thin">
+                <span style="float: left; width: 30px;"><b><u>GU</u><span style="font-size: 11px; padding-bottom: 6px; font-weight: bold">&#9792</span></b></span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 185px">Testes:</span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 181px">Penis:</span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 190px">Scrotum:</span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left;">Catheter:</span>
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height right-border-thin">
+                <span style="float: left; width: 30px;"><b><u>GU</u><span style="font-size: 11px; padding-bottom: 6px; font-weight: bold">&#9794</span></b></span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 120px">Vulva:</span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 120px">Vagina:</span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 120px">Cervix:</span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 120px">Uterus:</span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 120px">Adnexa:</span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left;">PAP:</span>
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Rectal:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 130px">Tone:</span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; width: 280px">Masses:</span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-left: 5px;">Hemorrhoids</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; width: 120px">Prostate:</span>
+            </div>
+
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>M-Skel:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">ROM</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Full</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Limited</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Muscle Tone</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Joints</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Deformity</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left;">Gait</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height right-border-thin">
+                <span style="float: left;">Amputation</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        RT</span>
+                </span>
+                <span style="float: left;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        LT</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Bilat</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> AKA</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> BKA</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> TMA</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Toe</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Skin:</u></b>
+            </div>
+
+            <div class="left-float right-border-thin line-height" style="float: left; width: 120px;">
+                Turgor:
+            </div>
+            <div class="left-float right-border-thin line-height" style="float: left; width: 120px">
+                Color:
+            </div>
+            <div class="left-float line-height">
+                Rash/Lesions:
+            </div>
+
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-left: 5px;">Ulcer
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> None</span>
+                </span>
+
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Pressure</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Arterial</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Venous</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Healed</span>
+                </span>
+                <span style="float: left; padding-right: 5px; padding-left: 5px;">
+                    <span style="float: left;"><span class="left-float checkbox-img">&nbsp;</span> Non Healed</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                Location/Stage:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float  line-height">
+                <b><u>Monofilament Exam (Present + / Decreased - ):</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                <b>RT:</b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-left: 5px;">Big Toe</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+            <div class="left-float ">
+                <span style="float: left; padding-left: 5px;">1<sup>st</sup> Metatarsal</span>
+            </div>
+            <div class="left-float line-height right-border-thin">
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+            <div class="left-float">
+                <span style="float: left; padding-left: 5px;">3<sup>rd</sup> Metatarsal</span>
+
+            </div>
+            <div class="left-float line-height right-border-thin">
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+            <div class="left-float ">
+                <span style="float: left; padding-left: 5px;">5<sup>th</sup> Metatarsal</span>
+                </div>
+            <div class="left-float line-height right-border-thin">
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; padding-left: 5px;">Plantar Surface Distal Hallux </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                <b>LT:</b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left; padding-left: 5px;">Big Toe</span>
+                <span style="float: left; padding-left: 6px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+            <div class="left-float ">
+                <span style="float: left; padding-left: 5px;">1<sup>st</sup> Metatarsal</span>
+                </div>
+            <div class="left-float line-height right-border-thin">
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+            <div class="left-float ">
+                <span style="float: left; padding-left: 6px;">3<sup>rd</sup> Metatarsal</span>
+                </div>
+            <div class="left-float line-height right-border-thin">
+                <span style="float: left; padding-left: 4px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+            <div class="left-float ">
+                <span style="float: left; padding-left: 5px;">5<sup>th</sup> Metatarsal</span>
+                </div>
+            <div class="left-float line-height right-border-thin">
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+            @*<div class="left-float line-height">
+                <span style="float: left; padding-left: 5px;">Plantar Surface Distal Hallux </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>*@
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left; padding-left: 5px;">Plantar Surface Distal Hallux </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        +</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <span class="left-float checkbox-img">&nbsp;</span>
+                        -</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float" style="padding-left: 5px;">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Neuro:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left">
+                    <span class="left-float checkbox-img">&nbsp;</span>Alert
+                </span>
+                <span style="float: left; padding-left: 5px;">Oriented to
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span class="left-float checkbox-img">&nbsp;</span> Person
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span class="left-float checkbox-img">&nbsp;</span> Place
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span class="left-float checkbox-img">&nbsp;</span> Time
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">CN 2-12 Intact</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Yes</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        No</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Speech</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left;">Cerebellar</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Sensory</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Intact</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        Decreased</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 150px">
+                <span style="float: left; width: 80px;">Reflexes:</span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px">/4
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px">UE
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 150px">
+                <span style="float: left; width: 80px;">&nbsp;</span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px">/4
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px">LE
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 150px">
+                <span style="float: left; width: 80px;">Strength:</span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px">/5
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px">UE
+                </span>
+            </div>
+            <div class="left-float line-height" style="width: 150px">
+                <span style="float: left; width: 80px;">&nbsp;</span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px">/5
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px">LE
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left  line-height">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Monoparesis&nbsp&nbsp;<b>RT:</b></span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        UE</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        LE</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+
+                <span style="float: left;"><b>LT:</b></span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        UE</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        LE</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+
+                <span style="float: left;"><b>Hemiparesis:</b></span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        RT</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        LT</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+                <span style="float: left;"><b>Hemiplegia:</b></span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        RT</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        LT</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">Other:
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                <b><u>Psych:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">Judgment</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+
+                <span style="float: left;">Mood</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+
+                <span style="float: left;">Affect</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+            </div>
+            <div class="left-float line-height">
+
+                <span style="float: left;">Behavior</span>
+                <span style="float: left; padding-left: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        NL</span>
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span style="float: left;">
+                        <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                        ABNL</span>
+                </span>
+
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float small-column-left line-height">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+
+        <div class="left-float div-row-new">
+            <div class="left-float line-height">
+                <b><u>See Additional Screening/Testing:</u></b>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span style="float: left;">
+                    <span class="left-float checkbox-img">&nbsp;</span> CAGE
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span class="left-float checkbox-img">&nbsp;</span> Cognitive Test
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span class="left-float checkbox-img">&nbsp;</span> Depression Screen
+                </span>
+                <span style="float: left; padding-left: 5px;">
+                    <span class="left-float checkbox-img">&nbsp;</span> DSM IV
+                </span>
+                <span style="float: left; padding-left: 5px; padding-right: 5px;">
+                    <span class="left-float checkbox-img">&nbsp;</span> MMSE
+                </span>
+            </div>
+            <div class="left-float  line-height">Other:</div>
+        </div>
+    </div>
+
+</div>
+
+@*PAGE 4*@
+<div class="section" style="page-break-before: always">
+    <div class="left-float hcpEc" style="width: 889px; margin-top: 5px;">
+        <div class="left-float div-row thickbox">
+            <div class="left-float right-border-thick line-height" style="width: 390px;"><b>Patient Name:</b> @Model.CustomerName</div>
+            <div class="left-float right-border-thick line-height" style="width: 120px;"><b>DOB: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")</div>
+            <div class="left-float right-border-thick line-height" style="width: 224px;"><b>Age: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.GetDetailAge() : "")</div>
+            <div class="left-float line-height"><b>DOS: </b>@Model.EventDate.Date.ToShortDateString()</div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new thinbox hcpEcbg-grey line-height">
+            <div class="left-float">
+                <b>ASSESSMENT / TREATMENT / CARE PLAN (Check as Applicable)</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new thinbox">
+            <div class="left-float line-height">
+                <b><u>Diabetes Mellitus</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height">
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Type I
+                </span>
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Type II
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Controlled
+                </span>
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Uncontrolled
+                </span>
+            </div>
+            <div class="left-float line-height" style="padding-left: 15px;">
+                <span class="left-float" style="width: 200px;">
+                    <span class="left-float checkbox-img">&nbsp;</span> Long Term Insulin Use
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 241px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diabetes with Renal Manifestations
+            </div>
+            <div class="left-float line-height" style="width: 153px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diabetic Nephropathy
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>CKD
+            </div>
+            <div class="left-float line-height" style="width: 277px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diabetes with Neurological Manifestations
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Diabetic Neuropathy
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diabetes with Vascular Manifestations
+            </div>
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diabetic PVD
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Diabetes with Opthalmic Manifestations
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 258px; padding-left: 5px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Non-Proliferative Diabetic Retinopathy
+            </div>
+            <div class="left-float line-height" style="width: 229px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Proliferative Diabetic Retinopathy
+            </div>
+            <div class="left-float line-height" style="width: 143px;">
+                <span class="left-float checkbox-img">&nbsp;</span>ED Due to Diabetes
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Hypoglycemia Due to Diabetes
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 340px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diabetes with Other Manifestions: (List Conditions)
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 115px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diet Controlled
+            </div>
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>DM Education
+            </div>
+            <div class="left-float line-height" style="width: 215px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Stable, Continue Current Meds
+            </div>
+            <div class="left-float line-height" style="width: 160px;">
+                <span class="left-float checkbox-img">&nbsp;</span>PO Anti-diabetic Meds
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Insulin
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>ACE
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>ARB
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 160px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Foot Care/Mirror Exam
+            </div>
+            <div class="left-float line-height" style="width: 170px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Wear shoes at All Times
+            </div>
+            <div class="left-float line-height" style="width: 80px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Eye Care
+            </div>
+            <div class="left-float line-height" style="width: 145px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Glucose Monitoring
+            </div>
+            <div class="left-float line-height" style="width: 95px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Nephrology
+            </div>
+            <div class="left-float line-height" style="width: 90px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Podiatry
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Cardiac</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 50px;">
+                <span class="left-float checkbox-img">&nbsp;</span>HTN
+            </div>
+            <div class="left-float line-height" style="width: 50px;">
+                <span class="left-float checkbox-img">&nbsp;</span>CAD
+            </div>
+            <div class="left-float line-height" style="width: 50px;">
+                <span class="left-float checkbox-img">&nbsp;</span>CHF
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>OLD MI
+            </div>
+            <div class="left-float line-height" style="width: 120px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Chronic Angina
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Aortic Atherosclerosis
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 255px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Hypertensive Heart Disease with CHF
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>HTN & CKD with CHF
+            </div>
+            <div class="left-float line-height" style="width: 250px;">
+                <span class="left-float checkbox-img">&nbsp;</span>HTN & CKD without CHF
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 105px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Chronic A-Fib
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>A Flutter
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Sick Sinus Syndrome
+            </div>
+            <div class="left-float line-height" style="width: 55px;">
+                <span class="left-float checkbox-img">&nbsp;</span>PAT
+            </div>
+            <div class="left-float line-height" style="width: 55px;">
+                <span class="left-float checkbox-img">&nbsp;</span>AAA
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 120px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Aortic Ectasia
+            </div>
+            <div class="left-float line-height" style="width: 150px; padding-left: 15px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 60px;">
+                <span class="left-float checkbox-img">&nbsp;</span>PVD
+            </div>
+            <div class="left-float line-height" style="width: 60px;">
+                <span class="left-float checkbox-img">&nbsp;</span>PAD
+            </div>
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Hyperlipidemia
+            </div>
+            <div class="left-float line-height" style="width: 215px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Stable, Continue Current Meds
+            </div>
+            <div class="left-float line-height" style="width: 75px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Digoxin
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Antiarrythmic
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 75px;">
+                <span class="left-float checkbox-img">&nbsp;</span>BP Meds
+            </div>
+            <div class="left-float line-height" style="width: 140px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Anticholestrol Meds
+            </div>
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Beta Blockers
+            </div>
+            <div class="left-float line-height" style="width: 60px;">
+                <span class="left-float checkbox-img">&nbsp;</span>ACE
+            </div>
+            <div class="left-float line-height" style="width: 60px;">
+                <span class="left-float checkbox-img">&nbsp;</span>ARB
+            </div>
+            <div class="left-float line-height" style="width: 80px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diuretics
+            </div>
+            <div class="left-float line-height" style="width: 120px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Platelet Inhibitor
+            </div>
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Antocoagulant
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 163px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Keep NTG on Person
+            </div>
+            <div class="left-float line-height" style="width: 120px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Fluid Restriction
+            </div>
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Low Salt Diet
+            </div>
+            <div class="left-float line-height" style="width: 100px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Daily Weight
+            </div>
+            <div class="left-float line-height" style="width: 100px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Weight Loss
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diet/Exercise
+            </div>
+            <div class="left-float line-height" style="width: 170px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Daily Walking Regimen
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Stop Smoking
+            </div>
+            <div class="left-float line-height" style="width: 150px; padding-left: 15px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+    </div>
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Chronic Kidney Disease</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 130px;">
+                CKD Stage:
+            </div>
+            <div class="left-float">&nbsp;1<sup>st</sup></div> <div class="left-float right-border-thin line-height" style="width: 100px;">eGFR:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 130px;">
+                Dated:
+            </div>
+            <div class="left-float">&nbsp;2<sup>nd</sup></div> <div class="left-float right-border-thin line-height" style="width: 100px;">eGFR:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 130px;">
+                Dated:
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>HTN with CKD
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 211px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Stable, Continue Current Meds
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>BP Meds
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>ACE
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>ARB
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Monitor Protein Urine
+            </div>
+            <div class="left-float line-height" style="width: 120px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Avoid NSAIDS
+            </div>
+            <div class="left-float line-height" style="width: 193px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Discussed Proper Hydration
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+    </div>
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Respiratory</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 60px;">
+                <span class="left-float checkbox-img">&nbsp;</span>COPD
+            </div>
+            <div class="left-float line-height" style="width: 140px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Chronic Bronchitis
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Asthma
+            </div>
+            <div class="left-float line-height" style="width: 50px;">
+                <span class="left-float checkbox-img">&nbsp;</span>URI
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Acute Bronchitis
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Exacerbation COPD
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Exacerbation Asthma
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Pulm HTN
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Pulm Fibrosis
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Asbestosis
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Bronchiectasis
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Obstructive Sleep Apnea
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Chronic Respiratory Failure
+            </div>
+            <div class="left-float line-height" style="padding-right: 5px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Hypoxia
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height">
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Oxygen PRN
+                </span>
+                <span class="left-float" style="width: 130px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Oxygen Bed Time
+                </span>
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Oxygen 24/7
+                </span>
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    No Oxygen
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 88px;">
+                <span class="left-float checkbox-img">&nbsp;</span>CPAP
+            </div>
+            <div class="left-float line-height" style="width: 88px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Stable, Continue Current Meds
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Inhalers
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Stop Smoking
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Avoid Enviromental Triggers
+            </div>
+            <div class="left-float line-height" style="padding-right: 5px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Discussed Hospice
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Cancer</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 100px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Active CA
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 250px;">
+                Primary Site:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 250px;">
+                Mets To:
+            </div>
+            <div class="left-float line-height" style="width: 180px;">
+                <span class="left-float checkbox-img">&nbsp;</span>No Treatment
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 70px;">
+                Treatment:
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Hormonal Therapy
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Seeds
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Brachytherapy
+            </div>
+            <div class="left-float line-height" style="width: 120px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Ext Beam Rads
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 75px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Chemo
+            </div>
+            <div class="left-float line-height" style="width: 250px; padding-left: 5px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 105px;">
+                <span class="left-float checkbox-img">&nbsp;</span>F/U Oncology
+            </div>
+            <div class="left-float line-height" style="width: 170px;">
+                <span class="left-float checkbox-img">&nbsp;</span>F/U Radiation Oncology
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 80px;">
+                <span class="left-float checkbox-img">&nbsp;</span>HX of CA
+            </div>
+            <div class="left-float line-height" style="width: 250px;">
+                Site:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*PAGE 5*@
+<div class="section" style="page-break-before: always">
+    <div class="left-float hcpEc" style="width: 889px; margin-top: 5px;">
+        <div class="left-float div-row thickbox">
+            <div class="left-float right-border-thick line-height" style="width: 390px;"><b>Patient Name:</b> @Model.CustomerName</div>
+            <div class="left-float right-border-thick line-height" style="width: 120px;"><b>DOB: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")</div>
+            <div class="left-float right-border-thick line-height" style="width: 224px;"><b>Age: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.GetDetailAge() : "")</div>
+            <div class="left-float line-height"><b>DOS: </b>@Model.EventDate.Date.ToShortDateString()</div>
+        </div>
+    </div>
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>CVA</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 120px;">
+                <span class="left-float checkbox-img">&nbsp;</span>HX of CVA with:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 269px;">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>HX of CVA without Sequelae
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Acute CVA in Clinic with Symptoms
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Stable, Continue Current Meds
+            </div>
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Anticoagulants
+            </div>
+            <div class="left-float line-height" style="width: 85px;">
+                <span class="left-float checkbox-img">&nbsp;</span>BP Meds
+            </div>
+            <div class="left-float line-height" style="width: 180px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Anticholestrol Meds
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Walker
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Cane
+            </div>
+            <div class="left-float line-height" style="width: 115px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Home Exercise
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 190px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Discussed Fall Precautions
+            </div>
+            <div class="left-float line-height" style="width: 180px; padding-left: 5px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <u><b>Neuropathy</b> (Non Diabetic)</u>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Peripheral Neuropathy
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Neuropathy With Other Disease:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 140px;">
+                &nbsp;
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Neuropathic Meds
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Discussed Limb Protective Care
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Nutrition</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Protein Calorie Malnutrition
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 80px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Cachexia
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float" style="width: 90px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    NL Weight
+                </span>
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Underweight
+                </span>
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    OverWeight
+                </span>
+                <span class="left-float" style="width: 70px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Obese
+                </span>
+                <span class="left-float">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Morbidly Obese (current BMI>=40)
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 140px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Dietary Supplement
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Dietary Counseling
+            </div>
+            <div class="left-float line-height" style="width: 100px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Weight Loss
+            </div>
+            <div class="left-float line-height" style="width: 80px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Exercise
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Continue Current Diet & Exercise
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Dementia</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Alzheimer's Disease
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Vascular Dementia
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Stable, Continue Current Meds
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Care Giver Education
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Long Term Plans
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Musculoskeletal</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 140px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Compression FX -
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 225px;">
+                Site:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 115px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Osteoarthritis-
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 225px;">
+                Site:
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Rheumatoid Arthritis
+            </div>
+        </div>
+         <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                Treatment:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick line-height">
+            <div class="left-float" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Endocrine</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Hypoparathyroid&nbsp;&nbsp;
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Cushings&nbsp;&nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Panhypopituitarism&nbsp;&nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 155px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Hyperparathyroid -
+            </div>
+            <div class="left-float">
+                <span class="left-float" style="width: 90px;padding-left: 5px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    1<sup>0</sup>
+                </span>
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    2<sup>0</sup> Renal
+                </span>
+                <span class="left-float">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    2<sup>0</sup> Non Renal
+                </span>
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height">
+                <span class="left-float">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Stable, Continue Current Meds&nbsp;&nbsp;
+                </span>
+                <span class="left-float" style="width: 100px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" />
+                    Adjust Meds:
+                </span>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Hematological Disorders</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Thrombocytopenia&nbsp;&nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Thalassemia Type:&nbsp;&nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 225px;">
+                &nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Coagulopathy Type:
+            </div>
+            <div class="left-float line-height" style="width: 145px;">
+                &nbsp;
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Sickle Cell Disease
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Sickle Cell Trait
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Stable, Continue Current Meds&nbsp;&nbsp;
+            </div>
+            <div class="left-float line-height" style="width: 125px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Anticoagulant
+            </div>
+            <div class="left-float line-height" style="width: 215px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Recheck Counts
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick line-height">
+            <div class="left-float" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 260px;">
+                <b><u>Mental Health</u></b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 100px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Depression
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Major Depression
+            </div>
+            <div class="left-float line-height" style="width: 125px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Bipolar Disorder
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 125px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Schizophrenia
+            </div>
+            <div class="left-float line-height" style="width: 215px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Tearful LOSS OF-&nbsp;&nbsp;
+            </div>
+            <div class="left-float line-height" style="width: 60px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Sleep
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Appetite
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Energy
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Interest
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 105px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Self-Esteem
+            </div>
+            <div class="left-float line-height" style="width: 215px;">
+                PHQ-9 Score:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 110px;">
+                DEPENDENCY-
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Alcohol
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Opioid
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Sedative&nbsp;&nbsp;
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 90px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Anxiolytic
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 130px;">
+                Other:
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                CAGE Score:
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                DSM-IV Criteria Met:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Stable, Continue Current Meds&nbsp;&nbsp;
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Antidepressants&nbsp;&nbsp;
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Pain Management Contract&nbsp;&nbsp;
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Agreed to Verbal Contract for Safety&nbsp;&nbsp;
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 90px;">
+                DISCUSSED-
+            </div>
+            <div class="left-float line-height" style="width: 125px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Proper Med Use
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Safe Driving Habits&nbsp;&nbsp;
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                <span class="left-float checkbox-img">&nbsp;</span>ETOH Avoidance
+            </div>
+            <div class="left-float right-border-thin line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Addiction Treatment&nbsp;&nbsp;
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 130px;">
+                <span class="left-float checkbox-img">&nbsp;</span>ETOH Counseling
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Addiction Counseling
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 100px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Psych F/U
+            </div>
+            <div class="left-float line-height" style="width: 130px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom-thick">
+            <div class="left-float line-height" style="width: 260px;">
+                <b>Addt'l Assessment/TX/Plan:</b>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*PAGE 6*@
+<div class="section" style="page-break-before: always">
+    <div class="left-float hcpEc" style="width: 889px; margin-top: 5px;">
+        <div class="left-float div-row thickbox">
+            <div class="left-float right-border-thick line-height" style="width: 390px;"><b>Patient Name:</b> @Model.CustomerName</div>
+            <div class="left-float right-border-thick line-height" style="width: 120px;"><b>DOB: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")</div>
+            <div class="left-float right-border-thick line-height" style="width: 224px;"><b>Age: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.GetDetailAge() : "")</div>
+            <div class="left-float line-height"><b>DOS: </b>@Model.EventDate.Date.ToShortDateString()</div>
+        </div>
+    </div>
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+
+        <div class="left-float div-row-new border-bottom-thick hcpEcbg-grey">
+            <div class="left-float right-border-thick  line-height" style="width: 350px;">
+                <b>ADDITIONAL CONDITION ASSESSED</b>
+            </div>
+            <div class="left-float  line-height" style="width: 525px;">
+                <b>CORRESPONDING TREATMENT / CARE PLAN</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin  line-height" style="width: 350px;">
+                1.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                1.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                2.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                2.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                3.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                3.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                4.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                4.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                5.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                5.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                6.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                6.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                7.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                7.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                8.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                8.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                9.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                9.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                10.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                10.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                11.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                11.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 350px;">
+                12.
+            </div>
+            <div class="left-float line-height" style="width: 525px;">
+                12.
+            </div>
+        </div>
+    </div>
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row thickbox hcpEcbg-grey">
+            <div class="left-float line-height">
+                <b>COUNSELLING & PREVENTATIVE MEDICINE</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 90px;">
+                <b>Education-</b>
+            </div>
+            <div class="left-float line-height" style="width: 185px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Side Effects of Medication
+            </div>
+            <div class="left-float line-height" style="width: 55px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Diet
+            </div>
+            <div class="left-float line-height" style="width: 75px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Exercise
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 140px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Weight Reduction
+            </div>
+            <div class="left-float line-height">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 90px;">
+                <b>Counsel-</b>
+            </div>
+            <div class="left-float line-height" style="width: 100px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Tobacco Use
+            </div>
+            <div class="left-float line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Alcohol Misuse
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 110px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Drug Misuse
+            </div>
+            <div class="left-float line-height" style="width: 130px; padding-left: 5px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 224px; padding-left: 5px;">
+                <span class="left-float checkbox-img">&nbsp;</span><b>Advance Directive Discussed</b>
+            </div>
+            <div class="left-float line-height" style="width: 40px;">
+                DNR -
+            </div>
+            <div class="left-float line-height" style="padding-left: 15px;">
+                <span class="left-float" style="width: 50px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" /> Yes
+                </span>
+                <span class="left-float" style="width: 50px;">
+                    <img src="/Config/Content/ResultPacket/content/radio-unchecked.png" class="radio-img" /> No
+                </span>
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 85px;">
+                Date Signed:
+            </div>
+            <div class="left-float line-height" style="width: 90px;">
+                &nbsp;
+            </div>
+            <div class="left-float line-height">
+                Comments:
+            </div>
+        </div>
+        <div class="left-float div-row-new">
+            <div class="left-float line-height" style="width: 90px;">
+                <b>Hospice-</b>
+            </div>
+            <div class="left-float line-height" style="width: 140px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Hospice Discussed
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 140px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Hospice Refferal
+            </div>
+            <div class="left-float line-height">
+                Notes:
+            </div>
+        </div>
+        <div class="left-float div-row thickbox hcpEcbg-grey">
+            <div class="left-float line-height">
+                <b>IMMUNIZATIONS</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 195px;">
+                Date of Flu Vaccine:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 150px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Refused Flu Vaccine
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 260px;">
+                Date of Pneumococcal Vaccine:
+            </div>
+            <div class="left-float line-height">
+                <span class="left-float checkbox-img">&nbsp;</span>Refused Pneumococcal Vaccine
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 195px;">
+                Date of TD Vaccine:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 280px;">
+                <span class="left-float checkbox-img">&nbsp;</span>Date of TDAP (after age 65):
+            </div>
+            <div class="left-float line-height" style="width: 200px;">
+                Other:
+            </div>
+        </div>
+        <div class="left-float div-row-new">
+            <div class="left-float line-height" style="width: 195px;">
+                <span class="left-float checkbox-img">&nbsp;</span><b>Old Records Request</b>
+            </div>
+        </div>
+        <div class="left-float div-row thickbox hcpEcbg-grey">
+            <div class="left-float line-height" style="height: 20px; padding-top: 3px;">
+                <b>IDENTIFICATION OF OTHER PATIENT NEEDS</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 790px;">
+                Explain reason for risk of hospital or SNF admission:
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>N/A
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 790px;">
+                Explain need for case or disease management referral:
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>N/A
+            </div>
+        </div>
+        <div class="left-float div-row-new">
+            <div class="left-float right-border-thin line-height" style="width: 790px;">
+                Explain need for social worker assistance (Dual Eligible?):
+            </div>
+            <div class="left-float line-height" style="width: 70px;">
+                <span class="left-float checkbox-img">&nbsp;</span>N/A
+            </div>
+        </div>
+    </div>
+</div>
+
+@*PAGE 7*@
+<div class="section" style="page-break-before: always">
+    <div class="left-float hcpEc" style="width: 889px; margin-top: 5px;">
+        <div class="left-float div-row thickbox">
+            <div class="left-float right-border-thick line-height" style="width: 390px;"><b>Patient Name:</b> @Model.CustomerName</div>
+            <div class="left-float right-border-thick line-height" style="width: 120px;"><b>DOB: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")</div>
+            <div class="left-float right-border-thick line-height" style="width: 224px;"><b>Age: </b>@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.GetDetailAge() : "")</div>
+            <div class="left-float line-height"><b>DOS: </b>@Model.EventDate.Date.ToShortDateString()</div>
+        </div>
+    </div>
+    <div class="left-float hcpEc hcpQuestion-Sectoin">
+        <div class="left-float div-row thickbox hcpEcbg-grey">
+            <div class="left-float line-height">
+                <b>SPECIALIST REFERRALS & ADDITIONAL NOTES</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 350px;">
+                1.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 350px;">
+                2.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 350px;">
+                3.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 350px;">
+                4.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 350px;">
+                5.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 350px;">
+                6.
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float line-height" style="width: 350px;">
+                7.
+            </div>
+        </div>
+        <div class="left-float div-row-new">
+            <div class="left-float line-height" style="width: 350px;">
+                8.
+            </div>
+        </div>
+        <div class="left-float div-row thickbox hcpEcbg-grey">
+            <div class="left-float line-height">
+                <b>FOLLOW UP</b>
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom">
+            <div class="left-float right-border-thin line-height" style="width: 240px;">
+                Date of Next Appointment:
+            </div>
+            <div class="left-float line-height" style="width: 150px;">
+                Return to Clinic in:
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 40px;">
+                Days
+            </div>
+            <div class="left-float right-border-thin line-height" style="width: 60px; padding-left: 50px;">
+                Weeks
+            </div>
+            <div class="left-float line-height" style="width: 100px; padding-left: 50px;">
+                Months
+            </div>
+        </div>
+        <div class="left-float div-row-new border-bottom line-height">
+            Labs or Diagnostics Needed & When:
+        </div>
+        <div class="left-float div-row-new  line-height">
+            <b>Name of Primary Care Provider (PCP):</b>
+        </div>
+
+        <div class="left-float div-row thickbox" style="border-bottom: 1px solid #000000;">
+            <div class="left-float right-border-thick line-height" style="width: 400px;"><b>Completed By:</b> </div>
+            <div class="left-float right-border-thick line-height" style="width: 300px;"><b>Title (MD/DO/PA/NP): </b></div>
+            <div class="left-float line-height"><b>DOS: </b>@Model.EventDate.Date.ToShortDateString()</div>
+        </div>
+    </div>
+
+    <div class="left-float hcpEc" style="width: 889px; margin-top: 20px; border: 0 solid">
+        <div class="left-float div-row">
+            <div style="padding: 10px; font-size: 15px"><b>Signature_______________________________________</b></div>
+        </div>
+    </div>
+</div>
+
+

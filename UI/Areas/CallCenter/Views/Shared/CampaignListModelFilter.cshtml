@@ -1,0 +1,59 @@
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallCenter.ViewModels.CampaignListModelFilter
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div style="clear:both;">
+        <div class="editor-column" style="width:35%;">
+            <div class="small-text">
+                Name:
+            </div>
+            @Html.TextBoxFor(m => m.Name, new { @style = "width:90%;" })
+        </div>
+        <div class="editor-column" style="width: 20%;">
+            <div class="small-text">
+                Campaign  Type:
+            </div>
+            @Html.DropDownListFor(m => m.CampaignTypeId, DropDownHelper.GetCampaignType(), new { @style = "width:90%;" })
+        </div>
+        <div class="editor-column" style="width: 20%;">
+            <div class="small-text">
+                Campaign Mode:
+            </div>
+            @Html.DropDownListFor(m => m.CampaignModeId, DropDownHelper.GetCampaignMode(), new { @style = "width:90%;" })
+        </div> 
+        <div class="editor-column" style="width:15%;">
+            <div class="small-text">
+                &nbsp;
+            </div>
+            @Html.CheckBoxFor(m => m.IsPublished) Is Published
+        </div>       
+    </div>
+    <div style="clear:both;">
+        <div class="editor-column" style="width: 35%;">
+            <div class="small-text">
+                Health Plan:
+            </div>
+            @Html.DropDownListFor(m => m.AccountId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:90%;" })
+        </div>
+        <div class="editor-column" style="width: 20%;">
+            <div class="small-text">
+                Start Date:
+            </div>
+            @Html.TextBoxFor(m => m.StartDate, new { @class = "datePicker", @style = "width:90%;" })
+        </div>
+        <div class="editor-column" style="width:20%; ">
+            <div class="small-text">
+                End Date:
+            </div>
+            @Html.TextBoxFor(m => m.EndDate, new { @class = "datePicker", @style = "width:90%;" })
+        </div>
+    </div>   
+    <div style="clear:both">
+        <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+            @Html.ActionLink("Clear", "ManageCampaign", "Campaign") | @Html.SubmitButton("Search")
+        </div>
+    </div>
+    
+</div>

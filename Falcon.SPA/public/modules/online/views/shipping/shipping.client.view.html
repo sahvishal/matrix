@@ -1,0 +1,10 @@
+﻿<div class="product-shipping">
+    <div class="col-md-5">
+        <h4 ng-show="ProductShipping.EnableImageUpsell" class="text-uppercase junior-legend"> Don't forget the Images.</h4>
+        <product-box ng-repeat="productdetail in ProductShipping.AllProducts" ng-show="ProductShipping.EnableImageUpsell"></product-box>
+    </div>
+    <div class="col-md-7">
+        <h4 class="text-uppercase junior-legend">Select how would you like to receive your results.</h4>
+        <shipping-box ng-repeat="shippingdetail in ProductShipping.AllShippingOptions"></shipping-box>
+    </div>
+</div>

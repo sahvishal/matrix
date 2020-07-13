@@ -1,0 +1,93 @@
+﻿@using System.Linq
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Sales.ViewModels.CorporateAccountCustomerListModel
+@{
+    ViewBag.Title = "Event Customers";
+}
+
+<h1>
+    Event Customers
+    @*@if (Model != null && Model.Collection != null)
+        {
+            <span style="float:right; font-size:11px;"><a target="_blank" href="/Sales/ExportableReports/EventCustomers?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export Customer To CSV</a></span>
+        }*@
+</h1>
+<div class="leftside-div-with-roundborder margin-top" style="width: 99%;">
+    <div style="float:left; width:100%; margin: 0 0 10px 0;">
+        <fieldset>
+            <legend>Event Summary</legend>
+            <div style="float:left; width:99%; margin-bottom:5px; margin-top:7px; margin-left:10px;">
+                <div style="float:left; margin-right:10px;">
+                    <b>Event Id:</b>@Model.EventId
+                </div>
+                <div style="float:left; margin-right:10px;">
+                    <b>Event Date:</b>@Model.EventDate.ToShortDateString()
+                </div>
+            </div>
+            <div style="float:left; width:99%; margin-bottom:5px; margin-left:10px;">
+                <div style="float:left; margin-right:10px;">
+                    <b>Location:</b>@Model.HostAddress.ToString()
+                </div>
+                <div style="float:left; margin-right:10px;">
+                    <a href="http://maps.google.com/maps?f=q&hl=en&geocode=&q=@Model.HostAddress.StreetAddressLine1,@Model.HostAddress.City,@Model.HostAddress.State,@Model.HostAddress.ZipCode&ie=UTF8&z=16" target="_blank">Map</a>
+                </div>
+            </div>
+            <div style="float:left; width:99%; margin-bottom:5px; margin-left:10px;">
+                <div style="float:left; margin-right:10px;">
+                    <b>Total Customers:</b>@Model.TotalCustomers
+                </div>
+                <div style="float:left; margin-right:10px;">
+                    <b>Screened Customers:</b>@Model.ScreenedCustomers
+                </div>
+                <div style="float:left; margin-right:10px;">
+                    <b>NoShow Customers:</b>@Model.NoShowCustomers
+                </div>
+                <div style="float:left; margin-right:10px;">
+                    <b>Cancelled Customers:</b>@Model.CancelledCustomers
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <div id="list-filter">
+        @{Html.BeginForm("MemberResultSummary", "CorporateAccount", FormMethod.Get);}
+        @Html.Partial("CorporateAccountCustomerListModelFilter", new ViewDataDictionary(Model.Filter))
+        @{Html.EndForm();}
+    </div>
+
+    @if (Model.Collection != null && Model.Collection.Any())
+    {
+        <div style="float:left; width:100%;">
+            @Html.Partial("CorporateAccountCustomers", new ViewDataDictionary(Model))
+        </div>
+    }
+    else
+    {
+        @Html.Raw("</div>")
+        <div>
+            <h2>No Records found.</h2>
+        </div>
+    }
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        $(document).ready(function () {
+            $('.event-info').hide();
+        });
+    </script>
+}
+

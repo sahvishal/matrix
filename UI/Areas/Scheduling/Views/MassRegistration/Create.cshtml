@@ -1,0 +1,602 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model MassRegistrationListModel
+<style type="text/css">
+    input[type=text], select
+    {
+        width: 137px;
+    }
+</style>
+@{
+    ViewBag.Title = "Mass Register People of Event";
+}
+<h2>
+    Mass Register customers for Event</h2>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{               
+   
+    var toolTipRepository = IoC.Resolve<IToolTipRepository>();
+    var insuranceIdLabel = toolTipRepository.GetToolTipContentByTag(Falcon.App.Core.Enum.ToolTipType.InsuranceIdLabel);
+    insuranceIdLabel = string.IsNullOrEmpty(insuranceIdLabel) ? "Insurance Id" : insuranceIdLabel;
+}
+@{Html.BeginForm();}
+<div>
+    <div class="editor-row" style="width: 99%;">
+        <div style="float: left;">
+            Event Id:@Model.EventId on @(Model.EventDate.ToShortDateString())
+            at @(Model.EventAddress != null ? Model.EventAddress.ToString() : "")
+        </div>
+        <div style="float: right">
+            Total Registered : <b>@Model.RegisteredCustomersCount</b>
+        </div>
+        @Html.HiddenFor(m => m.EventId)
+    </div>
+    <div class="editor-row" style="float: right">
+        <div style="float:right; margin-right:20px;">
+            <a href="javascript:void(0);" onclick="createBlankTemplate(2);renderRegistrations();"> + Add few more</a>
+        </div>
+        <div style="float:right; margin-right:20px;">
+            <a href="/Scheduling/MassRegistration/Upload">Upload File</a>
+        </div>        
+    </div>
+    <div id="registerCustomerContainer" style="clear: both; width: 99%; height: 600px; overflow-y: auto; overflow-x: hidden;">
+    </div>
+    <div class="editor-row" style="float: right">
+        <div style="float:right; margin-right:20px;">
+            <a href="javascript:void(0);" onclick="createBlankTemplate(2);renderRegistrations();"> + Add few more</a>
+        </div>
+    </div>
+</div>
+<div class="submit-button-row">
+    @{
+        var currentSession = IoC.Resolve<ISessionContext>().UserSession;
+        if (currentSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.CorporateAccountCoordinator))
+        {
+        <a href="/Users/Dashboard/CorporateAccountCoordinator">Close</a> 
+        }
+        else if(currentSession.CurrentOrganizationRole.CheckRole((long)Falcon.App.Core.Enum.Roles.Technician))
+        {
+        <a href="/Scheduling/EventCustomerList/Index?id=@Model.EventId">Close</a>
+        }
+        else
+        {
+        <a href="/Scheduling/Event/Index?showUpcoming=true">Close</a>    
+        }
+    }
+    &nbsp; &nbsp;
+    <input type="button" value="Save and Continue" onclick="SetSaveAndContinue(true);" />&nbsp;&nbsp;<input
+        type="button" value="Save and Close" onclick="SetSaveAndContinue(false);" />
+</div>
+<input type="submit" style="display: none" id="Submit" />
+<input type="hidden" name="saveAndContinue" id="saveAndContinue" />
+@{Html.EndForm();}
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js" ></script>
+<script type="text/javascript" language="javascript">
+    
+    var eventPackages = new Array();
+    var eventAppointments = new Array();
+    var countries = new Array();
+    var states = new Array();
+    var races = new Array();
+    var genders = new Array();
+
+    var feetDropDownValues = new Array();
+    var feetDropDown = new Object();
+    feetDropDown.Text = "0";
+    feetDropDown.Value = "0";
+    feetDropDownValues.push(feetDropDown);
+    for(var index = 3; index <= 7; index++)
+    {
+        feetDropDown = new Object();
+        feetDropDown.Text = index.toString();
+        feetDropDown.Value = index.toString();
+        feetDropDownValues.push(feetDropDown);
+    }
+
+    var inchDropDownValues = new Array();
+    var inchDropDown = new Object();    
+    for(var index = 0; index <= 11; index++)
+    {
+        inchDropDown = new Object();
+        inchDropDown.Text = index.toString();
+        inchDropDown.Value = index.toString();
+        inchDropDownValues.push(inchDropDown);
+    }
+
+
+    @if (Model.Packages != null)
+    {
+        foreach (var package in Model.Packages)
+        {
+            <text>
+            var eventPackage = new Object();
+            eventPackage.Id = @package.Id;
+            eventPackage.Name = "@package.Name";
+            eventPackages.push(eventPackage);           
+            </text>
+        }
+    }
+
+    @if (Model.Appointments != null)
+    {
+        foreach (var appointment in Model.Appointments)
+        {
+            <text>
+            var eventAppointment = new Object();
+            eventAppointment.Id = @appointment.Id;
+            eventAppointment.StartTime = "@appointment.StartTime.ToShortTimeString()";
+            eventAppointments.push(eventAppointment);
+            </text>
+        }
+    }
+
+    @if (Model.Countries != null)
+    {
+        foreach (var country in Model.Countries)
+        {
+            <text>
+            var ctry = new Object();
+            ctry.Id = @country.Id;
+            ctry.Name = "@country.Name";
+            countries.push(ctry);
+            </text>
+        }
+    }
+
+    var eventStateId = 0;
+    @if (Model.States != null)
+    {
+        foreach (var state in Model.States)
+        {
+            <text>
+                var s = new Object();
+                s.Id = @state.Id;
+                s.Name = "@state.Name";
+                states.push(s);
+                if('@state.Name' == '@Model.EventAddress.State')
+                    eventStateId = @state.Id;
+            </text>
+        }
+    }
+
+    @if (Model.Races != null)
+    {
+        foreach (var race in Model.Races)
+        {
+            <text>
+                var r = new Object();
+                r.Text = "@race.SecondValue";
+                r.Value = "@race.FirstValue";
+                races.push(r);
+            </text>
+        }
+    }
+
+    @if (Model.Genders != null)
+    {
+        foreach (var gender in Model.Genders)
+        {
+            <text>
+                var g = new Object();
+                g.Text = "@gender.SecondValue";
+                g.Value = "@gender.FirstValue";
+                genders.push(g);
+            </text>
+        }
+    }
+
+    
+    function createBlankTemplate(numberOfTemplate)
+    {//debugger;
+        registrations = new Object(); 
+        var count = key_index;
+        for (; key_index < Number(count + numberOfTemplate);)
+        {            
+            registerCustomer = new Object();
+            registerCustomer.FirstName = "";
+            registerCustomer.LastName = "";
+            registerCustomer.HomeNumber = new Object();
+            registerCustomer.HomeNumber.CountryCode = "";
+            registerCustomer.HomeNumber.AreaCode = "";
+            registerCustomer.HomeNumber.Number = "";
+            registerCustomer.Email = "";
+            registerCustomer.PackageId = "0";
+            registerCustomer.AppointmentId = "0";
+            registerCustomer.SendNotification = "@Boolean.FalseString";
+            registerCustomer.Address = new Object();
+            registerCustomer.Address.StreetAddressLine1 = "";
+            registerCustomer.Address.StreetAddressLine2 = "";
+            registerCustomer.Address.City = "";
+            registerCustomer.Address.StateId = eventStateId;
+            registerCustomer.Address.CountryId = "0";
+            registerCustomer.Address.ZipCode = "";   
+            registerCustomer.DateOfBirth = null;
+            registerCustomer.EmployeeId = "";
+            registerCustomer.InsuranceId = "";  
+            registerCustomer.HeightInFeet = "0";
+            registerCustomer.HeightInInch = "0";
+            registerCustomer.Weight = "";
+            registerCustomer.Race = "";
+            registerCustomer.Gender = "-1";
+            registerCustomer.Ssn = ""; 
+            registerCustomer.AddFreeShipping = "@Boolean.TrueString";
+                               
+
+            registerCustomer.Packages = eventPackages;
+            registerCustomer.Appointments = eventAppointments;
+            registerCustomer.Countries = countries;
+            registerCustomer.States = states;
+            registerCustomer.FeetDropDownValues = feetDropDownValues;
+            registerCustomer.InchDropDownValues = inchDropDownValues;
+            registerCustomer.Races = races;
+            registerCustomer.Genders = genders;
+                
+            registerCustomer.Key = key_index + "_" + count;
+            registrations[key_index] = registerCustomer;
+            key_index++;            
+        }        
+    }
+    
+    
+    var registrations = new Object(); 
+    var key_index = 0;
+    var registerCustomer = new Object();   
+    @if (Model.Registrations != null)
+    {
+        foreach (var registration in Model.Registrations)
+        {
+            <text>
+                registerCustomer = new Object();
+                registerCustomer.FirstName = "@registration.FirstName";
+                registerCustomer.LastName = "@registration.LastName";
+                registerCustomer.HomeNumber = new Object();
+                registerCustomer.HomeNumber.CountryCode = "@registration.HomeNumber.CountryCode";                
+                registerCustomer.HomeNumber.Number = "@(registration.HomeNumber.ToString())";
+                registerCustomer.Email = "@registration.Email";
+                registerCustomer.PackageId = "@registration.PackageId";
+                registerCustomer.AppointmentId = "@registration.AppointmentId";
+                registerCustomer.SendNotification = "@registration.SendNotification";
+                registerCustomer.Address = new Object();
+                registerCustomer.Address.StreetAddressLine1="@registration.Address.StreetAddressLine1";
+                registerCustomer.Address.StreetAddressLine2="@registration.Address.StreetAddressLine2";
+                registerCustomer.Address.City="@registration.Address.City";
+                registerCustomer.Address.StateId="@registration.Address.StateId";
+                registerCustomer.Address.CountryId="@registration.Address.CountryId";
+                registerCustomer.Address.ZipCode="@registration.Address.ZipCode";
+                registerCustomer.DateOfBirth='@(registration.DateOfBirth.HasValue ? registration.DateOfBirth.Value.ToShortDateString() : "")';
+                registerCustomer.EmployeeId="@registration.EmployeeId";
+                registerCustomer.InsuranceId="@registration.InsuranceId";
+                registerCustomer.HeightInFeet = "@registration.HeightInFeet";
+                registerCustomer.HeightInInch = "@registration.HeightInInch";
+                registerCustomer.Weight = "@registration.Weight";
+                registerCustomer.Race = "@registration.Race";
+                registerCustomer.Gender = "@registration.Gender";
+                registerCustomer.Ssn = "@registration.Ssn";
+                registerCustomer.AddFreeShipping = "@registration.AddFreeShipping";
+                registerCustomer.ErrorMessage = "@Html.Raw(registration.FeedbackMessage != null ? registration.FeedbackMessage.Message : string.Empty)";
+
+                registerCustomer.Packages = eventPackages;
+                registerCustomer.Appointments = eventAppointments;
+                registerCustomer.Countries = countries;
+                registerCustomer.States = states;
+                registerCustomer.FeetDropDownValues = feetDropDownValues;
+                registerCustomer.InchDropDownValues = inchDropDownValues;
+                registerCustomer.Races = races;
+                registerCustomer.Genders = genders;
+                
+                registerCustomer.Key = key_index + "_" + "0";
+                registrations[key_index] = registerCustomer;
+                key_index++;
+            </text>
+        }
+    }
+    else
+    {
+        <text>
+            createBlankTemplate(3);
+        </text>
+    }
+
+    
+
+    function renderRegistrations()
+    {//debugger;          
+        $.each(registrations, function (key, registerCustomer) {
+            $("#registerCustomerTemplate").tmpl(registerCustomer).appendTo("#registerCustomerContainer");
+            $("#registerCustomerContainer fieldset:last .error-message").html(registerCustomer.ErrorMessage);
+
+            $("#registerCustomerContainer fieldset:last .auto-Search").each(function(){
+                var contextKeyControl = $(this).parent().parent().find(".state-class").attr("id");
+                $(this).autoComplete({
+                    autoChange: true,
+                    url: '/App/AutoCompleteService.asmx/GetCityByContextKeyAndPrefixText',
+                    type: "POST",
+                    data: "prefixText",
+                    pickContextKeyfrom: contextKeyControl
+                });
+            });
+        });
+
+        setDatePicker();
+
+        $('.submit-button-row [type="button"]').show();
+        $('.mask-phone').unmask();
+        $('.mask-phone').mask('(999)-999-9999');
+
+        $('.mask-ssn').unmask();
+        $('.mask-ssn').mask('***-**-****');
+    }
+
+    $(document).ready(function () {
+        renderRegistrations();
+
+        $("a.deleteRegisterCustomer").live("click", function () {
+            $(this).parents("fieldset:first").remove();
+            
+            if($("#registerCustomerContainer fieldset").length==0)
+            {
+                $('.submit-button-row [type="button"]').hide();
+            }
+            else
+            {
+                $('.submit-button-row [type="button"]').show();
+            }
+            return false;
+        });
+
+        $(".datePicker-dob").bind("blur", function () { validateDob(this); });
+
+        
+    });
+</script>
+
+
+<script type="text/javascript" language="javascript">
+    function SetSaveAndContinue(continueFlag) {//debugger;
+        if (continueFlag)
+            $("#saveAndContinue").val('@(Boolean.TrueString)');
+        else
+            $("#saveAndContinue").val('@(Boolean.FalseString)');
+        $('#Submit').click();
+    }
+
+    function setSendNotification(checkBox, hiddenBox) {//debugger;
+        if ($(checkBox).attr("checked")) {
+            $(checkBox).parent().find('.send-notification').val(true);
+        }
+        else {
+            $(checkBox).parent().find('.send-notification').val(false);
+        }
+    }
+    
+    function setFreeShipping(checkBox, hiddenBox) {//debugger;
+        if ($(checkBox).attr("checked")) {
+            $(checkBox).parent().find('.free-shipping').val(true);
+        }
+        else {
+            $(checkBox).parent().find('.free-shipping').val(false);
+        }
+    }
+
+    function validateDob(dobTextbox) {//debugger;
+        var dateStr = $.trim($(dobTextbox).val());
+        if (dateStr != "") {
+            var RegExPattern = /^(?=\d)(?:(?:(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})|(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))|(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2}))($|\ (?=\d)))?(((0?[1-9]|1[012])(:[0-5]\d){0,2}(\ [AP]M))|([01]\d|2[0-3])(:[0-5]\d){1,2})?$/;
+            if (!dateStr.match(RegExPattern)) {
+                alert("Please provide a valid Date Of Birth in mm/dd/yyyy format.");
+                $(dobTextbox).val("");
+                $(dobTextbox).focus();
+            }
+        }
+    }
+</script>
+@* Register customer template *@
+<script id="registerCustomerTemplate" type="text/x-jquery-tmpl">    
+    <fieldset>
+        <legend>Register Customer</legend>        
+        <a href="#" class="deleteRegisterCustomer" data-key="${Key}" style="float:right;">Remove</a>        
+        {{if ErrorMessage}}
+        <div class="error-message" style="clear:both;"></div>
+        {{/if}}
+        <input type="hidden" name="Registrations.Index" value="${Key}" />
+        <table>
+            <tr>
+                <td>
+                    <table style="border:solid 1px black">
+                        <tr>
+                            <td>
+                                <div class="editor-label">First Name</div>
+                                <input name="Registrations[${Key}].FirstName" type="text" value="${FirstName}" />
+                            </td>
+                            <td>
+                                <div class="editor-label">Last Name</div>
+                                <input name="Registrations[${Key}].LastName" type="text" value="${LastName}" />
+                            </td>                            
+                            <td>
+                                <div class="editor-label">Email</div>
+                                <input name="Registrations[${Key}].Email" type="text" value="${Email}" />
+                            </td>
+                            <td colspan="2">
+                                <div class="editor-label">Phone Number</div>
+                                <select style="width:50px;" name="Registrations[${Key}].HomeNumber.CountryCode">
+                                    <option value="1">+1</option>
+                                </select>                                
+                                <input style="width:100px;" maxlength="10" name="Registrations[${Key}].HomeNumber.Number" size="10" type="text" value="${HomeNumber.Number}" class="mask-phone" />                               
+                                                                
+                            </td>    
+                            <td>
+                                <div class="editor-label">Date of Birth</div>
+                                <input name="Registrations[${Key}].DateOfBirth" class='datePicker-dob'  type="text" value="${DateOfBirth}" />
+                                <div style="color:#555555;">(mm/dd/yyyy)</div>
+                            </td>                                                                          
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="editor-label">Country</div>
+                                <select name="Registrations[${Key}].Address.CountryId">                                    
+                                    {{each(i, country) Countries}}
+                                    {{if Address.CountryId == country.Id }}
+                                    <option value="${country.Id}" selected="selected">${country.Name}</option>
+                                    {{else}}
+                                    <option value="${country.Id}">${country.Name}</option>
+                                    {{/if}}                                        
+                                    {{/each}}
+                                </select>
+                            </td> 
+                            <td>
+                                <div class="editor-label">Address</div>
+                                <input style="width:180px;" name="Registrations[${Key}].Address.StreetAddressLine1" type="text" value="${Address.StreetAddressLine1}" />
+                            </td>
+                            <td>
+                                <div class="editor-label">Suite</div>
+                                <input name="Registrations[${Key}].Address.StreetAddressLine2" type="text" value="${Address.StreetAddressLine2}" />
+                            </td>
+                            <td>
+                                <div class="editor-label">State</div>
+                                <select name="Registrations[${Key}].Address.StateId" class="state-class" id="Registrations_${Key}_Address_StateId">
+                                    <option value="0">--Select--</option>
+                                    {{each(i, state) States}}
+                                    {{if Address.StateId == state.Id }}
+                                    <option value="${state.Id}" selected="selected">${state.Name}</option> 
+                                    {{else}} 
+                                    <option value="${state.Id}">${state.Name}</option>
+                                    {{/if}}                                      
+                                    {{/each}}
+                                </select>
+                            </td>
+                            <td>
+                                <div class="editor-label">City</div>
+                                <input name="Registrations[${Key}].Address.City" type="text" value="${Address.City}" class="auto-Search"/>
+                            </td>
+                            <td>
+                                <div class="editor-label">Zip</div>
+                                <input name="Registrations[${Key}].Address.ZipCode" type="text" value="${Address.ZipCode}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="editor-label">Employee Id</div>
+                                <input name="Registrations[${Key}].EmployeeId" type="text" value="${EmployeeId}" />
+                            </td>
+                            <td>
+                                <div class="editor-label">@insuranceIdLabel</div>
+                                <input name="Registrations[${Key}].InsuranceId" type="text" value="${InsuranceId}" />
+                            </td>
+                            <td>
+                                <div class="editor-label">Height</div>
+                                <select name="Registrations[${Key}].HeightInFeet" id="Registrations_${Key}_HeightInFeet" style="width:40px;">                                    
+                                    {{each(i, feet) FeetDropDownValues}}
+                                    {{if HeightInFeet == feet.Value }}
+                                    <option value="${feet.Value}" selected="selected">${feet.Text}</option> 
+                                    {{else}} 
+                                    <option value="${feet.Value}">${feet.Text}</option>
+                                    {{/if}}                                      
+                                    {{/each}}
+                                </select> ft
+                                <select name="Registrations[${Key}].HeightInInch" id="Registrations_${Key}_HeightInInch" style="width:40px;">                                    
+                                    {{each(i, inch) InchDropDownValues}}
+                                    {{if HeightInInch == inch.Value }}
+                                    <option value="${inch.Value}" selected="selected">${inch.Text}</option> 
+                                    {{else}} 
+                                    <option value="${inch.Value}">${inch.Text}</option>
+                                    {{/if}}                                      
+                                    {{/each}}
+                                </select> inch
+                            </td>
+                            <td>
+                                <div class="editor-label">Weight</div>
+                                <input name="Registrations[${Key}].Weight" type="text" value="${Weight}" style="width:100px;" /> lbs
+                            </td>
+                            <td>
+                                <div class="editor-label">Race</div>
+                                <select name="Registrations[${Key}].Race" id="Registrations_${Key}_Race">                                    
+                                    {{each(i, race) Races}}
+                                    {{if Race == race.Value }}
+                                    <option value="${race.Value}" selected="selected">${race.Text}</option> 
+                                    {{else}} 
+                                    <option value="${race.Value}">${race.Text}</option>
+                                    {{/if}}                                      
+                                    {{/each}}
+                                </select> 
+                            </td>
+                            <td>
+                                <div class="editor-label">Gender</div>
+                                <select name="Registrations[${Key}].Gender" id="Registrations_${Key}_Gender">    
+                                    <option value="-1">--Select--</option>                                
+                                    {{each(i, gender) Genders}}
+                                    {{if Gender == gender.Value }}
+                                    <option value="${gender.Value}" selected="selected">${gender.Text}</option> 
+                                    {{else}} 
+                                    <option value="${gender.Value}">${gender.Text}</option>
+                                    {{/if}}                                      
+                                    {{/each}}
+                                </select> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="editor-label">SSN</div>
+                                <input name="Registrations[${Key}].Ssn" type="text" value="${Ssn}" class="mask-ssn" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>            
+            </tr>
+            <tr>
+                <td>
+                    <table style="border:solid 1px black">
+                        <tr>
+                            <td>
+                                <div class="editor-label">Package</div>
+                                <select style="width:320px;" name="Registrations[${Key}].PackageId">
+                                    <option value="0">--Select--</option>
+                                    {{each(i, package) Packages}}
+                                    {{if PackageId == package.Id }}
+                                    <option value="${package.Id}" selected="selected">${package.Name}</option>
+                                    {{else}}
+                                    <option value="${package.Id}">${package.Name}</option>
+                                    {{/if}}                                      
+                                    {{/each}}
+
+                                </select>
+                            </td>
+                            <td>
+                                <div class="editor-label">Appointment Time</div>
+                                <select name="Registrations[${Key}].AppointmentId">
+                                    <option value="0">--Select--</option>
+                                    {{each(i,appointment) Appointments}}
+                                    {{if AppointmentId == appointment.Id }}
+                                    <option value="${appointment.Id}" selected="selected">${appointment.StartTime}</option>
+                                    {{else}}
+                                    <option value="${appointment.Id}">${appointment.StartTime}</option>
+                                    {{/if}}
+                                    {{/each}}
+                                </select>
+                            </td>
+                            <td>   
+                                {{if SendNotification == 'True'}}
+                                <input name="Registrations[${Key}].SendNotification" type="checkbox" checked="checked" value="true" onclick="setSendNotification(this);" /><input name="Registrations[${Key}].SendNotification" class="send-notification" type="hidden" value="true" /> Send email notification
+                                {{else}}                             
+                                <input name="Registrations[${Key}].SendNotification" type="checkbox" value="true" onclick="setSendNotification(this);" /><input name="Registrations[${Key}].SendNotification" class="send-notification" type="hidden" value="false" /> Send email notification
+                                {{/if}}
+                            </td>
+                            <td>   
+                                {{if AddFreeShipping == 'True'}}
+                                    <input name="Registrations[${Key}].AddFreeShipping" type="checkbox" checked="checked" value="true" onclick="setFreeShipping(this);" /><input name="Registrations[${Key}].AddFreeShipping" class="free-shipping" type="hidden" value="true" /> Free Shipping
+                                {{else}}                             
+                                    <input name="Registrations[${Key}].AddFreeShipping" type="checkbox" value="true" onclick="setFreeShipping(this);" /><input name="Registrations[${Key}].AddFreeShipping" class="free-shipping" type="hidden" value="false" /> Free Shipping
+                                {{/if}}
+                            </td>
+                        </tr>                    
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </fieldset>    
+</script>

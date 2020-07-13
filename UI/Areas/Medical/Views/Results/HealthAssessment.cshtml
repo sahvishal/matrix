@@ -1,0 +1,437 @@
+@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentFormEditModel
+@{
+    ViewBag.Title = "HealthAssessment";
+    var vd = new ViewDataDictionary();
+    vd.Add("IsPrintable", !Model.LoadLayout);
+    vd.Add("CustomerName", Model.HealthAssessmentFooterEditModel.CustomerName.ToString());
+    vd.Add("EventDate", Model.HealthAssessmentFooterEditModel.EventDate.ToShortDateString());
+    vd.Add("IsMammoPurchased", Model.IsMammoPurchased);
+    vd.Add("IsKynPurchased", Model.IsKynPurchased);
+    vd.Add("ShowEthnicGroup", true);
+    vd.Add("IsBulkPrint", Model.IsBulkPrint);
+    vd.Add("IsPhqPurchased", Model.IsPhq9Purchased);
+    vd.Add("ShowMammogramQuestionnarire", Model.ShowMammogramQuestionnarire);
+
+    if (!Model.LoadLayout)
+    {
+        Layout = "LayoutPrintableHealthAssessment.cshtml";
+    }
+}
+@{Html.BeginForm("HealthAssessment", "Results", "POST");}
+
+@if (Model.LoadLayout)
+{
+    <h2>Health Assessment
+        <span style="float: right; font-size: 12px;">
+            <a href="javascript:void(0);" onclick="MarkOpenforPrint(false, false);">Print</a>&nbsp;&nbsp;
+            <a href="javascript:void(0);" onclick="MarkOpenforPrint(true, false);">Print Blank</a>&nbsp;&nbsp;
+            <a href="javascript:void(0);" onclick="OpenCustomerWindow();">Edit Customer</a>
+        </span>
+    </h2>
+}
+
+<br />
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@Html.HiddenFor(m => m.OpenforPrint)
+@Html.HiddenFor(m => m.Print)
+@Html.HiddenFor(m => m.PrintBlank)
+@Html.HiddenFor(m => m.RedirecttoPrevious)
+@Html.HiddenFor(m => m.RefrrerUrl)
+@Html.HiddenFor(m => m.EventId)
+@Html.HiddenFor(m => m.CustomerId)
+@Html.HiddenFor(m => m.IsBulkPrint)
+
+@Html.HiddenFor(m => m.PrintLipidBasicBiomertic)
+@Html.HiddenFor(m => m.PrintKynBasicBiomertic)
+@Html.HiddenFor(m => m.CaptureSurvey)
+
+@if (!Model.LoadLayout)
+{
+    <div class="section-header hideOnBulk">
+        Health Assessment Form
+    </div>
+}
+@if (Model.Print || Model.PrintBlank || Model.IsBulkPrint)
+{
+    <text>
+        <style type="text/css">
+            input[type=checkbox], input[type=radio] {
+                width: 13px !important;
+                height: 13px !important;
+            }
+        </style>
+    </text>
+}
+<div class="hideOnBulk" style="clear: both;">
+    @Html.Partial("/Config/Content/Views/Shared/HealthAssessmentHeader.cshtml", Model.HealthAssessmentHeaderEditModel)
+</div>
+<div id="divcontent_haf" class="hideOnBulk" style="clear: both;">
+    @Html.Partial("HealthAssessmentForm", Model.HealthAssessmentEditModel, vd)
+</div>
+
+@if (Model.ShowHafFooter)
+{
+    if (Model.Print || Model.PrintBlank || Model.IsBulkPrint)
+    {
+<text>
+    <style type="text/css">
+        .disclaimerdiv_css {
+            font-size: 14pt !important;
+        }
+    </style>
+</text>
+    }
+    <div class="section hideOnBulk" style="clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/HealthAssessmentFooter.cshtml", Model.HealthAssessmentFooterEditModel)
+    </div>
+}
+
+@if (Model.IsMammoPurchased && !Model.LoadLayout && File.Exists(Server.MapPath("/Config/Content/Views/Shared/MammogramQuestions.cshtml")) && Model.ShowMammogramQuestionnarire)
+{
+    <div class="section hideOnBulk" id="mammocontent_haf" style="clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/MammogramQuestions.cshtml", Model.HealthAssessmentFooterEditModel, vd)
+    </div>
+}
+@if (Model.IsMammoPurchased && !Model.LoadLayout && Model.MammogramHistoryFormViewModel != null)
+{
+    <div class="dummy-css-class" style="page-break-before: always;clear: both;">
+        @Html.Partial("MammogramHistoryForm", Model.MammogramHistoryFormViewModel)
+    </div>
+}
+@if (Model.IsKynPurchased && !Model.LoadLayout && File.Exists(Server.MapPath("/Config/Content/Views/Shared/KynQuestions.cshtml")))
+{
+    <div class="section hideOnBulk" id="kyncontent_haf" style="clear: both; margin-bottom: 0 !important;">
+        @Html.Partial("/Config/Content/Views/Shared/KynQuestions.cshtml", Model.HealthAssessmentHeaderEditModel, vd)
+    </div>
+}
+
+@if (Model.IsPhq9Purchased && !Model.LoadLayout && File.Exists(Server.MapPath("/Config/Content/Views/Shared/PhqQuestions.cshtml")))
+{
+    <div class="section hideOnBulk" id="phyhafQuestion_section" style="clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/PhqQuestions.cshtml", Model.HealthAssessmentHeaderEditModel, vd)
+    </div>
+}
+<!--CAGE-->
+@if (Model.IsBulkPrint && Model.IsCagePurchased && !Model.LoadLayout && File.Exists(Server.MapPath("/Config/Content/Views/Shared/CageQuestions.cshtml")))
+{
+    <div id="cageQuestion_section" class="dummy-css-class" style="clear: both; page-break-before: always;">
+        @Html.Partial("/Config/Content/Views/Shared/CageQuestions.cshtml", Model.HealthAssessmentHeaderEditModel)
+    </div>
+}
+
+
+@if (Model.IsBulkPrint && Model.ShowConsentForm && !Model.LoadLayout && Model.IsQualityMeasuresPurchased)
+{
+    <div class="section dummy-css-class" style="page-break-before: always; width: 95%;clear:both;">
+        @Html.Partial("/Config/Content/Views/Shared/FunctionalAssessment.cshtml", Model.HealthAssessmentHeaderEditModel)
+    </div>
+}
+@*@if (Model.AttachParicipantConsentForm && Model.ShowConsentForm && !Model.LoadLayout)
+{
+    if (Model.IsHealthPlan && File.Exists(Server.MapPath("/Config/Content/Views/Shared/HealthplanParticipationConsentFrom.cshtml")))
+    {
+        <div class="section" style="page-break-before: always; width: 95%;clear:both;">
+            @Html.Partial("/Config/Content/Views/Shared/HealthplanParticipationConsentFrom.cshtml", Model.HealthAssessmentHeaderEditModel)
+        </div>
+    }
+    else if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/AwvParticipationConsentFrom.cshtml")))
+    {
+        <div class="section" >
+            @Html.Partial("/Config/Content/Views/Shared/AwvParticipationConsentFrom.cshtml", Model.HealthAssessmentHeaderEditModel)
+        </div>
+    }
+}*@
+@*@if (Model.PcpConsentViewModel != null && !Model.LoadLayout && Model.ShowConsentForm)
+{
+    <div style="page-break-before: always;clear:both;">
+        @Html.Partial("/Config/Content/Views/Shared/AwvPcpConsentForm.cshtml", Model.PcpConsentViewModel)
+    </div>
+}*@
+
+@*@if (Model.IsFlushotTestPurchased && !Model.LoadLayout && Model.ShowConsentForm)
+{
+    $1$<div style="page-break-before: always; page-break-after: always;" class="section">
+        @Html.Partial("/Config/Content/Views/Shared/FluVaccinationConsentForm.cshtml", Model.FluVaccinationConsentViewModel)
+    </div>#1#
+    $1$<div class="section" style="page-break-before: always;">
+        @Html.Partial("/Config/Content/Views/Shared/SeasonalInfluenzaVaccinationConsent.cshtml", Model.FluVaccinationConsentViewModel)
+    </div>#1#
+    <div class="section" style="page-break-before: always;">
+        @Html.Partial("/Config/Content/Views/Shared/FluPneumoniaConsent.cshtml", Model.FluVaccinationConsentViewModel)
+    </div>
+}*@
+
+@if (Model.AttachCongitiveClockForm && Model.QualityAssuranceResultViewModel != null && File.Exists(Server.MapPath("/Config/Content/Views/Shared/ClockDrawingTest.cshtml")) && Model.ShowConsentForm && !Model.LoadLayout)
+{
+    <div class="section dummy-css-class" style="page-break-before: always;">
+        @Html.Partial("/Config/Content/Views/Shared/ClockDrawingTest.cshtml", Model.QualityAssuranceResultViewModel)
+    </div>
+}
+@if (Model.IsBulkPrint && Model.PatientWorksheetModel != null && !Model.LoadLayout && Model.ShowConsentForm && Model.PatientWorksheetModel.PrintPatientWorkSheet)
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 95%;clear:both;">
+        @Html.Partial("/Config/Content/Views/Shared/PatientWorksheet.cshtml", Model.PatientWorksheetModel)
+    </div>
+}
+@if (Model.AttachQualityAssuranceForm && Model.QualityAssuranceResultViewModel != null && File.Exists(Server.MapPath("/Config/Content/Views/Shared/QualityAssuranceResultForm.cshtml")) && Model.ShowConsentForm && !Model.LoadLayout)
+{
+    <div class="section dummy-css-class" style="page-break-before: always;">
+        @Html.Partial("/Config/Content/Views/Shared/QualityAssuranceResultForm.cshtml", Model.QualityAssuranceResultViewModel)
+    </div>
+}
+
+@if (Model.IsBulkPrint && !Model.LoadLayout && Model.PcpAppointmentViewModel != null)
+{
+    <div class="dummy-css-class"  style="font-family: sans-serif; page-break-before: always; width: 95%;clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/ViewPcpAppointmentForm.cshtml", Model.PcpAppointmentViewModel)
+    </div>
+
+    <div class="dummy-css-class" style="font-family: sans-serif; page-break-before: always; width: 95%;clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/ViewPcpAppointmentForm.cshtml", Model.PcpAppointmentViewModel)
+    </div>
+}
+
+@if (Model.AttachChronicEvaluationForm && Model.QualityAssuranceResultViewModel != null && File.Exists(Server.MapPath("/Config/Content/Views/Shared/HCPCEForm.cshtml")) && Model.ShowConsentForm && !Model.LoadLayout)
+{
+    @Html.Partial("/Config/Content/Views/Shared/HCPCEForm.cshtml", Model.QualityAssuranceResultViewModel)
+}
+
+@if (Model.AbnConsentModel != null && !Model.LoadLayout && Model.ShowConsentForm)
+{
+    <div class="dummy-css-class" style="page-break-before: always;clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/AbnConsentForm.cshtml", Model.AbnConsentModel)
+    </div>
+}
+
+@if (Model.IsBulkPrint && Model.BloodworksLabelModel != null && !Model.LoadLayout && Model.ShowConsentForm && File.Exists(Server.MapPath("/Config/Content/Views/Shared/BloodworkRequisitionForm.cshtml")))
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 95%;clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/BloodworkRequisitionForm.cshtml", Model.BloodworksLabelModel)
+    </div>
+}
+
+@if (Model.IsBulkPrint && Model.PatientWorksheetModel != null && !Model.LoadLayout && Model.ShowConsentForm && Model.PatientWorksheetModel.PrintScreeningInfo)
+{
+    <div class="dummy-css-class" style="font-family: sans-serif; page-break-before: always; width: 95%;clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/PatientUpsellForm.cshtml", Model.PatientWorksheetModel)
+    </div>
+}
+
+@*@if (Model.IsBulkPrint && !Model.LoadLayout && Model.GiftCertificateViewModel != null)
+{
+    <div style="font-family: sans-serif; page-break-before: always; width: 95%;clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/GiftCertificateForAccount.cshtml", Model.GiftCertificateViewModel)
+    </div>
+}*@
+
+@if (Model.IsBulkPrint && !Model.LoadLayout && Model.OrderRequisitionFormViewModel != null)
+{
+    <div class="dummy-css-class" style="font-family: sans-serif; page-break-before: always; width: 95%;clear: both;">
+        @Html.Partial("/Config/Content/Views/Shared/OrderRequisitionForm.cshtml", Model.OrderRequisitionFormViewModel)
+    </div>
+}
+@*@if (Model.IsBulkPrint && Model.CheckListFormModel != null && !Model.LoadLayout && Model.PrintCheckList)
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 99%;clear:both;float:left;">
+        @Html.Partial("/Config/Content/Views/Shared/CheckListForm.cshtml", Model.CheckListFormModel)
+    </div>
+}*@
+@if (Model.IsBulkPrint && Model.PrintIFOBTFormModel != null && !Model.LoadLayout && Model.PrintIFOBTForm)
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 98%; clear: both; float: left; ">
+        @Html.Partial("/Config/Content/Views/Shared/IFOBTLabForm.cshtml", Model.PrintIFOBTFormModel)
+    </div>
+}
+@if (Model.IsBulkPrint && Model.PrintMicroalbuminFormModel != null && !Model.LoadLayout && Model.PrintMicroalbuminForm)
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 98%;clear:both;">
+        @Html.Partial("/Config/Content/Views/Shared/MicroalbuminLabForm.cshtml", Model.PrintMicroalbuminFormModel)
+    </div>
+}
+
+@if (Model.IsBulkPrint && Model.MonarchAttestaionForm != null && !Model.LoadLayout && File.Exists(Server.MapPath("/Config/Content/Views/Shared/MonarchAttestationForm.cshtml")))
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 98%;clear:both;">
+        @Html.Partial("/Config/Content/Views/Shared/MonarchAttestationForm.cshtml", Model.MonarchAttestaionForm)
+    </div>
+}
+
+@if (Model.IsBulkPrint && Model.PrintLoincLabData && Model.PrintLoincLabDataModel != null && !Model.LoadLayout && File.Exists(Server.MapPath("/Config/Content/Views/Shared/LoincLabData.cshtml")))
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 98%;clear:both;">
+        @Html.Partial("/Config/Content/Views/Shared/LoincLabData.cshtml", Model.PrintLoincLabDataModel)
+    </div>
+}
+@if (Model.IsBulkPrint && Model.CaptureSurvey && Model.SurveyFormModel != null && !Model.LoadLayout && File.Exists(Server.MapPath("/Config/Content/Views/Shared/SurveyTemplateForm.cshtml")))
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 99%;clear:both;float:left;">
+        @Html.Partial("/Config/Content/Views/Shared/SurveyTemplateForm.cshtml", Model.SurveyFormModel)
+    </div>
+}
+@if (Model.IsBulkPrint && Model.IsCorporateAccount)
+{
+    <div class="dummy-css-class" style="page-break-before: always; width: 99%;clear:both;float:left;">
+    @Html.Partial("/Config/Content/Views/Shared/ConsentForCorporate.cshtml", Model.HealthAssessmentHeaderEditModel)
+</div>
+}
+@if (Model.LoadLayout)
+{
+    <div style="float: right; width: 100%; text-align: right; padding-top: 10px; border-top: solid 1px;">
+        <input type="button" value="Save & Print" onclick="MarkOpenforPrint(false, true);" />
+        <input type="button" value="Cancel" onclick="window.location.href = '/Scheduling/EventCustomerList/Index?id=@Model.EventId';" />
+        <input type="button" value="Save" onclick="MarkRedirect();" />
+    </div>
+}
+
+
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        @if (!Model.LoadLayout)
+        {
+            <text>$(".header-footer").show();</text>
+        }
+
+        @if (Model.OpenforPrint)
+        {
+            <text>window.open("@(Model.PrintUrl)");</text>
+
+            if (Model.Print && Model.RedirecttoPrevious)
+            {
+                <text>window.location.href = '@Model.RefrrerUrl' + "&hId=@Model.CustomerId";</text>
+            }
+        }
+        else if (Model.Print || Model.PrintBlank)
+        {
+            if (Model.PrintBlank)
+            {
+                <text>BlankAllQuestions();</text>
+            }
+            else if (Model.Print && Model.RedirecttoPrevious)
+            {
+                <text>window.location.href = '@Model.RefrrerUrl'</text>
+            }
+        }
+        
+        @if (Model.IsBulkPrint)
+        {
+            <text>hideQuestionOnBulkHaf();</text>   
+        }
+    });
+
+    var isRemoved = false;
+    function hideQuestionOnBulkHaf() {
+        $(".hideOnBulk").hide();
+        
+        $(".dummy-css-class").each(function () {
+            if ($(this).is(":visible") && isRemoved === false) {
+                $(this).css("page-break-before", "");
+                isRemoved = true;
+            }
+        });
+    }
+
+    function OpenCustomerWindow() {
+        window.open("/App/Common/EditCustomer.aspx?OpenAsPopUp=true&ReloadParent=true&CustomerID=@Model.CustomerId", "CustomerInfo", "toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,resizable=yes,width=820,height=500");
+    }
+
+    function BlankAllQuestions() {
+        $('#divcontent_haf').find('input[type="radio"]').attr('checked', false);
+        $('#divcontent_haf').find('input[type="checkbox"]').attr('checked', false);
+        $('#divcontent_haf').find('input[type="text"]').val('');
+        $('#divcontent_haf').find('textarea').val('');
+
+        $('.mammo-haf-container').find('input[type="radio"]').attr('checked', false);
+        $('.mammo-haf-container').find('input[type="checkbox"]').attr('checked', false);
+        $('.mammo-haf-container').find('input[type="text"]').val('');
+        $('.mammo-haf-container').find('textarea').val('');
+
+        $('.kyn-haf-container').find('input[type="radio"]').attr('checked', false);
+        $('.kyn-haf-container').find('input[type="checkbox"]').attr('checked', false);
+        $('.kyn-haf-container').find('input[type="text"]').val('');
+        $('.kyn-haf-container').find('textarea').val('');
+    }
+
+
+    function saveForm(isBlank) {
+
+        updateHAFAnswers();
+        
+        if (!saveFormWithoutvalidation) {
+            if (!ValidateHealthQuestions()) {
+                return;
+            }
+        }
+
+        @if (Model.IsKynPurchased && Model.HealthAssessmentEditModel != null && Model.HealthAssessmentEditModel.KynHealthAssessmentEditModel != null)
+        {
+            <text>
+                if (saveFormWithoutvalidation)
+                {
+                    SubmitForm()
+                } else {
+                    ValidateHAF(SubmitForm);
+                }                          
+            </text>
+        }
+        else
+        {
+            <text>SubmitForm();</text>
+        }
+    }
+    
+    var saveFormWithoutvalidation = false;
+    
+    function SubmitForm() {
+        $('form').submit();
+    }
+    function MarkPrint() {
+        $("#Print").val("@Boolean.TrueString");
+        $("#PrintBlank").val("@Boolean.FalseString");
+    }
+
+    function MarkPrintBlank() {
+        $("#PrintBlank").val("@Boolean.TrueString");
+    }
+
+    function MarkOpenforPrint(isBlank, redirect) {
+        $("#OpenforPrint").val("@Boolean.TrueString");
+        if (redirect) {
+            $("#RedirecttoPrevious").val("@Boolean.TrueString");
+        }
+        else {
+            $("#RedirecttoPrevious").val("@Boolean.FalseString");
+        }
+
+        if (isBlank) {
+            saveFormWithoutvalidation = true;
+            MarkPrintBlank();
+        }
+        else {
+            MarkPrint();
+        }
+
+        saveForm(saveFormWithoutvalidation);
+    }
+
+    function MarkRedirect() {
+        $("#RedirecttoPrevious").val("@Boolean.TrueString");
+        saveForm(false);
+    }
+
+</script>
+@{Html.EndForm();}
+<style type="text/css">
+    .ui-widget-content.ui-dialog-buttonpane {
+        border-top: 1px solid black !important;
+    }
+    .pcpAppointmentInfo {
+        width: 800px;
+        margin-left: 10px;
+    }
+</style>

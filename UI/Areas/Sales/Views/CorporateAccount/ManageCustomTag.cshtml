@@ -1,0 +1,192 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Sales.ViewModels
+
+@model CustomTagListModel
+
+@{
+    ViewBag.Title = "Manage Custom Tags";
+}
+
+<h1>Manage Custom Tags
+    <span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New Custom Tag", "CreateCustomTag")
+    </span>
+</h1>
+
+<div id="list-filter">
+    @{Html.BeginForm("ManageCustomTag", "CorporateAccount", FormMethod.Get);}
+    @Html.Partial("CustomTagListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>
+                Custom Tag
+            </th>
+            <th>
+                Corporate Account Name
+            </th>
+            <th>
+                Customer Attached
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+        @foreach (var customTag in Model.Collection)
+        {
+            <tr>
+                <td>
+                    @customTag.CustomTag
+                </td>
+                <td>
+                    @customTag.AccountName
+                </td>
+                <td>
+                    @customTag.CustomerCount
+                </td>
+                <td style="width: 150px;">
+                    <input type="hidden" value="@customTag.TagId" />
+                    <a class="toggle-btn delete-link" href="javascript:void(0)">Delete</a> <span class="spliter">|</span> 
+                    @if (!customTag.IsDisable)
+                    {
+                        <a class="toggle-btn disable-link" href="javascript:void(0)">Deactivate</a> <span class="spliter">|</span> 
+                    }
+                    else
+                    {
+                        <a class="toggle-btn enable-link" href="javascript:void(0)">Activate</a> <span class="spliter">|</span> 
+                    }
+                    <a href="/Sales/CorporateAccount/CreateCustomTag?customeTagId=@customTag.TagId">Edit</a>
+                    <div class="toggle-btn" style="display:none;">
+                        <span class="fullwdth"><img alt="" src="~/Content/Images/indicator.gif" /></span>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        $(".delete-link").click(function () {
+
+            var obj = $(this);
+            var td = $(obj).closest("td");
+            var togglebtn = $(obj).closest("td").find(".toggle-btn");
+            var corporateTagId = $(td).find("input[type='hidden']").val();
+            
+            $(togglebtn).toggle();
+            $("#list-view a, #list-view .spliter").hide();
+            
+            var answer = confirm("Do you really want to delete this Custom Tag? if yes, the customers will be removed from the associated tag");
+            if (answer) {
+                $.ajax({
+                    type: "Post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    url: "/Sales/CorporateAccount/DeleteCustomTag",
+                    data: "{'customTagId':" + corporateTagId + "}",
+                    success: function (result) {
+                        location.reload();
+                    },
+                    error: function (a, b, c) {
+                        $("#list-view a, #list-view .spliter").show();
+                        $(togglebtn).toggle();
+                    }
+                });
+            } else {
+                $(togglebtn).toggle();
+                $("#list-view a, #list-view .spliter").show();
+            }
+        });
+
+
+        $(".disable-link").click(function () {
+           
+            var td = $(this).closest("td");
+            var togglebtn = $(td).find(".toggle-btn");
+            var corporateTagId = $(td).find("input[type='hidden']").val();
+
+            $(togglebtn).toggle();
+            $("#list-view a, #list-view .spliter").hide();
+
+            var answer = confirm("Do you really want to Deactivate this Custom Tag?");
+
+            if (answer) {
+                $.ajax({
+                    type: "Post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    url: "/Sales/CorporateAccount/DisableCorporateTagCustomTag",
+                    data: "{'customTagId':" + corporateTagId + ",'disable':true}",
+                    success: function (result) {
+                        location.reload();
+                    },
+                    error: function (a, b, c) {
+                        $(togglebtn).toggle();
+                        $("#list-view a, #list-view .spliter").show();
+                    }
+                });
+            } else {
+                $(togglebtn).toggle();
+                $("#list-view a, #list-view .spliter").show();
+            }
+        });
+
+        $(".enable-link").click(function () {
+            var td = $(this).closest("td");
+            var togglebtn = $(td).find(".toggle-btn");
+            var corporateTagId = $(td).find("input[type='hidden']").val();
+
+            $(togglebtn).toggle();
+            $("#list-view a, #list-view .spliter").hide();
+
+            var answer = confirm("Do you really want to Activate this Custom Tag?");
+
+            if (answer) {
+                $.ajax({
+                    type: "Post",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    url: "/Sales/CorporateAccount/DisableCorporateTagCustomTag",
+                    data: "{'customTagId':" + corporateTagId + ",'disable':false}",
+                    success: function (result) {
+                        location.reload();
+                    },
+                    error: function (a, b, c) {
+                        $(togglebtn).toggle();
+                        $("#list-view a, #list-view .spliter").show();
+                    }
+                });
+            } else {
+                $(togglebtn).toggle();
+                $("#list-view a, #list-view .spliter").show();
+            }
+        });
+
+    </script>
+}

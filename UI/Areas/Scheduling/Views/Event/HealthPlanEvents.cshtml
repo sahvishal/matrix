@@ -1,0 +1,314 @@
+﻿@using System.Linq
+@using Falcon.App.Core.Scheduling.ViewModels
+@model HealthPlanEventListModel
+@{
+    ViewBag.Title = "Events";
+    var userSession = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISessionContext>().UserSession;
+}
+<h2>
+    Events
+    <span id="calendar_link" style="float: right;"><a href="javascript:void(0);" onclick="renderCalendar();">Calendar</a></span>
+    <span id="list_link" style="float: right; display: none;"><a href="javascript:void(0);" onclick="renderList();">List</a></span>
+</h2>
+
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<link href="/App/jquery/css/JQuery-Selectable/Selectable.css" rel="stylesheet" />
+<link href="/Content/Styles/fullcalendar.css" rel="stylesheet" type="text/css" />
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/Scripts/fullcalendar.min.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="/Scripts/json2.min.js"></script>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+
+<div id="event_list">
+    <div id="list-filter">
+        @{Html.BeginForm("HealthPlanEvents", "Event", FormMethod.Get);}
+        @Html.Partial("HealthPlanEventsFilter", new ViewDataDictionary(Model.Filter))
+        @{Html.EndForm();}
+    </div>
+    @if (Model != null && Model.Collection != null && Model.Collection.Any())
+    {
+        <div class="exportcsvlink">
+            @if (Model.PagingModel.NumberOfItems > 1000)
+            {
+                <a href="javascript:void(0);" onclick='return requestReport("/Scheduling/ReportsQueue/HealthPlanEventReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                    Export CSV
+                </a>
+            }
+            else
+            {
+                <a target="_blank" href="/Scheduling/ExportableReports/HealthPlanEvents?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV</a>
+            }
+        </div>
+        @Html.DisplayFor(m => m.PagingModel)
+        <table id="list-view">
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Info
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Pod
+                </th>
+                <th style="text-align: center;">
+                    Booked/Total Slots
+                </th>
+                <th style="text-align: center;">
+                    Screened Customers
+                </th>
+                <th style="width: 160px; text-align: center;">
+                    Action
+                </th>
+            </tr>
+            @foreach (var theEvent in Model.Collection)
+            {
+                <tr>
+                    <td>
+                        @theEvent.Id
+                    </td>
+                    <td>
+                        <span>@theEvent.HostName </span>
+                    </td>
+                    <td>
+                        @theEvent.HostAddress.ToString()
+                    </td>
+                    <td>
+                        @theEvent.EventDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @theEvent.PodNames()
+                    </td>
+                    <td style="text-align: center;">
+                        <span>@theEvent.FilledAppintmentSlots/@theEvent.TotalAppointmentSlots</span>
+                    </td>
+                    <td style="text-align: center;">
+                        @theEvent.ScreenedCustomers
+                    </td>
+                    <td class="action-field" style="width: 160px; text-align: center;">
+                        <a target="_blank" href="/Scheduling/Event/CorporateEventCustomerList?eventId=@theEvent.Id">View Customers</a>
+                    </td>
+                </tr>
+            }
+        </table>
+        @Html.DisplayFor(m => m.PagingModel)
+    }
+    else
+    {
+        <div>
+            <h2>
+                No Records found.
+            </h2>
+        </div>
+    }
+</div>
+<div id="calendar" style="clear:both; display: none;">
+</div>
+
+<div id="event-customers-dialog">
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                    $(this).addClass('row-hover');
+                },
+                function () {
+                    $(this).removeClass('row-hover');
+                });
+        });
+    </script>
+}
+<script language="javascript" type="text/javascript">
+    function loadSlots(eventId) {
+        $.ajax({ type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html", url: "/scheduling/appointmentslot/EventAppointmentSlotSummary?id=" + eventId, data: '{}',
+            success: function (result) { setAppointmentData(eventId, result); }, error: function (a, b, c) { }
+        });
+    }
+
+    function setAppointmentData(eventId, appointments) {
+        $("#Id_" + eventId).parent().find(".appointment-slots").html(appointments);
+    }
+
+</script>
+<script type="text/javascript">
+
+    function renderCalendar() {
+        $('#calendar_link').hide();
+        $('#event_list').hide();
+        $('#list_link').show();
+        $('#calendar').show();
+        createCalendar();
+        //$('#calendar').fullCalendar('events');
+    }
+
+    function renderList(){
+        $('#list_link').hide();
+        $('#calendar').hide();
+        $('#calendar_link').show();
+        $('#event_list').show();
+        $('#calendar').fullCalendar('destroy');
+    }
+
+    function createCalendar()
+    {
+        $('#calendar').fullCalendar({
+            theme: true,
+            defaultView: '@(Model.DefaultCalendarView)',
+            month: @(Model.Month - 1),
+            year: @(Model.Year),
+            date: 1,
+
+            header: {
+                left: 'month,basicWeek,basicDay',
+                center: 'title',
+                right: 'today prev,next'
+            },
+
+            lazyFetching: true,
+            eventSources: [
+            {
+                events: function (start, end, callback) {
+                    $.ajax({
+                        url: '/Operations/Schedule/GetStaffScheduleFor?Date=' + getDate() + '&Month=' + getMonth() + '&Year=' + getYear() + '&DefaultCalendarView=@(Model.DefaultCalendarView)&AccountId=@(userSession.CurrentOrganizationRole.OrganizationId)',
+                        dataType: 'json',
+                        data: '{}',
+                        type: 'POST',
+                        success: function (events) {
+                            callback(events);
+                        },
+                        error: function(xmlHttpRequest) {
+
+                        }
+                    });
+                },
+                backgroundColor: '#6eadc5',
+                textColor: 'white'
+            }],
+
+            eventRender: function (event, element) {
+                RenderforView(event, element);
+            },
+            eventClick: function (calEvent, jsEvent, view) {
+
+            }
+        });
+    }
+
+    function RenderforView(event, element){
+        var htmlEvent = $("#eventInfo").tmpl(event);
+        element.html(htmlEvent);
+
+        /*element.qtip({
+
+            content: {
+                title: "[" + event.Id + "] - " + event.title,
+                text: $("#podInfo").tmpl(event).html()
+            }
+        })*/;
+    }
+
+</script>
+<script type="text/javascript" language="javascript">
+
+    function getDisplayDate() {
+        var date = $('#calendar').fullCalendar('getDate');
+        if (typeof date.getDate != 'function')
+            date = new Date();
+        return date;
+    }
+
+    function getMonth() {
+        var date = getDisplayDate();
+        return Number(date.getMonth()) + 1;
+    }
+
+    function getDate() {
+        var date = getDisplayDate();
+        return date.getDate();
+    }
+
+    function getYear() {
+        var date = getDisplayDate();
+        return date.getFullYear();
+    }
+
+</script>
+<script id="podInfo" type="text/x-jquery-tmpl">
+    <div>
+        <div>
+            Pod: {{each Pods}} ${$value} {{/each}}
+        </div>
+        <div>
+            Team: {{if IsDefaultStaffAssignment}} (Default Assignment) {{/if}}
+            <ul>
+                {{each AssignedStaff}}
+                <li> ${FirstValue} (${SecondValue})  </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</script>
+<script id="staffInfo" type="text/x-jquery-tmpl">
+    <div>
+        <div>
+            Pod: {{each Pods}} ${$value} {{/each}}
+        </div>
+        <div>
+            Team: {{if IsDefaultStaffAssignment}} (Default Assignment) {{/if}}
+            <ul style="padding-left:14px;">
+                {{each AssignedStaff}}
+                <li style="padding-top: 2px;"> ${FirstValue} </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</script>
+<script id="eventInfo" type="text/x-jquery-tmpl">
+    <span style="width:45%; display:block; float:left; padding-left:2px;"> [${Id}] </span>
+    <span style="width:45%; display:block; float:left; text-align: right;"> ${FilledAppintmentSlots} / ${TotalAppointmentSlots} </span>
+    <span style="width:95%; clear:both; padding-top:5px; padding-left:2px; display:block;">  ${title}  </span>
+</script>
+<script type="text/javascript">
+
+    function viewEventCustomers(eventId) {
+        $.ajax({
+            type: "GET",
+            url: "/Scheduling/Event/CorporateEventCustomerList?eventId=" + eventId,
+            success: function (result) {
+                $("#event-customers-dialog").dialog("open");
+                $("#event-customers-dialog").html(result);
+            },
+            error: function (a, b, c) {
+                alert("Some error occured while processing your request!");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $(document).ready(function () {
+            var updateRoleDialog = $("#event-customers-dialog");
+            updateRoleDialog.dialog({ autoOpen: false, modal: true, title: 'Event Customers', resizable: true, draggable: true, width: 900, height:500 });
+            updateRoleDialog.bind('dialogclose', function() {
+                $("#event-customers-dialog").html('');
+            });
+        });
+    });
+
+</script>

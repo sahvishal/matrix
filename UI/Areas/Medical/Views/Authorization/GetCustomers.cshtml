@@ -1,0 +1,285 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Medical.ViewModels.EventScreeningAuthorizationEditModel
+@{
+    ViewBag.Title = "Authorizations";
+}
+<h1>
+    Authorizations</h1>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@{Html.BeginForm();}
+@if (Model != null)
+{
+    if (Model != null && !Model.Customers.IsNullOrEmpty())
+    {
+        var customersAbove40 = Model.Customers.Where(c => (!c.Dob.HasValue) || c.Dob.Value.GetAge() >= 40);
+        var customersBelow40 = Model.Customers.Where(c => (c.Dob.HasValue) && c.Dob.Value.GetAge() < 40);
+        int i = 0;
+    <div>
+        <fieldset>
+            <div>
+                <b>Event</b>: @Model.EventName (@Model.EventId)
+                <br />
+                <b>Address</b>:@Model.EventAddress.ToString()
+            </div>
+        </fieldset>
+    </div>
+        if (!customersAbove40.IsNullOrEmpty())
+        {  
+    <h1>
+        Customers over 40 years of age</h1>
+    <table id="list-view">
+        <tr>
+            <th>
+                <input type="checkbox" onclick="SelectAll(this);" />
+            </th>
+            @*<th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().CustomerId)
+                    </th>*@
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Name)
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Gender)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Height)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Weight)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Ethnicity)
+            </th>
+            @foreach (var test in Model.EventTests)
+            {
+                <th>
+                    @test.Alias
+                </th>
+            }
+        </tr>
+        @foreach (var customer in customersAbove40)
+        {
+            <tr>
+                <td>
+                    @Html.CheckBox("Customers[" + i + "].IsAuthorized", new { @onclick = "CheckSelectAll(this);" })
+                    @Html.Hidden("Customers[" + i + "].EventCustomerId", customer.EventCustomerId)
+                </td>
+                @*<td>@customer.CustomerId</td>*@
+                <td>@customer.Name
+                </td>
+                <td>
+                    @(customer.Dob.HasValue ? (DateTime.Now.Year - customer.Dob.Value.Year).ToString() : "N/A")
+                </td>
+                <td>@customer.Gender
+                </td>
+                <td>
+                    @if (customer.Height != null)
+                    {
+                        @customer.Height.Feet<span>&nbsp;Feet&nbsp;</span> @customer.Height.Inches.ToString("00")<span>&nbsp;Inch</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>   
+                    }
+                </td>
+                <td>
+                    @if (customer.Weight != null && customer.Weight.Pounds > 0)
+                    {
+                        @customer.Weight.Pounds <span>&nbsp;lbs</span> 
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+                <td>@customer.Ethnicity
+                </td>
+                @foreach (var test in Model.EventTests)
+                {
+                    var customerTest = customer.EventTests.Where(t => t.Id == test.Id).FirstOrDefault();
+                    if (customerTest == null)
+                    {
+                    <td>
+                        <img src="/App/Images/close-icon-grid.gif" alt="" />
+                    </td>   
+                    }
+                    else
+                    {
+                    <td>
+                        <img src="/App/Images/Customer/handsold-up.gif" alt="" />
+                    </td> 
+                    }
+                }
+            </tr>
+                i++;
+        }
+    </table>
+        }
+
+        if (!customersBelow40.IsNullOrEmpty())
+        {  
+    <h1>
+        Customers under 40 years of age</h1>
+    <p style="font-weight: bold; font-style: italic; padding-top: 5px;">
+        The following information was relayed to the client(s) listed below (verbally for
+        phone registrations and visually for Internet registrations): Vascular Screenings
+        for people < 40 years of age are typically NOT recommended. Exceptions include (i)
+        having a family history of vascular and/or heart disease, (ii) extensive risk factors,
+        or (iii) a doctor recommending your participation.
+    </p>
+    <table id="list-view">
+        <tr>
+            <th>
+                <input type="checkbox" onclick="SelectAll(this);" />
+            </th>
+            @*<th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().CustomerId)
+                    </th>*@
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Name)
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Gender)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Height)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Weight)
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Customers.FirstOrDefault().Ethnicity)
+            </th>
+            @foreach (var test in Model.EventTests)
+            {
+                <th>
+                    @test.Alias
+                </th>
+            }
+        </tr>
+        @foreach (var customer in customersBelow40)
+        {
+            <tr>
+                <td>
+                    @Html.CheckBox("Customers[" + i + "].IsAuthorized", new { @onclick = "CheckSelectAll(this);" })
+                    @Html.Hidden("Customers[" + i + "].EventCustomerId", customer.EventCustomerId)
+                </td>
+                @*<td>@customer.CustomerId</td>*@
+                <td>@customer.Name
+                </td>
+                <td>
+                    @(customer.Dob.HasValue ? (DateTime.Now.Year - customer.Dob.Value.Year).ToString() : "N/A")
+                </td>
+                <td>@customer.Gender
+                </td>
+                <td>
+                    @if (customer.Height != null)
+                    {
+                        @customer.Height.Feet<span>&nbsp;Feet&nbsp;</span> @customer.Height.Inches.ToString("00")<span>&nbsp;Inch</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>   
+                    }
+                </td>
+                <td>
+                    @if (customer.Weight != null && customer.Weight.Pounds > 0)
+                    {
+                        @customer.Weight.Pounds <span>&nbsp;lbs</span> 
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+                <td>@customer.Ethnicity
+                </td>
+                @foreach (var test in Model.EventTests)
+                {
+                    var customerTest = customer.EventTests.Where(t => t.Id == test.Id).FirstOrDefault();
+                    if (customerTest == null)
+                    {
+                    <td>
+                        <img src="/App/Images/close-icon-grid.gif" alt="" />
+                    </td>   
+                    }
+                    else
+                    {
+                    <td>
+                        <img src="/App/Images/Customer/handsold-up.gif" alt="" />
+                    </td> 
+                    }
+                }
+            </tr>
+                i++;
+        }
+    </table>
+        }
+    }
+    else
+    {
+    <div>
+        <h2>
+            No Records found!</h2>
+    </div>
+    }
+}
+else
+{
+    <div>
+        <h2>
+            No Records found!</h2>
+    </div>
+}
+@if (Model != null && !Model.Customers.IsNullOrEmpty())
+{
+    <div class="submit-button-row">
+        <a href="/Users/Dashboard/Physician">Cancel</a> &nbsp;&nbsp;@Html.SubmitButton("Authorize")
+    </div>
+}
+@{Html.EndForm();}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function SelectAll(sourceCheckbox) {
+            var checkbox = $(sourceCheckbox);
+            checkbox.parents('table:first').find('input[type=checkbox]').attr('checked', sourceCheckbox.checked);
+        }
+
+        function CheckSelectAll(sourceCheckbox) {
+            var allSelected = true;
+            var checkbox = $(sourceCheckbox);
+
+            checkbox.parents('table:first').find('input[type=checkbox]').each(function () {
+                if ($(this).is(':checked') == false && (checkbox.parents('table:first').find('input[type=checkbox]').first().attr('id') != $(this).attr('id')))
+                    allSelected = false;
+            });
+
+            checkbox.parents('table:first').find('input[type=checkbox]').first().attr('checked', allSelected);
+        }
+
+    </script>
+}

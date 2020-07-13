@@ -1,0 +1,53 @@
+
+USE [$(dbName)]
+GO
+
+Begin Try
+Begin Tran
+
+SET IDENTITY_INSERT [TblAddress] ON
+
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(25,'Street Apt -1','',7,60,1,74,1,'May  4 2011 11:14:24:887AM','May  4 2011 11:14:24:887AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(26,'Street Apt -1','',7,60,1,74,1,'May  4 2011 11:14:24:887AM','May  4 2011 11:14:24:887AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(27,'Street 1','',2,20,1,5,1,'May  4 2011 11:18:34:183AM','May  4 2011 11:18:34:183AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(28,'Street 1','',2,20,1,5,1,'May  4 2011 11:18:34:183AM','May  4 2011 11:18:34:183AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(29,'Street 2','',2,20,1,7,1,'May  4 2011 11:20:32:663AM','May  4 2011 11:20:32:663AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(30,'Street 2','',2,20,1,7,1,'May  4 2011 11:20:32:663AM','May  4 2011 11:20:32:663AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(31,'Street lane 1','',4,53,1,68,1,'May  4 2011 11:24:31:543AM','May  4 2011 11:24:31:543AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(32,'Street lane 1','',4,53,1,68,1,'May  4 2011 11:24:31:543AM','May  4 2011 11:24:31:543AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(33,'Street-23','',4,53,1,69,1,'May  4 2011 11:26:42:453AM','May  4 2011 11:26:42:453AM',NULL,NULL,NULL,0,0)
+INSERT [dbo].[TblAddress] ([AddressID],[Address1],[Address2],[CityID],[StateID],[CountryID],[ZipID],[IsActive],[DateCreated],[DateModified],[Latitude],[Longitude],[VerificationOrgRoleUserId],[IsManuallyVerified],[UseLatLogForMapping])VALUES(34,'Street-23','',4,53,1,69,1,'May  4 2011 11:26:42:453AM','May  4 2011 11:26:42:453AM',NULL,NULL,NULL,0,0)
+
+SET IDENTITY_INSERT [TblAddress] OFF
+
+SET IDENTITY_INSERT [dbo].[TblProspects] ON
+
+INSERT INTO [TblProspects] ([ProspectID],[ProspectListID],[ProspectStage],[DateCreated],[DateModified],[PropectsState],[IsHost],[Status],[ProspectTypeID],[EMailID],[PhoneOffice],[PhoneCell],[PhoneOther],[WebSite],[OrganizationName],[Notes],[AddressID],[AddressIDMailling],[ActualMembersHIP],[ActualAttendance],[WillPromote],[MAPUrl],[OtherEmail],[MethodObtainedID],[County],[DateHostConverted],[FUDate],[IsActive],[ReasonWillPromote],[TaxIdNumber],[CompanyID],[Department],[Ext],[Small],[Industry],[WebsiteJobOpenings],[YearlyRevRange],[EmployeeRange],[GroupDescription],[OrgRoleUserId])VALUES(2,NULL,NULL,'May  4 2011 11:14:24:887AM','May  4 2011 11:14:24:887AM',NULL,1,'0',12,'','1111111111','','','','Austin Community Center',NULL,25,26,20,0,2,NULL,NULL,0,NULL,NULL,'May  4 2011 12:00:00:000AM',1,'NULL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,3)
+INSERT INTO [TblProspects] ([ProspectID],[ProspectListID],[ProspectStage],[DateCreated],[DateModified],[PropectsState],[IsHost],[Status],[ProspectTypeID],[EMailID],[PhoneOffice],[PhoneCell],[PhoneOther],[WebSite],[OrganizationName],[Notes],[AddressID],[AddressIDMailling],[ActualMembersHIP],[ActualAttendance],[WillPromote],[MAPUrl],[OtherEmail],[MethodObtainedID],[County],[DateHostConverted],[FUDate],[IsActive],[ReasonWillPromote],[TaxIdNumber],[CompanyID],[Department],[Ext],[Small],[Industry],[WebsiteJobOpenings],[YearlyRevRange],[EmployeeRange],[GroupDescription],[OrgRoleUserId])VALUES(3,NULL,NULL,'May  4 2011 11:18:34:183AM','May  4 2011 11:18:34:183AM',NULL,1,'0',12,'','3333333333','','','','Florida Community Center',NULL,27,28,25,0,2,NULL,NULL,0,NULL,NULL,'May  4 2011 12:00:00:000AM',1,'NULL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,3)
+INSERT INTO [TblProspects] ([ProspectID],[ProspectListID],[ProspectStage],[DateCreated],[DateModified],[PropectsState],[IsHost],[Status],[ProspectTypeID],[EMailID],[PhoneOffice],[PhoneCell],[PhoneOther],[WebSite],[OrganizationName],[Notes],[AddressID],[AddressIDMailling],[ActualMembersHIP],[ActualAttendance],[WillPromote],[MAPUrl],[OtherEmail],[MethodObtainedID],[County],[DateHostConverted],[FUDate],[IsActive],[ReasonWillPromote],[TaxIdNumber],[CompanyID],[Department],[Ext],[Small],[Industry],[WebsiteJobOpenings],[YearlyRevRange],[EmployeeRange],[GroupDescription],[OrgRoleUserId])VALUES(4,NULL,NULL,'May  4 2011 11:20:32:663AM','May  4 2011 11:20:32:663AM',NULL,1,'0',2,'','4444444444','','','','Florida Church',NULL,29,30,30,0,2,NULL,NULL,0,NULL,NULL,'May  4 2011 12:00:00:000AM',1,'NULL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,3)
+INSERT INTO [TblProspects] ([ProspectID],[ProspectListID],[ProspectStage],[DateCreated],[DateModified],[PropectsState],[IsHost],[Status],[ProspectTypeID],[EMailID],[PhoneOffice],[PhoneCell],[PhoneOther],[WebSite],[OrganizationName],[Notes],[AddressID],[AddressIDMailling],[ActualMembersHIP],[ActualAttendance],[WillPromote],[MAPUrl],[OtherEmail],[MethodObtainedID],[County],[DateHostConverted],[FUDate],[IsActive],[ReasonWillPromote],[TaxIdNumber],[CompanyID],[Department],[Ext],[Small],[Industry],[WebsiteJobOpenings],[YearlyRevRange],[EmployeeRange],[GroupDescription],[OrgRoleUserId])VALUES(5,NULL,NULL,'May  4 2011 11:24:31:543AM','May  4 2011 11:24:31:543AM',NULL,1,'0',12,'','5555555555','','','','Pennsylvania Community Center',NULL,31,32,20,0,2,NULL,NULL,0,NULL,NULL,'May  4 2011 12:00:00:000AM',1,'NULL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,3)
+INSERT INTO [TblProspects] ([ProspectID],[ProspectListID],[ProspectStage],[DateCreated],[DateModified],[PropectsState],[IsHost],[Status],[ProspectTypeID],[EMailID],[PhoneOffice],[PhoneCell],[PhoneOther],[WebSite],[OrganizationName],[Notes],[AddressID],[AddressIDMailling],[ActualMembersHIP],[ActualAttendance],[WillPromote],[MAPUrl],[OtherEmail],[MethodObtainedID],[County],[DateHostConverted],[FUDate],[IsActive],[ReasonWillPromote],[TaxIdNumber],[CompanyID],[Department],[Ext],[Small],[Industry],[WebsiteJobOpenings],[YearlyRevRange],[EmployeeRange],[GroupDescription],[OrgRoleUserId])VALUES(6,NULL,NULL,'May  4 2011 11:26:42:457AM','May  4 2011 11:26:42:457AM',NULL,1,'0',2,'','7777777777','','','','Pennsylvania Church',NULL,33,34,25,0,2,NULL,NULL,0,NULL,NULL,'May  4 2011 12:00:00:000AM',1,'NULL',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,3)
+
+SET IDENTITY_INSERT [dbo].[TblProspects] OFF
+
+SET IDENTITY_INSERT [dbo].[TblProspectDetails] ON
+
+INSERT INTO [TblProspectDetails] ([ProspectDetailsID],[ProspectID],[FacilitiesFee],[PaymentMethod],[DepositsRequire],[DepositsAmount],[ViableHostSite],[HostedInPast],[HostedInPastWith],[WillHost],[DateCreated],[DateModified],[IsActive],[ReasonViableHostSite],[ReasonHostedInPast],[ReasonHostedInPastWith],[ReasonWillHost])VALUES(2,2,'','',0,0.00,2,2,'',2,'May  4 2011 11:14:25:003AM','May  4 2011 11:14:25:003AM',1,' ','','NULL','')
+INSERT INTO [TblProspectDetails] ([ProspectDetailsID],[ProspectID],[FacilitiesFee],[PaymentMethod],[DepositsRequire],[DepositsAmount],[ViableHostSite],[HostedInPast],[HostedInPastWith],[WillHost],[DateCreated],[DateModified],[IsActive],[ReasonViableHostSite],[ReasonHostedInPast],[ReasonHostedInPastWith],[ReasonWillHost])VALUES(3,3,'','',0,0.00,2,2,'',2,'May  4 2011 11:18:34:210AM','May  4 2011 11:18:34:210AM',1,' ','','NULL','')
+INSERT INTO [TblProspectDetails] ([ProspectDetailsID],[ProspectID],[FacilitiesFee],[PaymentMethod],[DepositsRequire],[DepositsAmount],[ViableHostSite],[HostedInPast],[HostedInPastWith],[WillHost],[DateCreated],[DateModified],[IsActive],[ReasonViableHostSite],[ReasonHostedInPast],[ReasonHostedInPastWith],[ReasonWillHost])VALUES(4,4,'','',0,0.00,2,2,'',2,'May  4 2011 11:20:32:697AM','May  4 2011 11:20:32:697AM',1,' ','','NULL','')
+INSERT INTO [TblProspectDetails] ([ProspectDetailsID],[ProspectID],[FacilitiesFee],[PaymentMethod],[DepositsRequire],[DepositsAmount],[ViableHostSite],[HostedInPast],[HostedInPastWith],[WillHost],[DateCreated],[DateModified],[IsActive],[ReasonViableHostSite],[ReasonHostedInPast],[ReasonHostedInPastWith],[ReasonWillHost])VALUES(5,5,'','',0,0.00,2,2,'',2,'May  4 2011 11:24:31:567AM','May  4 2011 11:24:31:567AM',1,' ','','NULL','')
+INSERT INTO [TblProspectDetails] ([ProspectDetailsID],[ProspectID],[FacilitiesFee],[PaymentMethod],[DepositsRequire],[DepositsAmount],[ViableHostSite],[HostedInPast],[HostedInPastWith],[WillHost],[DateCreated],[DateModified],[IsActive],[ReasonViableHostSite],[ReasonHostedInPast],[ReasonHostedInPastWith],[ReasonWillHost])VALUES(6,6,'','',0,0.00,2,2,'',2,'May  4 2011 11:26:42:483AM','May  4 2011 11:26:42:483AM',1,' ','','NULL','')
+
+SET IDENTITY_INSERT [dbo].[TblProspectDetails] OFF
+
+Commit Tran
+
+End Try
+Begin Catch
+	IF @@TRANCOUNT > 0
+		ROLLBACK TRAN
+	DECLARE @ErrMsg nvarchar(4000), @ErrSeverity int
+	SELECT @ErrMsg = ERROR_MESSAGE(),
+	@ErrSeverity = ERROR_SEVERITY()
+	RAISERROR(@ErrMsg, @ErrSeverity, 1)
+End Catch

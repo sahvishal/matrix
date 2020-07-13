@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Falcon.App.Core.Medical.ViewModels.MedicareQuestionGroupEditModel>
+@{
+    ViewBag.Title = "MSP Form";
+}
+
+@Html.Partial("MedicareQuestionEditModel", Model)
+
+<script type="text/javascript">
+    function backToHistory() {
+
+        @{
+            var refrealUrl = (string)ViewData["http_referer"];
+            if (!string.IsNullOrEmpty(refrealUrl))
+            {
+                
+             <text>window.location.href = '@Html.Raw(refrealUrl)';</text>   
+            }
+            else
+            {
+                <text>window.history.back();</text>
+            }
+        }
+
+   }
+    
+</script>
+
+
+@if (Model != null || Model.Any())
+{
+    <div style="margin: 30px 60px; text-align: right">
+        <input type="button" value="Back" onclick="backToHistory();" />
+        <input type="button" value="Submit" class="save-medicare-data" onclick="return addToObject()" />
+        <img class="save-medicare-data" src="/App/Images/loading.gif" alt="" style="display: none;" />
+    </div>
+}

@@ -1,0 +1,19 @@
+﻿@{
+    var settings = Falcon.App.DependencyResolution.IoC.Resolve <Falcon.App.Core.Application.ISettings>();
+}
+<div class="header">
+    <div class="left-float"><a href="http://www.healthfair.com"><img src="/Config/Content/Images/header_logo.png" width="285" height="67" alt="" /></a></div>
+    <div class="right-float pt5"> 
+        @*<a id="_lpChatBtn" class="live_chat_btn" href="https://server.iad.liveperson.net/hc/59996411/?cmd=file&amp;file=visitorWantsToChat&amp;site=59996411&amp;byhref=1&amp;imageUrl=https://www.healthfair.com/buttons"  
+            onclick="lpButtonCTTUrl = 'http://server.iad.liveperson.net/hc/59996411/?cmd=file&amp;file=visitorWantsToChat&amp;site=59996411&amp;imageUrl=http://www.healthfair.com/buttons&amp;referrer='+escape(document.location); lpButtonCTTUrl = (typeof(lpAppendVisitorCookies) != 'undefined' ? lpAppendVisitorCookies(lpButtonCTTUrl) : lpButtonCTTUrl); lpButtonCTTUrl = ((typeof(lpMTag)!='undefined' &amp;&amp; typeof(lpMTag.addFirstPartyCookies)!='undefined')?lpMTag.addFirstPartyCookies(lpButtonCTTUrl):lpButtonCTTUrl);window.open(lpButtonCTTUrl,'chat59996411','width=475,height=400,resizable=yes');return false;"
+            target="chat59996411"><h3>Live Chat</h3></a>*@   
+        <a id="_lpChatBtn" class="live_chat_btn" href="https://livechat.boldchat.com/aid/822077772254796008/bc.chat?resize=true&amp;cwdid=1307843003937512143" target="_blank" onclick="window.open((window.pageViewer &amp;&amp; pageViewer.link || function(link){return link;})(this.href + (this.href.indexOf('?')>=0 ? '&amp;' : '?') + 'url=' + escape(document.location.href)), 'Chat1823675449605161511', 'toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=640,height=480');return false;">
+            <script language="JavaScript" type="text/javascript">                document.write(unescape('%3Cscript language="JavaScript" type="text/javascript" src="' + (('https:' == document.location.protocol) ? 'https:' : 'http:') + '//cbi.boldchat.com/aid/822077772254796008/bc.cbhs"%3E%3C/script%3E')); </script>
+            <script language="JavaScript" type="text/javascript">                bt_showChatHTML('', ''); </script>
+            @*<noscript>Live Chat</noscript>*@
+            <h3>Live Chat</h3>
+        </a>    
+        <a href="#" class="ml5 call_us_btn"><h3><span class="toll-free-number">@settings.PhoneTollFree</span></h3></a>
+    </div>
+    <div class="clearfix"></div>
+</div>

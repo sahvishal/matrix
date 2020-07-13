@@ -1,0 +1,11 @@
+﻿<div ng-if="question.ControlType == displayControlTypes.Radio">
+    <div class="pull-left single-question-text" ng-class="{'single-question-text' : question.ControlValues.length <= 2,'single-question-text-full':question.ControlValues.length > 2}">
+        <span ng-bind="question.Question"></span>
+    </div>
+    <div class="single-question-opt pull-left">
+        <div class="styled-radio small" ng-repeat="controlValue in question.ControlValues">
+            <input type="radio" name="question_{{question.QuestoinId}}" ng-checked="question.Answer===controlValue" ng-disabled="question.disable" ng-click="SaveSelectedObject(question,controlValue)">
+            <label ng-bind="controlValue | uppercase"></label>
+        </div>
+    </div>
+</div>

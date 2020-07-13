@@ -1,0 +1,168 @@
+﻿@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model SetupViewModel
+@{
+    ViewBag.Title = "Please choose your preferences so that we can secure your account.";
+}
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+
+@{Html.BeginForm();}
+<div class="setup">
+    <h2>@ViewBag.Title</h2>
+    <br />
+    @if (Model.IsOtpBySmsEnabled || Model.IsOtpByEmailEnabled || Model.IsOtpByAppEnabled)
+    {
+        <h3>Choose the mode of authentication for two Factor Authentication</h3>
+    }
+    @if (Model.IsOtpBySmsEnabled || Model.IsOtpByEmailEnabled) {
+        <br />
+        <text>
+            @Html.RadioButtonFor(m => m.UseAuthenticator, false, new { id = "sendOpt" }) Send OTP
+            <div id="otpModes" style="display: none; margin-left: 30px;">
+                @if (Model.IsOtpByEmailEnabled)
+                {
+                    <p class="main_container_row_accm">
+                        <span class="titletext_accm">  @Html.CheckBoxFor(m => m.UseEmail, new {id = "useEmail"})  </span>
+                        <span class="inputfieldcon_accm"> <span style="display: inline-block; width: 50px;">Email</span> @Html.TextBoxFor(m => m.Email, new {id = "emailTxt", style = (Model != null && Model.UseEmail ? "display: inline-block;" : "display: none;") + "width:350px;"}) @Html.ValidationMessageFor(m => m.Email)</span>
+                    </p>
+                }
+                @if (Model.IsOtpBySmsEnabled)
+                {
+                    <p class="main_container_row_accm">
+                        <span class="titletext_accm"> @Html.CheckBoxFor(m => m.UseSms, new {id = "useSms"})  @Html.ValidationMessageFor(m => m.UseSms)</span>
+                        <span class="inputfieldcon_accm"> <span style="display: inline-block; width: 50px;">SMS</span>  @Html.TextBoxFor(m => m.PhoneCell, new {id = "phoneCellTxt",maxlength="10", style = Model != null && Model.UseSms ? "display: inline-block;" : "display: none;"})</span>
+                    </p>
+                }
+            </div>
+        </text>
+    }
+
+    @if (Model.IsOtpByAppEnabled) { 
+        <br />
+        <text>
+             @Html.RadioButtonFor(m => m.UseAuthenticator, true, new { id = "useApp" }) Google Authenticator
+            <div id="appModes" style="display: none; margin-left: 30px;">
+                <p>
+                    Use the QR code to add Healthfair account to Google Authenticator app:
+                    You can downlaod the app to your mobile from <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">here</a>.
+                </p>
+                <p>
+                    @Html.QRCode(string.Format("otpauth://totp/Healthfair?secret={0}", Model.EncodedSecret))
+                </p>
+            </div>
+        </text>
+    }
+
+    <br /><br />
+    <h3 style="display: @(Model.IsPinRequired? "block":"none");">Required to Open Downloaded Files</h3>
+    <p class="main_container_row_accm" style="display: @(Model.IsPinRequired? "block":"none");">
+        <span class="titletext_accm">  Pin (Required to Open Downloaded Files) </span>
+        <span class="inputfieldcon_accm"> @Html.TextBoxFor(m => m.Pin, new { maxlength = "4", @class = "numericOnly" })</span>
+    </p>
+    <br />
+    <p> Any preferences you save can be changed later on from the profile page.</p>
+    <br />
+    <div class="submit-button-row">
+        @Html.HiddenFor(x => x.IsPinRequired)
+        @Html.HiddenFor(x => x.UserLoginId)
+        @Html.HiddenFor(m => m.IsOtpByAppEnabled)
+        @Html.HiddenFor(m => m.IsOtpByEmailEnabled)
+        @Html.HiddenFor(m => m.IsOtpBySmsEnabled) 
+        <input type="submit" id="Submit" value="Save" onclick="return check();">
+
+    </div>
+    
+</div>
+@{ Html.EndForm(); }
+
+
+<script type="text/javascript" language="javascript">
+    @if (Model != null && (Model.UseEmail || Model.UseSms))
+    {
+        @: $('#sendOpt').attr('checked', true);
+                @: onSendOptChange();
+            }
+    else
+    {
+         @: $('#sendOpt').attr('checked', false);
+            }
+
+
+    $('#sendOpt').change(function () {
+
+        onSendOptChange();
+    });
+    function onSendOptChange() {
+
+        if ($('#sendOpt').is(":checked")) {
+            $('#otpModes').show();
+        }
+        else {
+            $('#otpModes').hide();
+            $('#useEmail').attr('checked', false);
+            $('#useSms').attr('checked', false);
+            $('#emailTxt').hide().removeClass("input-validation-error");
+            $('#phoneCellTxt').hide().removeClass("input-validation-error");
+        }
+
+        if ($('#useApp').is(":checked")) {
+            $('#appModes').show();
+        }
+        else {
+            $('#appModes').hide();
+        }
+
+    }
+
+
+    $('#useApp').change(function () {
+        onSendOptChange();
+    });
+    $('#useEmail').change(function () {
+        if ($('#useEmail').is(":checked")) {
+            $('#emailTxt').show();
+        }
+        else {
+            $('#emailTxt').hide();
+        }
+    });
+    $('#useSms').change(function () {
+        if ($('#useSms').is(":checked")) {
+            $('#phoneCellTxt').show();
+        }
+        else {
+            $('#phoneCellTxt').hide();
+        }
+    });
+
+    function check() {
+        if ($('#sendOpt').is(":checked")) {
+            if ($('#useEmail').is(":checked") || $('#useSms').is(":checked"))
+                return true;
+            else {
+                alert("Please select SMS or email");
+                return false;
+            }
+        }
+        return true;
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+    $('.numericOnly').bind('keypress', function (evt) {
+        console.log(evt.charCode);
+        var key = (evt.which ? evt.which : ((evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : 0)));
+        if (evt.shiftKey == false) {
+            if ((key >= 48 && key <= 57)) {
+                return true;
+            }
+        }
+        evt.preventDefault();
+        return false;
+    });
+    $('#phoneCellTxt').mask('(999)-999-9999');
+</script>

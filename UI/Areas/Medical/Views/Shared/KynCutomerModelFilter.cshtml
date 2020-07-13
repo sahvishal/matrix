@@ -1,0 +1,73 @@
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Medical.ViewModels.KynCustomerModelFilter
+<h2>Search Records</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.EventId)
+        </div>
+        @Html.TextBoxFor(m => m.EventId)
+    </div>
+
+    <div class="editor-column" style="width: 25%;">
+        <div class="small-text">
+            &nbsp;
+        </div>
+        <div>
+            @Html.CheckBoxFor(m => m.ShowOnlyKyn)
+            @Html.LabelFor(m => m.ShowOnlyKyn)
+        </div>
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>Registration </b>From
+        </div>
+        @Html.TextBoxFor(m => m.RegistrationFromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.RegistrationToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Tag
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.Tag)
+        </div>
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Sponsered By
+        </div>
+        @Html.TextBoxFor(m => m.SponseredBy)
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllCustomTags(), new { @class = "tokenizer", @multiple = "multiple", @style = "width: 300px" })
+        </div>
+    </div>
+     
+    <div class="editor-column" style="float: right; padding-top:12px; text-align: right;">
+        @Html.ActionLink("Clear", "KynCustomerReport", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>

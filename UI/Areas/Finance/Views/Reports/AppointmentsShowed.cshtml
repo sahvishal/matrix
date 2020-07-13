@@ -1,0 +1,85 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Finance.ViewModels.AppointmentsShowedListModel
+@{
+    ViewBag.Title = "Call Center Bonus (Actual)";
+}
+<h1>Call Center Bonus (Actual)</h1>
+<div id="list-filter">
+    @{Html.BeginForm("AppointmentsShowed", "Reports", FormMethod.Get);}
+    @Html.Partial("AppointmentsShowedFilter", Model.Filter)
+    @{Html.EndForm();}
+</div>
+@if (!Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Finance/ExportableReports/AppointmentsShowed?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th style="width: 20%;">
+                Agent Name
+            </th>
+            <th style="width: 20%; text-align: center;">
+                Customers Showed
+            </th>
+            <th style="width: 15%; text-align: center;">
+                Actual Bonus($)
+            </th>
+            <th style="width: 15%; text-align: center;">
+                Action
+            </th>
+        </tr>
+        @foreach (var lineItem in Model.Collection)
+        {
+            <tr>
+                <td>
+                    @lineItem.AgentName
+                </td>
+                <td style="width: 15%;text-align: center;">
+                    @lineItem.AppointmentsShowed
+                </td>
+                <td style="width: 15%;text-align: center;">
+                    $@lineItem.ActualBonus.ToString("0.00")
+                </td>
+                <td style="width: 15%;text-align: center;">
+
+                    @if (lineItem.AppointmentsShowed > 0)
+                    {
+                        <text>
+                    <a target="_blank" href="/Finance/Reports/ActualCustomerShowed?ShowAttendedCustomersOnly=true&AgentId=@lineItem.AgentId&StartDate=@(Model.Filter.StartDate.HasValue?Model.Filter.StartDate.Value.ToString("MM/dd/yyyy"):"")&EndDate=@(Model.Filter.EndDate.HasValue ? Model.Filter.EndDate.Value.ToString("MM/dd/yyyy") : "")">View Customers </a>
+                        </text>
+                    }
+
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

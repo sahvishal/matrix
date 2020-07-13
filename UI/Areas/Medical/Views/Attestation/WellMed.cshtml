@@ -1,0 +1,408 @@
+﻿@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Medical.ViewModels
+@model WellMedAttestationListModel
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+<script type="text/javascript" src="/Scripts/fileupload.ui.js"></script>
+<script type="text/javascript" src="/Scripts/fileuploader.js"></script>
+<style type="text/css">
+    input[type=text], select {
+        width: 137px;
+    }
+
+    .qq-upload-button {
+        border: 1px solid #25729a;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-family: arial, helvetica, sans-serif;
+        padding: 10px 10px 10px 10px;
+        text-decoration: none;
+        display: inline-block;
+        text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+        font-weight: bold;
+        color: #FFFFFF;
+        background-color: #3093c7;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#3093c7), to(#1c5a85));
+        background-image: -webkit-linear-gradient(top, #3093c7, #1c5a85);
+        background-image: -moz-linear-gradient(top, #3093c7, #1c5a85);
+        background-image: -ms-linear-gradient(top, #3093c7, #1c5a85);
+        background-image: -o-linear-gradient(top, #3093c7, #1c5a85);
+        background-image: linear-gradient(to bottom, #3093c7, #1c5a85);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#3093c7, endColorstr=#1c5a85);
+    }
+</style>
+@{
+    ViewBag.Title = "WellMed Attestation Form";
+}
+<h2>
+    Attestation Form
+</h2>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+
+@{Html.BeginForm();}
+<div>
+    <div class="eventdetail-row">
+        <div class="fieldLabelValue" style="width: 45%;">
+            <label style="width: 70px;">
+                Patient Name:
+            </label>
+            @Model.CustomerName
+        </div>
+        <div class="fieldLabelValue" style="width: 25%;">
+            <label>
+                Patient DOB :
+            </label>
+            @(Model.CustomerDob.HasValue ? Model.CustomerDob.Value.ToString("MM/dd/yyyy") : "")
+        </div>
+        <div class="fieldLabelValue" style="width: 25%;">
+            <label>
+                DOS :
+            </label>
+            @Model.EventDate.ToString("MM/dd/yyyy")
+        </div>
+    </div>
+    <div class="editor-row" style="float: right">
+        <div style="float:right; margin-right:20px;">
+            <a href="javascript:void(0);" onclick="createBlankTemplate(2);renderRegistrations();"> + Add few more</a>
+        </div>
+    </div>
+    <div id="AttestationTemplate" style="clear: both; width: 99%; height: 600px; overflow-y: auto; overflow-x: hidden;">
+    </div>
+</div>
+<div class="submit-button-row">
+    <a href="/Medical/Results/ResultStatusList?EventId=@Model.EventId">Close</a>
+    &nbsp; &nbsp;
+    &nbsp;&nbsp;<input type="button" value="Save and Close" onclick="SetSaveAndContinue(false);" />
+</div>
+<input type="submit" style="display: none" id="Submit" />
+<input type="hidden" name="saveAndContinue" id="saveAndContinue" />
+@Html.HiddenFor(x => x.CustomerId)
+@Html.HiddenFor(x => x.EventId)
+@Html.HiddenFor(x => x.EventCustomerResultId)
+
+@{Html.EndForm();}
+
+<script type="text/javascript" language="javascript">
+    var fileTypeExtention = ['jpg', 'jpeg', 'png', 'gif'];
+    var fileTypeExtentionList = 'jpg,jpeg,png,gif';
+
+    function createBlankTemplate(numberOfTemplate) { //debugger;
+        attestations = new Object();
+        var count = key_index;
+        for (; key_index < Number(count + numberOfTemplate) ;) {
+            registerAttestation = new Object();
+            registerAttestation.Diagnosiscode = "";
+            registerAttestation.ReferenceDate = "";
+            registerAttestation.StatusId = "0";
+            registerAttestation.EventCustomerResultId = "@Model.EventCustomerResultId";
+            //registerAttestation.ProviderSignatureFileId = "";
+            registerAttestation.FullPrintedName = "";
+            registerAttestation.DiagnosisDate = "";
+
+            registerAttestation.ProviderSignatureImage = {};
+            registerAttestation.ProviderSignatureImage.Id = "0";
+            registerAttestation.ProviderSignatureImage.Caption = "";
+            registerAttestation.ProviderSignatureImage.FileName = "";
+            registerAttestation.ProviderSignatureImage.FolderPath = "";
+            registerAttestation.ProviderSignatureImage.FileSize = "0";
+            registerAttestation.ProviderSignatureImage.FileType = "0";
+            registerAttestation.ProviderSignatureImage.Url = "";
+            registerAttestation.ProviderSignatureImage.IsTemporaryLocated = 'False';
+            registerAttestation.ProviderSignatureImage.UploadedBy = "0";
+            registerAttestation.ProviderSignatureImage.PhisicalPath = "";
+
+
+            registerAttestation.Key = key_index + "_" + count;
+            attestations[key_index] = registerAttestation;
+            key_index++;
+        }
+    }
+
+    var attestations = new Object();
+    var key_index = 0;
+    var registerAttestation = new Object();
+
+    @if (Model.Attestations != null)
+    {
+        foreach (var attestations in Model.Attestations)
+        {
+            <text>
+    registerAttestation = new Object();
+    registerAttestation.Diagnosiscode = "@attestations.DiagnosisCode";
+    registerAttestation.ReferenceDate = "@(attestations.ReferenceDate == DateTime.MinValue ? "" : attestations.ReferenceDate.ToString("MM/dd/yyyy"))";
+    registerAttestation.EventCustomerResultId = "@attestations.EventCustomerResultId";
+    registerAttestation.ProviderSignatureFileId = "@attestations.ProviderSignatureFileId";
+    registerAttestation.StatusId = "@attestations.StatusId";
+    registerAttestation.FullPrintedName = "@attestations.FullPrintedName";
+    registerAttestation.DiagnosisDate = "@(attestations.DiagnosisDate == DateTime.MinValue ? "" : attestations.DiagnosisDate.ToString("MM/dd/yyyy"))";
+    registerAttestation.ErrorMessage = "@Html.Raw(attestations.FeedbackMessage != null ? attestations.FeedbackMessage.Message : string.Empty)";
+
+    @if (@attestations.ProviderSignatureImage != null)
+    {
+        <text>registerAttestation.ProviderSignatureImage = {};</text>
+        <text>registerAttestation.ProviderSignatureImage.Id = "@attestations.ProviderSignatureImage.Id";</text>
+        <text>registerAttestation.ProviderSignatureImage.Caption = "@attestations.ProviderSignatureImage.Caption";</text>
+        <text>registerAttestation.ProviderSignatureImage.FileName = "@(string.IsNullOrEmpty(attestations.ProviderSignatureImage.FileName) ? string.Empty : attestations.ProviderSignatureImage.FileName.Replace("\\", "\\\\"))";</text>
+        <text>registerAttestation.ProviderSignatureImage.FolderPath = "@(string.IsNullOrEmpty(attestations.ProviderSignatureImage.FolderPath)?string.Empty: attestations.ProviderSignatureImage.FolderPath.Replace("\\","\\\\"))";</text>
+        <text>registerAttestation.ProviderSignatureImage.FileSize = "@attestations.ProviderSignatureImage.FileSize";</text>
+        <text>registerAttestation.ProviderSignatureImage.FileType = "@attestations.ProviderSignatureImage.FileType";</text>
+        <text>registerAttestation.ProviderSignatureImage.Url = "@attestations.ProviderSignatureImage.Url";</text>
+        <text>registerAttestation.ProviderSignatureImage.IsTemporaryLocated = "@attestations.ProviderSignatureImage.IsTemporaryLocated";</text>
+        <text>registerAttestation.ProviderSignatureImage.UploadedBy = "@attestations.ProviderSignatureImage.UploadedBy";</text>
+        <text>registerAttestation.ProviderSignatureImage.PhisicalPath = "@(string.IsNullOrEmpty(attestations.ProviderSignatureImage.PhisicalPath)?string.Empty: attestations.ProviderSignatureImage.PhisicalPath.Replace("\\", "\\\\"))";</text>
+    }
+    else
+    {
+        <text>registerAttestation.ProviderSignatureImage = {};</text>
+        <text>registerAttestation.ProviderSignatureImage.Id = "0";</text>
+        <text>registerAttestation.ProviderSignatureImage.Caption = "";</text>
+        <text>registerAttestation.ProviderSignatureImage.FileName = "";</text>
+        <text>registerAttestation.ProviderSignatureImage.FolderPath = "";</text>
+        <text>registerAttestation.ProviderSignatureImage.FileSize = "0";</text>
+        <text>registerAttestation.ProviderSignatureImage.FileType = "0";</text>
+        <text>registerAttestation.ProviderSignatureImage.Url = "";</text>
+        <text>registerAttestation.ProviderSignatureImage.IsTemporaryLocated = 'False';</text>
+        <text>registerAttestation.ProviderSignatureImage.UploadedBy = "0";</text>
+        <text>registerAttestation.ProviderSignatureImage.PhisicalPath = "";</text>
+    }
+
+    registerAttestation.fileTypeExtentionList = fileTypeExtentionList;
+    registerAttestation.Key = key_index + "_" + "0";
+    attestations[key_index] = registerAttestation;
+    key_index++;
+    </text>
+        }
+    }
+    else
+    {
+        <text>
+
+    createBlankTemplate(2);
+
+    </text>
+    }
+
+    function renderRegistrations() {
+        var allowedExts = [];
+
+        for (var ext = 0; ext < fileTypeExtention.length; ext++) {
+            allowedExts.push(fileTypeExtention[ext]);
+        }
+
+        $.each(attestations, function (key, registerCustomer) {
+            $("#registerWellMedTemplate").tmpl(registerCustomer).appendTo("#AttestationTemplate");
+            if (registerCustomer.ErrorMessage != null) {
+                window.location.hash = '#Attestation' + registerCustomer.Key;
+            }
+            $("#AttestationTemplate fieldset:last .error-message").html(registerCustomer.ErrorMessage);
+
+            fu_createUploader('ProviderSignatureImage' + registerCustomer.Key, allowedExts);
+            $("#AttestationTemplate fieldset:last .auto-Search").each(function () {
+                var contextKeyControl = $(this).parent().parent().find(".state-class").attr("id");
+                $(this).autoComplete({
+                    autoChange: true,
+                    url: '/App/AutoCompleteService.asmx/GetCityByContextKeyAndPrefixText',
+                    type: "POST",
+                    data: "prefixText",
+                    pickContextKeyfrom: contextKeyControl
+                });
+            });
+        });
+
+        setDatePicker();
+        $('.submit-button-row [type="button"]').show();
+    }
+
+    $(document).ready(function () {
+        renderRegistrations();
+
+        $("a.deleteAttestationTemplate").live("click", function () {
+            $(this).parents("fieldset:first").remove();
+
+            if ($("#AttestationTemplate fieldset").length == 0) {
+                $('.submit-button-row [type="button"]').hide();
+            }
+            else {
+                $('.submit-button-row [type="button"]').show();
+            }
+            return false;
+        });
+        $(".datePicker-dob").bind("blur", function () { validateDob(this); });
+
+    });
+</script>
+
+
+<script type="text/javascript" language="javascript">
+    function SetSaveAndContinue(continueFlag) {
+        if (continueFlag)
+            $("#saveAndContinue").val('@(Boolean.TrueString)');
+        else
+            $("#saveAndContinue").val('@(Boolean.FalseString)');
+        $('#Submit').click();
+    }
+
+    function validateDob(dobTextbox) {//debugger;
+        var dateStr = $.trim($(dobTextbox).val());
+        if (dateStr != "") {
+            var RegExPattern = /^(?=\d)(?:(?:(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})|(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))|(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2}))($|\ (?=\d)))?(((0?[1-9]|1[012])(:[0-5]\d){0,2}(\ [AP]M))|([01]\d|2[0-3])(:[0-5]\d){1,2})?$/;
+            if (!dateStr.match(RegExPattern)) {
+                alert("Please provide a valid Date Of Birth in mm/dd/yyyy format.");
+                $(dobTextbox).val("");
+                $(dobTextbox).focus();
+            }
+        }
+    }
+
+</script>
+<script id="registerWellMedTemplate" type="text/x-jquery-tmpl">
+    <fieldset id="Attestation${Key}">
+        <legend>Attestation</legend>
+        <a href="#" class="deleteAttestationTemplate" data-key="${Key}" style="float: right;">Remove</a>
+        {{if ErrorMessage}}
+        <div class="error-message" style="clear: both;"></div>
+        {{/if}}
+        <input type="hidden" name="Attestations.Index" value="${Key}" />
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <table style="width: 100%">
+                        <tr>
+                            <td style="width: 40%">
+                                <div class="editor-label">Diagnosis code</div>
+                                <input name="Attestations[${Key}].Diagnosiscode" type="text" value="${Diagnosiscode}" />
+                                <input name="Attestations[${Key}].EventCustomerResultId" type="hidden" value="${EventCustomerResultId}" />
+                                <input name="Attestations[${Key}].ProviderSignatureFileId" type="hidden" value="${ProviderSignatureFileId}" />
+                            </td>
+                            <td>
+                                <div class="editor-label">Reference Date</div>
+                                <input name="Attestations[${Key}].ReferenceDate" type="text" value="${ReferenceDate}" class='datePicker-dob' placeholder="mm/dd/yyyy" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="editor-label">Status</div>
+                                {{if StatusId=='@((int)WellmedAttestationStatus.Agree)'}}
+                                <input name="Attestations[${Key}].StatusId" type="radio" value="@((int) WellmedAttestationStatus.Agree)" checked="" />Agree
+                                {{else}}
+                                <input name="Attestations[${Key}].StatusId" type="radio" value="@((int) WellmedAttestationStatus.Agree)" />Agree
+                                {{/if}}
+                                {{if StatusId=='@((int)WellmedAttestationStatus.Disagree)'}}
+                                <input name="Attestations[${Key}].StatusId" type="radio" value="@((int) WellmedAttestationStatus.Disagree)" checked /> Disagree
+                                {{else}}
+                                <input name="Attestations[${Key}].StatusId" type="radio" value="@((int) WellmedAttestationStatus.Disagree)" /> Disagree
+                                {{/if}}
+                                {{if StatusId=='@((int)WellmedAttestationStatus.Resolved)'}}
+                                <input name="Attestations[${Key}].StatusId" type="radio" value="@((int) WellmedAttestationStatus.Resolved)" checked /> Resolved
+                                {{else}}
+                                <input name="Attestations[${Key}].StatusId" type="radio" value="@((int) WellmedAttestationStatus.Resolved)" /> Resolved
+                                {{/if}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="editor-label">Date</div>
+                                <input name="Attestations[${Key}].DiagnosisDate" class='datePicker-dob' type="text" placeholder="mm/dd/yyyy" value="${DiagnosisDate}" />
+                            </td>
+                            <td>
+                                <div class="editor-label"> Full Printed Name</div>
+                                <input style="width: 200px;" name="Attestations[${Key}].FullPrintedName" type="text" value="${FullPrintedName}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="editor-label">Provider Signature</div>
+
+                                <div id="ProviderSignatureImage${Key}" class="image-container">
+                                    <div id="ProviderSignatureImage${Key}-filemodeldiv">
+                                        <div id="ProviderSignatureImage${Key}-fileuploader">
+                                            <div class="qq-uploader">
+                                                <div class="qq-upload-drop-area" style="display: none;"><span>Drop files here to upload</span></div>
+                                                <div class="qq-upload-button" style="position: relative; overflow: hidden; direction: ltr;">
+                                                    Upload a file<input type="file" name="file" style="position: absolute; right: 0px; top: 0px; font-family: Arial; font-size: 118px; margin: 0px; padding: 0px; cursor: pointer; opacity: 0;">
+                                                </div><ul style="display: none;" class="qq-upload-list"></ul>
+                                            </div>
+                                        </div>
+                                        <div class="file-display-div">
+                                            {{if ProviderSignatureImage.FileName==''}}
+                                            <div class="file-view">
+                                                <h4>No file uploaded yet! </h4>
+                                            </div>
+                                            {{/if}}
+                                            {{if ProviderSignatureImage.FileName!=''}}
+                                            <b>${ProviderSignatureImage.Caption}</b>
+                                            <div style="">
+                                                <a href="${ProviderSignatureImage.Url}${ProviderSignatureImage.FileName}" target="_blank">View</a> &nbsp;&nbsp;
+                                                <a class="template_bttn" href="javascript:void(0);" onclick="removeTemplateUploadedFile($(this))">Remove</a>
+                                            </div>
+                                            {{/if}}
+                                        </div>
+                                        <div class="editor-row" style="font-size: 8pt; padding-left: 5px">
+                                            *<i> Only jpg, jpeg, png, gif images should be uploaded</i>
+                                        </div>
+                                        <input id="ProviderSignatureImage${Key}_Id" name="Attestations[${Key}].ProviderSignatureImage.Id" type="hidden" value="${ProviderSignatureImage.Id}">
+                                        <input id="ProviderSignatureImage${Key}_Caption" name="Attestations[${Key}].ProviderSignatureImage.Caption" type="hidden" value="${ProviderSignatureImage.Caption}">
+                                        <input id="ProviderSignatureImage${Key}_FileName" name="Attestations[${Key}].ProviderSignatureImage.FileName" type="hidden" value="${ProviderSignatureImage.FileName}">
+                                        <input id="ProviderSignatureImage${Key}_FolderPath" name="Attestations[${Key}].ProviderSignatureImage.FolderPath" type="hidden" value="${ProviderSignatureImage.FolderPath}">
+                                        <input id="ProviderSignatureImage${Key}_FileSize" name="Attestations[${Key}].ProviderSignatureImage.FileSize" type="hidden" value="${ProviderSignatureImage.FileSize}">
+                                        <input id="ProviderSignatureImage${Key}_FileType" name="Attestations[${Key}].ProviderSignatureImage.FileType" type="hidden" value="${ProviderSignatureImage.FileType}">
+                                        <input id="ProviderSignatureImage${Key}_Url" name="Attestations[${Key}].ProviderSignatureImage.Url" type="hidden" value="${ProviderSignatureImage.Url}">
+                                        <input id="ProviderSignatureImage${Key}_IsTemporaryLocated" name="Attestations[${Key}].ProviderSignatureImage.IsTemporaryLocated" type="hidden" value="${ProviderSignatureImage.IsTemporaryLocated}">
+                                        <input id="ProviderSignatureImage${Key}_UploadedBy" name="Attestations[${Key}].ProviderSignatureImage.UploadedBy" type="hidden" value="${ProviderSignatureImage.UploadedBy}">
+                                        <input id="ProviderSignatureImage${Key}_PhisicalPath" name="Attestations[${Key}].ProviderSignatureImage.PhisicalPath" type="hidden" value="${ProviderSignatureImage.PhisicalPath}">
+
+                                    </div>
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</script>
+<style type="text/css">
+    .default_bttn {
+        display: none !important;
+    }
+
+    .template_bttn {
+        display: inline-block !important;
+    }
+</style>
+<script type="text/javascript">
+
+    function removeTemplateUploadedFile(caller) {
+        var imageParent = caller.parents(".image-container:first");
+        if (imageParent.length < 0) {
+            return;
+        }
+        var confirmRes = confirm("Are you sure about removing the file? Click 'OK' to continue!");
+
+        if (confirmRes == false) return;
+
+        $(imageParent).find(".file-display-div").html("<div class='file-view'><h4>No file uploaded yet! </h4></div>")
+
+
+        imageParent.find("[name*='FileName']").val("");
+        imageParent.find("[name*='FolderPath']").val("");
+        imageParent.find("[name*='Caption']").val("");
+        imageParent.find("[name*='Url']").val("");
+        imageParent.find("[name*='FileSize']").val(0);
+        imageParent.find("[name*='IsTemporaryLocated']").val('');
+        imageParent.find("[name*='FileType']").val(0);
+        imageParent.find("[name*='.MimeType']").val(0);
+        imageParent.find("[name*='.Id']").val(0);
+        imageParent.find("[name*='.PhisicalPath']").val("");
+        imageParent.find("[name*='.UploadedBy']").val(0);
+        imageParent.parents(".image-container:first").find(".remove-input-div").show();
+    }
+</script>

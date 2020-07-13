@@ -1,0 +1,25 @@
+﻿ @using Falcon.App.UI.HtmlHelpers
+ <div class="mini-container">
+        <h2>Add Role</h2>
+        
+        <div style="overflow:hidden;border-right:1px solid red;width:61%;margin-right:7px;float:left;">
+            <div class="editor-row">
+                Select Organization: <br />
+                @Html.DropDownList("organizationId", DropDownHelper.Organizations(), new { @style = "width:98%;" })
+            </div>
+
+            <div  class="editor-row">
+                Select Role: <br />
+                <select id="roleId" name="roleId" disabled="disabled" style="width:98%">
+                    <option value="-1">Select Organization First</option>
+                </select>        
+            </div>
+        </div>
+
+        <div style="overflow:hidden;width:36%;float:left;margin-top:25px;">
+            <div  class="editor-row">
+                @Html.CheckBox("IsDefault") Is Default   
+            </div>
+            <input type="button" id="addRole" value="Assign Role" />
+        </div>
+    </div>

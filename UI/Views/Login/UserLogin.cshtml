@@ -1,0 +1,84 @@
+﻿@model Falcon.App.Core.Users.ViewModels.UserLoginModel
+@{
+    Layout = null;               
+}
+<div class="val-login">
+    <div class="error-message" id="ul-message-div" style="display: none;">
+    </div>
+    <div class="input-wrapper">
+        @Html.LabelFor(x => x.UserName)
+        @Html.TextBoxFor(x => x.UserName, new { @class = "text-box user-name" })
+    </div>
+    <div class="input-wrapper">
+        @Html.LabelFor(x => x.Password)
+        @Html.PasswordFor(x => x.Password, new { @class = "text-box password" })
+        <br />
+        <a href="/Public/Account/ResetPasswordStep1.aspx" target="_blank" style="padding-left: 10px;
+            font-size: 10pt; color: #397DA8;">Forgot Password? </a>
+    </div>
+    <div class="submit-button-row">
+        <input type="button" value="Login" onclick="validateUser();" />
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+
+    var _callBack = null;
+    var _fieldRefToSetCustomerId = null;
+    var _fieldRefToSetCustomerName = null;
+
+    function setCallBack(callBackMethodRef, fieldRefToSetCustomerId, fieldReftoSetCustomerName) {
+        _callBack = callBackMethodRef;
+        _fieldRefToSetCustomerId = fieldRefToSetCustomerId;
+        _fieldRefToSetCustomerName = fieldReftoSetCustomerName;
+    }
+
+    function validateUser() {
+
+        var model = { 'UserName': $.trim($(".user-name").val()), 'Password': $.trim($(".password").val()) };
+
+        if (model.UserName.length < 1) {
+            $("#ul-message-div").text("Please provide a UserName!");
+            $("#ul-message-div").show();
+            return;
+        }
+
+
+        if (model.Password.length < 1) {
+            $("#ul-message-div").text("Please provide the Password!");
+            $("#ul-message-div").show();
+            return;
+        }
+
+        $.ajax({ type: "Post",
+            contentType: "application/json; charset=utf-8", url: "/Login/ValidateUser",
+            data: "{'userLoginModel' : " + JSON.stringify(model) + "}",
+            dataType: "json",
+            success: function (result) {
+
+                if (!result.IsValid) {
+                    $("#ul-message-div").text(result.Message);
+                    $("#ul-message-div").show();
+                    return;
+                }
+
+                $("#ul-message-div").hide();
+                if (_fieldRefToSetCustomerId != null) {
+                    _fieldRefToSetCustomerId.val(result.CustomerId);
+                }
+
+                if (_fieldRefToSetCustomerName != null) {
+                    _fieldRefToSetCustomerName.val(result.CustomerName);
+                }
+
+                if (_callBack != null)
+                    _callBack(result.CustomerId);
+
+            },
+            error: function (a, b, c) {
+                $("#ul-message-div").text("Some Error occured while Logging In!");
+            }
+        });
+    }
+
+
+</script>

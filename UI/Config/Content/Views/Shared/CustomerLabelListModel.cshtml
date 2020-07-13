@@ -1,0 +1,57 @@
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Operations.ViewModels.CustomerLabelListModel
+@if (Model != null && !Model.CustomerLabelBasicModels.IsNullOrEmpty())
+{
+    int index = 0;
+    var customers = Model.CustomerLabelBasicModels.ToArray();
+    
+    @Html.EditorFor(m => m.EventId)
+    
+    
+    while (index < customers.Count())
+    {
+        string pageBreakString = "margin-top: 10px; ";
+        if (index > 0)
+        {
+            pageBreakString = "page-break-before:always; display:block; padding-top: 10px; ";
+        }
+        <div style="clear: both; width: 100%; @pageBreakString">
+                <table id="list-view" cellspacing="30px">
+                    @while (true)
+                    {
+                        <tr>
+                            @for (int count = 0; count < 3; count++)
+                            {
+                                var customer = customers[index++];
+                                <td style="padding-top: 0px; padding-bottom: 15px; padding-left:@((count + 1) * 15)px; font-size: 18px; width:300px; height:100px">
+                                    <b>@customer.Name.ToString()</b>
+                                    <br />
+                                    @(customer.Address.StreetAddressLine1 + " " + customer.Address.StreetAddressLine2)
+                                    <br />
+                                    @(customer.Address.City + ", " + customer.Address.State + " " + customer.Address.ZipCode.Zip)
+                                </td>
+                
+                                if (index >= customers.Count() || index % 30 == 0)
+                                {
+                                    break;
+                                }
+                            }
+                        </tr>
+                            if (index >= customers.Count() || index % 30 == 0)
+                            {
+                                break;
+                            }
+                    }
+                </table>
+            </div>
+    }
+
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}

@@ -1,0 +1,47 @@
+﻿@model Falcon.App.Core.Scheduling.ViewModels.EventNotes
+@{
+    Layout = null;
+}
+<div>
+    <div style="width: 335px; min-height: 120px;">
+        @if (Model == null)
+        {
+                
+            <h2>
+                N/A
+            </h2>
+        }
+        else
+        {
+            if (@Model.CallCenterNotes != null)
+            {
+            <h3>
+                Call Center Instructions
+            </h3>
+            <ul>
+                @if(!string.IsNullOrWhiteSpace(@Model.CallCenterNotes.Note))
+                {
+                    <li>@Model.CallCenterNotes.Note </li>
+                }
+                else
+                {<li>N/A</li> }
+            </ul>   
+            }
+            <br />
+            if (@Model.TechnicianNotes != null)
+            {
+            <h3>
+                Technician Instructions
+            </h3>
+            <ul>
+                @if(!string.IsNullOrWhiteSpace(@Model.TechnicianNotes.Note))
+                {
+                    <li>@Model.TechnicianNotes.Note </li>
+                }
+                else
+                {<li>N/A</li> }
+            </ul>   
+            }
+        }
+    </div>
+</div>

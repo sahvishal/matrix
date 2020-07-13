@@ -1,0 +1,290 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.CallCenter.Interfaces;
+@model IEnumerable<Falcon.App.Core.Communication.Domain.CustomerCallNotes>
+@{
+    Layout = null;
+}
+<div>
+    @{
+        var currentRoleId = IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.GetSystemRoleId;
+        var canChangeNotes = false;
+        if (currentRoleId == (long)Falcon.App.Core.Enum.Roles.CallCenterRep)
+        {
+            var callCenterRepRepository = IoC.Resolve<ICallCenterRepRepository>();
+            canChangeNotes = callCenterRepRepository.CanChangeNotes(IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.OrganizationRoleUserId);
+        }
+    }
+    <div id="selectable" style="width: 90%; min-height: 120px;">
+        @if (Model == null || Model.Count() < 1)
+        {
+
+            <h3>
+                No Special Notes for this customer.
+            </h3>
+        }
+        else
+        {
+            <h3>
+                Event Instructions for the Customer.
+            </h3>
+            <br />
+            <ul>
+                @foreach (var notes in Model)
+                {
+                    if (notes.NotesType == CustomerRegistrationNotesType.AppointmentNote && notes.EventId > 0)
+                    {
+                        <li>
+                            @Html.Raw(notes.Notes) by <i> [@notes.CreatedBy] </i> on <i>
+                                [@notes.DataRecorderMetaData.DateCreated.ToShortDateString()]
+                            </i>
+                            @if (currentRoleId == (long)Falcon.App.Core.Enum.Roles.CallCenterRep && canChangeNotes)
+                            {
+                                <span class="span-action">
+                                    <a href="javascript:void(0);" onclick="EditNotes(@notes.Id,@notes.CustomerId)">
+                                        Edit
+                                    </a> <span>&nbsp;| &nbsp;</span> <a href="javascript:void(0);" onclick="DeleteNotes(@notes.Id,@notes.CustomerId)">
+                                        Delete
+                                    </a>
+                                </span>
+                            }
+                        </li>
+                        <br />
+                    }
+
+                }
+            </ul>
+            <h3>
+                Post Screening Followup for the Customer.
+            </h3>
+            <br />
+            <ul>
+                @foreach (var notes in Model)
+                {
+                    if (notes.NotesType == CustomerRegistrationNotesType.PostScreeningFollowUpNotes)
+                    {
+                        <li>
+                            @Html.Raw(notes.Notes) by <i> [@notes.CreatedBy] </i> on <i>
+                                [@notes.DataRecorderMetaData.DateCreated.ToShortDateString()]
+                            </i>
+                            @if (currentRoleId == (long)Falcon.App.Core.Enum.Roles.CallCenterRep && canChangeNotes)
+                            {
+                                <span class="span-action">
+                                    <a href="javascript:void(0);" onclick="EditNotes(@notes.Id,@notes.CustomerId)">
+                                        Edit
+                                    </a> <span>&nbsp;| &nbsp;</span> <a href="javascript:void(0);" onclick="DeleteNotes(@notes.Id,@notes.CustomerId)">
+                                        Delete
+                                    </a>
+                                </span>
+                            }
+                        </li>
+                        <br />
+                    }
+                }
+            </ul>
+            <h3>
+                General Instructions for the Customer.
+            </h3>
+            <br />
+            <ul>
+                @foreach (var notes in Model)
+                {
+                    if ((notes.NotesType == CustomerRegistrationNotesType.AppointmentNote || notes.NotesType == CustomerRegistrationNotesType.CustomerNote) && (notes.EventId == null || notes.EventId == 0))
+                    {
+                        <li>
+                            @notes.Notes by <i> [@notes.CreatedBy] </i> on <i>
+                                [@notes.DataRecorderMetaData.DateCreated.ToShortDateString()]
+                            </i>
+                            @if (currentRoleId == (long)Falcon.App.Core.Enum.Roles.CallCenterRep && canChangeNotes)
+                            {
+                                <span class="span-action">
+                                    <a href="javascript:void(0);" onclick="EditNotes(@notes.Id,@notes.CustomerId)">
+                                        Edit
+                                    </a> <span>&nbsp;| &nbsp;</span> <a href="javascript:void(0);" onclick="DeleteNotes(@notes.Id,@notes.CustomerId)">
+                                        Delete
+                                    </a>
+                                </span>
+                            }
+                        </li>
+                        <br />
+                    }
+
+                }
+            </ul>
+
+                var cancelledNotes = Model.Where(n => n.NotesType == CustomerRegistrationNotesType.CancellationNote).Select(n => n).ToArray();
+                if (cancelledNotes.Count() > 0)
+                {
+                    <h3>
+                        Cancelation Notes.
+                    </h3>
+                    <br />
+                    <ul style="list-style:none;">
+                        @foreach (var notes in cancelledNotes)
+                        {
+                            if (notes.NotesType == CustomerRegistrationNotesType.CancellationNote)
+                            {
+                                <li style="padding-bottom:10px;">
+                                    @{
+                                if (notes.EventId > 0)
+                                {
+                                    <b>Appointment for Event :</b>  @notes.EventId <b>Cancelled by :</b> @notes.CreatedBy <b> on :</b> @notes.DataRecorderMetaData.DateCreated.ToShortDateString()
+                                }
+
+                                if (!string.IsNullOrEmpty(notes.ReasonName))
+                                {
+                                    <b>Reason :</b> @notes.ReasonName
+                                }
+
+                                if (!string.IsNullOrEmpty(notes.Notes))
+                                {
+                                    <b>Notes :</b> @notes.Notes
+                                }
+                                if (currentRoleId == (long)Falcon.App.Core.Enum.Roles.CallCenterRep && canChangeNotes)
+                                {
+                                    <span class="span-action">
+                                        <a href="javascript:void(0);" onclick="EditNotes(@notes.Id,@notes.CustomerId)">
+                                            Edit
+                                        </a> <span>&nbsp;| &nbsp;</span> <a href="javascript:void(0);" onclick="DeleteNotes(@notes.Id,@notes.CustomerId)">
+                                            Delete
+                                        </a>
+                                    </span>
+                                }
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
+
+                var patientLeftNotes = Model.Where(n => n.NotesType == CustomerRegistrationNotesType.LeftWithoutScreeningNotes).ToArray();
+                if (patientLeftNotes.Count() > 0)
+                {
+                    <h3>
+                        Left Without Screening Notes.
+                    </h3>
+                    <br />
+                    <ul style="list-style:none;">
+                        @foreach (var notes in patientLeftNotes)
+                        {
+                            if (notes.NotesType == CustomerRegistrationNotesType.LeftWithoutScreeningNotes)
+                            {
+                                <li style="padding-bottom:10px;">
+                                    @{
+                                if (notes.EventId > 0)
+                                {
+                                    <b>Event ID :</b>  @notes.EventId
+                                }
+
+                                if (!string.IsNullOrEmpty(notes.ReasonName))
+                                {
+                                    <b style="margin-left: 5px;">Reason :</b> @notes.ReasonName
+                                }
+
+                                if (!string.IsNullOrEmpty(notes.Notes))
+                                {
+                                    <b style="margin-left: 5px;">Notes :</b> @notes.Notes
+                                }
+                                if (!string.IsNullOrEmpty(notes.CreatedBy))
+                                {
+                                    <b style="margin-left: 5px;">By </b> @notes.CreatedBy
+                                }
+                                if (notes.DataRecorderMetaData != null)
+                                {
+                                    <span style="margin-left: 5px;">on <i>[@notes.DataRecorderMetaData.DateCreated.ToShortDateString()]</i></span>
+                                }
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
+        }
+    </div>
+    <div id="EditNotesDialogDiv" title="Edit Notes">
+        <div class="editor-row">
+            <div style="float: left; width: 10%">
+                Notes :
+            </div>
+            <div style="float: left; width: 60%">
+                <textarea id="CustomerNotes" rows="4" cols="60"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var loadNotesMethod = null;
+    function DeleteNotes(notesId, customerId) {
+        var ans = confirm('Are you sure that you want to delete this notes?');
+        if (!ans) return false;
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html", url: "/Communication/CustomerCallNotes/DeleteCustomerNotes",
+            data: "{'notesId':'" + notesId + "'}",
+            success: function (result) { DeleteSuccessFunction(result, customerId); },
+            error: function (a, b, c) { }
+        });
+    }
+
+    function DeleteSuccessFunction(result, customerId) {
+        if (result == '@(Boolean.TrueString)') {
+            if (loadNotesMethod != null)
+                loadNotesMethod(customerId, 0);
+        }
+        else {
+            alert("Can not delete notes.");
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#EditNotesDialogDiv').dialog({ autoOpen: false, width: 500, height: 230, closeOnEscape: true, buttons: { 'Close': function () { $(this).dialog('close'); }, 'Save': function () { SaveNotes(); } } });
+    });
+
+    var currentNotesId = 0;
+    var currentCustomerId = 0;
+    function EditNotes(notesId, customerId) {
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json", url: "/Communication/CustomerCallNotes/GetCustomerNotes",
+            data: "{'notesId':'" + notesId + "'}",
+            success: function (result) {
+                if (result != null) {
+                    currentCustomerId = customerId;
+                    currentNotesId = notesId;
+                    $("#CustomerNotes").val(result.Notes);
+                    $('#EditNotesDialogDiv').dialog('open');
+                }
+            },
+            error: function (a, b, c) { }
+        });
+    }
+
+    function SaveNotes() {
+        var parameter = '{"notesId":"' + currentNotesId + '",';
+        parameter += '"notes":"' + $("#CustomerNotes").val().replace(/\\/gi, "\\\\").replace(/\"/gi, "\\\"") + '"}';
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html", url: "/Communication/CustomerCallNotes/UpdateCustomerNotes",
+            data: parameter,
+            success: function (result) { UpdateSuccessFunction(result); },
+            error: function (a, b, c) { }
+        });
+    }
+
+    function UpdateSuccessFunction(result) {
+        if (result == '@(Boolean.TrueString)') {
+            $('#EditNotesDialogDiv').dialog('close')
+            if (loadNotesMethod != null)
+                loadNotesMethod(currentCustomerId, 0);
+        }
+        else {
+            alert("Can not update notes.");
+        }
+    }
+</script>

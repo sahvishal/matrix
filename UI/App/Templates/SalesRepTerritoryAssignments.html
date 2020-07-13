@@ -1,0 +1,12 @@
+﻿{#foreach $T as SalesRepTerritoryAndAssignment}
+    {#if $T.SalesRepTerritoryAndAssignment.FirstValue.Name.length > 25}
+        {$T.SalesRepTerritoryAndAssignment.FirstValue.Name.substring(0, 25)}...
+    {#else}
+        {$T.SalesRepTerritoryAndAssignment.FirstValue.Name}
+    {#/if}
+    |
+    {$T.SalesRepTerritoryAndAssignment.SecondValue.EventTypeSetupPermissionName} |
+    <a href="#{$T.SalesRepTerritoryAndAssignment.FirstValue.Id}-{$T.SalesRepTerritoryAndAssignment.SecondValue.SalesRep.SalesRepresentativeId}"
+        onClick="ShowUnassignConfirmation({$T.SalesRepTerritoryAndAssignment.FirstValue.Id}, {$T.SalesRepTerritoryAndAssignment.SecondValue.SalesRep.SalesRepresentativeId})"
+        class="SmallLinks">Unassign</a><br />
+{#/foreach}

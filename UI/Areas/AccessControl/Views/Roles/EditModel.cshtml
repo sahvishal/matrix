@@ -1,0 +1,82 @@
+﻿@using System.Web.Mvc.Html
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Users.ViewModels.RoleEditModel
+
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@Html.HiddenFor(m => m.Id)
+@Html.HiddenFor(m => m.DateCreated)
+@Html.HiddenFor(m => m.DateModified)
+@Html.HiddenFor(m => m.DefaultPage)
+@Html.HiddenFor(m => m.Description)
+@Html.HiddenFor(m => m.OrganizationTypeId)
+@Html.HiddenFor(m => m.ShellType)
+@Html.HiddenFor(m => m.IsSystemRole)
+@Html.HiddenFor(m => m.ShortName)
+<div class="editor-row">
+    <div class="editor-field">
+
+        <label><b>Role Name :</b> </label>@Html.ValidationMessageFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { maxLength = "50" })
+    </div>
+</div>
+@if (!Model.IsSystemRole && Model.Id != (long)Falcon.App.Core.Enum.Roles.Customer)
+{
+    <div class="editor-row">
+        <div class="editor-field">
+            <label>
+                <b>
+                    Base Role
+                    :
+                </b>
+            </label>            @Html.ValidationMessageFor(m => m.ParentId)
+            @if (Model.Id < 1)
+            {
+                @Html.DropDownListFor(m => m.ParentId, DropDownHelper.AllSystemRoles(Model.ParentId))
+            }
+            else
+            {
+                var firstOrDefault = DropDownHelper.AllSystemRoles(Model.ParentId).FirstOrDefault(x => x.Selected);
+                if (firstOrDefault != null)
+                {
+                    var parentName = firstOrDefault.Text;
+                    /*@Html.DropDownListFor(m => m.ParentId, DropDownHelper.AllSystemRoles(Model.ParentId), new { disabled = "disabled" })*/
+                    @parentName
+                }
+                @Html.HiddenFor(m => m.ParentId)
+            }
+        </div>
+    </div>
+}
+@if (Model.Id == 0 || Model.Id == (long)Falcon.App.Core.Enum.Roles.FranchisorAdmin || Model.ParentId == (long)Falcon.App.Core.Enum.Roles.FranchisorAdmin)
+{
+    <div id="pinCheckBox" style="display: none;">
+        @Html.EditorFor(m => m.IsPinRequired, new { id = "IsPinRequired" })
+    </div>
+}
+@Html.EditorFor(m => m.IsTwoFactorAuthrequired, new { id = "IsTwoFactorAuthrequired" })
+
+<div id="resetAllOverridesDiv" style="display: none;" isdisplayed="false">
+    @if (Model.Id > 0)
+    {@Html.EditorFor(m => m.ResetAllOverrides)}
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        if (@Model.Id > 0) { 
+            $("#resetAllOverridesDiv").show(); 
+            $("#pinCheckBox").show();
+        } else {
+            $('#ParentId').change(function() { 
+                var ctrl = $('#ParentId');  
+                if (ctrl.val() == '@((long) Falcon.App.Core.Enum.Roles.FranchisorAdmin)') {
+                    $("#pinCheckBox").show();
+                } else {
+                    $("#pinCheckBox").hide();
+                }
+            });
+        }
+    });
+</script>

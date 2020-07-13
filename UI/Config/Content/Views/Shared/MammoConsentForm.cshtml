@@ -1,0 +1,163 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.MammoConsentEditModel
+@{
+    Layout = null;
+}
+
+<div style="float: left; width: 97%; font-size: 18px;">
+    <div style="float: left; width: 90%; text-align: left; margin-bottom: 20px; margin-left: 20px;">
+        <img src="/Config/Content/Images/Logo-Large-300x90.gif"/>
+    </div>
+    <div style="float: left; width: 95%; margin-top: 10px; margin-bottom: 10px; border-bottom: solid 3px #330170; font-size: 24px; color: #330170; ">
+        <b>NOTICE TO CLIENTS</b>
+    </div>
+    <div style="float: left; width: 90%; margin:10px 20px 10px 40px;">
+        <div style="float: left; width: 99%;">
+            We require all clients to authorize their test results be sent directly to their personal physician so the information can be combined with their
+            physician's knowledge to determine how clinically significant the screening results are.
+        </div>
+        <div style="float: left; width: 99%; margin: 20px 0px 20px 0px;">
+            <b>PLEASE COMPLETE AND SIGN BELOW:</b>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 120px;">Clinet Name:</span>
+            <span style="float: left; width: 600px; border-bottom: solid 1px #000000;">
+                @Model.FullName.FullName
+            </span>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 80px;">Address:</span>
+            <span style="float: left; width: 640px; border-bottom: solid 1px #000000;">
+                @Model.Address.StreetAddressLine1
+            </span>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Address.StreetAddressLine2))
+        {
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                    @Model.Address.StreetAddressLine2
+                </span>
+            </div>
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                    @Model.Address.City, @Model.Address.State - @Model.Address.ZipCode
+                </span>
+            </div>
+        }
+        else
+        {
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                    @Model.Address.City, @Model.Address.State - @Model.Address.ZipCode
+                </span>
+            </div>
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                </span>
+            </div>
+        }
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 180px;">Home Phone Number:</span>
+            <span style="float: left; width: 540px; border-bottom: solid 1px #000000;">
+                (@Model.HomeNumber.AreaCode)@Model.HomeNumber.Number
+            </span>
+        </div>
+        <div style="float: left; width: 99%; margin: 30px 0px 30px 0px;">
+            <b>PHYSICIAN:</b>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 60px;">Name:</span>
+            <span style="float: left; width: 660px; border-bottom: solid 1px #000000;">
+                @(Model.Pcp.Name != null ? Model.Pcp.Name.FullName : "")
+            </span>
+        </div>
+        @if (Model.Pcp.Address != null)
+        {
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 80px;">Address:</span>
+                <span style="float: left; width: 640px; border-bottom: solid 1px #000000;">
+                    @Model.Pcp.Address.StreetAddressLine1
+                </span>
+            </div>
+            if (!string.IsNullOrEmpty(Model.Address.StreetAddressLine2))
+            {
+                <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                    <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                        @Model.Pcp.Address.StreetAddressLine2
+                    </span>
+                </div>
+                <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                    <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                        @Model.Pcp.Address.City, @Model.Pcp.Address.State - @Model.Pcp.Address.ZipCode
+                    </span>
+                </div>
+            }
+            else
+            {
+                <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                    <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                        @Model.Pcp.Address.City, @Model.Pcp.Address.State - @Model.Pcp.Address.ZipCode
+                    </span>
+                </div>
+                <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                    <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                    </span>
+                </div>
+            }
+        }
+        else
+        {
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 80px;">Address:</span>
+                <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                </span>
+            </div>
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                </span>
+            </div>
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 640px; margin-left: 80px; border-bottom: solid 1px #000000;">
+                </span>
+            </div>
+        }
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 210px;">Physician Phone Number:</span>
+            <span style="float: left; width: 510px; border-bottom: solid 1px #000000;">(
+                @{
+                    if (Model.Pcp.Primary != null && Model.Pcp.Primary.AreaCode.Length > 0)
+                    {
+                        <span>@Model.Pcp.Primary.AreaCode</span>
+                    }
+                    else
+                    {
+                        <span style="width:30px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    }
+                }
+                )@(Model.Pcp.Primary !=null ? Model.Pcp.Primary.Number:"")
+            </span>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            I hereby authorize Matrix Medical Network to mail my screening results directly to my physicians address.
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 70px;">Signed:</span>
+            <span style="float: left; width: 450px; border-bottom: solid 1px #000000;">&nbsp;</span>
+            <span style="float: left; width: 50px;">Date:</span>
+            <span style="float: left; width: 40px; border-bottom: solid 1px #000000;">&nbsp;</span>
+            <span style="float: left; width: 40px; border-bottom: solid 1px #000000;">/</span>
+            <span style="float: left; width: 60px; border-bottom: solid 1px #000000;">/</span>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            I hereby authorize Matrix Medical Network to mail my screening results directly to my physicians address as well as a copy to myself at the above Client address.
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 70px;">Signed:</span>
+            <span style="float: left; width: 450px; border-bottom: solid 1px #000000;">&nbsp;</span>
+            <span style="float: left; width: 50px;">Date:</span>
+            <span style="float: left; width: 40px; border-bottom: solid 1px #000000;">&nbsp;</span>
+            <span style="float: left; width: 40px; border-bottom: solid 1px #000000;">/</span>
+            <span style="float: left; width: 60px; border-bottom: solid 1px #000000;">/</span>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,28 @@
+﻿<table style="float: left;">
+    {#foreach $T as GiftCertificateOfferingsViewData}
+    <tr>
+        <td>
+            <div class="bdyrow bckImage">
+                <div class="thumbimg_gftc">					
+                   <div class="amonttxt">
+                         </div>
+                </div>
+                <div class="detailtxt_gftc">
+                    <h3>
+                        ${$T.GiftCertificateOfferingsViewData.Price} Gift Certificate</h3>
+                    <br />
+                    Ideal for the following package<br />
+                    <span class="sbhead2t_gftc"><b>{$T.GiftCertificateOfferingsViewData.PackageName} </b></span><span class="stxt1_gftc">
+                        {$T.GiftCertificateOfferingsViewData.TestNames} </span>
+                    <br />
+                    <br />
+                    <a href="javascript:MoveNextStep({$T.GiftCertificateOfferingsViewData.Price});">
+                        <img src="/Content/Images/buy_btn_gftc.gif" alt="" /></a>
+                </div>
+            </div>
+            <div class="dotdiv_gftc">
+            </div>
+        </td>
+    </tr>
+    {#/for}
+</table>

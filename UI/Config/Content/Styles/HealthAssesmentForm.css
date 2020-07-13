@@ -1,0 +1,75 @@
+﻿div.sequence-block
+{
+    padding: 4px 0px;
+    float: left;
+    width: 100%;
+    font-size: 12pt;
+}
+
+tr.sequence-block
+{
+    font-size: 12pt;
+}
+
+div.font-10pt
+{
+    font-size: 10pt !important;
+}
+
+tr.font-10pt
+{
+    font-size: 10pt !important;
+}
+
+.front-radio-block
+{
+    width: 15%;
+    margin-right: 2%;
+    float: left;
+}
+.question-label-block
+{
+    padding-top: 4px;
+    float: left;
+    width: 81%;
+}
+
+.front-radio-block span, .question-label-block span
+{
+    margin-right: 10px;
+    float: left;
+}
+
+.textarea-style
+{
+    width: 100%;
+    resize: none;
+}
+
+.section-header
+{
+    float: left;
+    width: 99%;
+    font: normal 22px Arial;
+    margin-bottom: 10px;
+}
+.section
+{
+    float: left;
+    width: 99%;
+    margin-bottom: 10px;
+}
+.section-withborder
+{
+    float: left;
+    width: 98%;
+    margin-bottom: 10px;
+    padding: 0.5%;
+    border: solid 1px;
+    border-radius: 5px;
+}
+.parentdiv
+{
+    width: 900px;
+    margin: auto;
+}

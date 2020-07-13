@@ -1,0 +1,80 @@
+﻿<div>
+    <div class="pull-left progress-wrap" ng-click="showHideProgressBar()">
+        <p class="no-margin text-center hidden-xs hidden-sm">Checkin Progress <span>({{ProgressbarInPercentage()}})</span></p>
+        <div class="clearfix top-buffer-4 hidden-xs hidden-sm">
+            <div class="progress">
+                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" ng-style="{'width':ProgressbarInPercentage()}">
+                </div>
+            </div>
+            <div class="top-buffer-6 text-center">
+                <i ng-class="{'glyphicon glyphicon-menu-down': !$root.showProgressBar, 'glyphicon glyphicon-menu-up': $root.showProgressBar}"></i>
+            </div>
+        </div>
+        <div class="hidden-lg hidden-md">
+            <percent-display percent="ProgressbarInValue()" side="40" colors="#FFFFFF #55a651"></percent-display>
+            <div class="top-buffer-6 text-center">
+                <i ng-class="{'glyphicon glyphicon-menu-down': !$root.showProgressBar, 'glyphicon glyphicon-menu-up': $root.showProgressBar}"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix progress-showcase progress-bar-sm" collapse="!$root.showProgressBar">
+        <div class="single-progress">
+            <span class="chart pull-left"><span class="percent" ng-class="{'done':checkLocation()===constants.Complete}">0</span></span>
+            <span class="chart-text pull-left">Location</span>
+        </div>
+        <div class="single-progress" ng-class="{'inactive':(checkPreQualificationStatus()===constants.NotStarted || checkPreQualificationStatus()===constants.Started)}">
+            <span class="chart pull-left" ng-if="checkPreQualificationStatus()===constants.NotStarted || checkPreQualificationStatus()===constants.Started"><span class="percent">0</span></span>
+            <span class="chart pull-left" ng-if="checkPreQualificationStatus()===constants.Complete"><span class="percent done"></span></span>
+            <span class="chart-text pull-left">Risk Assessment</span>
+        </div>
+        <div class="single-progress" ng-class="{'inactive':(checkPackagesStatus()===constants.NotStarted || checkPackagesStatus()===constants.Started)}">
+            <span class="chart pull-left" ng-if="checkPackagesStatus()===constants.NotStarted || checkPackagesStatus()===constants.Started"><span class="percent">0</span></span>
+            <span class="chart pull-left" ng-if="checkPackagesStatus()===constants.Complete"><span class="percent done"></span></span>
+            <span class="chart-text pull-left">Package & Tests</span>
+        </div>
+        <div class="single-progress" ng-class="{'inactive':(checkAppointmentStatus()===constants.NotStarted)}">
+            <span class="chart pull-left" ng-if="checkAppointmentStatus()===constants.NotStarted || checkAppointmentStatus()===constants.Started"><span class="percent">0</span></span>
+            <span class="chart pull-left" ng-if="checkAppointmentStatus()===constants.Complete"><span class="percent done"></span></span>
+            <span class="chart-text pull-left">Appointment Time</span>
+        </div>
+        <div class="single-progress" ng-class="{'inactive':(checkPersonalInformationStatus()===constants.NotStarted || checkPersonalInformationStatus()===constants.Started)}">
+            <span class="chart pull-left" ng-if="checkPersonalInformationStatus()===constants.NotStarted || checkPersonalInformationStatus()===constants.Started"><span class="percent">0</span></span>
+            <span class="chart pull-left" ng-if="checkPersonalInformationStatus()===constants.Complete"><span class="percent done"></span></span>
+            <span class="chart-text pull-left">Info & Payment</span>
+        </div>
+    </div>
+
+
+    <div class="clearfix progress-showcase progress-bar-lg desktop">
+        <div class="single-progress-lg" ng-class="{'inactive':(checkLocation()===constants.NotStarted),'currentState':($root.currentState===ProgressBarSteps.Location), 'done':checkLocation()===constants.Complete }">
+            <p class="chart" ng-if="checkLocation()===constants.NotStarted || checkLocation()===constants.Started"><span class="percent">0</span></p>
+            <p class="chart" ng-if="checkLocation()===constants.Complete"><span class="percent">0</span></p>
+            <p class="chart-text">Location</p>
+        </div>
+        <!--<div class="single-progress-lg sideway-arrow-right"></div>-->
+        <div class="single-progress-lg" ng-class="{'inactive':(checkPreQualificationStatus()===constants.NotStarted),'currentState':($root.currentState===ProgressBarSteps.PreQualifiedTest), 'done':checkPreQualificationStatus()===constants.Complete }">
+            <p class="chart" ng-if="checkPreQualificationStatus()===constants.NotStarted || checkPreQualificationStatus()===constants.Started"> <span class="percent">0</span>            </p>
+            <p class="chart" ng-if="checkPreQualificationStatus()===constants.Complete"><span class="percent"></span></p>
+            <p class="chart-text">Risk Assessment</p>
+        </div>
+        <!--<div class="single-progress-lg sideway-arrow-right"></div>-->
+        <div class="single-progress-lg" ng-class="{'inactive':(checkPackagesStatus()===constants.NotStarted),'currentState':($root.currentState===ProgressBarSteps.Packages || $root.currentState===ProgressBarSteps.Tests), 'done':checkPackagesStatus()===constants.Complete }">
+            <p class="chart" ng-if="checkPackagesStatus()===constants.NotStarted || checkPackagesStatus()===constants.Started"><span class="percent">0</span></p>
+            <p class="chart" ng-if="checkPackagesStatus()===constants.Complete"><span class="percent"></span></p>
+            <p class="chart-text">Package & Tests</p>
+        </div>
+        <!--<div class="single-progress-lg sideway-arrow-right"></div>-->
+        <div class="single-progress-lg" ng-class="{'inactive':(checkAppointmentStatus()===constants.NotStarted),'currentState':($root.currentState===ProgressBarSteps.Appointment), 'done':checkAppointmentStatus()===constants.Complete}">
+            <p class="chart" ng-if="checkAppointmentStatus()===constants.NotStarted || checkAppointmentStatus()===constants.Started"><span class="percent">0</span></p>
+            <p class="chart" ng-if="checkAppointmentStatus()===constants.Complete"><span class="percent"></span></p>
+            <p class="chart-text">Appointment Time</p>
+        </div>
+        <!--<div class="single-progress-lg sideway-arrow-right"></div>-->
+        <div class="single-progress-lg" ng-class="{'inactive':(checkPersonalInformationStatus()===constants.NotStarted),'currentState':($root.currentState===ProgressBarSteps.PersonalInformation || $root.currentState===ProgressBarSteps.Payment), 'done':checkPersonalInformationStatus()===constants.Complete}">
+            <p class="chart" ng-if="checkPersonalInformationStatus()===constants.NotStarted || checkPersonalInformationStatus()===constants.Started"><span class="percent">0</span></p>
+            <p class="chart" ng-if="checkPersonalInformationStatus()===constants.Complete"><span class="percent"></span></p>
+            <p class="chart-text">Info & Payment</p>
+        </div> 
+    </div>
+</div>

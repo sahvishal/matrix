@@ -1,0 +1,56 @@
+﻿@model IEnumerable<KeyValuePair<string,Falcon.App.Core.Audit.ViewModel.ActivityLoggedModelViewModel>>
+@{
+    var complexElements = Model.ToArray();
+    <div class="editor-row" style="border: 1px solid #ddd;">
+        <div class="editor-row">
+
+            @for (int i = 0; i < complexElements.Count(); i++)
+            {
+                <div class="editor-row" style="margin-left: 20px; margin-right: 20px;">
+
+                    @complexElements[i].Key :
+                    @if (complexElements[i].Value.Simple.Any())
+                    {
+
+                        <text>@Html.Partial("SimpleModel", complexElements[i].Value.Simple)</text>
+                    }
+                    else if (complexElements[i].Value.Complex.Any())
+                    {
+                        <text> @Html.Partial("ComplexModel", complexElements[i].Value.Complex) </text>
+                    }
+                    else
+                    {
+                        <text> @complexElements[i].Value </text>
+                    }
+
+
+                </div>
+            }
+
+     </div>
+     @*<div class="editor-column-twoinrow">
+            @for (int i = complexElements.Count() / 2; i < complexElements.Count(); i++)
+            {
+                <div class="editor-row" style="margin-left: 20px;">
+
+                    @complexElements[i].Key :
+
+                    @if (complexElements[i].Value.Simple.Any())
+                    {
+
+                        <text>@Html.Partial("SimpleModel", complexElements[i].Value.Simple)</text>
+                    }
+                    else if (complexElements[i].Value.Complex.Any())
+                    {
+                        <text> @Html.Partial("ComplexModel", complexElements[i].Value.Complex) </text>
+                    }
+                    else
+                    {
+                        <text> @complexElements[i].Value </text>
+                    }
+
+                </div>
+            }
+     </div>*@
+  </div>
+}

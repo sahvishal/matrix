@@ -1,0 +1,154 @@
+﻿@model Falcon.App.Core.Operations.ViewModels.EventStaffAssignmentEditModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Assign Staff To Event";
+}
+
+
+    <h1>Assign Staff To Event on @Model.Event.EventDate.ToShortDateString() </h1>    
+    @{Html.BeginForm();}
+    <fieldset>
+        <legend>
+            @Model.Event.HostName in @Model.Event.HostAddress.City, @Model.Event.HostAddress.State using @Model.Event.PodNames()
+        </legend>
+        @Html.Hidden("eventId", Model.Event.Id)        
+        @Html.Hidden("podId", Model.Event.Pods.First().FirstValue) @*TODO: Need to add drop down to select pod. *@
+        
+        
+
+        @if (Model.IsDefaultStaffAssignment)
+        {
+            <div class="MiniWarningMessage">Currently using default team assignement</div>
+        }
+        
+        <div>            
+            @Html.Partial("AddStaffMiniForm", new ViewDataDictionary(Model))
+        </div>
+        
+        @Html.ValidationMessageFor(m => m.EventStaffAssignements)    
+        <h3>Current Event  Staff Assignments</h3>
+        <div id="event-staff">
+            @if (Model.EventStaffAssignements == null)
+            {
+                <div class="info-box">
+                    No staff have been assigned to this event. Please assign the staff as needed.
+                </div>
+            } 
+            else
+            {
+                 <table id="users" class="ui-widget ui-widget-content" style="width:100%">
+	                <thead>
+		                <tr class="ui-widget-header ">
+			                <th>Name</th>
+			                <th>Role</th>
+			                <th>Action</th>
+		                </tr>
+	                </thead>
+	                <tbody id="event-staff-list">
+                    </tbody>
+	            </table>                
+            }      
+        </div>
+     </fieldset>
+ @{Html.EndForm();}
+
+
+
+
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+  
+
+<script id="assignedStaffTemplate" type="text/x-jquery-tmpl">   
+	<tr class="data-row">
+		<td>${FullName}</td>
+		<td>${EventRole}</td>
+
+		<td><a href="#" data-key="${Key}" class="unAssign">Remove</a></td>
+	</tr>		                       
+</script>
+
+
+<script type="text/javascript">
+
+        $("a.unAssign").live("click", function () {
+                                      
+            delete assignedStaff[$(this).attr('data-key')];
+            if ($.isEmptyObject(assignedStaff)) {
+                $(".info-box").show();
+            }
+            selectDefault();
+            renderAssignedStaff();
+            return false;
+        });
+            
+    var assignedStaff = new Object();
+    var k = 0;
+        @if ((Model.EventStaffAssignements != null) && (Model.EventStaffAssignements.Count() > 0))
+        {
+        <text>
+        var k = 0;
+        var staff = new Object();
+        </text>
+            foreach (var assignedStaff in Model.EventStaffAssignements)
+            {                                 
+                <text>
+                {
+                    staff = new Object();
+                    staff.ScheduledStaffOrgRoleUserId = @assignedStaff.ScheduledStaffOrgRoleUserId; 
+                    staff.ActualStaffOrgRoleUserId = @(assignedStaff.ActualStaffOrgRoleUserId??0);                    
+                    staff.FullName = "@assignedStaff.FullName";                                        
+                    staff.EventRoleId = @assignedStaff.EventRoleId;  
+                    staff.EventRole = "@assignedStaff.EventRole";
+                    staff.Key = @assignedStaff.ScheduledStaffOrgRoleUserId + "_" + @assignedStaff.EventRoleId; 
+                    assignedStaff[staff.Key] = staff;
+                }
+                </text>
+            }
+        }
+        
+     function assignStaffToEvent() {
+            
+        var staffAssigned = new Object();
+        staffAssigned.ScheduledStaffOrgRoleUserId = $("#staff").val();
+        staffAssigned.FullName = $("#staff option:selected").text();
+        staffAssigned.EventRoleId = $("#role").val();
+        staffAssigned.EventRole = $("#role option:selected").text();
+        staffAssigned.Id = 0;        
+        staffAssigned.Key =   $("#staff").val() + "_" +$("#role").val(); 
+            
+        if(assignedStaff[staffAssigned.Key] != null){
+            return false;
+            }
+        if (staffAssigned.ScheduledStaffOrgRoleUserId == -1) {
+            alert("Please select a Staff Member.");
+            return false;
+        }         
+        if (staffAssigned.EventRoleId == -1) {
+            alert("Please select a Role for the selected staff, before assigning.");
+            return false;
+        }
+            
+        assignedStaff[staffAssigned.Key] = staffAssigned;
+                                     
+        $(".info-box").hide();
+        renderAssignedStaff();
+        selectDefault();
+        return false;
+    }
+     
+     
+    function renderAssignedStaff() {
+                
+        $("#event-staff-list tr").remove();        
+        $.each(assignedStaff, function (key, staff) {
+            $("#assignedStaffTemplate").tmpl(staff).appendTo("#event-staff-list");
+        });        
+    }
+        
+    
+    $("#assignStaff").click(assignStaffToEvent); 
+    renderAssignedStaff();
+</script>
+
+

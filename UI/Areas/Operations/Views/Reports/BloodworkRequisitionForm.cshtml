@@ -1,0 +1,11 @@
+﻿@model Falcon.App.Core.Operations.ViewModels.BloodworksLabelViewModel
+@{
+    Layout = null;
+}
+<div style="width: 950px;">
+    @if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/BloodworkRequisitionForm.cshtml")))
+    {
+        @Html.Partial("/Config/Content/Views/Shared/BloodworkRequisitionForm.cshtml", Model)    
+    }
+
+</div>

@@ -1,0 +1,499 @@
+@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.CallCenter.Enum
+@using Falcon.App.Core.CallCenter.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model CampaignEditModel
+@{
+    var isCorporateCampaign = Model.TypeId == (long)CampaignType.Corporate;
+}
+@if (Model != null)
+{
+    if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType != UserInterfaceMessageType.Success)
+    {
+        @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+    }
+}
+
+<div class="editor-row">
+    <div style="width: 100%;float: left">
+        @Html.HiddenFor(m => m.IsPublished)     
+        <fieldset>
+            <legend>Campaign</legend>
+            <div class="editor-row">
+                <div class="editor-label">
+                    Name @Html.ValidationMessageFor(m => m.Name)
+                </div>
+                @Html.TextBoxFor(m => m.Name, new { @style = "width:89%;" })
+            </div>
+            <div class="editor-row">
+                <div class="editor-label">
+                    Description @Html.ValidationMessageFor(m => m.Description)
+                </div>
+                @Html.TextAreaFor(m => m.Description, new { @style = "width:89%;height:100px;" })
+            </div>
+            <div class="editor-row">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        Campaign Code @Html.ValidationMessageFor(m => m.CampaignCode)
+                    </div>
+                    @Html.TextBoxFor(m => m.CampaignCode)
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        &nbsp;
+                    </div>
+                    <a href="javascript:void(0)" onclick="GenerateCampaignCode()">Generate Campaign Code</a>
+                </div>
+            </div>
+            <div class="editor-row">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        Start Date @Html.ValidationMessageFor(m => m.StartDate)
+                    </div>
+                    @Html.TextBoxFor(m => m.StartDate, new { @class = "datePicker" })
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        End Date @Html.ValidationMessageFor(m => m.EndDate)
+                    </div>
+                    @Html.TextBoxFor(m => m.EndDate, new { @class = "datePicker" })
+                </div>
+            </div>
+
+            <div class="editor-row">
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        Campaign Type @Html.ValidationMessageFor(m => m.TypeId)
+                    </div>
+                    @Html.DropDownListFor(m => m.TypeId, DropDownHelper.GetCampaignType())
+                </div>
+                <div class="editor-column-twoinrow">
+                    <div class="editor-label">
+                        Call Mode @Html.ValidationMessageFor(m => m.ModeId)
+                    </div>
+                    @Html.DropDownListFor(m => m.ModeId, DropDownHelper.GetCampaignMode())
+                </div>
+            </div>
+            <div class="corporate-campaign" style="@(isCorporateCampaign ? "display:block" : "display:none")">
+                <div class="editor-row">
+                    <div class="editor-column" style="width:90%;">
+                        <div class="editor-label">
+                            Health Plan @Html.ValidationMessageFor(m => m.AccountId)
+                        </div>
+                        @Html.DropDownListFor(m => m.AccountId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:99%;", @onchange = "GetCustomTagsByAccountId();" })
+                    </div>
+                </div>
+                <div class="editor-row">
+                    <div class="editor-column" style="width:90%;">
+                        <div class="editor-label">
+                            Custom Tags @Html.ValidationMessageFor(m => m.CustomTags)
+                        </div>
+                        @*@Html.DropDownListFor(m => m.CustomTags, DropDownHelper.GetCustomTagsByAccountId(Model.AccountId, Model.CustomTags), new { @multiple = "multiple", @style = "width:99%;" })*@
+                        @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetCustomTagsByAccountId(Model.AccountId, Model.CustomTags), new { @style = "width:99%;" })
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    @*<div style="width: 38%;float: left;margin-left: 2%;">
+        <fieldset>
+            <legend>Campaign Assigned To</legend>
+            <div class="editor-row">
+                <div class="editor-label">
+                    Call Center Agent
+                </div>
+                @Html.DropDownList("assignedId", DropDownHelper.GetCallCenterRep(), new { @style = "width:240px;" })
+                <input id="addAssignmentButton" type="button" value="Add" onclick="addAssignment();" />
+            </div>
+            <div id="assignment-container">
+
+            </div>
+        </fieldset>
+    </div>*@
+</div>
+<div id="activity-dialog">
+
+</div>
+<div class="editor-row">
+    <fieldset>
+        <legend>Campaign Activity</legend> @Html.ValidationMessageFor(m => m.CampaignActivity)
+        <div class="editor-row">
+            <input id="addcampaignActivityButton" type="button" value="Add" onclick="CreateNewActivity();" />
+        </div>
+        <div id="activity-container">
+
+        </div>
+    </fieldset>
+
+    <div style="display: none" id="activity-popup">
+
+
+    </div>
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script id="assignmentTemplate" type="text/x-jquery-tmpl">
+    <div class="assignment-row" style="margin-bottom: 10px; margin-top: 10px;">
+        <div>
+            ${Name}
+            <a href="javascript:void(0);" data-key="${Key}" class="removeAssignment">Remove</a>
+        </div>
+        <div style="display: none;">
+            <input type="hidden" name="Assignments.Index" value="${Key}" />
+            <input type="text" name="Assignments[${Key}].AssignedOrgRoleUserId" value="${AssignedOrgRoleUserId}" />
+            <input type="text" name="Assignments[${Key}].Name" value="${Name}" />
+        </div>
+    </div>
+</script>
+
+<script id="activityTemplate" type="text/x-jquery-tmpl">
+    <div class="activity-row" style="margin-bottom: 10px; margin-top: 10px;">
+        <div>
+            <b>Activity:</b> ${Name} <b>Date: </b> ${ActivityDate}
+            <a href="javascript:void(0);" data-key="${Sequence}" class="removeActivity">Remove</a>&nbsp;|&nbsp;<a href="javascript:void(0);" data-key="${Sequence}" class="editActivity">Edit</a>
+        </div>
+        <div style="display: none;" activity-key="${Sequence}">
+            <input type="hidden" name="CampaignActivity.Index" value="${Sequence}" />
+            <input type="text" name="CampaignActivity[${Sequence}].ActivityId" value="${ActivityId}" />
+            <input type="text" name="CampaignActivity[${Sequence}].ActivityType" value="${ActivityType}" />
+            <input type="text" name="CampaignActivity[${Sequence}].DirectMailType" value="${DirectMailType}" />
+            <input type="text" name="CampaignActivity[${Sequence}].Sequence" value="${Sequence}" />
+            <input type="text" name="CampaignActivity[${Sequence}].Name" value="${Name}" />
+            <input type="text" name="CampaignActivity[${Sequence}].ActivityDate" value="${ActivityDate}" />
+            {{each Assignments}}
+            <input type="hidden" name="CampaignActivity[${Sequence}].Assignments.Index" value="${AssignedOrgRoleUserId}" />
+            <input type="text" name="CampaignActivity[${Sequence}].Assignments[${AssignedOrgRoleUserId}].AssignedOrgRoleUserId" value="${AssignedOrgRoleUserId}" />
+            <input type="text" name="CampaignActivity[${Sequence}].Assignments[${AssignedOrgRoleUserId}].Name" value="${Name}" />
+            {{/each}}
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var assignments = new Object();
+
+    @if (Model.Assignments != null && Model.Assignments.Any())
+    {
+        <text>
+    var assignmentKey = "";
+    var assignment = new Object();
+    </text>
+        foreach (var queueAssignment in Model.Assignments)
+        {
+            <text>
+    assignment = new Object();
+    assignment.AssignedOrgRoleUserId = '@queueAssignment.AssignedOrgRoleUserId';
+    assignment.Name = "@queueAssignment.Name";
+    assignmentKey = "@queueAssignment.AssignedOrgRoleUserId";
+    assignment.Key = assignmentKey;
+    assignments[assignmentKey] = assignment;
+    </text>
+        }
+    }
+
+    function addAssignment() {
+        if ($("#assignedId").val() <= 0) {
+            alert("Please select Call center agent.");
+            return false;
+        }
+
+        var assignment = new Object();
+        assignment.AssignedOrgRoleUserId = $("#assignedId").val();
+        assignment.Name = $("#assignedId option:selected").text();
+
+        assignment.Key = assignment.AssignedOrgRoleUserId;
+
+        if (assignments[assignment.Key] != undefined) {
+            alert("This assignment has already been added.");
+            return false;
+        }
+        assignments[assignment.Key] = assignment;
+
+        renderassignment();
+        return false;
+    }
+
+    function renderassignment() {//debugger;
+        if ($.isEmptyObject(assignments)) {
+            $("#assignment-container").empty();
+        }
+        else {
+            $("#assignment-container").empty();
+            $.each(assignments, function (key, assignment) {
+                $("#assignmentTemplate").tmpl(assignment).appendTo("#assignment-container");
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        renderassignment();
+
+        $("a.removeAssignment").live("click", function () {
+
+            $(this).parents("div.assignment-row:first").remove();
+            delete assignments[$(this).attr('data-key')];
+
+            if ($.isEmptyObject(assignments)) {
+                $("#assignment-container").empty();
+            }
+
+            return false;
+        });
+    });
+</script>
+
+<script type="text/javascript" language="javascript">
+
+    $("#TypeId").change(function () {
+        if ($(this).val() == '@((long) CampaignType.Corporate)') {
+            $(".corporate-campaign").show();
+        } else {
+            $(".corporate-campaign").hide();
+            $("#AccountId").val("-1");
+            $("#CustomTags").val("");
+        }
+    });
+
+    function GenerateCampaignCode() {
+        $.ajax({
+            url: '/callcenter/campaign/GetRandomUniqueCampaignCodeInstance',
+            success: function (data) {
+                $("#CampaignCode").val(data);
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+    var activities = new Object();
+
+    @if (Model.CampaignActivity != null && Model.CampaignActivity.Any())
+    {
+        <text>
+    var activityKey = "";
+    var activity = new Object();
+    </text>
+        foreach (var queueActivity in Model.CampaignActivity)
+        {
+            <text>
+    activity = new Object();
+    activity.ActivityId = '@queueActivity.ActivityId';
+    activity.ActivityDate = "@(queueActivity.ActivityDate.HasValue ? queueActivity.ActivityDate.Value.ToShortDateString() : string.Empty)";
+    activity.Name = "@queueActivity.Name";
+    activity.ActivityType = "@queueActivity.ActivityType";
+    activity.DirectMailType = "@queueActivity.DirectMailType";
+    activity.Sequence = "@queueActivity.Sequence";
+    activityKey = "@queueActivity.Sequence";
+    activity.Key = activityKey;
+
+    @if (queueActivity.Assignments != null && queueActivity.Assignments.Any())
+    {
+        <text>  var activityAssignments = new Object(); </text>
+        foreach (var activityAssignment in queueActivity.Assignments)
+        {
+            <text>
+    activityAssignment = new Object();
+    activityAssignment.Name = '@activityAssignment.Name';
+    activityAssignment.AssignedOrgRoleUserId = '@activityAssignment.AssignedOrgRoleUserId';
+    activityAssignmentKey = "@activityAssignment.AssignedOrgRoleUserId"
+    activityAssignment.Key = activityAssignmentKey;
+    activityAssignments[activityAssignmentKey] = activityAssignment;
+    </text>
+        }
+        <text>  activity.Assignments = activityAssignments; </text>
+
+    }
+
+    activities[activityKey] = activity;
+    </text>
+        }
+    }
+
+    function renderActivity() {//debugger;
+        if ($.isEmptyObject(activities)) {
+            $("#activity-container").empty();
+        }
+        else {
+            $("#activity-container").empty();
+            $.each(activities, function (key, activity) {
+                $("#activityTemplate").tmpl(activity).appendTo("#activity-container");
+            });
+        }
+    }
+
+    function SetActivity(activity) {
+
+        var sequence = activity.Sequence;
+        if (sequence <= 0) {
+            sequence = Object.keys(activities).length + 1;
+        }
+        activity.Sequence = sequence;
+        activity.Key = sequence;
+
+        activities[sequence] = activity;
+        renderActivity();
+
+        $('#activity-dialog').dialog('close');
+    }
+
+    function ValidateActivity(activity) {
+        activity.IsForValidate = true;
+
+        var activityAssignedTo = new Array();
+        if (activity.Assignments != null && typeof (activity.Assignments) != 'undefined') {
+
+            for (var prop in activity.Assignments) {
+                if (!activity.Assignments.hasOwnProperty(prop)) {
+                    continue;
+                }
+                var assignedTo = activity.Assignments[prop];
+                var model = new Object();
+                model.AssignedOrgRoleUserId = assignedTo.AssignedOrgRoleUserId;
+                model.Name = assignedTo.Name;
+
+                activityAssignedTo.push(model);
+            }
+
+            activity.Assignments = activityAssignedTo;
+        }
+
+        showActivityDialog(activity);
+    }
+
+    function CreateNewActivity() {
+        var model = new Object();
+        model.ActivityId = 0;
+        model.Name = "";
+        model.Sequence = 0;
+        model.ActivityType = 0;
+        model.DirectMailType = 0;
+        model.IsNew = true;
+        model.CampaignStartDate = $("#StartDate").val();
+        model.CampaignEndDate = $("#EndDate").val();
+        showActivityDialog(model);
+    }
+
+    function showActivityDialog(model) {
+
+        var activity = JSON.stringify(model);
+        $.ajax({
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            data: activity,
+            dataType: 'html',
+            url: '/callcenter/campaign/campaignactivity',
+            success: function (data) {
+                if (model.IsForValidate == true) {
+                    $("#activity-dialog").html(data);
+                } else {
+                    $("#activity-dialog").html(data).dialog({ modal: true }).dialog('open');
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        renderActivity();
+
+        $("a.removeActivity").live("click", function () {
+
+            $(this).parents("div.activity-row:first").remove();
+
+            delete activities[$(this).attr('data-key')];
+
+            if ($.isEmptyObject(activities)) {
+                $("#assignment-container").empty();
+            } else {
+                var activitiesCopy = new Object();
+                var index = 1;
+                for (var prop in activities) {
+                    if (!activities.hasOwnProperty(prop)) {
+                        continue;
+                    }
+                    var activity = activities[prop];
+                    activity.Sequence = index;
+                    activity.Key = index;
+                    activitiesCopy[index] = activity;
+                    index = index + 1;
+                }
+                activities = activitiesCopy;
+            }
+            renderActivity();
+            return false;
+        });
+
+        $("a.editActivity").live("click", function () {
+
+            var sequence = $(this).attr('data-key');
+            var activity = activities[sequence];
+
+            var activityAssignedTo = new Array();
+            if (activity.Assignments != null && typeof (activity.Assignments) != 'undefined') {
+
+                for (var prop in activity.Assignments) {
+                    if (!activity.Assignments.hasOwnProperty(prop)) {
+                        continue;
+                    }
+                    var assignedTo = activity.Assignments[prop];
+                    var model = new Object();
+                    model.AssignedOrgRoleUserId = assignedTo.AssignedOrgRoleUserId;
+                    model.Name = assignedTo.Name;
+
+                    activityAssignedTo.push(model);
+                }
+
+                activity.Assignments = activityAssignedTo;
+            }
+
+            activity.CampaignStartDate = $("#StartDate").val();
+            activity.CampaignEndDate = $("#EndDate").val();
+
+            showActivityDialog(activity);
+        });
+
+        $("#activity-dialog").dialog({
+            autoOpen: false,
+            modal: true,
+            title: "Activity",
+            height: 350,
+            width: 400,
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    function GetCustomTagsByAccountId() {//debugger;
+        var accountId = $("#AccountId").val();
+
+        $('#CustomTags>option').remove();
+
+        if (accountId > 0) {
+            var parameter = "{'accountId':'" + accountId + "'}";
+
+            var messageUrl = '/CallCenter/Campaign/GetCustomTagsByAccountId';
+
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: messageUrl,
+                data: parameter,
+                success: function (result) {
+                    FillCustomTags(result);
+                },
+                error: function (a, b, c) {
+                    //alert(a.responseText);
+                }
+            });
+        }
+    }
+
+    function FillCustomTags(templateList) {
+        if (templateList.length > 0) {
+            for (var i = 0; i < templateList.length; i++) {
+                $('#CustomTags').append($('<option></option>').val(templateList[i].Tag).html(templateList[i].Tag));
+            }
+        }
+    }
+</script>

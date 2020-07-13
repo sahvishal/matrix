@@ -1,0 +1,216 @@
+﻿@using System.Linq
+@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@model Falcon.App.Core.Users.ViewModels.CorporateAccountDashboardViewModel
+@{
+    var organizationName = Falcon.App.DependencyResolution.IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.OrganizationName;
+    ViewBag.Title = "Corporate Dashboard";
+}
+
+<style type="text/css">
+    .title-txt {
+        float: left;
+        width: 270px;
+        padding-top: 7px;
+        font: bold 14px arial;
+        color: #333;
+    }
+
+    .count-txt {
+        float: left;
+        width: 140px;
+        height: 27px;
+        background: url('/App/images/bigboxdata-kpi-fdbrd.gif');
+        padding-top: 6px;
+        font: bold 16px arial;
+        text-align: center;
+        color: #000;
+    }
+
+    .orngbdrboxbetweenrow {
+        float: left;
+        width: 305px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .orngbdrboxinner {
+        float: left;
+        width: 306px;
+        padding: 5px 10px 5px 10px;
+        border: solid 1px #F18B30;
+        background-color: #fff;
+    }
+
+    p {
+        line-height: 1;
+        margin: 0px 0px 5px 5px;
+    }
+</style>
+
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+
+<div class="leftside-div-with-roundborder margin-top" style="width: 99%;">
+    <h1>@organizationName</h1>
+    <div style="float:left; width:100%; margin-top:10px;">
+        <div style="float:left; width:100%;">
+            <fieldset>
+                <legend><b>Upcoming Events</b></legend>
+                <div style="margin-top:10px;">
+                    @if (Model.UpcomingEvents != null && Model.UpcomingEvents.Any())
+                    {
+                        <table id="list-view">
+                            <tr>
+                                <th>EventId</th>
+                                <th>
+                                    Event Date
+                                </th>
+                                <th>Location</th>
+                                <th style="text-align:center;">
+                                    Booked Customers
+                                </th>
+                            </tr>
+                            @foreach (var theEvent in Model.UpcomingEvents)
+                            {
+                                <tr>
+                                    <td>@theEvent.EventCode</td>
+                                    <td>@theEvent.EventDate.ToShortDateString() </td>
+                                    <td>@(theEvent.Location + " - " + theEvent.City + ", " + theEvent.State + "-" + theEvent.Zip)</td>
+                                    <td style="text-align:center;">@theEvent.AppointmentsBooked</td>
+                                </tr>
+                            }
+                        </table>
+                    }
+                    else
+                    {
+                        <h2>No Upcoming Events</h2>
+                    }
+                </div>
+                <div style="margin-top:10px; width: 100%;">
+                    <span style="float: right; margin-right: 10px;">
+                        <a href="/Scheduling/Event/HealthPlanEvents?showUpcoming=true">View All</a>
+                    </span>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div style="float:left; width:100%; margin-top:10px;">
+        <div style="float:left; width:50%;">
+            <fieldset>
+                <legend><b>Member Status</b></legend>
+                <div style="margin-top:10px; width: 100%;">
+                    <p>
+                        <span class="title-txt">Eligible Customers</span>
+                        <span class="count-txt">@Model.MemberStatus.EligibleCustomersCount</span>
+                    </p>
+                    <p><img src="~/App/Images/dottedline300px.gif" alt="" /></p>
+                    <p class="orngbdrboxinnerrow">
+                        <span class="title-txt">Tested Customers</span>
+                        <span class="count-txt">@Model.MemberStatus.MembersTestedCount</span>
+                    </p>
+                    <p><img src="~/App/Images/dottedline300px.gif" alt="" /></p>
+                    <p class="orngbdrboxinnerrow">
+                        <span class="title-txt">Scheduled Customers</span>
+                        <span class="count-txt">@Model.MemberStatus.MembersScheduledCount</span>
+                    </p>
+                    <p><img src="~/App/Images/dottedline300px.gif" alt="" /></p>
+                    <p class="orngbdrboxinnerrow">
+                        <span class="title-txt">Cancelled Customers</span>
+                        <span class="count-txt">@Model.MemberStatus.MembersCancelledCount</span>
+                    </p>
+                    <p><img src="~/App/Images/dottedline300px.gif" alt="" /></p>
+                    <p class="orngbdrboxinnerrow">
+                        <span class="title-txt">No Show Customers</span>
+                        <span class="count-txt">@Model.MemberStatus.MembersNoShowedCount</span>
+                    </p>
+                </div>
+            </fieldset>
+        </div>
+        <div style="float:left; width:50%;">
+            <fieldset style="height:255px;">
+                <legend><b>Notification of Critical/Urgent Results <a id="critical-qtip">?</a></b></legend>
+                <div style="margin-top:10px;">
+                    @if (Model.CriticalUrgentResult != null && Model.CriticalUrgentResult.Any())
+                    {
+                        <table id="list-view">
+                            <tr>
+                                <th>CustomerId</th>
+                                <th style="width:140px;">
+                                    Name
+                                </th>
+                                <th>Result</th>
+                                <th style="text-align:right;">
+                                    Event Date
+                                </th>
+                                <th style="text-align:right;">
+                                </th>
+                            </tr>
+                            @foreach (var result in Model.CriticalUrgentResult)
+                            {
+                                <tr>
+                                    <td>@result.CustomerId</td>
+                                    <td style="width:140px;">@result.CustomerName.ToString() </td>
+                                    <td>@result.ResultSummary</td>
+                                    <td style="text-align:right;">@result.EventDate.ToShortDateString()</td>
+                                    <td style="text-align:right;">
+                                        @if (result.CriticalMarkedByPhysician)
+                                        {
+                                            <a href="/App/Common/Results.aspx?EventId=@result.EventId&CustomerId=@result.CustomerId" target="_blank">View</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="javascript:void(0);" onclick="openCriticalDataDialog('@result.EventId','@result.CustomerId')">View</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    }
+                    else
+                    {
+                        <h2>No Critical Customers</h2>
+                    }
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+                function () {
+                    $(this).removeClass('row-hover');
+                });
+        });
+    </script>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#critical-qtip").qtip({
+            position: {
+                my: 'left top'
+            },
+            style: {
+                width: '500px'
+            },
+            content: {
+                title: "Critical Disclaimer",
+                text: function (api) {
+                    return "Here for Critical, the results of the study are preliminary. They have not yet been read and interpreted by a @(IoC.Resolve<ISettings>().CompanyName) physician.";
+                }
+            }
+        });
+    });
+</script>
+
+

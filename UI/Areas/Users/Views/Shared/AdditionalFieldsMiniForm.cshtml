@@ -1,0 +1,16 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+<div class="mini-container" >
+    <div style="overflow: hidden; border-right: 1px solid red; width: 61%; margin-right: 7px;
+        float: left;">
+        <div class="editor-row">
+            Select Additional Fields:
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">Select Additional Fields.</div>
+            <br />
+            @Html.DropDownList("ddlAdditionalFields", DropDownHelper.GetAdditionalFields(), new { @style = "width:98%;" })
+        </div>
+    </div>
+    <div style="overflow: hidden; width: 36%; float: left; margin-top: 10px;">
+        <input type="button" id="btnAdditionalFields" value="Add" />
+    </div>
+</div>

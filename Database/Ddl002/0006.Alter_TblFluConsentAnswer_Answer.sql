@@ -1,0 +1,6 @@
+USE [$(dbName)]
+GO
+
+ALTER TABLE TblFluConsentAnswer
+ALTER COLUMN Answer VARCHAR(MAX) NULL
+GO

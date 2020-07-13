@@ -1,0 +1,99 @@
+﻿@using Falcon.App.Core.Sales.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+
+@model HospitalPartnerEventListModelFilter
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<h2>
+    Search Records
+    <span style="float:right"> Preset Searches: <a href="#" onclick="clickToday(); return false;">Today </a>|<a href="#" onclick="clickYesterday(); return false;">Yesterday </a>|<a href="#" onclick="clickThisWeek(); return false;">This Week </a> </span>
+</h2>
+@{var currentRole = (Falcon.App.Core.Enum.Roles)IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.GetSystemRoleId; }
+<div style="padding-left: 5px; overflow: hidden;">    
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">Event From: </div>
+        @Html.TextBoxFor(m => m.FromDate,new { @class = "datePicker", @value=String.Format("{0:yyyy-MM-dd}", Model.FromDate.HasValue ? Model.FromDate : DateTime.Now)})       
+
+        @Html.HiddenFor(m=>m.HospitalPartnerId)
+        @Html.HiddenFor(m=>m.HospitalFacilityId)
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">Event To: </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">Event Id: </div>
+        @Html.TextBoxFor(m=>m.EventId)
+    </div> 
+    <div class="editor-column" style="width: 15%;">
+        <div class="small-text">Status: </div>
+        @Html.DropDownListFor(m => m.Status, DropDownHelper.GetHospiatlPartnerEventStatusFilter())
+    </div> 
+    <div class="editor-column" style="width: 20%;">
+        <div class="small-text">Evaluation Status: </div>
+        @Html.DropDownListFor(m => m.ResultInterpretation, DropDownHelper.GetResultInterpretation())
+    </div>
+</div>
+<div style="padding-left: 5px; padding-top:10px; overflow: hidden;"> 
+    <div class="editor-column" style="width: 40%;">
+        @Html.CheckBoxFor(m=>m.CriticalMarkedByTechnician) Critical Marked by Technician <a id="critical-qtip"><b>?</b></a>
+    </div>
+    @if (currentRole == Falcon.App.Core.Enum.Roles.HospitalPartnerCoordinator)
+    {
+        <div class="editor-column" style="float: right; padding-top: 12px; text-align: right;">
+            @Html.ActionLink("Clear", "SearchEvents", "HospitalPartner") | @Html.SubmitButton("Search")
+        </div>
+    }
+    else if (currentRole == Falcon.App.Core.Enum.Roles.HospitalFacilityCoordinator)
+    {
+        <div class="editor-column" style="float: right; padding-top: 12px; text-align: right;">
+            @Html.ActionLink("Clear", "SearchHospitalFacilityEvents", "HospitalPartner") | @Html.SubmitButton("Search")
+        </div>
+    }
+</div>
+<script language="javascript" type="text/javascript">
+
+    function clickToday() {
+        clearAll();
+        $("input#FromDate").val('@DateTime.Now.ToShortDateString()');
+        $("input#ToDate").val('@DateTime.Now.ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clickYesterday() {
+        clearAll();
+        $("input#FromDate").val('@DateTime.Now.AddDays(-1).ToShortDateString()');
+        $("input#ToDate").val('@DateTime.Now.AddDays(-1).ToShortDateString()');
+        $("#Submit").click();
+    }
+    function clickThisWeek() {
+        clearAll();
+        $("input#FromDate").val('@DateTime.Now.AddDays(-1 * (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("input#ToDate").val('@DateTime.Now.AddDays(6 - (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clearAll() {
+        $("input[type=text]").val("");
+    }
+
+     $(document).ready(function () {
+         $("#critical-qtip").qtip({
+             position: {
+                 my: 'left top'
+             },
+             style: {
+                 width: '500px'
+             },
+             content: {
+                 title: "Critical Disclaimer",
+                 text: function (api) {
+                     return "In case of Criticals study are preliminary. They have not yet been read and interpreted by a @(IoC.Resolve<ISettings>().CompanyName) physician.";
+                 }
+             }
+         });
+     });
+
+</script>

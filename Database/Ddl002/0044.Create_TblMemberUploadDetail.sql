@@ -1,0 +1,86 @@
+USE [$(dbname)]
+GO
+
+
+CREATE TABLE TblMemberUploadParseDetail
+(	
+	Id BIGINT NOT NULL IDENTITY(1,1),
+	CorporateUploadId BIGINT NOT NULL,
+	CustomerId BIGINT NULL,
+	MemberID VARCHAR(512) NULL,
+	FirstName VARCHAR(512) NULL,
+	MiddleName VARCHAR(512) NULL,
+	LastName VARCHAR(512) NULL,
+	Gender VARCHAR(128) NULL,
+	Dob VARCHAR(128) NULL,
+	Email VARCHAR(512) NULL,
+	AlternateEmail VARCHAR(512) NULL,
+	PhoneCell VARCHAR(128) NULL,
+	PhoneHome VARCHAR(128) NULL,
+	Address1 VARCHAR(500) NULL,
+	Address2 VARCHAR(500) NULL,
+	City VARCHAR(512) NULL,
+	[State] VARCHAR(512) NULL,
+	Zip VARCHAR(128) NULL,
+	Hicn VARCHAR(512) NULL,
+	PcpFirstName VARCHAR(512) NULL,
+	PcpLastName VARCHAR(512) NULL,
+	PcpPhone VARCHAR(128) NULL,
+	PcpFax VARCHAR(128) NULL,
+	PcpEmail VARCHAR(512) NULL,
+	PcpAddress1 VARCHAR(500) NULL,
+	PcpAddress2 VARCHAR(500) NULL,
+	PcpCity VARCHAR(512) NULL,
+	PcpState VARCHAR(512) NULL,
+	PcpZip VARCHAR(128) NULL,
+	PcpNpi VARCHAR(512) NULL,
+	PreApprovedTest VARCHAR(1024) NULL,
+	IsEligible VARCHAR(512) NULL,
+	TargetYear VARCHAR(64) NULL,
+	[Language] VARCHAR(512) NULL,
+	Lab VARCHAR(512) NULL,
+	Copay VARCHAR(512) NULL,
+	MedicareAdvantagePlanName VARCHAR(500) NULL,
+	Lpi VARCHAR(512) NULL,
+	Market VARCHAR(512) NULL,
+	Mrn VARCHAR(512) NULL,
+	GroupName VARCHAR(512) NULL,
+	IcdCodes VARCHAR(512) NULL,
+	PreApprovedPackage VARCHAR(500) NULL,
+	PreApprovedPackageId BIGINT NULL,
+	PCPMailingAddress1 VARCHAR(500) NULL,
+	PCPMailingAddress2 VARCHAR(500) NULL,
+	PCPMailingCity VARCHAR(512) NULL,
+	PCPMailingState VARCHAR(512) NULL,
+	PCPMailingZip VARCHAR(128) NULL,
+	CurrentMedication VARCHAR(MAX) NULL,
+	CurrentMedicationSource VARCHAR(512) NULL,
+	AdditionalField1 VARCHAR(512) NULL,
+	AdditionalField2 VARCHAR(512) NULL,
+	AdditionalField3 VARCHAR(512) NULL,
+	AdditionalField4 VARCHAR(512) NULL,
+	Activity VARCHAR(512) NULL,
+	PredictedZip VARCHAR(MAX) NULL,
+	Mbi VARCHAR(512) NULL,
+	BillingMemberId VARCHAR(512) NULL,
+	BillingMemberPlan VARCHAR(512) NULL,
+	BillingMemberPlanYear VARCHAR(64) NULL,
+	WarmTransferAllowed VARCHAR(512) NULL,
+	WarmTransferYear VARCHAR(64) NULL,
+	AcesId VARCHAR(512) NULL,
+	EligibilityYear VARCHAR(64) NULL,
+	ErrorMessage VARCHAR(MAX) NULL,
+	IsSuccessful BIT NOT NULL
+	CONSTRAINT [PK_TblMemberUploadDetail] PRIMARY KEY CLUSTERED 
+	(
+		[Id] ASC
+	)WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+ALTER TABLE TblMemberUploadParseDetail
+ADD CONSTRAINT TblMemberUploadParseDetail_TblCorporateUpload_CorporateUploadId
+FOREIGN KEY (CorporateUploadId)
+REFERENCES [TblCorporateUpload](Id)
+GO

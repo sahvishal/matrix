@@ -1,0 +1,23 @@
+﻿<div>
+    <div class="pull-left">
+        <div class="table-cell">
+            <div class="select-wrap dob-day">
+                <input type="text" placeholder="00" class="form-control sm-input" maxlength="2" ng-blur="changeDate()" only-digits maxlength="2" dmin="1" dmax="12" ng-model="date.Month" ng-required="true" />
+            </div>
+            <span class="datepicker-info">Month</span>
+        </div>
+        <div class="table-cell">
+            <div class="select-wrap dob-day">
+                <input type="text" placeholder="00" class="form-control sm-input" maxlength="2" ng-blur="changeDate()" only-digits maxlength="2" dmin="1" dmax="31" ng-model="date.Day" ng-required="true" />
+            </div>
+            <span class="datepicker-info">Day</span>
+        </div>
+        <div class="table-cell">
+            <div class="select-wrap dob-day">
+                <input type="text" placeholder="00" class="form-control sm-input" maxlength="2" ng-blur="changeDate()" only-digits dmin="1" dmax="99" ng-model="date.Year"
+                       ng-required="true" />
+                <span class="datepicker-info">Year</span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+﻿<div class="main-container border-default">
+    <div class="delivery-wrapper">
+        <h3 ng-show="shipping.EnableImageUpsell" class="big-text text-uppercase junior-legend">Don't forget the Images.</h3>
+        <product-box ng-repeat="productdetail in shipping.AllProducts" ng-show="shipping.EnableImageUpsell"></product-box>
+        <h3 class="big-text text-uppercase junior-legend">Select how would you like to receive your results.</h3>
+        <shipping-box ng-repeat="shippingdetail in shipping.AllShippingOptions"></shipping-box>
+    </div>
+
+    <div class="clearfix lower-btns">
+        <div class="col-sm-12">
+
+            <!--<button class="btn btn-primary pull-left" ng-click="goToPreviousStep()" ng-disabled="isPosted"><span ng-hide="loader_back">&#60;</span> Back <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_back"></i></button>-->
+            <button class="btn btn-primary pull-right" ng-click="submitShippingAndProcut()" ng-disabled="isPosted">Continue <span ng-hide="loader_next">&#62;</span><i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_next"></i></button>
+        </div>
+    </div>
+</div>

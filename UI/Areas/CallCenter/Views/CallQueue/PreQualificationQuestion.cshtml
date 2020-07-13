@@ -1,0 +1,200 @@
+﻿@using Falcon.App.Core.Medical.ViewModels;
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Enum;
+
+@model IEnumerable<PreQualificationQuestionViewModel>
+    
+    <style>
+        #tblQuestion table {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+            #tblQuestion table tr {
+            }
+
+                #tblQuestion table tr td {
+                    padding: 0;
+                }
+
+        .ui-widget {
+            font-size: 1em;
+        }
+    </style>
+
+    @if (Model != null)
+    {
+        <table id="tblPrequalificationQuestions" style="width:100%;">
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div style="font-weight:bold">Test : <span class="testName">@item.TestName</span></div>
+                        </td>
+                    </tr>
+                    if (!item.Questions.IsNullOrEmpty())
+                    {
+                        <tr>
+                            <td>
+                                <div id="temp-div">
+                                    <table style="width: 100%" id="tblQuestion">
+                                        <tbody>
+                                            @foreach (var q in item.Questions.Where(x => !x.TypeId.HasValue || x.TypeId.Value == (long)DisplayControlType.Radio))
+                                            {
+                                                var ans = q.ControlValues;
+                                                var del = q.ControlValueDelimiter;
+                                                var options = ans.Split(',');
+                                                var display = q.ParentId != null ? "none" : "block";
+
+                                                <tr id="tr_@q.Id" style="display:@display">
+                                                    <td style="width: 300px; vertical-align:top">
+                                                        <input type="hidden" id="hdnQuestionId" value="@q.Id" />
+                                                        <input type="hidden" id="hdnTestId" value="@item.TestId" />
+                                                        <input type="hidden" id="hdnControlType" name="@("hdnControlType_" + q.Id)" value="@((DisplayControlType)q.TypeId)" />
+                                                        <div class="question" id="@("que_" + q.Id)">
+                                                            @q.Question.Trim()
+                                                        </div>
+
+                                                    </td>
+
+                                                    @if (options.Length > 2)
+                                                    {
+                                                        var childQuestion = item.Questions.FirstOrDefault(x => x.TypeId.HasValue && x.TypeId.Value == (long)DisplayControlType.TextBox && x.ParentId == q.Id);
+                                                        var isShowonOnFirst = false;
+                                                        <td>
+                                                            <table style="width: 100%">
+
+                                                                @foreach (var option in options)
+                                                                {
+                                                                    <tr>
+                                                                        <td style="padding:2px;">
+                                                                            <div style="float:left;">
+                                                                                @if ((long)DisplayControlType.Radio == (long)q.TypeId)
+                                                                                {
+                                                                                    <input type="radio" value="@option" testid="@item.TestId" questionid="@q.Id" class="radio" onchange="RadioChangeEvent(@q.Id,'@option')" name="@(item.TestId)_@q.Id" id="@(item.TestId + "_" + q.Id + "_" + option.Replace(" ","_"))" />@option
+                                                                                }
+
+                                                                            </div>
+
+                                                                            @if (childQuestion != null && !isShowonOnFirst)
+                                                                            {
+                                                                                isShowonOnFirst = true;
+                                                                                <input type="hidden" id="hdnControlType" name="@("hdnControlType_" + childQuestion.Id)" value="@((DisplayControlType)childQuestion.TypeId)" />
+                                                                                <div style="float: left; margin-left: 30px; display:none " id="@(item.TestId + "_" + childQuestion.Id)">
+                                                                                    <input type="text" name="@(item.TestId + "_" + childQuestion.Id)" parentquestionid="@q.Id" testid="@item.TestId" questionid="@childQuestion.Id" value="" class="datePicker" style="height: 20px; width: 105px;padding-left: 2px; padding-right: 2px; padding-top: 0; padding-bottom: 0;" />
+                                                                                </div>
+
+                                                                            }
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+
+                                                            </table>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td style="padding:2px;">
+                                                            <div>
+                                                                @foreach (var option in options)
+                                                                {
+                                                                    if ((long)Falcon.App.Core.Enum.DisplayControlType.Radio == (long)q.TypeId)
+                                                                    {
+                                                                        <input type="radio" value="@option" class="radio" testid="@item.TestId" questionid="@q.Id" onchange="RadioChangeEvent(@q.Id,'@option')" name="@(item.TestId)_@q.Id)" id="@(item.TestId + "_" + q.Id + "_" + option)" />@option
+                                                                    }
+
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                    }
+                                                </tr>
+
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+
+    }
+
+    <script>
+
+        $(".datePicker").datepicker({
+            dateFormat: 'mm/dd/yy'
+        });
+
+        var listQuestionRule = new Array();
+        @{
+        if (Model!=null)
+        {
+           var questionRule = Model.First().QuestionRule;
+
+            foreach (var item in questionRule)
+            {
+                <text>
+        rule = new Object();
+        rule.DependentQuestionId = '@item.DependentQuestionId';
+        rule.DependencyValue = "@item.DependencyValue";
+        rule.QuestionId = '@item.QuestionId';
+        rule.dispaly = false;
+        listQuestionRule.push(rule);
+        </text>
+            }
+        }
+
+
+        }
+
+        function RadioChangeEvent(questionId, ans) {
+
+            $(listQuestionRule).each(function (index, item) {
+
+                if (item.DependencyValue == ans && item.DependentQuestionId == questionId) {
+                    $("#tr_" + item.QuestionId).css("display", "block");
+                }
+                else if (item.DependencyValue != ans && item.DependentQuestionId == questionId) {
+                    $("#tr_" + item.QuestionId).css("display", "none");
+                    $("#tr_" + item.QuestionId).find("input:radio").removeAttr("checked");
+                    $("#tr_" + item.QuestionId).find("input:text").val('');
+                    $("#tr_" + item.QuestionId).find("input:text").hide();
+                }
+                else if (item.DependentQuestionId == questionId) {
+                    $("#tr_" + item.QuestionId).css("display", "none");
+                    $("#tr_" + item.QuestionId).find("input:radio").removeAttr("checked");
+                    $("#tr_" + item.QuestionId).find("input:text").val('');
+                    $("#tr_" + item.QuestionId).find("input:text").hide();
+                }
+
+                if (questionId == 5 && ans == 'No') {
+                    $("#tr_8").css("display", "none");
+                    $("#tr_" + item.QuestionId).find("input:radio").removeAttr("checked");
+                    $("#tr_" + item.QuestionId).find("input:text").val('');
+                    $("#tr_" + item.QuestionId).find("input:text").hide();
+                }
+
+                if (questionId == 7 && ans == 'Date') {
+                    $("[parentquestionid='" + questionId + "']").closest("div").show();
+                    $("[parentquestionid='" + questionId + "']").show();
+                    $("[parentquestionid='" + questionId + "'].datePicker").datepicker('setDate', new Date());
+                }
+                else if (questionId == 7 && ans !== 'Date') {
+                    $("[parentquestionid='" + questionId + "']").hide();
+                    $("[parentquestionid='" + questionId + "']").val('');
+                }
+
+            });
+        }
+        $(function () {
+            $('.datePicker').datepicker();
+        });
+
+    </script>

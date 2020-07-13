@@ -1,0 +1,53 @@
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="NoRole" CodeBehind="NoRole.master.cs" %>
+<%@ Import Namespace="Falcon.App.Core.Application" %>
+<%@ Import Namespace="Falcon.App.DependencyResolution" %>
+
+<%@ Register Src="~/App/UCCommon/Footer.ascx" TagName="Footer" TagPrefix="FooterControl" %>
+<%@ Register Src="~/App/UCCommon/ucQADiv.ascx" TagName="ucQaDiv" TagPrefix="ucQaDiv" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Untitled Page</title>
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+    <link href="StyleSheets/Commonstyle.css" rel="Stylesheet" type="text/css" />
+    <script src="JavascriptFiles/validations.js" language="javascript" type="text/javascript"></script>
+    <script src="JavascriptFiles/gridcommon.js" language="javascript" type="text/javascript"></script>
+    <script src="/scripts/jquery-1.5.2.min.js" type="text/javascript"></script>
+</head>
+<body>
+    <form id="form1" runat="server">    
+    <div style="float: left;">
+        <ucQaDiv:ucQaDiv ID="QaDiv" runat="server" />
+    </div>
+    <div class="maintopcontainer">
+        <div class="topintercontainer">
+            <%--************** Date Panel *****************--%>
+            <div class="datepanelmain">
+                <div>
+                </div>
+            </div>
+            <%-- *************** Logo Row **************** --%>
+            <div class="logoside" style="background: url(<%= IoC.Resolve<ISettings>().SmallLogo %>) no-repeat">
+            </div>
+            <%--*************** Menu Row ***************** --%>
+            <div class="mainnav">
+                <div class="rgtprt">
+                </div>
+            </div>
+            <%-- ***************************************** --%>
+        </div>
+        <div class="mainbodyouter">
+            <%-- *********** Content PlaceHolder here ********** --%>
+            <div>
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+            <%-- *********************************************** --%>
+        </div>
+        <%-- *************************** Footer starts here ************************** --%>
+        <FooterControl:Footer ID="FooterControl" runat="server" />
+        <%-- ********************************************************************** --%>
+    </div>
+    </form>
+</body>
+</html>

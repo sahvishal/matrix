@@ -1,0 +1,2160 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link rel="Stylesheet" type="text/css" href="content/FinalPdf.css" />
+    <script type="text/javascript" src="content/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="content/jquery-ui-1.8.12.custom.min.js"></script>
+</head>
+<body>
+    <div class="mainContainer-wopb">
+        <div class="topcontainer">
+            <div class="sectionUpper" style="margin: 0 0.5%; padding: 0 3%;">
+                <div style="float: left; width: 20%; padding-top: 15px;">
+                    <h3>
+                        Clinical Form
+                    </h3>
+                </div>
+                <div style="float: left; width: 50%; text-align: center;">
+                    <img id="logo-company" src="" alt="" />
+                </div>
+                <div style="float: right; width: 27%; padding-top: 15px; font: normal 12px arial;">
+                    <div id="fullBusinessName">
+                    </div>
+                    <div id="businessAddress">
+                    </div>
+                    <div>
+                        <span id="tollFreeNumber"></span>| <span id="siteUrl"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="customer-info" class="sectionUpper">
+                <div class="row">
+                    <div style="float: left; width: 60%;">
+                        <span class="label">Client Name: </span>
+                        <input id="customer-name" type="text" style="width: 80%;" />
+                    </div>
+                    <div style="float: left; width: 38%; margin-right: 10px;">
+                        <span class="label">Event Id: </span>
+                        <input id="eventid" type="text" style="width: 20%;" />&nbsp; <span class="label">Customer
+                            Id: </span>
+                        <input id="customerid" type="text" style="width: 33%;" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="float: left; width: 65%;">
+                        <span class="label">Screening Location: </span>
+                        <input id="screening-location" type="text" style="width: 75%;" />
+                    </div>
+                    <div style="float: left; width: 33%;">
+                        <span class="label">Screening Date: </span>
+                        <input id="screening-date" type="text" style="width: 61%;" />
+                    </div>
+                </div>
+                <div class="row">
+                    <span class="label">Screened For: </span>
+                    <input id="screenedfor-package" type="text" style="width: 87%;" />
+                </div>
+                <div class="row">
+                    <div style="float: left; width: 30%;">
+                        <span class="label">Payment Amount: </span>
+                        <input type="text" id="payment-amount" style="width: 40%;" />
+                    </div>
+                    <div style="float: left; width: 70%;">
+                        <span class="label">Payment Method: </span>
+                        <input type="checkbox" id="payment-method-cash" />
+                        Cash &nbsp; &nbsp;
+                        <input type="checkbox" id="payment-method-check" />
+                        Check #<input type="text" id="check-number" style="width: 70px;" />&nbsp;&nbsp;
+                        <input type="checkbox" id="payment-method-card" />
+                        Card #<input type="text" id="card-number" style="width: 28%;" />
+                    </div>
+                </div>
+            </div>
+            <div class="sectionUpper">
+                <fieldset class="signing-physician">
+                    <legend>
+                        <h2>
+                            Basic Biometric</h2>
+                    </legend>
+                    <div class="lrow">
+                        <strong>Blood Pressure: </strong>&nbsp;&nbsp; <b>Systolic: </b>
+                        <input type="text" id="systolicbp" disabled="disabled" class="small-width" />
+                        &nbsp;&nbsp; <b>Diastolic: </b>
+                        <input type="text" id="diastolicbp" disabled="disabled" class="small-width" />
+                        &nbsp;&nbsp;<strong>Pulse Rate: </strong>&nbsp;&nbsp;
+                        <input type="text" id="pulseratebb" disabled="disabled" class="small-width" />
+                        &nbsp;&nbsp; <b>Tested Arm: </b>&nbsp; &nbsp;
+                        <input type="radio" id="rightArmBp" disabled="disabled" name="bpMeasurement" />
+                        Right &nbsp;&nbsp;
+                        <input type="radio" id="leftArmBp" disabled="disabled" name="bpMeasurement" />
+                        Left&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="checkbox" id="isElevatedBp" disabled="disabled" />
+                        Abnormal
+                    </div>
+                </fieldset>
+            </div>
+            <div id="aaaTestResultDiv" class="sectionUpper">
+                <div class="resultHeader">
+                    <span class="rhleft">ABDOMINAL AORTIC ANEURYSM (AAA) SCREENING </span><span class="rhright">
+                        <b>Technician: </b>
+                        <input type="text" id="techaaa" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div id="AaaFindingDiv">
+                        <table cellspacing="0" cellpadding="0" id="aaaFinding">
+                        </table>
+                        <!--<div class="resultSection">
+                            <b>Incidental Findings:</b>
+                            
+                        </div>-->
+                    </div>
+                    <div id="AaaReadingDiv">
+                        <div class="aaaReadingwidth">
+                            Largest Measurement (Sagittal View):
+                            <input type="text" id="AortaSizeInputText" style="width: 20%;" />cm
+                        </div>
+                        <div class="aaaReadingwidth" id="aaaSagitalViewDiv">
+                            <table cellspacing="0" cellpadding="0" id="aaaSagitalView">
+                            </table>
+                        </div>
+                        <div class="aaaReadingwidth">
+                            Largest Measurement (Transverse View):
+                            <input type="text" id="TVDatapointOneTextbox" style="width: 10%;" />cm X
+                            <input type="text" id="TVDatapointTwoTextbox" style="width: 10%;" />cm
+                        </div>
+                        <div class="aaaReadingwidth" id="aaaTransverseViewDiv">
+                            <table cellspacing="0" cellpadding="0" id="aaaTransverseView">
+                            </table>
+                        </div>
+                        <div class="aaaReadingwidth">
+                            <span style="float: left; padding-right: 10px;">
+                                <input type="checkbox" id="AorticDissectionCheckbox" />Aortic Dissection 
+                            </span>
+                            <span style="float: left; padding-right: 10px;">
+                                <input type="checkbox" id="PlaqueCheckbox" />Plaque 
+                            </span>
+                            <span style="float: left; padding-right: 5px;">
+                                <input type="checkbox" id="ThrombusCheckbox" />Thrombus
+                            </span>
+                            <div style="float: left;">
+                                <table id="aaaIncidenatlFindings">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsleft" style="width: 45%;" id="aaaUnableToScreenDiv">
+                            <table cellspacing="0" cellpadding="0" id="aaaUnableToScreen">
+                            </table>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 40%;">                                
+                                <input type="checkbox" id="TechnicallyLimitedbutReadableAaaInputCheck" />&nbsp;Technically limited, but readable<br />
+                                <input type="checkbox" id="RepeatStudyAaaInputCheck" />&nbsp;Repeat Study/Unreadable<br />
+                                <input type="checkbox" id="criticalAaa" /><span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 55%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksAaa" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="aaaTestResultDisabledDiv" class="sectionUpper">
+                <img src="content/AAANotPerformed.gif" alt="" />
+            </div>
+            <div id="PpaaaTestResultDiv" class="sectionUpper">
+                <div class="resultHeader">
+                    <span class="rhleft">ABDOMINAL AORTIC ANEURYSM (AAA) SCREENING </span>
+                    <span class="rhright">
+                        <b>Technician: </b>
+                        <input type="text" id="techPpaaa" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div id="PpAaaFindingDiv">
+                        <table cellspacing="0" cellpadding="0" id="PpaaaFinding"></table>
+                    </div>
+                    <div id="PpAaaReadingDiv">
+                        <div class="aaaReadingwidth">
+                            Largest Measurement (Sagittal View):
+                            <input type="text" id="PpAortaSizeInputText" style="width: 20%;" />cm
+                        </div>
+                        <div class="aaaReadingwidth" id="PpaaaSagitalViewDiv">
+                            <table cellspacing="0" cellpadding="0" id="PpaaaSagitalView"></table>
+                        </div>
+                        <div class="aaaReadingwidth">
+                            Largest Measurement (Transverse View):
+                            <input type="text" id="PpTVDatapointOneTextbox" style="width: 10%;" />cm X
+                            <input type="text" id="PpTVDatapointTwoTextbox" style="width: 10%;" />cm
+                        </div>
+                        <div class="aaaReadingwidth" id="PpaaaTransverseViewDiv">
+                            <table cellspacing="0" cellpadding="0" id="PpaaaTransverseView"></table>
+                        </div>
+                        <div class="aaaReadingwidth">
+                            <span style="float: left; padding-right: 10px;">
+                                <input type="checkbox" id="PpAorticDissectionCheckbox" />Aortic Dissection
+                            </span>
+                            <span style="float: left; padding-right: 10px;">
+                                <input type="checkbox" id="PpPlaqueCheckbox" />Plaque/Atherosclerosis
+                            </span>
+                            <span style="float: left; padding-right: 5px;">
+                                <input type="checkbox" id="PpThrombusCheckbox" />Thrombus
+                            </span>
+                            <div style="clear:both; margin-left:-2px;">
+                                <table id="PpaaaIncidenatlFindings"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsleft" style="width: 45%;" id="PpaaaUnableToScreenDiv">
+                            <table cellspacing="0" cellpadding="0" id="PpaaaUnableToScreen"></table>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 40%;">
+                                <input type="checkbox" id="TechnicallyLimitedbutReadablePpAaaInputCheck" />&nbsp;Technically limited, but readable<br />
+                                <input type="checkbox" id="RepeatStudyPpAaaInputCheck" />&nbsp;Unreadable<br />
+                                <input type="checkbox" id="criticalPpAaa" /><span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 55%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksPpAaa" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="PpaaaTestResultDisabledDiv" class="sectionUpper">
+                <img src="content/AAANotPerformed.gif" alt="" />
+            </div>
+            <div id="strokeResultDiv" class="sectionUpper">
+                <div class="resultHeader">
+                    <span class="rhleft">STROKE/CAROTID ARTERY SCREENING </span><span class="rhright"><b>
+                        Technician </b>
+                        <input type="text" id="techstroke" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div id="strokeFindingDiv">
+                        <table cellspacing="0" cellpadding="0" id="strokeFinding">
+                            <tr>
+                                <th>
+                                    Right
+                                </th>
+                                <th style="padding-left: 3px;">
+                                    Left
+                                </th>
+                                <th style="float:left; width:110px; padding-left:10px; text-align:left;">
+                                    Stenosis
+                                </th>
+                                <th></th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="strokeReadingDiv">
+                        <div>
+                            <div class="blockLeft">
+                                RICA:
+                            </div>
+                            <div class="blockRight">
+                                <div style="float: left;">
+                                    <span style="width: 30px; float: left; padding-top: 4px;">PSV</span> <span style="float: left;">
+                                        <input type="text" id="RICAPSVInputText" />&nbsp;cm/sec</span>
+                                </div>
+                                <div style="float: left;">
+                                    <span style="width: 30px; float: left; padding-top: 4px;">EDV</span> <span style="float: left;">
+                                        <input type="text" id="RICAEDVInputText" />&nbsp;cm/sec</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="LowVelocityRICACheckbox" />
+                            <span id="LowVelocityRICALabel"></span>
+                        </div>
+                        <div>
+                            <div class="blockLeft">
+                                LICA:
+                            </div>
+                            <div class="blockRight">
+                                <div style="float: left;">
+                                    <span style="width: 30px; float: left; padding-top: 4px;">PSV</span> <span style="float: left;">
+                                        <input type="text" id="LICAPSVInputText" />&nbsp;cm/sec</span>
+                                </div>
+                                <div style="float: left;">
+                                    <span style="width: 30px; float: left; padding-top: 4px;">EDV</span> <span style="float: left;">
+                                        <input type="text" id="LICAEDVInputText" />&nbsp;cm/sec</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="LowVelocityLICACheckbox" />
+                            <span id="LowVelocityLICALabel"></span>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsleft" id="strokeUnableToScreenDiv">                            
+                            <div class="margin-small">
+                                <table cellspacing="0" cellpadding="0" id="strokeUnableToScreen">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 40%;">
+                                <input type="checkbox" id="TechnicallyLimitedbutReadableStrokeInputCheck" />&nbsp;Technically limited, but readable<br />
+                                <input type="checkbox" id="RepeatStudyStrokeInputCheck" />&nbsp;Repeat Study/Unreadable<br />
+                                <input type="checkbox" id="criticalStroke" /><span style="font-weight: bold">Critical (Self Submit within 48 hrs) </span>
+                            </div>
+                            <div class="rsright" style="width: 55%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksStroke" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="strokeResultDisabledDiv" class="sectionUpper">
+                <img src="content/StrokeNotPerformed.gif" alt="" />
+            </div>
+            <div id="leadResultDiv" class="sectionUpper">
+                <div class="resultHeader">
+                    <span class="rhleft">LOWER EXTREMITY ARTERIAL DUPLEX (LEAD) SCREENING </span><span class="rhright">
+                        <b>
+                            Technician
+                        </b>
+                        <input type="text" id="techlead" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div id="leadFindingDiv">
+                        <table cellspacing="0" cellpadding="0" id="leadFinding">
+                            <tr>
+                                <th>
+                                    Right
+                                </th>
+                                <th style="padding-left: 3px;">
+                                    Left
+                                </th>
+                                <th></th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="leadReadingDiv">
+                        <div>
+                            <div class="blockLeft" style="width:295px;">
+                                Right:
+                            </div>
+                            <div class="blockRight" style="width:295px;">
+                                <div style="float: left;">
+                                    <span style="width: 200px; float: left; padding-top: 4px;">CFA (Common femoral artery) PSV</span>
+                                    <span style="float: left;">
+                                        <input type="text" id="RightCFAPSVInputText" />&nbsp;cm/sec
+                                    </span>
+                                </div>
+                                <div style="float: left;">
+                                    <span style="width: 200px; float: left; padding-top: 4px;">PSFA (Proximal femoral artery) PSV</span> 
+                                    <span style="float: left;">
+                                        <input type="text" id="RightPSFAPSVInputText" />&nbsp;cm/sec
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="LowVelocityRightCheckbox" />
+                            <span id="LowVelocityRightLabel"></span>
+                        </div>
+                        <div>
+                            <div class="blockLeft" style="width:295px;">
+                                Left:
+                            </div>
+                            <div class="blockRight" style="width:295px;">
+                                <div style="float: left;">
+                                    <span style="width: 200px; float: left; padding-top: 4px;">CFA (Common femoral artery) PSV</span> 
+                                    <span style="float: left;">
+                                        <input type="text" id="LeftCFAPSVInputText" />&nbsp;cm/sec
+                                    </span>
+                                </div>
+                                <div style="float: left;">
+                                    <span style="width: 200px; float: left; padding-top: 4px;">PSFA (Proximal femoral artery) PSV</span> 
+                                    <span style="float: left;">
+                                        <input type="text" id="LeftPSFAPSVInputText" />&nbsp;cm/sec
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="LowVelocityLeftCheckbox" />
+                            <span id="LowVelocityLeftLabel"></span>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsleft" id="leadUnableToScreenDiv">
+                            <div class="margin-small">
+                                <table cellspacing="0" cellpadding="0" id="leadUnableToScreen"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 40%;">
+                                <input type="checkbox" id="TechnicallyLimitedbutReadableLeadInputCheck" />&nbsp;Technically limited, but readable<br />
+                                <input type="checkbox" id="RepeatStudyLeadInputCheck" />&nbsp;Unreadable<br />
+                                <input type="checkbox" id="criticalLead" /><span style="font-weight: bold">Critical (Self Submit within 48 hrs) </span>
+                            </div>
+                            <div class="rsright" style="width: 55%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksLead" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="leadResultDisabledDiv" class="sectionUpper">
+                <img src="content/StrokeNotPerformed.gif" alt="" />
+            </div>
+        </div>
+    </div>
+    <div class="mainContainer">
+        <div class="topcontainer">
+            <div id="ekgResultDiv" class="sectionUpper">
+                <div class="resultHeader">
+                    <span class="rhleft">ELECTROCARDIOGRAM (EKG) SCREENING </span><span class="rhright">
+                        <b>Technician: </b>
+                        <input type="text" id="techEkg" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultSection">
+                        <div class="ekg-finding-div">
+                            <table cellspacing="0" cellpadding="0" id="ekgFinding" class="ekg-finding-table"
+                                border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input name="EKGFindingsRadioButton" class="ekg-radio rbt-finding" type="radio" />No
+                                            Significant Abnormalty Seen
+                                        </td>
+                                        <td>
+                                            <input name="EKGFindingsRadioButton" class="ekg-radio rbt-finding" type="radio" />Mildly
+                                            Abnormal
+                                        </td>
+                                        <td>
+                                            <input name="EKGFindingsRadioButton" class="ekg-radio rbt-finding" type="radio" />Abnormal
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="ekg-physicianvalue-div">
+                            <div class="ekg-physicianvalue-inner-div">
+                                <input type="checkbox" id="RepeatStudyInputCheck" />Repeat Study&nbsp;&nbsp;
+                                <input type="checkbox" id="ArtifactInputCheck" />Artifact&nbsp;&nbsp;
+                                <input type="checkbox" id="ReversedLeadInputCheck" />Reversed Leads&nbsp;&nbsp;
+                                <input type="checkbox" id="ComparetoPrevEkgInputCheck" />Compare to Previous EKG
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div style="float: left; width: 100%; padding: 4px 0px; margin-top: 10px;">
+                            <table cellspacing="0" cellpadding="0" style="float: left; font-size: 11px;" width="270px"
+                                border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input id="sinusRythmInputCheck" type="checkbox" />Sinus Rhythm
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="sinusArrythmiaInputCheck" type="checkbox" />Sinus Arrhythmia
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="sinusBradycardiaInputCheck" type="checkbox" />Sinus Bradycardia
+                                            <input id="markedInputCheck" type="checkbox" />Marked &lt; 50
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="sinusTachycardiaInputCheck" type="checkbox" />Sinus Tachycardia
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="atrialFibrillationInputCheck" type="checkbox" />Atrial Fibrillation&nbsp;&nbsp;
+                                            <input id="AtrialFlutterInputCheck" type="checkbox" />Atrial Flutter
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="SupraventriculaCheckbox" type="checkbox" />Supraventricular Arrythmia
+                                            <input id="svtInputCheck" type="checkbox" />SVT
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="pacInputCheck" type="checkbox" />PAC(s)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="pvcInputCheck" type="checkbox" />PVC(s)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="PacerRythmCheckbox" type="checkbox" />Pacer Rythm
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="BundleBranchBlockCheckbox" type="checkbox" />Bundle Branch Block
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <table cellspacing="0" cellpadding="0" style="border-collapse: collapse; padding-left: 15px;"
+                                                border="0" id="bundleBranchBlockFinding">
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table cellspacing="0" cellpadding="0" border="0" width="270px" style="float: left;
+                                font-size: 11px">
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="qrsWideningInputCheck" />QRS widening
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="leftAxisInputCheck" />&nbsp;Left Axis
+                                        <input type="checkbox" id="RightAxisInputCheck" />
+                                        &nbsp;Right Axis
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="AbnormalAxisInputCheck" />&nbsp;Abnormal Axis
+                                        <input type="checkbox" id="LeftInputCheck" />Left
+                                        <input type="checkbox" id="RightInputCheck" />Right
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="LeftAnteriorfasicularBlockCheckbox" />Left Anterior Fasicular
+                                        Block
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="HeartBlockInputCheck" />AV Nodal Heart Block
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table cellspacing="0" cellpadding="0" border="0" style="padding-left: 15px;">
+                                            <tr>                                                
+                                                <td>
+                                                    <input type="checkbox" id="FirstDegreeBlockInputCheck" />
+                                                </td>
+                                                <td>
+                                                    1st  Degree AV Block
+                                                </td>
+                                            </tr>
+                                            <tr>                                                
+                                                <td>
+                                                    <input type="checkbox" id="SecondDegreeBlockInputCheck" />
+                                                </td>
+                                                <td>
+                                                    2nd Degree Mobitz I AV Block
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" id="TypeIIInputCheck" />
+                                                </td>
+                                                <td>
+                                                    2nd Degree Mobitz II AV Block
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" id="ThirdDegreeBlockInputCheck" />
+                                                </td>
+                                                <td>
+                                                    3rd Degree Complete AV Block
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="EkgVentricularCheckbox" />R/O Ventricular Hypertrophy
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="LeftVentricularCheckbox" />Left
+                                        <input type="checkbox" id="RightVentricularCheckbox" />Right
+                                    </td>
+                                </tr>
+                            </table>
+                            <table cellspacing="0" cellpadding="0" border="0" width="270px" style="float: left;
+                                font-size: 11px">
+                                <tr>
+                                    <td>
+                                        <input id="ProlongedQTCheckbox" type="checkbox" />Prolonged QTc Interval
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="ISchemicSttCheckbox" type="checkbox" />R/O Ischemic ST-T changes
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="NonSpecificSttCheckbox" type="checkbox" />Non Specific ST-T changes
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="PoorRWaveProgressionCheckbox" type="checkbox" />Poor R Wave Progression
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="InfarctionPatternCheckbox" type="checkbox" />R/O Infarction Pattern
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table cellspacing="0" cellpadding="0" id="infarctionPatternFinding" style="border-collapse: collapse;
+                                            padding-left: 15px;" border="0">
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="ATypicalWaveCheckbox" type="checkbox" />Atypical Q Wave lead III
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="EkgAtrialEnlargementCheckbox" type="checkbox" />Atrial Enlargement
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="EkgLeftAtrialCheckbox" type="checkbox" />Left
+                                        <input id="EkgRightAtrialCheckbox" type="checkbox" />Right
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input id="RepolarizationCheckbox" type="checkbox" />Repolarization Variant
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="EkgLowVoltageCheckbox" />Low Voltage
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="EkgLimbLeadsCheckbox" />Limb leads
+                                        <input type="checkbox" id="EkgPrecordialLeadsCheckbox" />Precordial leads
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsleft">
+                            <table cellspacing="0" cellpadding="0" id="ekgUnableToScreen">
+                            </table>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 30%;">
+                                <input type="checkbox" id="criticalEkg" />
+                                <span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 60%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="ekgPhysicianNotesTextbox" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="ekgResultDisabledDiv" class="sectionUpper">
+                <img src="content/ElectrocardiogramTestNotPer.gif" alt="" />
+            </div>
+            <div id="asiResultDiv" class="sectionUpper">
+                <div class="resultHeader">
+                    <span class="rhleft">ARTERIAL STIFFNESS INDEX (ASI) SCREENING </span><span class="rhright">
+                        <b>Technician: </b>
+                        <input type="text" id="techasi" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div id="asiFindingDiv" style="float: left; width: 50%">
+                        <div>
+                            <table cellspacing="0" cellpadding="0" id="asiFinding">
+                            </table>
+                        </div>
+                        <div class="margin-small">
+                            <table cellspacing="0" cellpadding="0" id="asiUnableToScreen">
+                            </table>
+                        </div>
+                    </div>
+                    <div id="asiReadingDiv" style="float: left; width: 47%">
+                        <div>
+                            <span style="float: left; width: 25%"><b>ASI:</b></span> <span style="float: left;">
+                                <input type="text" id="AsiInputtext" />
+                            </span>
+                        </div>
+                        <div>
+                            <span style="float: left; width: 25%">Pulse:</span> <span style="float: left;">
+                                <input type="text" id="PulseInputtext" />
+                            </span>
+                        </div>
+                        <div>
+                            <span style="float: left; width: 25%">Pattern:</span> <span style="float: left;">
+                                <input type="text" id="PatternInputtext" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 30%;">
+                                <input type="checkbox" id="RepeatStudyAsiInputCheck" />&nbsp;Repeat Study<br />
+                                <input type="checkbox" id="criticalAsi" /><span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 60%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksAsi" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="asiResultDisabledDiv" class="sectionUpper">
+                <img src="content/ASITestNotPerformed.gif" alt="" />
+            </div>
+        </div>
+    </div>
+    <div class="mainContainer">
+        <div class="topcontainer">
+            <div id="echoResultDiv" class="sectionUpper margin-large">
+                <div class="resultHeader">
+                    <span class="rhleft">ECHOCARDIOGRAM SCREENING </span><span class="rhright"><b>Technician:
+                    </b>
+                        <input type="text" id="techecho" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultSection">
+                        <div style="float: left; width: 100%; border-bottom: solid 1px black">
+                            <table cellspacing="0" cellpadding="0" id="echoFindings" style="border-collapse: collapse;
+                                float: left; width: 100%;" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input name="EchoFindingsRadioButton" class="rbt-finding" type="radio" />No Significant
+                                            Abnormality Seen
+                                        </td>
+                                        <td>
+                                            <input name="EchoFindingsRadioButton" class="rbt-finding" type="radio" />Normal
+                                            for age
+                                        </td>
+                                        <td>
+                                            <input name="EchoFindingsRadioButton" class="rbt-finding" type="radio" />Normal
+                                            As Visualized
+                                        </td>
+                                        <td>
+                                            <input name="EchoFindingsRadioButton" class="rbt-finding" type="radio" />Mildly
+                                            Abnormal
+                                        </td>
+                                        <td>
+                                            <input name="EchoFindingsRadioButton" class="rbt-finding" type="radio" />Abnormal
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div style="float: left; width: 170px;">
+                            <div>
+                                <b>Estimated Ejection Fraction </b>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="estimatedEjacFinding" style="border-collapse: collapse;"
+                                    border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input disabled="disabled" name="finding-ejaction" class="rbt-finding" type="radio" />Normal
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input disabled="disabled" name="finding-ejaction" class="rbt-finding" type="radio">Borderline
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input disabled="disabled" name="finding-ejaction" class="rbt-finding" type="radio">Abnormal
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input disabled="disabled" name="finding-ejaction" class="rbt-finding" type="radio">Critical
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="float: left; width: 90px;">
+                            <div>
+                                <b>Valve </b>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="ValveAorticCheckbox" />Aortic
+                            </div>
+                            <div>
+                                <input type="checkbox" id="ValveMitralCheckbox" />Mitral
+                            </div>
+                            <div>
+                                <input type="checkbox" id="ValvePulmonicCheckbox" />Pulmonic
+                            </div>
+                            <div>
+                                <input type="checkbox" id="ValveTricuspidCheckbox" />Tricuspid
+                            </div>
+                        </div>
+                        <div style="float: left; width: 230px;">
+                            <div>
+                                <b>Regurgitation</b></div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="aorticRegurgitationFinding" style="border-collapse: collapse;"
+                                    border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input name="regurgitationaortic-button" class="rbt-finding" type="radio" />Trace
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationaortic-button" class="rbt-finding" type="radio" />Mild
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationaortic-button" class="rbt-finding" type="radio" />Mod
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationaortic-button" class="rbt-finding" type="radio" />Severe
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="mitralRegurgitationFinding" style="border-collapse: collapse;"
+                                    border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input name="regurgitationmitral-button" class="rbt-finding" type="radio" />Trace
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationmitral-button" class="rbt-finding" type="radio" />Mild
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationmitral-button" class="rbt-finding" type="radio" />Mod
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationmitral-button" class="rbt-finding" type="radio" />Severe
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="pulmonicRegurgitationFinding" style="border-collapse: collapse;"
+                                    border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input name="regurgitationpulmonic-button" class="rbt-finding" type="radio" />Trace
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationpulmonic-button" class="rbt-finding" type="radio" />Mild
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationpulmonic-button" class="rbt-finding" type="radio" />Mod
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationpulmonic-button" class="rbt-finding" type="radio" />Severe
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="tricuspidRegurgitationFinding" style="border-collapse: collapse;"
+                                    border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input name="regurgitationtricuspid-button" class="rbt-finding" type="radio" />Trace
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationtricuspid-button" class="rbt-finding" type="radio" />Mild
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationtricuspid-button" class="rbt-finding" type="radio" />Mod
+                                            </td>
+                                            <td>
+                                                <input name="regurgitationtricuspid-button" class="rbt-finding" type="radio" />Severe
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="float: left; width: 350px;">
+                            <div style="float: left; width: 100%;">
+                                <b>Morphology Characteristics </b>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <table cellspacing="0" cellpadding="0" id="aorticMorphologyFinding" style="border-collapse: collapse;"
+                                        border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="morphologyaorticcheckbox" type="checkbox">Sclerosis
+                                                </td>
+                                                <td>
+                                                    <input id="morphologyaorticcheckbox" type="checkbox">Stenosis
+                                                </td>
+                                                <td>
+                                                    <input id="morphologyaorticcheckbox" type="checkbox">Bicuspid AV
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="float: left;">
+                                    &nbsp;&nbsp;Velocity
+                                    <input style="width: 30px;" id="AorticVelocityTextbox" type="text" />
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <table cellspacing="0" cellpadding="0" id="mitralMorphologyFinding" style="border-collapse: collapse;"
+                                        border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="morphologymitralcheckbox" type="checkbox">Sclerosis
+                                                </td>
+                                                <td>
+                                                    <input id="morphologymitralcheckbox" type="checkbox">Stenosis
+                                                </td>
+                                                <td>
+                                                    <input id="morphologymitralcheckbox" type="checkbox">Mitral Prolapse
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="float: left;">
+                                    &nbsp;&nbsp;P1/2T
+                                    <input style="width: 30px;" id="PTTextbox" type="text" />
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <table cellspacing="0" cellpadding="0" id="pulmonicMorphologyFinding" style="border-collapse: collapse;"
+                                        border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="Checkbox1" type="checkbox">Sclerosis
+                                                </td>
+                                                <td>
+                                                    <input id="Checkbox2" type="checkbox">Stenosis
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="float: left;">
+                                    &nbsp;&nbsp;Velocity
+                                    <input id="VelocityPulmonicTextbox" style="width: 30px;" type="text" />
+                                </div>
+                                <div style="clear: both;">
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <table cellspacing="0" cellpadding="0" id="tricuspidMorphologyFinding" style="border-collapse: collapse;"
+                                        border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="morphologytricuspidcheckbox" type="checkbox">Sclerosis
+                                                </td>
+                                                <td>
+                                                    <input id="morphologytricuspidcheckbox" type="checkbox">Stenosis
+                                                </td>
+                                                <td>
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="float: left;">
+                                    &nbsp;&nbsp;PAP
+                                    <input id="PapTextbox" style="width: 30px;" type="text" />
+                                    &nbsp;&nbsp;Velocity
+                                    <input id="VelocityTricuspidTextbox" style="width: 30px;" type="text" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div style="float: left; clear: both; margin-bottom: 5px; width: 100%">
+                            <div style="float: left; width: 170px;">
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="DiastolicDysfunctionCheckbox" />Diastolic Dysfunction
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="PericardialEffusionCheckbox" />Pericardial Effusion
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="VentricularEnlargmentCheckbox" />Ventricular Enlargement
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="AorticRootCheckbox" />Aortic Root
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="VentricularHypertrophyCheckbox" />Ventricular Hypertrophy
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="AtrialEnlargmentCheckbox" />Atrial Enlargement
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="ArrythmiaCheckbox" />Arrythmia
+                                </div>
+                            </div>
+                            <div style="float: left; width: 360px;">
+                                <div style="clear: both;">
+                                    <table cellspacing="0" cellpadding="0" id="distolicDysfunctionFinding" style="border-collapse: collapse;"
+                                        border="0">
+                                    </table>
+                                </div>
+                                <div style="clear: both;">
+                                    <table cellspacing="0" cellpadding="0" id="pericardialEffFinding" style="border-collapse: collapse;"
+                                        border="0">
+                                    </table>
+                                </div>
+                                <div style="clear: both;" class="margin-top-small">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="LeftVEnlargementCheckbox" />Left
+                                        <input type="text" style="width: 40px" id="LeftVEnlargementTextbox" />cm </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="RightVEnlargementCheckbox" />Right
+                                        <input type="text" style="width: 40px" id="RightVEnlargementTextbox" />cm </span>
+                                </div>
+                                <div style="clear: both;" class="margin-top-small">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="ScleroticCheckbox" />Sclerotic </span><span style="float: left;">
+                                            <input type="checkbox" id="CalcifiedCheckbox" />Calcified </span><span style="float: left;">
+                                                <input type="checkbox" id="EnlargedCheckbox" />Enlarged
+                                                <input type="text" style="width: 40px" id="EnlargedTextbox" />cm </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="LeftVHypertrophyCheckbox" />Left
+                                        <input type="text" style="width: 40px" id="LeftVHypertrophyTextbox" />cm </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="RightVHypertrophyCheckbox" />Right
+                                        <input type="text" style="width: 40px" id="RightVHypertrophyTextbox" />cm </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="IvshCheckbox" runat="server" />IVSH
+                                        <input type="text" style="width: 40px" id="IvshTextbox" />cm </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="LeftAtrialEnlargementCheckbox" />Left
+                                        <input type="text" style="width: 40px" id="LeftAtrialEnlargementTextbox" />cm
+                                    </span><span style="float: left;">
+                                        <input type="checkbox" id="RightAtrialEnlargementCheckbox" />Right
+                                        <input type="text" style="width: 40px" id="RightAtrialEnlargementTextbox" />cm
+                                    </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="AsdCheckbox" />ASD </span><span style="float: left;">
+                                            <input type="checkbox" id="PfoCheckbox" />PFO </span><span style="float: left;">
+                                                <input type="checkbox" id="FlailCheckbox" />Flail AS </span>
+                                </div>
+                            </div>
+                            <div style="float: left; width: 320px;">
+                                <div style="float: left;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="VsdCheckbox" />VSD 
+                                    </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="SamCheckbox" />SAM 
+                                    </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="LvotoCheckbox" />LVOTO 
+                                    </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="MitralAnnularCheckbox" />Mitral annular Ca++
+                                    </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="RestrictedLeafletCheckbox" />
+                                        Restricted Leaflet Motion</span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="RestrictedLeafletAorticCheckbox" />
+                                        Aortic</span> <span style="float: left;">
+                                            <input type="checkbox" id="RestrictedLeafletMitralCheckbox" />
+                                            Mitral</span> <span style="float: left;">
+                                                <input type="checkbox" id="RestrictedLeafletPulCheckbox" />
+                                                Pul</span><span style="float: left;">
+                                                    <input type="checkbox" id="RestrictedLeafletTriCheckbox" />
+                                                    Tri</span>
+                                </div>
+                                <div style="clear: both">
+                                </div>
+                                <div style="float: left; margin-top: 20px;">
+                                    <div>
+                                        <strong>Wall Motion Abnormality </strong>
+                                    </div>
+                                    <div>
+                                        <span style="float: left">
+                                            <input type="checkbox" id="HypokineticCheckbox" />Hypokinetic </span><span style="float: left">
+                                                <input type="checkbox" id="AkineticCheckbox" />Akinetic </span><span style="float: left">
+                                                    <input type="checkbox" id="DyskineticCheckbox" />Dyskinetic </span>
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div>
+                                        <span style="float: left">
+                                            <input type="checkbox" id="AnteriorCheckbox" />Anterior </span><span style="float: left">
+                                                <input type="checkbox" id="PosteriorCheckbox" />Posterior </span><span style="float: left">
+                                                    <input type="checkbox" id="ApicalCheckbox" />Apical </span>
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div>
+                                        <span style="float: left">
+                                            <input type="checkbox" id="SeptalCheckbox" />Septal </span><span style="float: left">
+                                                <input type="checkbox" id="LateralCheckbox" />Lateral </span><span style="float: left">
+                                                    <input type="checkbox" id="InferiorCheckbox" />Inferior </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsleft">
+                            <table cellspacing="0" cellpadding="0" id="echoUnableToScreen">
+                            </table>
+                        </div>
+                        <div class="rsright">
+                            
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 30%;">
+                                <input id="TechnicalLimitedbutReadableEchoCheckbox" type="checkbox" />Technically Limited but Readable<br />
+                                <input id="RepeatStudyuneadableEchoCheckbox" type="checkbox" />Repeat Study/Unreadable<br />
+                                <input type="checkbox" id="criticalEcho" /><span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 60%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksEcho" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="echoResultDisabledDiv" class="sectionUpper">
+                <img src="content/ecocardiogramtestnotperform.gif" alt="" />
+            </div>
+            <div id="PpechoResultDiv" class="sectionUpper margin-large">
+                <div class="resultHeader">
+                    <span class="rhleft">ECHOCARDIOGRAM SCREENING </span><span class="rhright">
+                        <b>
+                            Technician:
+                        </b>
+                        <input type="text" id="techPpecho" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultSection">
+                        <div style="float: left; width: 100%; border-bottom: solid 1px black">
+                            <table cellspacing="0" cellpadding="0" id="PpechoFindings" style="border-collapse: collapse; float: left; width: 100%;" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input name="PpEchoFindingsRadioButton" class="rbt-finding" type="radio" />No Significant
+                                            Abnormality Seen
+                                        </td>
+                                        <td>
+                                            <input name="PpEchoFindingsRadioButton" class="rbt-finding" type="radio" />Normal
+                                            As Visualized
+                                        </td>
+                                        <td>
+                                            <input name="PpEchoFindingsRadioButton" class="rbt-finding" type="radio" />Abnormal
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div style="float: left; width: 170px;">
+                            <div>
+                                <b>Estimated Ejection Fraction </b>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="PpestimatedEjacFinding" style="border-collapse: collapse;" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input disabled="disabled" name="Ppfinding-ejaction" class="rbt-finding" type="radio" />Normal
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input disabled="disabled" name="Ppfinding-ejaction" class="rbt-finding" type="radio" />Borderline
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input disabled="disabled" name="Ppfinding-ejaction" class="rbt-finding" type="radio" />Abnormal
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <input disabled="disabled" name="Ppfinding-ejaction" class="rbt-finding" type="radio" />Critical
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="float: left; width: 90px;">
+                            <div>
+                                <b>Valve </b>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="PpValveAorticCheckbox" />Aortic
+                            </div>
+                            <div>
+                                <input type="checkbox" id="PpValveMitralCheckbox" />Mitral
+                            </div>
+                            <div>
+                                <input type="checkbox" id="PpValvePulmonicCheckbox" />Pulmonic
+                            </div>
+                            <div>
+                                <input type="checkbox" id="PpValveTricuspidCheckbox" />Tricuspid
+                            </div>
+                        </div>
+                        <div style="float: left; width: 230px;">
+                            <div>
+                                <b>Regurgitation</b>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="PpaorticRegurgitationFinding" style="border-collapse: collapse;" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input name="Ppregurgitationaortic-button" class="rbt-finding" type="radio" />Trace
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationaortic-button" class="rbt-finding" type="radio" />Mild
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationaortic-button" class="rbt-finding" type="radio" />Mod
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationaortic-button" class="rbt-finding" type="radio" />Severe
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="PpmitralRegurgitationFinding" style="border-collapse: collapse;" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input name="Ppregurgitationmitral-button" class="rbt-finding" type="radio" />Trace
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationmitral-button" class="rbt-finding" type="radio" />Mild
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationmitral-button" class="rbt-finding" type="radio" />Mod
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationmitral-button" class="rbt-finding" type="radio" />Severe
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="PppulmonicRegurgitationFinding" style="border-collapse: collapse;" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input name="Ppregurgitationpulmonic-button" class="rbt-finding" type="radio" />Trace
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationpulmonic-button" class="rbt-finding" type="radio" />Mild
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationpulmonic-button" class="rbt-finding" type="radio" />Mod
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationpulmonic-button" class="rbt-finding" type="radio" />Severe
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <table cellspacing="0" cellpadding="0" id="PptricuspidRegurgitationFinding" style="border-collapse: collapse;" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input name="Ppregurgitationtricuspid-button" class="rbt-finding" type="radio" />Trace
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationtricuspid-button" class="rbt-finding" type="radio" />Mild
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationtricuspid-button" class="rbt-finding" type="radio" />Mod
+                                            </td>
+                                            <td>
+                                                <input name="Ppregurgitationtricuspid-button" class="rbt-finding" type="radio" />Severe
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div style="float: left; width: 350px;">
+                            <div style="float: left; width: 100%;">
+                                <b>Morphology Characteristics </b>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <table cellspacing="0" cellpadding="0" id="PpaorticMorphologyFinding" style="border-collapse: collapse;" border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="Ppmorphologyaorticcheckbox" type="checkbox" />Sclerosis
+                                                </td>
+                                                <td>
+                                                    <input id="Ppmorphologyaorticcheckbox" type="checkbox" />Stenosis
+                                                </td>
+                                                <td>
+                                                    <input id="Ppmorphologyaorticcheckbox" type="checkbox" />Bicuspid AV
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="float: left;">
+                                    &nbsp;&nbsp;Velocity
+                                    <input style="width: 30px;" id="PpAorticVelocityTextbox" type="text" />
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <table cellspacing="0" cellpadding="0" id="PpmitralMorphologyFinding" style="border-collapse: collapse;" border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="Ppmorphologymitralcheckbox" type="checkbox" />Sclerosis
+                                                </td>
+                                                <td>
+                                                    <input id="Ppmorphologymitralcheckbox" type="checkbox" />Stenosis
+                                                </td>
+                                                <td>
+                                                    <input id="Ppmorphologymitralcheckbox" type="checkbox" />Mitral Prolapse
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="float: left;">
+                                    &nbsp;&nbsp;P1/2T
+                                    <input style="width: 30px;" id="PpPTTextbox" type="text" />
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <table cellspacing="0" cellpadding="0" id="PppulmonicMorphologyFinding" style="border-collapse: collapse;" border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="Checkbox1" type="checkbox" />Sclerosis
+                                                </td>
+                                                <td>
+                                                    <input id="Checkbox2" type="checkbox" />Stenosis
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="float: left;">
+                                    &nbsp;&nbsp;Velocity
+                                    <input id="PpVelocityPulmonicTextbox" style="width: 30px;" type="text" />
+                                </div>
+                                <div style="clear: both;">
+                                </div>
+                            </div>
+                            <div>
+                                <div style="float: left;">
+                                    <table cellspacing="0" cellpadding="0" id="PptricuspidMorphologyFinding" style="border-collapse: collapse;" border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <input id="Ppmorphologytricuspidcheckbox" type="checkbox" />Sclerosis
+                                                </td>
+                                                <td>
+                                                    <input id="Ppmorphologytricuspidcheckbox" type="checkbox" />Stenosis
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="float: left;">
+                                    &nbsp;&nbsp;PAP
+                                    <input id="PpPapTextbox" style="width: 30px;" type="text" />
+                                    &nbsp;&nbsp;Velocity
+                                    <input id="PpVelocityTricuspidTextbox" style="width: 30px;" type="text" />
+                                </div>
+                                <div style="clear:both;">
+                                    <input type="checkbox" id="PpMorphologyTricuspidHigh35MmHgOrGreaterCheckbox" />
+                                    High, 35mmHg or greater
+                                    <input type="checkbox" id="PpMorphologyTricuspidNormalCheckbox" />
+                                    Normal
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div style="float: left; clear: both; margin-bottom: 5px; width: 100%">
+                            <div style="float: left; width: 170px;">
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="PpDiastolicDysfunctionCheckbox" />Diastolic Dysfunction
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="PpPericardialEffusionCheckbox" />Pericardial Effusion
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="PpVentricularEnlargmentCheckbox" />Ventricular Enlargement
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="PpAorticRootCheckbox" />Aortic Root
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="PpVentricularHypertrophyCheckbox" />Ventricular Hypertrophy
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="PpAtrialEnlargmentCheckbox" />Atrial Enlargement
+                                </div>
+                                <div class="margin-top-small">
+                                    <input type="checkbox" id="PpArrythmiaCheckbox" />Arrythmia
+                                </div>
+                                <div class="margin-top-small" style="margin-left: 15px;">
+                                    <input type="checkbox" id="PpAFibCheckbox" />A-Fib
+                                    <input type="checkbox" id="PpAFlutterCheckbox" />A-Flutter
+                                </div>
+                                <div class="margin-top-small" style="margin-left: 15px;">
+                                    <input type="checkbox" id="PpPACCheckbox" />PAC
+                                    <input type="checkbox" id="PpPVCCheckbox" />PVC
+                                </div>
+                            </div>
+                            <div style="float: left; width: 360px;">
+                                <div style="clear: both;">
+                                    <table cellspacing="0" cellpadding="0" id="PpdistolicDysfunctionFinding" style="border-collapse: collapse;" border="0"></table>
+                                </div>
+                                <div style="clear: both;">
+                                    <table cellspacing="0" cellpadding="0" id="PppericardialEffFinding" style="border-collapse: collapse;" border="0"></table>
+                                </div>
+                                <div style="clear: both;" class="margin-top-small">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpLeftVEnlargementCheckbox" />Left
+                                        <input type="text" style="width: 40px" id="PpLeftVEnlargementTextbox" />cm
+                                    </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpRightVEnlargementCheckbox" />Right
+                                        <input type="text" style="width: 40px" id="PpRightVEnlargementTextbox" />cm
+                                    </span>
+                                </div>
+                                <div style="clear: both;" class="margin-top-small">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpScleroticCheckbox" />Sclerotic
+                                    </span><span style="float: left;">
+                                            <input type="checkbox" id="PpCalcifiedCheckbox" />Calcified
+                                    </span><span style="float: left;">
+                                            <input type="checkbox" id="PpEnlargedCheckbox" />Enlarged
+                                        <input type="text" style="width: 40px" id="EnlargedTextbox" />cm
+                                    </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpLeftVHypertrophyCheckbox" />Left
+                                        <input type="text" style="width: 40px" id="PpLeftVHypertrophyTextbox" />cm
+                                    </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpRightVHypertrophyCheckbox" />Right
+                                        <input type="text" style="width: 40px" id="PpRightVHypertrophyTextbox" />cm
+                                    </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpIvshCheckbox" />IVSH
+                                        <input type="text" style="width: 40px" id="PpIvshTextbox" />cm
+                                    </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpLeftAtrialEnlargementCheckbox" />Left
+                                        <input type="text" style="width: 40px" id="PpLeftAtrialEnlargementTextbox" />cm
+                                    </span><span style="float: left;">
+                                            <input type="checkbox" id="PpRightAtrialEnlargementCheckbox" />Right
+                                            <input type="text" style="width: 40px" id="PpRightAtrialEnlargementTextbox" />cm
+                                    </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpAsdCheckbox" />ASD
+                                    </span><span style="float: left;">
+                                            <input type="checkbox" id="PpPfoCheckbox" />PFO
+                                    </span><span style="float: left;">
+                                            <input type="checkbox" id="PpFlailCheckbox" />Flail AS
+                                    </span>
+                                </div>
+                            </div>
+                            <div style="float: left; width: 320px;">
+                                <div style="float: left;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpVsdCheckbox" />VSD
+                                    </span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpSamCheckbox" />Systolic Anterior Motion
+                                    </span>
+                                    <span style="clear:both"></span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpLvotoCheckbox" />Left Ventricular Outflow Tract Obstruction
+                                    </span>
+                                    <span style="clear:both"></span>
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpMitralAnnularCheckbox" />Mitral annular Ca++
+                                    </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpRestrictedLeafletCheckbox" />
+                                        Restricted Leaflet Motion
+                                    </span>
+                                </div>
+                                <div style="clear: both;">
+                                    <span style="float: left;">
+                                        <input type="checkbox" id="PpRestrictedLeafletAorticCheckbox" />
+                                        Aortic
+                                    </span> <span style="float: left;">
+                                        <input type="checkbox" id="PpRestrictedLeafletMitralCheckbox" />
+                                        Mitral
+                                    </span> <span style="float: left;">
+                                        <input type="checkbox" id="PpRestrictedLeafletPulCheckbox" />
+                                        Pul
+                                    </span><span style="float: left;">
+                                        <input type="checkbox" id="PpRestrictedLeafletTriCheckbox" />
+                                        Tri
+                                    </span>
+                                </div>
+                                <div style="clear: both">
+                                </div>
+                                <div style="float: left; margin-top: 20px;">
+                                    <div>
+                                        <strong>Wall Motion Abnormality </strong>
+                                    </div>
+                                    <div>
+                                        <span style="float: left">
+                                            <input type="checkbox" id="PpHypokineticCheckbox" />Hypokinetic
+                                        </span><span style="float: left">
+                                                <input type="checkbox" id="PpAkineticCheckbox" />Akinetic
+                                        </span><span style="float: left">
+                                                <input type="checkbox" id="PpDyskineticCheckbox" />Dyskinetic
+                                        </span>
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div>
+                                        <span style="float: left">
+                                            <input type="checkbox" id="PpAnteriorCheckbox" />Anterior
+                                        </span><span style="float: left">
+                                            <input type="checkbox" id="PpPosteriorCheckbox" />Posterior
+                                        </span><span style="float: left">
+                                            <input type="checkbox" id="PpApicalCheckbox" />Apical
+                                        </span>
+                                    </div>
+                                    <div style="clear: both">
+                                    </div>
+                                    <div>
+                                        <span style="float: left">
+                                            <input type="checkbox" id="PpSeptalCheckbox" />Septal
+                                        </span><span style="float: left">
+                                            <input type="checkbox" id="PpLateralCheckbox" />Lateral
+                                        </span><span style="float: left">
+                                            <input type="checkbox" id="PpInferiorCheckbox" />Inferior
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsleft">
+                            <table cellspacing="0" cellpadding="0" id="PpechoUnableToScreen"></table>
+                        </div>
+                        <div class="rsright">
+
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 30%;">
+                                <input id="TechnicalLimitedbutReadablePpEchoCheckbox" type="checkbox" />Technically Limited but Readable<br />
+                                <input id="RepeatStudyuneadablePpEchoCheckbox" type="checkbox" />Unreadable<br />
+                                <input type="checkbox" id="criticalPpEcho" /><span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 60%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksPpEcho" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="PpechoResultDisabledDiv" class="sectionUpper">
+                <img src="content/ecocardiogramtestnotperform.gif" alt="" />
+            </div>
+            <div id="padResultDiv" class="sectionUpper">
+                <div class="resultHeader">
+                    <span class="rhleft">PERIPHERAL ARTERY DISEASE (PAD) SCREENING </span><span class="rhright">
+                        <b>Technician: </b>
+                        <input type="text" id="techPad" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div id="padFindingDiv">
+                        <div>
+                            <table cellspacing="0" cellpadding="0" id="padFinding">
+                            </table>
+                        </div>
+                        <div class="margin-medium">
+                            <table cellspacing="0" cellpadding="0" id="padUnableToScreen">
+                            </table>
+                        </div>
+                    </div>
+                    <div id="padReadingDiv">
+                        <div>
+                            <span>
+                                <label>
+                                    Systolic R Arm:
+                                </label>
+                                <input type="text" id="txtSystolicRightArm" />
+                            </span><span>
+                                <label>
+                                    Systolic L Arm:
+                                </label>
+                                <input type="text" id="txtSystolicLeftArm" />
+                            </span>
+                        </div>
+                        <div>
+                            <span>
+                                <label>
+                                    Systolic R Ankle:
+                                </label>
+                                <input type="text" id="txtSystolicRightAnkle" />
+                            </span><span>
+                                <label>
+                                    Systolic L Ankle:
+                                </label>
+                                <input type="text" id="txtSystolicLeftAnkle" />
+                            </span>
+                        </div>
+                        <div>
+                            <span>
+                                <label>
+                                    Right ABI:
+                                </label>
+                                <input type="text" id="txtRightAbi" />
+                            </span><span>
+                                <label>
+                                    Left ABI:
+                                </label>
+                                <input type="text" id="txtLeftAbi" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 30%;">
+                                <input type="checkbox" id="RepeatStudyPadInputCheck" />&nbsp;Repeat Study<br />
+                                <input type="checkbox" id="criticalPad" /><span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 60%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksPad" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="padResultDisabledDiv" class="sectionUpper">
+                <img src="content/PADTestNotPerformed.gif" alt="" />
+            </div>
+        </div>
+    </div>
+    <div class="mainContainer">
+        <div class="topcontainer">
+            <div id="lipidResultDiv" class="sectionUpper margin-medium">
+                <div class="resultHeader">
+                    <span class="rhleft">LIPID SCREENING </span><span class="rhright"><b>Technician: </b>
+                        <input type="text" id="techlipid" style="width: 200px;" /></span>
+                </div>
+                <div class="resultContent">
+                    <div id="lipidTotalCholesterol" style="float: left; width: 33%;">
+                        <div style="float: left; width: 100%;">
+                            TOTAL CHOLESTEROL =
+                            <input type="text" id="TotalCholestrolLipidInputText" style="width: 60px" />
+                        </div>
+                        <div style="float: left; width: 100%;">
+                            <table cellspacing="0" cellpadding="0" id="totalCholestrolFinding" style="border-collapse: collapse;"
+                                border="0">
+                            </table>
+                        </div>
+                    </div>
+                    <div id="lipidLDL" style="float: left; width: 33%;">
+                        <div style="float: left; width: 100%;">
+                            LDL =
+                            <input type="text" id="LDLLipidInputText" style="width: 60px" />
+                        </div>
+                        <div style="float: left; width: 100%;">
+                            <table cellspacing="0" cellpadding="0" style="border-collapse: collapse;" border="0"
+                                id="ldlFinding">
+                            </table>
+                        </div>
+                    </div>
+                    <div id="lipidGlucose" style="float: left; width: 33%">
+                        <div style="float: left; width: 100%;">
+                            GLUCOSE (Blood Sugar) =
+                            <input type="text" id="GlucoseLipidInputText" style="width: 60px" />
+                        </div>
+                        <div style="float: left; width: 100%;">
+                            <table cellspacing="0" cellpadding="0" style="border-collapse: collapse;" border="0"
+                                id="glucoseFinding">
+                            </table>
+                        </div>
+                    </div>
+                    <div id="lipidHDL" style="float: left; width: 33%;">
+                        <div style="float: left; width: 100%;">
+                            HDL =
+                            <input type="text" id="HDLLipidInputText" style="width: 60px" />
+                        </div>
+                        <div style="float: left; width: 100%;">
+                            <table cellspacing="0" cellpadding="0" style="border-collapse: collapse;" border="0"
+                                id="hdlFinding">
+                            </table>
+                        </div>
+                    </div>
+                    <div id="lipidTriglycerides" style="float: left; width: 33%;">
+                        <div style="float: left; width: 100%;">
+                            TRIGLYCERIDES =
+                            <input type="text" id="TriglyceridesLipidInputText" style="width: 60px" />
+                        </div>
+                        <div style="float: left; width: 100%;">
+                            <table cellspacing="0" cellpadding="0" style="border-collapse: collapse;" border="0"
+                                id="triglyceridesFinding">
+                            </table>
+                        </div>
+                    </div>
+                    <div id="lipidTCHDLRatio" style="float: left; width: 33%;">
+                        <div style="float: left; width: 100%;">
+                            TC/HDL RATIO =
+                            <input type="text" id="TCHDLRatioLipidInputText" style="width: 60px" />
+                        </div>
+                        <div style="float: left; width: 100%;">
+                            <table cellspacing="0" cellpadding="0" class="tchdlratio-lipid-finding" id="tchdlRatioFinding"
+                                style="border-collapse: collapse;" border="0">
+                            </table>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <i>Note: HDL range differs for Male/Female.</i>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsleft">
+                            <table cellspacing="0" cellpadding="0" id="lipidUnableToScreen">
+                            </table>
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 30%;">
+                                <input type="checkbox" id="criticalLipid" />
+                                <span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 60%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksLipid" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="lipidResultDisabledDiv" class="sectionUpper">
+                <img src="content/LipidTestNotPerformed.gif" alt="" />
+            </div>
+            <div id="a1cResultDiv" class="sectionUpper margin-medium">
+                <div class="resultHeader">
+                    <span class="rhleft">A1C SCREENING </span><span class="rhright"><b>Technician:</b>
+                        <input type="text" id="techhba1c" style="width: 200px;" /></span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultSection">
+                        <div style="float: left; width: 40%;">
+                            <table cellspacing="0" cellpadding="0" id="a1cUnableToScreen">
+                            </table>
+                        </div>
+                        <div style="float: left; width: 50%;">
+                            <b>A1C</b>
+                            <input type="text" id="hba1ctextbox" style="width: 100px;" />
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 30%;">
+                                <input type="checkbox" id="criticalHemaglobin" />
+                                <span style="font-weight: bold">Critical (Self Submit within 48 hrs)</span>
+                            </div>
+                            <div class="rsright" style="width: 60%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksHemaglobin" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="a1cResultDisabledDiv" class="sectionUpper">
+                <img src="content/A1cTestNotPerformed.gif" alt="" />
+            </div>
+            <div id="imtResultDiv" style="display:none;" class="sectionUpper">
+                <div class="resultHeader">
+                    <span class="rhleft">INTIMA-MEDIA THICKNESS (IMT) SCREENING </span><span class="rhright">
+                        <b>Technician </b>
+                        <input type="text" id="techimt" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div id="imtFindingDiv">
+                        <table cellspacing="0" cellpadding="0" id="imtFinding">
+                            <tr>
+                                <td>
+                                    Normal
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="imtunablescreenDiv">
+                        <table cellspacing="0" cellpadding="0" id="imtUnableToScreen">
+                        </table>
+                    </div>
+                    <div id="imtReadingDiv">
+                        <div>
+                            QIMT Left:
+                            <input type="text" id="QIMTLeftInputText" />
+                            Right:
+                            <input type="text" id="QIMTRightInputText" />
+                        </div>
+                        <div>
+                            Excepted QIMT:
+                            <input type="text" id="ExceptedQIMTInputText" />
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <fieldset>
+                            <legend>Physician Remarks </legend>
+                            <div class="rsleft" style="width: 30%;">
+                                <input type="checkbox" id="criticalImt" />
+                                <span style="font-weight: bold">Critical (Self Submit within 48 hrs) </span>
+                            </div>
+                            <div class="rsright" style="width: 60%;">
+                                <b>Remarks: </b>
+                                <br />
+                                <span id="physicianRemarksImt" class="tech-notes"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div id="imtResultDisableDiv" style="display:none;" class="sectionUpper">
+                <img src="content/IMTNotPerformed.gif" alt="" />
+            </div>
+            <div class="sectionUpper margin-medium">
+                <fieldset class="signing-physician">
+                    <legend>Signing Physicians </legend>
+                    <table cellspacing="0" class="physician-signature">
+                        <tr>
+                            <td class="primaryEvalPhysicianSign" style="text-align: center;">
+                            </td>
+                            <td class="overreadEvalPhysicianSign" style="text-align: center;">
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div class="mainContainer-wopb" style="display: none; visibility: hidden;">
+        <div class="topcontainer">
+            <div class="sectionUpper page-title">
+                <h1>
+                    Your Results
+                </h1>
+            </div>
+            <div id="kynResultDiv" class="sectionUpper margin-large">
+                <div class="resultHeader">
+                    <span class="rhleft">KYN SCREENING </span><span class="rhright"><b>Technician: </b>
+                        <input type="text" id="techKyn" style="width: 200px;" /></span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultSection">
+                        <div class="rsleft">
+                            <table cellspacing="0" cellpadding="0" id="kynUnableToScreen">
+                            </table>
+                        </div>
+                        <div class="rsright">
+                            <fieldset>
+                                <legend>Technician Notes </legend><span id="technotesKyn" class="tech-notes"></span>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="thyroidResultdiv" class="sectionUpper margin-large">
+                <div class="resultHeader">
+                    <span class="rhleft">TSH SCREENING </span>
+                    <span class="rhright"><b>Technician: </b>
+                        <input type="text" id="techThyroid" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultSection">
+                        <div style="float: left; width: 40%;">
+                            <table cellspacing="0" cellpadding="0" id="thyroidUnableToScreen"></table>
+                        </div>
+                        <div style="float: left; width: 50%;">
+                            <b>TSHSCR</b>
+                            <input type="text" id="thyroidtextbox" style="width: 100px;" />
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsright">
+                            <fieldset>
+                                <legend>Technician Notes </legend><span id="technotesThyroid" class="tech-notes"></span>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="psaResultDiv" class="sectionUpper margin-large">
+                <div class="resultHeader">
+                    <span class="rhleft">PSA SCREENING </span>
+                    <span class="rhright">
+                        <b>Technician: </b>
+                        <input type="text" id="techPsa" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultSection">
+                        <div style="float: left; width: 40%;">
+                            <table cellspacing="0" cellpadding="0" id="psaUnableToScreen"></table>
+                        </div>
+                        <div style="float: left; width: 50%;">
+                            <b>PSASCR</b>
+                            <input type="text" id="psatextbox" style="width: 100px;" />
+                        </div>
+                    </div>
+                    <div class="resultSection">
+                        <div class="rsright">
+                            <fieldset>
+                                <legend>Technician Notes </legend><span id="technotesPsa" class="tech-notes"></span>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="crpResultDiv" class="sectionUpper margin-large">
+                <div class="resultHeader">
+                    <span class="rhleft">CRP SCREENING </span>
+                    <span class="rhright">
+                        <b>Technician: </b>
+                        <input type="text" id="techCrp" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultContent">
+                        <div class="resultSection">
+                            <div style="float: left; width: 40%;">
+                                <table cellspacing="0" cellpadding="0" id="crpUnableToScreen"></table>
+                            </div>
+                            <div style="float: left; width: 50%;">
+                                <b>LCRP</b>
+                                <input type="text" id="crptextbox" style="width: 100px;" />
+                            </div>
+                        </div>
+                        <div class="resultSection">
+                            <div class="rsright">
+                                <fieldset>
+                                    <legend>Technician Notes </legend><span id="technotesCrp" class="tech-notes"></span>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="testosteroneResultDiv" class="sectionUpper margin-large">
+                <div class="resultHeader">
+                    <span class="rhleft">TESTOSTERONE SCREENING </span>
+                    <span class="rhright">
+                        <b>Technician: </b>
+                        <input type="text" id="techTestosterone" style="width: 200px;" />
+                    </span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultContent">
+                        <div class="resultSection">
+                            <div style="float: left; width: 40%;">
+                                <table cellspacing="0" cellpadding="0" id="testosteroneUnableToScreen"></table>
+                            </div>
+                            <div style="float: left; width: 50%;">
+                                <b>TESTSCRE</b>
+                                <input type="text" id="testosteronetextbox" style="width: 100px;" />
+                            </div>
+                        </div>
+                        <div class="resultSection">
+                            <div class="rsright">
+                                <fieldset>
+                                    <legend>Technician Notes </legend><span id="technotesTestosterone" class="tech-notes"></span>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="colorectalResultdiv" class="sectionUpper margin-large">
+                <div class="resultHeader">
+                    <span class="rhleft">COLORECTAL SCREENING </span><span class="rhright"><b>Technician:
+                    </b>
+                        <input type="text" id="techColorectal" style="width: 200px;" /></span>
+                </div>
+                <div class="resultContent">
+                    <div class="resultSection">
+                        <div class="rsleft">
+                            <table cellspacing="0" cellpadding="0" id="colorectalUnableToScreen">
+                            </table>
+                        </div>
+                        <div class="rsright">
+                            <fieldset>
+                                <legend>Technician Notes </legend><span id="technotesColorectal" class="tech-notes">
+                                </span>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sectionUpper margin-medium">
+                <fieldset class="signing-physician">
+                    <legend>Signing Physicians </legend>
+                    <table cellspacing="0" class="physician-signature">
+                        <tr>
+                            <td class="primaryEvalPhysicianSign" style="text-align: center;">
+                            </td>
+                            <td class="overreadEvalPhysicianSign" style="text-align: center;">
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

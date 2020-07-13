@@ -1,0 +1,149 @@
+﻿@*@model Falcon.App.Core.Users.Domain.CorporateAccount*@
+@model Falcon.App.Core.Users.ViewModels.AccountVerificationEditModel
+@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@{
+    Layout = "~/Views/Shared/_LayoutPrivate.cshtml";
+    ViewBag.Title = "Search for an Event Screening Location";
+    var settings = IoC.Resolve<ISettings>();
+}
+@* Search Box *@
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+
+<div style="margin: 10px; padding: 10px; border: 1px solid gray; float: left; width: 55%;min-height:275px">
+    @if (Model != null && !string.IsNullOrEmpty(Model.Content))
+    {
+        @Html.Raw(Model.Content)
+    }
+    else
+    {
+        @Html.Raw(" <h1>Sign Up for Your free Health Screening!</h1> <p> The confidential health screenings are being offered to you by invitation. Screenings take less than 15 minutes and will take place on the screening bus</p>")
+    }
+</div>
+<div id="privatemember-form" style="margin: 10px; padding: 10px; border: 1px solid gray; float: right; width: 36%; height:275px;">
+
+    @if (Model != null && Model.AllowVerifiedMembersOnly && !(Model.CustomerId > 0))
+    {
+        using (Ajax.BeginForm("AccountMemberVerificationForm", "Private", new AjaxOptions { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "validationForm" }))
+        {
+            <div id="validationForm"></div>
+        }
+
+        <script type="text/javascript">
+            function loadAccountMemeberVerificationForm() {
+                $.ajax({
+                    url: "/private/AccountMemberVerificationForm?urlSuffix=@Model.UrlSuffix&invitationCode=@Model.InvitationCode",
+                    success: on_Success
+                });
+            }
+
+            function on_Success(result) {
+                $("#validationForm").empty();
+                $("#validationForm").html(result);
+            }
+
+            loadAccountMemeberVerificationForm();
+        </script>
+    }
+    else
+    {
+        <div>
+            <h2>
+                Step 1: Find a Screening Event
+            </h2>
+            @{Html.BeginForm("PrivateSearch", "Private");}
+            <p class="light-text">
+                <u>Enter</u> your Invitation Code and <u>Click</u> on the Find Event button
+            </p>
+            <input type="hidden" value="@Model.CustomerId" name="customerId" />
+            <input type="hidden" value="@Request.QueryString["urlSuffix"]" name="corpCode" />
+            <div>
+                <span style="float:left; width:100%;">
+                    Invitation Code:
+                    @if (Request.QueryString["invitationCode"] != null)
+                    {
+                        <input type="text" name="invitationCode" readonly="readonly" value="@Request.QueryString["invitationCode"]" id="InvitationCodeTextbox" />
+                    }
+                    else
+                    {
+                        <input type="text" name="invitationCode" id="InvitationCodeTextbox" />
+                    }
+                    <a href="#" class="jtip" title='Help | Invitation code is an unique code. If you have not received please contact your coordinator.'>?</a>
+                </span>
+                <span style="float:left; width:100%; margin-top:10px;">
+                    <span style="float:left; width:86px;">Zip Code: </span>
+                    <input type="text" name="zipCode" id="ZipCodeTextBox" />
+                    <a href="#" class="jtip" title='Help | If you want to find screening events held at convenient locations near to your community - <u>Enter</u> your U.S. Zip Code (5-digit zip code), and <u>Click</u> on the Find Event button and we can help you find screening events in your local area. Although it is <u>NOT</u> a mandatory input.'>?</a>
+                    @Html.SubmitButton("Find Event")
+                </span>
+
+                <h3>
+                    What is my invitation code?
+                </h3>
+                <p>
+                    Invitation code is an unique code. If you have not received please contact your coordinator.
+                </p>
+                <hr />
+                <h3>
+                    Having trouble?
+                </h3>
+                <p>
+                    If you have any questions or experience problems while signing up, please call us
+                    toll-free at: <strong>@Model.CheckoutPhoneNumber</strong>
+                </p>
+            </div>
+            @{Html.EndForm();}
+        </div>
+    }
+
+</div>
+
+<div class="failed-verfication-msg" style="display: none;width: 36%;float:right;background: red;color: white;border: solid 1px gray;margin-right: 10px; padding-left: 20px;">
+    Unable to verify your information. Please call us as @Model.CheckoutPhoneNumber for any queries.
+</div>
+
+<div id="verification-confirm"></div>
+@section scripts {
+    <link type="text/css" href="@Url.Content("/App/jquery/css/JTip/jquery.cluetip.css")" rel="Stylesheet" />
+    <script type="text/javascript" src="@Url.Content("/App/jquery/js/jquery.cluetip.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/App/jquery/js/jquery.hoverIntent.js")"></script>
+    <script type="text/javascript" language="javascript">
+
+        $(document).ready(function () {
+            $(".failed-verfication-msg").hide();
+            $('.jtip').cluetip({ splitTitle: '|', cursor: 'pointer', tracking: true, cluetipClass: 'jtip', arrows: true, dropShadow: false, hoverIntent: false, width: 400 });
+            $("#verification-confirm").dialog({
+                resizable: false,
+                width: 540,
+                modal: true,
+                title: "Verification Successful",
+                autoOpen: false,
+                buttons: {
+                    "Continue": function () {
+                        reloadForm();
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
+
+        $("#Submit").click(function () {
+            if ($("#InvitationCodeTextbox").attr("readonly") != "readonly") {
+                var code = $("#InvitationCodeTextbox").val();
+                var codeLength = $("#InvitationCodeTextbox").val().length;
+
+                if (code == "" || codeLength < 1) {
+                    alert("Please enter a valid Invitation Code.");
+                    return false;
+                }
+            }
+            else {
+                $("#InvitationCodeTextbox").attr("readonly", "");
+            }
+        });
+
+    </script>
+}

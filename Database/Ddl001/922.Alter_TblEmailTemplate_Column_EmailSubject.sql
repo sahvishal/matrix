@@ -1,0 +1,10 @@
+USE [$(dbName)]
+GO
+
+ALTER TABLE TblEmailTemplate
+ALTER COLUMN EmailSubject VARCHAR(512) NOT NULL
+GO
+
+ALTER TABLE TblEmailTemplate
+ALTER COLUMN EmailTitle VARCHAR(256) NOT NULL
+GO

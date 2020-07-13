@@ -1,0 +1,64 @@
+.TopMain {
+	background: url("/Config/Content/Images/TopGradient.gif") repeat-x scroll left bottom transparent;
+    overflow: hidden;
+    padding: 9px;
+}
+
+.LogoPane {
+    float: left;
+    height: 53px;
+    margin-top: 10px;
+    padding: 10px 0 0 0;
+    white-space: nowrap;
+    width: 275px;
+}
+.TopMiddlePane {
+    float: left;
+    margin-left: 25px;
+    padding: 0;
+    text-align: right;
+    width: 320px;
+} 
+.TopRightPane {
+    float: right;
+    padding: 0;
+    text-align: right;
+    width: 320px;
+}
+
+.TopLinks {
+    background: url("/Config/Content/Images/BlackBorder.gif") repeat-x scroll left bottom transparent;
+    color: #000000 !important;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 9px;
+    padding: 10px 0 6px !important;
+    text-align: right;
+	}
+	
+.TopLinks a {
+    color: #000000 !important;
+    font-size: 11px;
+    text-decoration: none !important;
+	font-weight: bold;
+	font-family: Arial,Georgia,Verdana,Geneva,sans-serif;
+	 
+}
+.BlackTitleTopMIddle {
+    padding: 0 0 2px;
+}
+.BlackTitleContentpane {
+    clear: both;
+    overflow: hidden;
+    padding: 4px 0 0;
+    text-align: left;
+    vertical-align: top;
+}
+
+.BottomAction {
+    color: #000000;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 8pt;
+    font-weight: normal;
+    text-align: right;
+}

@@ -1,0 +1,97 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.VoiceMailReminderListModel
+@{
+    ViewBag.Title = "Voice Mail Reminder";
+}
+<h1>
+    Voice Mail Reminder</h1>
+<div id="list-filter">
+    @{Html.BeginForm("VoiceMailReminder", "Reports", FormMethod.Get);}
+    @Html.Partial("VoiceMailReminderModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Scheduling/ExportableReports/VoiceMailReminder?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV
+        </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <table id="list-view" style="width:100%;">
+            <tr>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().CustomerId)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().PhoneHome)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().EventId)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().SponsoredBy)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().EventDate)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Address)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Package)
+                </th>
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().AppointmentTime)
+                </th>
+            </tr>
+            @foreach (var appointment in Model.Collection)
+            {
+                <tr>
+                    <td>@appointment.CustomerId 
+                    </td>
+                    <td>@appointment.PhoneHome
+                    </td>
+                    <td>@appointment.EventId 
+                    </td>
+                    <td>@(string.IsNullOrEmpty(appointment.SponsoredBy) ? "N/A" : appointment.SponsoredBy)
+                    </td>
+                    <td>@appointment.EventDate.ToShortDateString() 
+                    </td>
+                    <td class="address-column">@appointment.Address 
+                    </td>
+                    <td>@appointment.Package 
+                    </td>
+                    <td>
+                        <span>@(appointment.AppointmentTime.HasValue ? appointment.AppointmentTime.Value.ToShortTimeString() : "N/A") </span> 
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

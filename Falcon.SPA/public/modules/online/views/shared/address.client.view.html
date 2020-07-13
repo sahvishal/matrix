@@ -1,0 +1,8 @@
+﻿<div>
+    <span ng-bind="address.StreetAddressLine1"></span>,    
+    <span ng-if="address.StreetAddressLine2 != null && event.EventLocation.StreetAddressLine2 != ''"><span ng-bind="address.StreetAddressLine2"></span>,</span> 
+    <span ng-bind="address.City"></span>,
+    <span ng-bind="address.State"></span>,
+    <span ng-bind="address.Country"></span>-
+    <span ng-bind="address.ZipCode"></span>
+</div>

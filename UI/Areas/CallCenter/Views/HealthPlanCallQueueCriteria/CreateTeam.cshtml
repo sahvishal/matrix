@@ -1,0 +1,31 @@
+﻿@model Falcon.App.Core.CallCenter.ViewModels.CallCenterTeamEditModel
+@{
+    ViewBag.Title = "Create Team";
+}
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+
+<h1>
+    Create Team <span class="create-info-tip" style="vertical-align: middle;"><img alt="Info" src="/App/Images/info-icon.gif"></span>
+    <div class="create-prop-tip-info" style="display: none;">
+        Use this page to create a team of call center agents.
+    </div>
+</h1>
+
+<div class="option-links">
+    <a href="/CallCenter/HealthPlanCallQueueCriteria/ManageCallCenterTeam">Manage Teams</a>
+</div>
+
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<br />
+@{ Html.BeginForm(null, null, FormMethod.Post, new { @id = "form" }); }
+
+@Html.EditorFor(x=>x)
+<div id="save" class="submit-button-row" style="clear: both;">
+    <a href="/CallCenter/HealthPlanCallQueueCriteria/ManageCallCenterTeam">Close</a> &nbsp;&nbsp;
+    <button type="button" style="float: right;" onclick="checkAndSubmit()">Save</button>
+</div>
+@{Html.EndForm();}

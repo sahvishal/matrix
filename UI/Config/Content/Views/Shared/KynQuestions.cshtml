@@ -1,0 +1,107 @@
+﻿@using Falcon.App.Core.Users.Enum
+@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentHeaderEditModel
+@{
+    bool isPrint = ViewData["IsPrintable"] != null && Convert.ToBoolean(ViewData["IsPrintable"]);
+
+    bool isKynPurchased = ViewData["IsKynPurchased"] != null && Convert.ToBoolean(ViewData["IsKynPurchased"]);
+}
+
+<style type="text/css">
+    .kyn-info input[type="text"] {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .kyn-info .label {
+        float: left;
+        width: 20%;
+    }
+
+    .kyn-info .container {
+        float: left;
+        width: 79%;
+    }
+
+/*.kyn-info td {
+        float: left;
+        width: 117px;
+        min-height: 30px;
+        text-align: right;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-right: 2px;
+        border: solid 1px #000000;       
+    }*/
+</style>
+
+@if (isKynPurchased && isPrint)
+{
+    <style>
+        .kyn-info.result-section input[type="text"] {
+            border: none;
+        }
+    </style>
+    <div style="float: left; width: 97%; font-size: 12px; page-break-before: always; overflow: hidden;">
+        <div style="float: left; width:99%; text-align: center; margin-top: 5px; margin-bottom: 3px;">
+            <b>Matrix Medical Network Multiple Disease Risk Assessment</b>
+        </div>
+        <div class='section-withborder kyn-info' style='margin-bottom:3px; padding:0px;'>
+            <div style="float: left; width: 100%;">
+                <div style="float: left; width: 33%; padding: 5px 0px 5px 5px; border-right: solid 1px #000000;">
+                    <div class="label" style="width:30%;">Today's Date:</div>
+                    <div class="container" style="width:69%;">
+                        <input type="text" id="TodayDateMonthTextbox" style="width: 20px;" value="@(DateTime.Now.Month)" />/
+                        <input type="text" id="TodayDateDayTextbox" style="width: 20px;" value="@(DateTime.Now.Day)" />/
+                        <input type="text" id="TodayDateYearTextbox" style="width: 30px;" value="@(DateTime.Now.Year)" />
+                    </div>
+                </div>
+                <div style="float: left; width: 33%; padding: 5px 0px 5px 5px; border-right: solid 1px #000000;">
+                    <div class="label" style="width:20%;">Name:</div>
+                    <div class="container">
+                        <input type="text" value="@(Model.CustomerName.ToString())" />
+                    </div>
+                </div>
+                <div style="float: left; width: 30%; padding: 5px 0px 5px 5px; ">
+                    <div class="label">ID#:</div>
+                    <div class="container">
+                        <input type="text" value="@(Model.CustomerId)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='section-withborder kyn-info' style='margin-bottom:3px; padding:0px;'>
+            <div style="border-bottom: solid 1px #000000; background-color: #ECECED; text-align: center;"><b>PERSONAL INFORMATION</b></div>
+            <div style="float: left; width: 100%; border-bottom: solid 1px #000000;">
+                <div style="float: left; width: 49%; padding: 5px 0px 5px 5px; border-right: solid 1px #000000;">
+                    <div class="label">Date of Birth:</div>
+                    <div class="container">
+                        <input type="text" id="DobMonthTextbox" style="width: 20px;" value="@(Model.DateofBirth.HasValue ?Model.DateofBirth.Value.Month.ToString():string.Empty)" />/
+                        <input type="text" id="DobDateDayTextbox" style="width: 20px;" value="@(Model.DateofBirth.HasValue ?Model.DateofBirth.Value.Day.ToString():string.Empty)" />/
+                        <input type="text" id="DobDateYearTextbox" style="width: 30px;" value="@(Model.DateofBirth.HasValue ?Model.DateofBirth.Value.Year.ToString():string.Empty)" />
+                    </div>
+                </div>
+                <div style="float: left; width: 49%; padding: 5px 0px 5px 5px; ">
+                    <div class="label">Gender:</div>
+                    <div class="container">
+                        <input type="checkbox" @(Model.Gender == (int)Gender.Male ? "checked=checked" : string.Empty) /> Male 
+                        <input type="checkbox" @(Model.Gender == (int)Gender.Female ? "checked=checked" : string.Empty) /> Female 
+                    </div>
+                </div>
+            </div>
+            <div style="float: left; width: 98%; padding: 5px 0px 5px 5px;">
+                <div class="label" style="width:10%;">Ethnic Group:</div>
+                <div class="container">
+                    <input type="checkbox" @(Model.Race == (int)Race.Caucasian ? "checked=checked" : string.Empty) /> Caucasian
+                    <input type="checkbox" @(Model.Race == (int)Race.AfricanAmerican ? "checked=checked" : string.Empty) /> African-American
+                    <input type="checkbox" @(Model.Race == (int)Race.Asian ? "checked=checked" : string.Empty) /> Asian
+                    <input type="checkbox" @(Model.Race == (int)Race.Hispanic ? "checked=checked" : string.Empty) /> Hispanic
+                    <input type="checkbox" @(Model.Race == (int)Race.NativeAmerican ? "checked=checked" : string.Empty) /> Native American
+                    <input type="checkbox" @(Model.Race == (int)Race.Other ? "checked=checked" : string.Empty) /> Other
+                </div>
+            </div>
+        </div>
+        <div class='kyn-haf-container'>
+        </div>
+    </div>
+}
+

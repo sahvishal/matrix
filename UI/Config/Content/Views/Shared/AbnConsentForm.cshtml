@@ -1,0 +1,194 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@model Falcon.App.Core.Medical.ViewModels.AbnConsentViewModel
+
+@{
+    Layout = null;
+
+    var settings = IoC.Resolve<ISettings>();
+}
+<style type="text/css">
+    .full-width-abn {
+        float: left;
+        width: 865px;
+        margin-top: 5px;
+    }
+
+    .half-width-abn {
+        float: left;
+        width: 432px;
+    }
+    .bold-underline-abn {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .underline-abn {
+        text-decoration: underline;
+    }
+</style>
+
+<div style="float: left; width: 97%; font-size: 15px; margin-top: 30px;">
+    <div class="full-width-abn">
+        <b>Notifier: @settings.CompanyName ( @settings.Address1 @settings.Address2 @settings.City, @settings.State @settings.ZipCode)</b>
+    </div>
+    <div class="full-width-abn" style="margin-top: 15px;">
+        <div class="half-width-abn">
+            <b>Patient Name:</b> @Model.CustomerName
+        </div>
+        <div class="half-width-abn">
+            <b>Identification Number:</b> @Model.CustomerId
+        </div>
+    </div>
+    <hr class="full-width-abn" style="border: solid 2px #000000;" />
+    <div class="full-width-abn" style="text-align: center; font-size: 17px;">
+        <b>Advance Beneficiary Notice of Noncoverage (ABN)</b>
+    </div>
+    <div class="full-width-abn">
+        <span class="bold-underline-abn">NOTE:</span>
+        If Medicare doesn&#8217;t pay for <span class="underline-abn">preventive services </span> below, you may have to pay. <br/>
+        Medicare does not pay for everything, even some care that you or your health care provider have good reason to think you need. We expect Medicare may not pay for the 
+        <span class="underline-abn">preventive services </span> below.
+    </div>
+    <div class="full-width-abn" style="border: solid 1px #000000;">
+        <div class="full-width-abn" style="margin-top: 0px; width: 100%; background-color: #cdcdcd; font-size: 17px;">
+            <div style="float: left; width: 310px; height: 35px; border-bottom: solid 1px #000000; border-right: solid 1px #000000;">
+                @*<span style="padding-left:15px;">
+                    <b>Items/Services</b>
+                </span>*@
+            </div>
+            <div style="float: left; width: 395px; height: 35px; border-bottom: solid 1px #000000; border-right: solid 1px #000000; ">
+                <span style="padding-left:5px;">
+                    <b>Reason Medicare May Not Pay:</b>
+                </span>
+            </div>
+            <div style="float: left; width: 155px; height: 35px; border-bottom: solid 1px #000000;">
+                <span style="padding-left:5px;">
+                    <b>Estimated Cost</b>
+                </span>
+            </div>
+        </div>
+        <div class="full-width-abn" style="margin-top: 0px; width: 100%; font-weight: bold; font-size: 13px;">
+            <div style="float: left; width: 305px; padding-left: 5px; min-height: 195px; border-right: solid 1px #000000;">
+                @*<span style="float: left; width: 30px; padding-left: 15px; ">1.</span>
+                <span style="float: left; width: 250px; padding-left: 5px;">Ultrasound exam AAA screen</span>
+                <span style="float: left; width: 30px; padding-left: 15px; ">2.</span>
+                <span style="float: left; width: 250px; padding-left: 5px; ">Upper extremity art 2 levels (ASI)</span>
+                <span style="float: left; width: 30px; padding-left: 15px; ">3.</span>
+                <span style="float: left; width: 250px; padding-left: 5px; ">Lower extremity art 2 levels (PAD)</span>
+                <span style="float: left; width: 30px; padding-left: 15px; ">4.</span>
+                <span style="float: left; width: 250px; padding-left: 5px; ">Extracranial uni/ltd study (Carotid)</span>
+                <span style="float: left; width: 30px; padding-left: 15px; ">5.</span>
+                <span style="float: left; width: 250px; padding-left: 5px; ">Electrocardiogram complete or EKG for initial prevent exam</span>*@
+            </div>
+            <div style="float: left; width: 390px; padding-left: 5px; min-height: 195px; border-right: solid 1px #000000;">
+                @*<span style="float: left; width: 30px; padding-left: 35px; ">1.</span>
+                <span style="float: left; width: 310px; padding-left: 5px;">Asymptomatic patient receiving non referral preventive services</span>
+                <span style="float: left; width: 30px; padding-left: 35px; ">2.</span>
+                <span style="float: left; width: 310px; padding-left: 5px; ">Asymptomatic patient receiving non referral preventive services</span>
+                <span style="float: left; width: 30px; padding-left: 35px; ">3.</span>
+                <span style="float: left; width: 310px; padding-left: 5px; ">Asymptomatic patient receiving non referral preventive services</span>
+                <span style="float: left; width: 30px; padding-left: 35px; ">4.</span>
+                <span style="float: left; width: 310px; padding-left: 5px; ">Asymptomatic patient receiving non referral preventive services</span>
+                <span style="float: left; width: 30px; padding-left: 35px; ">5.</span>
+                <span style="float: left; width: 310px; padding-left: 5px; ">Asymptomatic patient receiving non referral preventive services</span>*@
+            </div>
+            <div style="float: left; width: 150px; padding-left: 5px; min-height: 195px;">
+                @*<span style="float: left; width: 30px; padding-left: 35px; ">1.</span>
+                <span style="float: left; width: 70px; padding-left: 5px;">$20.00</span>
+                <span style="float: left; width: 30px; padding-left: 35px; ">2.</span>
+                <span style="float: left; width: 70px; padding-left: 5px; ">$19.00</span>
+                <span style="float: left; width: 30px; padding-left: 35px; ">3.</span>
+                <span style="float: left; width: 70px; padding-left: 5px; ">$20.00</span>
+                <span style="float: left; width: 30px; padding-left: 35px; ">4.</span>
+                <span style="float: left; width: 70px; padding-left: 5px; ">$20.00</span>
+                <span style="float: left; width: 30px; padding-left: 35px; ">5.</span>
+                <span style="float: left; width: 70px; padding-left: 5px; ">$20.00</span>*@
+            </div>
+        </div>
+    </div>
+    <div class="full-width-abn">
+        <span style="font-size: 17px;">
+            <b>WHAT YOU NEED TO DO NOW: </b>
+        </span>
+        <br/>
+        <ul>
+            <li>Read this notice, so you can make an informed decision about your care.</li>
+            <li>Ask us any questions that you may have after you finish reading.</li>
+            <li>
+                Choose an option below about whether to receive the <span class="underline-abn">preventive services </span> listed above.<br/>
+                <b>Note:</b> If you choose Option 1 or 2, we may help you to use any other insurance that you might have, but Medicare cannot require us to do this.
+            </li>
+        </ul>
+    </div>
+    <div class="full-width-abn" style="border: solid 1px #000000;">
+        <div class="full-width-abn" style="margin-top: 0px; width: 100%; padding-bottom: 7px; background-color: #cdcdcd;">
+            <span style="padding-left:10px;"><b>OPTIONS:</b></span>
+            <span style="padding-left:50px;"><b>Check only one box.  We cannot choose a box for you.</b></span>
+        </div>
+        <div class="full-width-abn" style="margin-top: 0px; border-top: solid 1px #000000;">
+            <div style="padding: 5px; text-align: justify;">
+                <span>
+                    <img src="/Config/Content/ResultPacket/content/checkbox-unchecked.png" />
+                </span>
+                <span><b>OPTION 1.</b>  I want the </span>
+                <span class="underline-abn">preventive services</span>
+                <span>
+                    listed above.  You may ask to be paid now, but I also want Medicare billed for an official decision on payment,
+                    which is sent to me on a Medicare Summary Notice (MSN). I understand that if Medicare doesn&#8217;t pay, I am responsible
+                    for payment, but <b>I can appeal to Medicare</b> by following the directions on the MSN.  If Medicare does pay, you will refund any payments I made to you, less co-pays or deductibles.
+                </span>
+            </div>
+            <div style="padding: 5px; text-align: justify;">
+                <span>
+                    <img src="/Config/Content/ResultPacket/content/checkbox-unchecked.png" />
+                </span>
+                <span><b>OPTION 2.</b>  I want the </span>
+                <span class="underline-abn">preventive services</span>
+                <span>
+                    listed above, but do not bill Medicare. You may ask to be paid now as I am responsible for payment. <b>I cannot appeal if Medicare is not billed.</b>
+                </span>
+            </div>
+            <div style="padding: 5px; text-align: justify;">
+                <span>
+                    <img src="/Config/Content/ResultPacket/content/checkbox-unchecked.png" />
+                </span>
+                <span><b>OPTION 3.</b>  I don't want the </span>
+                <span class="underline-abn">preventive services</span>
+                <span>
+                    listed above. I understand with this choice I am <b>not</b> responsible for payment, and <b>I cannot appeal to see if Medicare would pay.</b>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="full-width-abn">
+        <b>H. Additional Information:</b><br/><br/>
+        <b>This notice gives our opinion, not an official Medicare decision.</b> If you have other questions on this notice or Medicare billing, call <b>1-800-MEDICARE</b> (1-800-633-4227/<b>TTY</b>: 1-877-486-2048). <br/>
+        Signing below means that you have received and understand this notice. You also receive a copy.
+    </div>
+    <div class="full-width-abn" style="border: solid 1px #000000;">
+        <div class="half-width-abn" style="height:50px; border-right: solid 1px #000000;">
+            <span style="padding-left: 10px;"><b>I. Signature:</b></span>
+        </div>
+        <div class="half-width-abn" style="height:50px;">
+            <span style="padding-left: 10px;"><b>J. Date:</b></span>
+        </div>
+    </div>
+    <div class="full-width-abn">
+        According to the Paperwork Reduction Act of 1995, no persons are required to respond to a collection of information unless it displays a valid OMB control number. 
+        The valid OMB control number for this information collection is 0938-0566.  The time required to complete this information collection is estimated to average 7 minutes 
+        per response, including the time to review instructions, search existing data resources, gather the data needed, and complete and review the information collection. 
+        If you have comments concerning the accuracy of the time estimate or suggestions for improving this form, please write to: CMS, 7500 Security Boulevard, 
+        Attn: PRA Reports Clearance Officer, Baltimore, Maryland 21244-1850. 
+    </div>
+    <hr class="full-width-abn" style="border: solid 2px #000000;" />
+    <div class="full-width-abn">
+        <span style="float:left; margin-left: 50px;">
+            Form CMS-R-131 (03/11)	
+        </span>
+        <span style="float:right; margin-right: 50px;">
+            Form Approved OMB No. 0938-0566
+        </span>
+    </div>
+</div>
+

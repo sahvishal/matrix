@@ -1,0 +1,96 @@
+﻿<table id="EventCustomerAggregatesTable" class="divgrid_clnew" cellspacing="0" cellpadding="0" width="100%" style="font-size: xx-small"> 
+    <tr>
+        <th style="white-space:nowrap;">
+            <b>Event Date</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Host</b> 
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Source</b>
+        </th>      
+        <th style="white-space:nowrap;">
+            <b>Coupon Code</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Incoming Phone #</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Mode</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Customer ID</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Signup Date</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Paid?</b>
+        </th>
+        <th class="amt">
+            <b>Amount</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Package</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Pod Name</b>
+        </th>
+    </tr>
+    {#foreach $T as EventCustomerAggregate}
+    <tr>
+        <td style="white-space:nowrap;">
+           {DateDeserialize($T.EventCustomerAggregate.EventDate).format("shortDate")}
+        </td>
+        <td style="white-space:nowrap;">
+           {#if $T.EventCustomerAggregate.EventName.length > 10}
+                {$T.EventCustomerAggregate.EventName.substring(0, 10)}...
+           {#else}
+                {$T.EventCustomerAggregate.EventName}
+           {#/if}
+        </td>
+        <td style="white-space:nowrap;">
+           {#if $T.EventCustomerAggregate.MarketingSource.length > 20}
+                {$T.EventCustomerAggregate.MarketingSource.substring(0, 20)}...
+           {#else}
+                {$T.EventCustomerAggregate.MarketingSource}
+           {#/if}
+        </td>
+        <td style="white-space:nowrap;">
+            {$T.EventCustomerAggregate.SourceCode}
+        </td>
+        <td style="white-space:nowrap;">
+            {$T.EventCustomerAggregate.IncomingPhoneNumber}
+        </td>
+        <td style="white-space:nowrap;">
+            {$T.EventCustomerAggregate.SignUpModeName}
+        </td>
+        <td style="white-space:nowrap;">
+            {$T.EventCustomerAggregate.CustomerId}
+        </td>
+        <td style="white-space:nowrap;">
+            {DateDeserialize($T.EventCustomerAggregate.CustomerSignupDate).format("shortDate")}
+        </td>
+        <td style="white-space:nowrap;">
+            {$T.EventCustomerAggregate.IsPaid}
+        </td>
+        <td style="white-space:nowrap;" class="amt">
+            {FormatCurrency($T.EventCustomerAggregate.PaymentAmount)}
+        </td>
+        <td style="white-space:nowrap;">
+           {#if $T.EventCustomerAggregate.PackageName.length > 10}
+                {$T.EventCustomerAggregate.PackageName.substring(0, 10)}...
+           {#else}
+                {$T.EventCustomerAggregate.PackageName}
+           {#/if}
+        </td>
+        <td style="white-space:nowrap;">
+           {#if $T.EventCustomerAggregate.PodName.length > 20}
+                {$T.EventCustomerAggregate.PodName.substring(0, 20)}...
+           {#else}
+                {$T.EventCustomerAggregate.PodName}
+           {#/if}
+        </td>                   
+    </tr>  
+    {#/for}                                              
+</table>

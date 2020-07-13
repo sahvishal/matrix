@@ -1,0 +1,77 @@
+﻿@using Falcon.App.Core.CallQueues.ViewModels;
+@using System.Collections.Generic;
+@using Falcon.App.UI.HtmlHelpers
+@model List<CallQueueAssignmentEditModel>
+    @{
+        Layout = null;
+    }
+    <script language="javascript" type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+    <div class="editor-row" id="assignment-container" tabindex="1">
+        <table id="list-view">
+            <thead>
+                <tr>
+                    <th>Call Center Agent</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count(); i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(m => Model[i].Name)
+                            @Html.HiddenFor(m => Model[i].Name)
+                            @Html.HiddenFor(m => Model[i].AssignedOrgRoleUserId)
+                            @Html.HiddenFor(m => Model[i].HealthPlanCriteriaId)
+                            @Html.HiddenFor(m => Model[i].IsEdited, new { @class = "isEdited" })
+                        </td>
+                        <td>
+                            @if ((Model[i].StartDate.HasValue && Model[i].StartDate.Value.Date >= System.DateTime.Today) || Model[i].IsEdited)
+                            {
+                                @Html.TextBoxFor(m => Model[i].StartDate, new { @class = "datePicker startDateDatePicker", @style = "width:100px;" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => Model[i].StartDate, new { @class = "datePicker startDateDatePicker", @style = "width:100px; ", @disabled = "disabled" })
+                                @Html.HiddenFor(m => Model[i].StartDate)
+                            }
+                            <br />
+                            @Html.ValidationMessageFor(m => Model[i].StartDate)
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => Model[i].EndDate, new { @class = "datePicker endDateDatePicker", @style = "width:100px;" })
+                            <br />
+                            @Html.ValidationMessageFor(m => Model[i].EndDate)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+        function closePopup() {
+            $('#edit-assignment').dialog("close");
+        }
+
+        $(".startDateDatePicker").focusin(function () {
+            $(this).data('val', $(this).val());
+        });
+
+        $(".startDateDatePicker").change(function () {
+            var prev = $(this).data('val');
+            var current = $(this).val();
+            var startDate = $(this).closest('tr').find('.startDateDatePicker').val();
+
+            if (new Date(prev) != new Date(current)) {
+                $(this).closest('tr').find('.isEdited').val('true');
+            }
+            //debugger;
+            //var todaysDate = new Date().setHours(0, 0, 0, 0);
+            //if (new Date(startDate) >= todaysDate && new Date(prev) != new Date(current)) {
+            //    $(this).closest('tr').find('.isEdited').val('true');
+            //}
+        });
+
+    </script>

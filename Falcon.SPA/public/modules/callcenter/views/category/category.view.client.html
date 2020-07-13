@@ -1,0 +1,46 @@
+﻿<div class="mainbodyouter" data-ng-controller="catergoryController" us-spinner spinner-key="online-spinner">
+    <div class="bodycontnr clearfix">
+        <div class="wrapcrep_inpg wrapcrep_inpg2">
+            <div class="bluheader">
+                <div>
+                    &nbsp;
+                </div>
+            </div>
+
+            <div class="main_area_bdr clearfix">
+                <div class="maincontentrow_ccrep">
+                    <div class="regcust_innerrow">
+                        <div class="midrow_bcinfo">
+                            <div class="col-sm-12">
+                                <h2>
+                                    <span id="spSearchType">System Generated Call Queues</span>
+                                </h2>
+                                <p>Click on the button to view the list of prospect/customers</p>
+                            </div>
+
+                            <div class="fline_regcust">
+                            </div>
+                        </div>
+
+                        <div class="middivrow_regcust">
+                            <div style="width:265px;" ng-repeat="u in category" class="pull-left">
+                                <div class="custmr_optlnk">
+                                    <img ng-src="/App/Images/CCRep/{{numtoWord($index + 1)}}.gif" title="Customer Option 1" alt="Customer Option 1">
+                                    <a href="" ng-click="SelectCategory(u)">{{u.Name}}</a>
+                                </div>
+                                <div style="text-decoration: none; width:8px; float: right;">
+                                    <a href="javascript:void();" custom-tool-tip tool-tip-header="Help" tool-tip-container="catgory-help-div" class="glyphicon glyphicon-question-sign"></a>
+                                    <div class="catgory-help-div qtip" style="width:500px; display: none; font-size: 30px;">
+                                        {{u.Description}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+

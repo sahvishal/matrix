@@ -1,0 +1,76 @@
+﻿@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+
+@model UserNameEditModel
+           
+@{
+    ViewBag.Title = "Change User Name";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml";
+}
+
+@{Html.BeginForm();}
+@if(Model.FeedbackMessage!=null)
+{
+    @Html.Partial("Message",new ViewDataDictionary(Model.FeedbackMessage))     
+}
+
+<div style="float: left; width: 400px;">
+    <div class="editor-row">
+        @Html.ValidationMessageFor(m=>m.UserName)
+    </div>
+    <div class="editor-row" style="width:99%; margin-bottom:10px;">
+        <div class="editor-column" style="width:100%;">            
+            <div class="editor-field"> 
+                <div style="float:left; width:100px;">
+                    @Html.LabelFor(m=>m.UserName):   
+                </div>     
+                <div style="float:left; width:290px;"> 
+                    @Html.TextBoxFor(m => m.UserName) 
+                    <br />
+                    <span class="small-text">5-20 characters</span> <a href="javascript:void(0);">(Check Availability)</a>                  
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m=>m.UserId)
+
+    <div class="submit-button-row">
+        <a href="javascript:void(0);" onclick="closeWindow();">Cancel </a>&nbsp; &nbsp;
+        @Html.SubmitButton("Update")
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+    function closeWindow() {
+        parent.ClosePopUp();
+    }
+
+    $("#UserName").blur(function () {
+        //debugger;
+        $("#username-hint").remove();
+        if ($.trim($("#UserName").val()).length < 5 || $.trim($("#UserName").val()).length > 20) {
+            $("#UserName").after("<span id='username-hint' class='error-userhint'> Not Available </span>");
+            return;
+        }
+        var url = "/Users/User/IsAvailable/?userName=" + $("#UserName").val() + "&excludedUserId=" + $("#UserId").val();        
+        $.getJSON(url, null, function (isUnique) {
+            if (isUnique) {
+                $("#UserName").after("<span id='username-hint'  class='success-userhint'> Available </span>");
+            }
+            else {
+                $("#UserName").after("<span id='username-hint' class='error-userhint'> Not Available </span>");
+            }
+        });
+    });
+
+</script>
+@if (Model.FeedbackMessage!=null && (Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success || Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Warning))
+    {
+    <script language="javascript" type="text/javascript">
+        function closeAndReloadWindow() {
+            parent.UpdateUserName("@Model.UserName");
+        }
+        closeAndReloadWindow()
+    </script>
+    }
+@{Html.EndForm();}

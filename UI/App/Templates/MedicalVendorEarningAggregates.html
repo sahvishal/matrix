@@ -1,0 +1,45 @@
+﻿<div>
+    <div id="PagingDiv" style="text-align: right; padding: 5px">
+        <a id="PrevPage">Previous Page</a> <span id="PagingLinksSeparator">|</span>
+        <a id="NextPage">Next Page</a>
+    </div>
+    <div id="medicalVendorEarningAggregateRepeaterDiv" runat="server">
+        <table id="MedicalVendorEarningAggregateTable" class="divgrid_clnew" cellspacing="3" width="100%">
+            <thead>
+                <tr>
+                    <th style="white-space:nowrap;">
+                        <b>Evaluation Date</b>
+                    </th>
+                    <th style="white-space:nowrap;">
+                        <b>Customer Name</b> 
+                    </th>                        
+                    <th style="white-space:nowrap;">
+                        <b>Package</b>
+                    </th>
+                    <th class="amt">
+                        <b>Amount Earned</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {#foreach $T as MedicalVendorEarningCustomerAggregate}
+                <tr>
+                    <td style="white-space:nowrap;">
+                       {DateDeserialize($T.MedicalVendorEarningCustomerAggregate.EvaluationDate).format("shortDate")} @
+                       {DateDeserialize($T.MedicalVendorEarningCustomerAggregate.EvaluationDate).format("shortTime")}
+                    </td>
+                    <td style="white-space:nowrap;">
+                       {$T.MedicalVendorEarningCustomerAggregate.CustomerName.FullName}
+                    </td>                        
+                    <td style="white-space:nowrap;">
+                        {$T.MedicalVendorEarningCustomerAggregate.PackageName}
+                    </td>
+                    <td style="white-space:nowrap;" class="amt">
+                        {FormatCurrency($T.MedicalVendorEarningCustomerAggregate.AmountEarned)}
+                    </td>                    
+                </tr>  
+                {#/for}
+            </tbody>
+        </table>
+    </div>
+</div>

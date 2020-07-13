@@ -1,0 +1,196 @@
+﻿@model Falcon.App.Core.Scheduling.ViewModels.EventCustomerOrderSummaryModel
+<div class="order_summary">
+    <div class="left-float disclaimer-normal-message-header warning-message" style="width: 55%;display: none;">
+    </div>
+    <div class="right-float">
+        <div class="tab_button" id="ShowOrderSummary">Order Summary</div>
+        <div class="order_summary_details" id="order_summary_details" style="display: none">
+            <div class="heading_grey">
+                <strong>LOCATION</strong>
+            </div>
+            <div class="section_content">
+                <strong>@Model.Host</strong><br />
+                @Model.Address.ToShortAddressString()
+            </div>
+            <div class="heading_grey mt10">
+                <strong>DATE &amp; TIME</strong>
+            </div>
+            <div class="section_content">
+                <strong>
+                    @Model.EventDate.Value.DayOfWeek @Model.EventDate.Value.ToString("MMMM dd, yyyy")
+                    <span id="appointment-time">
+                        @if (Model.AppointmentTime.HasValue)
+                        {
+                            <span>at @Model.AppointmentTime.Value.ToString("h:mm tt")</span>
+                        }
+                    </span>
+                </strong>
+            </div>
+            <div class="heading_grey mt10">
+                <strong>YOUR ORDER</strong>
+            </div>
+            <div class="section_content" id="os-selectedpackage-div">
+                @if (Model.Package != null)
+                {
+                    <h5 class="txt-green">
+                        <strong>@Model.Package.FirstValue</strong>
+                    </h5>
+                    <ul class="os_tests">
+                        @foreach (var item in Model.PackageTest)
+                        {
+                            <li>@item </li>
+                        }
+                    </ul>                    
+                }
+                @if (Model.AdditionalTests != null && Model.AdditionalTests.Count() > 0)
+                {
+                    foreach (var item in Model.AdditionalTests)
+                    {                    
+                    <h5 class="txt-green">
+                        <strong>@item.FirstValue</strong>
+                    </h5>
+                    }
+                }
+@*<h6>
+                    <a href="#">See more..</a></h6>*@
+                @if (Model.Product != null && Model.Product.Count() > 0)
+                {
+                    foreach (var item in Model.Product)
+                    {                    
+                    <h4 class="mt10">
+                        <strong class="txt-green">@item.FirstValue -</strong> Yes
+                    </h4>
+                    }
+                }
+                @if (Model.ShippingOptionId.HasValue)
+                {
+                    <h4 class="mt10">
+                        <strong class="txt-green">Result -</strong> @(Model.ShippingOptionId.Value > 0 ? "Mail" : "Online")
+                    </h4>
+                }
+            </div>
+            <div class="total_box mt10">
+                @{
+                    var totalPrice = Model.TotalPrice != null ? Model.TotalPrice.Value : 0;
+                    var discountAmount = Model.DiscountAmount != null ? Model.DiscountAmount.Value : 0;
+                    var paidAmount = Model.AmountPaid != null ? Model.AmountPaid.Value : 0;
+                    var discountedTotal = totalPrice - discountAmount;
+                    var unPaidAmount = Model.AmountDue != null ? Model.AmountDue.Value : 0;
+                }
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td height="24">
+                            <strong>Total Price: </strong>
+                        </td>
+                        <td align="right">
+                            <span id="totalprice-span">$@totalPrice.ToString("0.00")</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="24">
+                            <strong>Discount: </strong>
+                        </td>
+                        <td align="right">(<span id="discountamount-span">$@(discountAmount.ToString("0.00"))</span>)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="24">
+                            <strong>Amount Due: </strong>
+                        </td>
+                        <td align="right">
+                            <span id="discounttotal-span">$@unPaidAmount.ToString("0.00")</span>
+                        </td>
+                    </tr>
+                    @if (paidAmount > 0)
+                    {
+                        <tr>
+                            <td height="24">
+                                <strong>Amount Paid: </strong>
+                            </td>
+                            <td align="right">
+                                <span>$@paidAmount.ToString("0.00")</span>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<script type="text/javascript" language="javascript">
+    var totalPrice = parseFloat('@totalPrice');
+    function getTotalOrderPrice() {
+        return totalPrice;
+    }
+
+    function setOrderPricing(totalAmount, discountAmount, discountedTotal) {
+
+        $("#totalprice-span").text("$"+totalAmount.toFixed(2));
+        $("#discountamount-span").text("$" + discountAmount.toFixed(2));
+        $("#discounttotal-span").text("$" + discountedTotal.toFixed(2));
+
+    }
+
+
+    function setOrder(selectedPackage, selectedShipping, selectedTests, selectedProducts, appliedSourceCode) {
+        totalPrice = 0;
+
+        var htmlPackage = "";
+        $("#os-selectedpackage-div").html("");
+
+        if (selectedPackage != null) {
+            htmlPackage = "<h5 class=\"txt-green\"><strong>" + selectedPackage.Name + "</strong></h5>";
+            htmlPackage += "<ul class=\"os_tests\">";
+            for (var i = 0; i < selectedPackage.PackageTests.length; i++) {
+                htmlPackage += "<li>" + selectedPackage.PackageTests[i] + "</li>";
+            }
+            htmlPackage += "</ul>";
+
+            totalPrice += Number(selectedPackage.Price);
+        }
+
+        if (selectedTests != null) {
+            for (var i = 0; i < selectedTests.length; i++) {
+                htmlPackage += "<h5 class=\"txt-green\"><strong>" + selectedTests[i].Name + "</strong></h5>";
+                totalPrice += Number(selectedTests[i].Price);
+            }
+        }
+
+        if (selectedProducts != null && selectedProducts.length > 0) {
+            for (var i = 0; i < selectedProducts.length; i++) {
+                htmlPackage += "<h4 class=\"mt10\"><strong class=\"txt-green\">" + selectedProducts[i].Name + " - </strong> Yes</h4>";
+                totalPrice += Number(selectedProducts[i].Price);
+            }
+        }
+
+        if (selectedShipping != null) {
+            var option = "Online";
+            if (selectedShipping.Id > 0)
+                option = "Mail";
+
+            htmlPackage += "<h4 class=\"mt10\"><strong class=\"txt-green\">Result - </strong>" + option + "</h4>";
+            totalPrice += Number(selectedShipping.Price);
+        }
+
+        $("#os-selectedpackage-div").html(htmlPackage);
+
+
+
+        var netAmount = parseFloat(totalPrice);
+
+        if (appliedSourceCode != null) {
+            netAmount = netAmount - parseFloat(appliedSourceCode.Amount);
+        }
+
+        setOrderPricing(totalPrice, (appliedSourceCode != null ? appliedSourceCode.Amount : 0), netAmount);
+    }
+
+    function setAppointmentTime(appointmentTime) {
+        if (appointmentTime.length > 0)
+            $("#appointment-time").html(" at " + appointmentTime);
+        else
+            $("#appointment-time").html("");
+    }
+
+</script>

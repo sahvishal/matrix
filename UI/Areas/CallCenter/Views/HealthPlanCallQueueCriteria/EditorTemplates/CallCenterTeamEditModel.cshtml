@@ -1,0 +1,284 @@
+﻿@using Falcon.App.Core.CallCenter.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.CallCenter.ViewModels.CallCenterTeamEditModel
+
+@Html.HiddenFor(m => m.Id)
+<div class="leftside-div-with-roundborder" style="width: 99%; min-height:120px;">
+    <div class=" editor-row" style="padding-top: 5px;">
+
+        <div id="NameAndTypeBinder" style="float: left;">
+            <div class="col1" style="float: left;">
+                <div class="editor-label">
+                    @Html.LabelFor(m => m.Name) @*<br />@Html.ValidationMessageFor(m => m.Name)*@
+                </div>
+                @Html.TextBoxFor(x => x.Name, new { @style = "width:250px;", @id = "Name", @minlength = "5", @maxlength = "255" })
+            </div>
+            <div style="float: left; clear: both; padding-top: 5px;">
+                <div class="editor-label">
+                    Select @Html.LabelFor(m => m.TypeId)
+                </div>
+                @Html.DropDownListFor(x => x.TypeId, DropDownHelper.GetEnumBasePairs(AgentTeamType.OutBound), new { @style = "width:150px;" })
+            </div>
+        </div>
+
+        <div style="float: left; width: 65%; height: 25%; padding-left: 30px;">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Description) @Html.ValidationMessageFor(m => m.Description)
+            </div>
+            @Html.TextAreaFor(x => x.Description, new { @style = "width:100%;", @rows = "5", @maxlength = "2048" })
+        </div>
+    </div>
+</div>
+
+<div id="assignmentsDiv" class="rightside-div-with-roundborder" style="width: 99%; min-height: 250px; clear: both; margin-top: 20px;">
+    <h2>Select Agents</h2>
+    <div class="selectListContainer" style="align-content: center; padding: 10px; margin: 0 auto;">
+        <div class="subject-info-box-1" style="padding-right: 20px;">
+            <div style="text-align: left; padding-bottom: 5px;">
+                Select Call Center Agents&nbsp;&nbsp;<span class="create-info-tip" style="vertical-align: middle;"><img alt="Info" src="/App/Images/info-icon.gif"></span>
+                <div class="create-prop-tip-info" style="display: none;">
+                    List of all Call center agents (unassigned to team)
+                </div>
+            </div>
+            @{
+                if (Model != null && Model.AgentsMasterList != null && Model.AgentsMasterList.Any())
+                {
+                    var agentMasterList = Model.AgentsMasterList.Select(x => new SelectListItem { Text = x.SecondValue, Value = x.FirstValue.ToString() }).ToList();
+                    @Html.DropDownListFor(x => x.AgentsMasterList, agentMasterList, new { @multiple = "multiple", @id = "agentMasterDiv", @style = "width: 100%; height: 150px;" })
+                }
+                else
+                {
+                    var emptyList = new List<SelectListItem>();
+                    @Html.DropDownListFor(x => x.AgentsMasterList, emptyList, new { @multiple = "multiple", @id = "agentMasterDiv", @style = "width: 100%; height: 150px;" })
+                }
+            }
+        </div>
+
+        <div class="subject-info-arrows text-center" style="padding-top: 25px;text-align: center; height: 150px; justify-content: center; align-content: center;">
+            <div>
+                <input type='button' class="controlButton create-info-tip" id='btnAllRight' value='>>' class="btn btn-default" />
+                <div class="create-prop-tip-info" style="display: none;">
+                    Move all agents to assignment list
+                </div>
+            </div>
+            <br />
+            <div>
+                <input type='button' class="controlButton create-info-tip" id='btnRight' value='>' class="btn btn-default" />
+                <div class="create-prop-tip-info" style="display: none;">
+                    Move selected agents to assignment list
+                </div>
+            </div>
+            <br />
+            <div>
+                <input type='button' class="controlButton create-info-tip" id='btnLeft' value='<' class="btn btn-default" />
+                <div class="create-prop-tip-info" style="display: none;">
+                    Remove selected agents from assignment list
+                </div>
+            </div>
+            <br />
+            <div>
+                <input type='button' class="controlButton create-info-tip" id='btnAllLeft' value='<<' class="btn btn-default" />
+                <div class="create-prop-tip-info" style="display: none;">
+                    Remove all agents from assignment list
+                </div>
+            </div>
+        </div>
+
+        <div class="subject-info-box-2" style="padding-left: 20px;">
+            <div style="text-align: left; padding-bottom: 5px;">
+                Selected Call Center Agents&nbsp;&nbsp;<span class="create-info-tip" style="vertical-align: middle;"><img alt="Info" src="/App/Images/info-icon.gif"></span>
+                <div class="create-prop-tip-info" style="display: none;">
+                    List of call center agents assigned to the team
+                </div>
+            </div>
+            <select multiple="multiple" id='selectedAgents' style="width: 100%; height: 150px;">
+                @if (Model != null && Model.Assignments != null && Model.Assignments.Any())
+                {
+                    foreach (var assignment in Model.Assignments)
+                    {
+                        <option value="@assignment.FirstValue">@assignment.SecondValue</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+    <div id="selectedAgentsInputs" style="display: none"></div>
+    @*<div id="AgentsMasterListInputs" style="display: none"></div>*@
+    <div class="clearfix"></div>
+</div>
+
+
+<script type="text/javascript">
+    function checkAndSubmit() {
+
+        var teamName = $("#Name").val();
+        if (teamName == null || teamName == '') {
+            alert("Please enter team name");
+            return;
+        }
+        if ($("#selectedAgents option").length == 0) {
+            alert("Select some agents to be in Team");
+            return;
+        }
+
+        appendAssignmentInputs();
+
+        $("#form").submit();
+    }
+
+    //To prepare input elements for selected agents
+    function appendAssignmentInputs() {
+        $("#selectedAgentsInputs").empty();
+        if ($("#selectedAgents option").length > 0) {
+            var counter = 0;
+            var html = "";
+            $.each($("#selectedAgents option"), function (index, markup) {
+                html = html + "<input class='agentAssignments' type='hidden' value='" + $(markup).val() + "' name='Assignments[" + counter + "].FirstValue'>" +
+                    "<input class='agentAssignments' type='hidden' value='" + $(markup).text() + "' name='Assignments[" + counter + "].SecondValue'>";
+                counter++;
+            });
+            $("#selectedAgentsInputs").append(html);
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    $(".create-info-tip").qtip({
+        content: {
+            title: function (api) {
+                return "Info";
+            },
+            text: function (api) {
+                return $(this).parent().find('.create-prop-tip-info').html();
+            }
+        },
+        style: {
+            width: '300px'
+        },
+        position: {
+            adjust: {
+                method: 'shift'
+            }
+        },
+    });
+</script>
+
+<style type="text/css">
+    .subject-info-box-1,
+    .subject-info-box-2 {
+        float: left;
+        width: 40%;
+        select;
+
+    {
+        height: 200px;
+        padding: 0;
+        option;
+
+    {
+        padding: 4px 10px 4px 10px;
+    }
+
+    option:hover {
+        background: #EEEEEE;
+    }
+
+    }
+    }
+
+    .subject-info-arrows {
+        float: left;
+        width: 10%;
+        input;
+
+    {
+        width: 70%;
+        margin-bottom: 5px;
+    }
+
+    }
+
+    .controlButton {
+        margin: 0 auto;
+        padding-bottom: 2px;
+        background: #f7ba80;
+        color: black;
+        display: block;
+    }
+</style>
+
+<script type="text/javascript">
+    //Logic for Select Lists
+    (function () {
+        $('#btnRight').click(function (e) {
+            var selectedOpts = $('#agentMasterDiv option:selected');
+            if (selectedOpts.length == 0) {
+                alert("Nothing to move.");
+                e.preventDefault();
+            }
+
+            $('#selectedAgents').append($(selectedOpts).clone());
+            sortSelect('#selectedAgents', 'text', 'asc');
+            $(selectedOpts).remove();
+            e.preventDefault();
+        });
+
+        $('#btnAllRight').click(function (e) {
+            var selectedOpts = $('#agentMasterDiv option');
+            if (selectedOpts.length == 0) {
+                alert("Nothing to move.");
+                e.preventDefault();
+            }
+
+            $('#selectedAgents').append($(selectedOpts).clone());
+            sortSelect('#selectedAgents', 'text', 'asc');
+            $(selectedOpts).remove();
+            e.preventDefault();
+        });
+
+        $('#btnLeft').click(function (e) {
+            var selectedOpts = $('#selectedAgents option:selected');
+            if (selectedOpts.length == 0) {
+                alert("Nothing to move.");
+                e.preventDefault();
+            }
+
+            $('#agentMasterDiv').append($(selectedOpts).clone());
+            sortSelect('#agentMasterDiv', 'text', 'asc');
+            $(selectedOpts).remove();
+            e.preventDefault();
+        });
+
+        $('#btnAllLeft').click(function (e) {
+            var selectedOpts = $('#selectedAgents option');
+            if (selectedOpts.length == 0) {
+                alert("Nothing to move.");
+                e.preventDefault();
+            }
+
+            $('#agentMasterDiv').append($(selectedOpts).clone());
+            sortSelect('#agentMasterDiv', 'text', 'asc');
+            $(selectedOpts).remove();
+            e.preventDefault();
+        });
+    }(jQuery));
+
+
+    var sortSelect = function (select, attr, order) {
+        if (attr === 'text') {
+            if (order === 'asc') {
+                $(select).html($(select).children('option').sort(function (x, y) {
+                    return $(x).text().toUpperCase() < $(y).text().toUpperCase() ? -1 : 1;
+                }));
+                $(select).get(0).selectedIndex = 0;
+            }// end asc
+            if (order === 'desc') {
+                $(select).html($(select).children('option').sort(function (y, x) {
+                    return $(x).text().toUpperCase() < $(y).text().toUpperCase() ? -1 : 1;
+                }));
+                $(select).get(0).selectedIndex = 0;
+            }// end desc
+        }
+
+    };
+</script>

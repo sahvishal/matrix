@@ -1,0 +1,61 @@
+﻿@model Falcon.App.Core.Users.ViewModels.HospitalFacilityListModel
+@{
+    ViewBag.Title = "Manage Hospital Facilities";
+}
+
+<h1>Manage Hospital Facilities</h1>
+
+<div class="option-links">
+    <a href="/Users/HospitalFacility/Create">+ Add Hospital Facility </a>
+</div>
+<div id="list-filter">
+    @Html.Partial("HospitalFacilityListModelFilter", new ViewDataDictionary(Model.Filter))
+</div>
+@if (Model != null && Model.HospitalFacilities != null)
+{
+    @Html.DisplayFor(m=>m.PagingModel)
+    <table id="list-view">
+        <tr>
+            <th>Name</th>
+            <th>Business Address</th>
+            <th>Phone</th>
+            <th>Parent Hospital</th>
+            <th>Action</th>
+        </tr>
+        @foreach (var hospitalFacility in Model.HospitalFacilities)
+        {
+            <tr>
+                <td>
+                    @hospitalFacility.OrganizationBasicInfoModel.Name
+                </td>
+                <td>
+                    @hospitalFacility.OrganizationBasicInfoModel.Address.ToString()
+                </td>
+                <td>
+                    @hospitalFacility.OrganizationBasicInfoModel.PhoneNumber
+                </td>
+                <td>
+                    @hospitalFacility.ParentHospitalPartner
+                </td>
+                <td>
+                    <a href="/Users/HospitalFacility/Edit?id=@hospitalFacility.OrganizationBasicInfoModel.Id">Edit</a>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m=>m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+@section scripts {
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        }); 
+    </script>
+}

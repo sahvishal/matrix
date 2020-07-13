@@ -1,0 +1,12 @@
+﻿.healthPlan fieldset {
+    width: 650px;
+}
+.healthPlan fieldset legend {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.info-label {width: 200px;}
+.healthPlan fieldset select,.healthPlan fieldset select option {width: 315px;}
+
+.middivrow_regcust ul li {display: block;clear: both;}
+.wrapcrep_inpg2 .middivrow_regcust { overflow: visible;    }

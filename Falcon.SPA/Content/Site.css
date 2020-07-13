@@ -1,0 +1,244 @@
+﻿.fa-1xx {
+    font-size: 1.5em;
+}
+
+.small-font {
+    font-size: .75em;
+}
+
+.well-grey {
+    background-color: #E7EBEE;
+}
+
+.well-white {
+    background-color: #ffffff;
+}
+
+.font-xlarge {
+    font-size: 18px;
+}
+
+.font-xxlarge {
+    font-size: 28px;
+}
+
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+[class^=col-] {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.success {
+    color: #53A559;
+}
+
+input.success {
+    color: #53A559;
+}
+
+.btn-primary {
+    background-color: #ffffff !important;
+    background-image: none;
+    border-color: #3e8f3e;
+    color: #3e8f3e;
+    text-shadow: none;
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary.focus,
+    .btn-primary:active,
+    .btn-primary.active,
+    .open > .dropdown-toggle.btn-primary {
+        color: #3e8f3e;
+        background-color: #ffffff;
+        border-color: #3e8f3e;
+    }
+
+    .btn-primary:active,
+    .btn-primary.active,
+    .open > .dropdown-toggle.btn-primary {
+        background-image: none;
+    }
+
+    .btn-primary.disabled,
+    .btn-primary[disabled],
+    fieldset[disabled] .btn-primary,
+    .btn-primary.disabled:hover,
+    .btn-primary[disabled]:hover,
+    fieldset[disabled] .btn-primary:hover,
+    .btn-primary.disabled:focus,
+    .btn-primary[disabled]:focus,
+    fieldset[disabled] .btn-primary:focus,
+    .btn-primary.disabled.focus,
+    .btn-primary[disabled].focus,
+    fieldset[disabled] .btn-primary.focus,
+    .btn-primary.disabled:active,
+    .btn-primary[disabled]:active,
+    fieldset[disabled] .btn-primary:active,
+    .btn-primary.disabled.active,
+    .btn-primary[disabled].active,
+    fieldset[disabled] .btn-primary.active {
+        background-color: #ffffff;
+        border-color: #3e8f3e;
+    }
+
+    .btn-primary .badge {
+        color: #3e8f3e;
+        background-color: #ffffff;
+    }
+
+.row-border {
+    border: 1px solid #808080;
+}
+
+input {
+    padding-left: 5px;
+}
+
+    input.input-small {
+        width: 100px;
+    }
+
+.header-font-color {
+    color: #47627F;
+}
+
+select {
+    padding: 7px;
+}
+
+.margin-top-small {
+    margin-top: 10px;
+}
+
+.margin-v-small {
+    margin: 10px 0;
+}
+
+.margin-v-xlarge {
+    margin: 20px 0;
+}
+
+.margin-h-small {
+    margin: 0 3px 0 3px;
+}
+
+.margin-large {
+    padding: 10px;
+}
+
+.margin-xlarge {
+    padding: 15px;
+}
+
+.padding-top-xxlarge {
+    padding-top: 20px;
+}
+
+.padding-bottom-xlarge {
+    padding-bottom: 15px;
+}
+
+.padding-top-xxxlarge {
+    padding-top: 30px;
+}
+
+.padding-v-small {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.padding-v-large {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.padding-small {
+    padding: 10px;
+}
+
+.padding-large {
+    padding: 15px;
+}
+
+.padding-xlarge {
+    padding: 20px;
+}
+
+.padding-xxxlarge {
+    padding: 40px;
+}
+
+.padding-h-large {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.body-container {
+    width: 990px;
+    padding: 0;
+}
+
+    .body-container .well-lg {
+        padding: 24px 10px 10px 10px;
+    }
+
+.show-grid [class^=col-] {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid #808080;
+}
+
+.show-row-dotted [class=row] {
+    padding: 10px;
+    border-bottom: dotted 1px #808080;
+}
+
+.text-middle {
+    vertical-align: middle;
+}
+
+.chatnow-pannel {
+    width: 200px;
+    height: 50px;
+    float: right;
+    margin: auto;
+    background-color: #000000;
+    color: #ffffff;
+    border: solid #000000 1px;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.content-loader {
+    margin: auto;
+    left: 50%;
+    right: 50%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.tooltip-inner {
+    background-color: #ECF1EF;
+    font-family: 'Proxima Nova Regular';
+    text-align: left;
+    padding-left: 10px;
+    color: #47627F;
+    box-shadow: 3px 3px 2px #888;
+    
+}
+
+.tooltip.right .tooltip-arrow {
+    border-right-color: #ECF1EF;
+    top: 45%;
+    left: -5px;
+    margin-top: -5px;
+    border-width: 10px 10px 10px 0;
+}

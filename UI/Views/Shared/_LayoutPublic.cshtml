@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    @if (IsSectionDefined("googleanalyitcs"))
+    {
+        @RenderSection("googleanalyitcs", false)
+    }
+    else
+    {
+        @Html.Partial("/Config/Content/Views/Shared/GoogleAnalytics.cshtml")
+    }
+    <title>@ViewBag.Title</title>
+    <link rel='shortcut icon' href='/favicon.ico' type="image/x-icon" />
+
+    @*<link href="@Url.Content("/Content/Styles/Style.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("/Content/Styles/main.css")" rel="stylesheet" type="text/css" />*@
+
+    <link href="@Url.Content("/Config/Content/Styles/style-ps.css")" type="text/css" rel="Stylesheet" />
+
+    <link href="@Url.Content("~/Content/Styles/jquery-ui-1.8.12.custom.css")" rel="Stylesheet" type="text/css" />
+    <script src="/scripts/jquery-1.5.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/Scripts/jquery-ui-1.8.12.custom.min.js"></script>
+    <script type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+    <script src="/scripts/jquery.ie6blocker.js" type="text/javascript"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0; url=/Public/Events/NoScript.aspx">
+    </noscript>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+    @if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/Remarketing.cshtml")))
+    {
+        @Html.Partial("/Config/Content/Views/Shared/Remarketing.cshtml")
+    }
+    <div class="wrapper">
+        <div id="header">
+            @Html.Partial("HeaderPublic")
+        </div>
+        <div id="content">
+            @RenderBody()
+        </div>
+        <div id="footer">
+            @Html.Partial("FooterPublic")
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        var _mfq = _mfq || [];
+
+        (function () {
+
+            var mf = document.createElement("script"); mf.type = "text/javascript"; mf.async = true;
+
+            mf.src = "//cdn.mouseflow.com/projects/20602bcd-abc7-4f3f-bca9-68d2cdf167ac.js";
+
+            document.getElementsByTagName("head")[0].appendChild(mf);
+
+        })();
+
+    </script>
+</body>
+@* please put all scripts at the end *@
+@RenderSection("scripts", false)
+</html>

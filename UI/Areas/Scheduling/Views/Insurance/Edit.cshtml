@@ -1,0 +1,177 @@
+﻿@using Falcon.App.Core.Finance.Enum
+@model Falcon.App.Core.Insurance.ViewModels.EligibilityEditModel
+@{
+    Layout = null;
+}
+@*<script type="text/javascript" src="/Scripts/jquery-1.5.2.min.js"></script>
+<script type="text/javascript" src="/Scripts/jquery-ui-1.8.12.custom.min.js"></script>
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>*@
+<script language="javascript" type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+@using (Ajax.BeginForm("CheckEligibility", "", new AjaxOptions { HttpMethod = "Post", Url = "/Scheduling/Insurance/CheckEligibility", InsertionMode = InsertionMode.Replace, OnBegin = "onBeginCheckEligibility", OnComplete = "onCompleteCheckEligibility", UpdateTargetId = "check-eligibility-div" }, new { Id = "form-check-eligibility" }))
+{
+    <div id="check-eligibility-div">
+        @Html.Partial("CheckEligibility", Model)
+    </div>
+    
+    <div class="submit-button-row">
+        <a href="javascript: closeCheckEligibility();">Close</a>&nbsp;&nbsp;
+        <input type="submit" value="Check Eligibility" class="addButton-toggle"/>
+        <img src="/App/Images/loading.gif" alt="" style="display: none;" class="addButton-toggle" />
+    </div>
+    
+    <script type="text/javascript">
+
+        var currentYear_expDate = Number('@(DateTime.Now.Year)');
+        var currentMonth_expDate = Number('@(DateTime.Now.Month)');
+
+        function setEligibilityExpiryDateBox() {
+            var index = 0;
+            while (index <= 15) {
+                var yearToSet = currentYear_expDate + index;
+                $("#check-eligibility-div #card-detail #expiryDate-year").append("<option value='" + yearToSet + "'> " + yearToSet + " </option>");
+                index = index + 1;
+            }
+        }
+
+        function setEligibilityExpiryDateonSelect() {
+            var yearSelected = Number($("#check-eligibility-div #card-detail #expiryDate-year option:selected").val());
+            var monthSelected = Number($("#check-eligibility-div #card-detail #expiryDate-month option:selected").val());
+
+            if (yearSelected < 1 || monthSelected < 1) {
+                $("#check-eligibility-div #card-detail [id*='ExpirationDate']").val("");
+                return;
+            }
+
+            $("#check-eligibility-div #card-detail [id*='ExpirationDate']").val(monthSelected + "/" + yearSelected);
+        }
+
+        function setEligibilityCardType() {
+            //debugger;
+            var cardTypeId = '@((int)ChargeCardType.Visa)';
+
+            var cardNumber = $.trim($("#check-eligibility-div #card-detail [id*='Number']").val());
+            if (cardNumber.length > 0) {
+                if (cardNumber.substring(0, 1) == 4)
+                    cardTypeId = '@((int)ChargeCardType.Visa)';
+                else if (cardNumber.substring(0, 2) >= 51 && cardNumber.substring(0, 2) <= 55)
+                    cardTypeId = '@((int)ChargeCardType.MasterCard)';
+                else if (cardNumber.substring(0, 2) == 34 || cardNumber.substring(0, 2) == 37) {
+                    cardTypeId = '@((int)ChargeCardType.AmericanExpress)';
+                }
+                else if (cardNumber.substring(0, 2) == 60 || cardNumber.substring(0, 2) == 65)
+                    cardTypeId = '@((int)ChargeCardType.Discover)';
+            }
+
+            $("#check-eligibility-div #card-detail [id*='TypeId'] option[value=" + cardTypeId + "]").attr("selected", true);
+        }
+
+
+        setEligibilityExpiryDateBox();
+        $("#check-eligibility-div #card-detail #expiryDate-year, #card-detail #expiryDate-month").change(function () { setEligibilityExpiryDateonSelect(); });
+
+        setEligibilityCardType();
+        $("#check-eligibility-div #card-detail [id*='Number']").blur(function () { setEligibilityCardType(); });
+    </script>
+    <script type="text/javascript">
+        function setEligibilityCardDetails(cardDetails) {
+            //debugger;
+            $("#check-eligibility-div #card-detail [id*='NameOnCard']").val(cardDetails.NameOnCard);
+
+            $("#check-eligibility-div #card-detail [id*='ExpirationDate']").val(setEligibilityExpirationDate(cardDetails.ExpirationDate));
+
+            $("#check-eligibility-div #card-detail [id*='Number']").val(cardDetails.Number);
+            $("#check-eligibility-div #card-detail [id*='CVV']").val(cardDetails.CVV);
+            $("#check-eligibility-div #card-detail [id*='TypeId'] option[value=" + cardDetails.TypeId + "]").attr("selected", true);
+            //$("#card-detail input[type=hidden][id*='Id']").val(cardDetails.Id);
+        }
+
+        function getEligibilityCardDetails() {
+            //debugger;
+            var cardDetails = new Object();
+            cardDetails.NameOnCard = $("#check-eligibility-div #card-detail [id*='NameOnCard']").val();
+            cardDetails.ExpirationDate = getEligibilityValidDate($("#check-eligibility-div #card-detail [id*='ExpirationDate']").val());
+            cardDetails.Number = $("#check-eligibility-div #card-detail [id*='Number']").val();
+            cardDetails.CVV = $("#check-eligibility-div #card-detail [id*='CVV']").val();
+            cardDetails.TypeId = $("#check-eligibility-div #card-detail [id*='TypeId']").val();
+            //cardDetails.Id = $("#card-detail input[type=hidden][id*='Id']").val();
+            return cardDetails;
+        }
+
+        function getEligibilityValidDate(value) {
+            var dateToValidate = $.trim(value);
+            var parts = dateToValidate.split("/");
+
+            if (parts.length < 2 || parts[0].length < 1 || isNaN(parts[0]) || isNaN(parts[1]) || parts[1].length < 4) {
+                return null;
+            }
+
+            var correctDate = value;
+            return correctDate;
+        }
+
+        function setEligibilityExpirationDate(expiryDate) {
+            if (expiryDate == null)
+                return "";
+
+            var parts = expiryDate.split("/");
+
+            if (parts.length < 2 || parts[0].length < 1 || isNaN(parts[0]) || isNaN(parts[1]) || parts[1].length < 4 || Number(parts[1]) < 1950) //the last check is just a hack to prevent filling in 01/0001
+            {
+                return "";
+            }
+
+            $("#check-eligibility-div #card-detail #expiryDate-year option[value=" + Number(parts[1]) + "]").attr("selected", true);
+            $("#check-eligibility-div #card-detail #expiryDate-month option[value=" + Number(parts[0]) + "]").attr("selected", true);
+
+            return expiryDate;
+        }
+    </script>
+    <script type="text/javascript">
+        var _onSuccessMethodRef;
+        var _onCloseMethodRef;
+        
+        var cardDetail = new Object();
+        
+        function setSuccessandCloseMethod(succesMethodRef,closeMethodRef) {
+            _onSuccessMethodRef = succesMethodRef;
+            _onCloseMethodRef = closeMethodRef;
+        }
+        
+        function closeCheckEligibility() {
+            if (_onCloseMethodRef != null)
+                _onCloseMethodRef();
+        }
+        function toggleCheckEligibilityButton() {
+            $(".addButton-toggle").toggle();
+        }
+        
+        function onBeginCheckEligibility() {
+            toggleCheckEligibilityButton();
+            cardDetail = getEligibilityCardDetails();
+        }
+
+        function onCompleteCheckEligibility() {
+            //debugger;
+            toggleCheckEligibilityButton();
+
+            setEligibilityExpiryDateBox();
+            $("#check-eligibility-div #card-detail #expiryDate-year, #check-eligibility-div #card-detail #expiryDate-month").change(function () { setEligibilityExpiryDateonSelect(); });
+
+            setEligibilityCardType();
+            $("#check-eligibility-div #card-detail [id*='Number']").blur(function () { setEligibilityCardType(); });
+            
+            setEligibilityCardDetails(cardDetail);
+            setDatePicker();
+
+            var eligibilityId = $("#check-eligibility-div input[type='hidden'][id*='EligibilityId']").val();
+            var chargeCardId = $("#check-eligibility-div #card-detail input[type='hidden'][id*='Id']").val();;
+
+            if (eligibilityId > 0 && chargeCardId > 0)
+                $("input[type=submit]").hide();
+            
+            if (_onSuccessMethodRef != null)
+                _onSuccessMethodRef(eligibilityId, chargeCardId, cardDetail);
+        }
+
+    </script>
+}

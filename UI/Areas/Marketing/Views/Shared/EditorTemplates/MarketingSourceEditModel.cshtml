@@ -1,0 +1,117 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Marketing.ViewModels.MarketingSourceEditModel
+<style type="text/css">
+    textarea
+    {
+        width: 81%;
+    }
+</style>
+<div class="content-main-column full-width">
+    @Html.EditorFor(m => m.Id)
+    <div class="editor-row">
+        <div class="editor-column-twoinrow">
+            @Html.EditorFor(m => m.Name)
+        </div>
+        <div class="editor-column-twoinrow">
+            <div class="editor-label">&nbsp;</div>
+            @Html.CheckBoxFor(m=>m.ShowOnline) Show Online
+        </div>
+    </div>
+    <div class="editor-row">
+        <div class="editor-field">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Description)
+            </div>
+            @Html.EditorFor(m => m.Description)
+        </div>
+        <div class="editor-row">
+            <fieldset style="width: 80%; overflow: scroll;">
+                <legend>
+                    <h4>
+                        Territories</h4>
+                </legend>
+                <div style="float: left;height: 250px;  overflow-y: scroll;">
+                    @if (Model.Territories != null && Model.Territories.Count() > 0)
+                    {
+
+                        foreach (var territory in Model.Territories)
+                        {
+                        <div class="editor-column" style="min-width: 15px;">
+                            @if (Model.SelectedTerritories != null && Model.SelectedTerritories.Contains(territory.FirstValue))
+                            {
+                                <input type="checkbox" id="@territory.FirstValue" checked="checked" onclick="onClickFill(this);" />@territory.SecondValue
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="@territory.FirstValue" onclick="onClickFill(this);" /> @territory.SecondValue 
+                            }
+                            <input type="hidden" value="@territory.FirstValue" />
+                        </div>
+                        }
+                        if (Model.SelectedTerritories != null && Model.SelectedTerritories.Count() > 0)
+                        {
+                        <script type="text/javascript" language="javascript">                            $(document).ready(function () { renderAllowedTerritories(); });        </script>
+                        }
+                    }
+                    else
+                    {
+                        <i>No Territories available. </i>
+                    }
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div id="selectedTerritoryContainer" style="display: none;">
+    </div>
+    <script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+    <script language="javascript" type="text/javascript">
+    var selectedTerritories = new Object();
+    @if ((Model.SelectedTerritories != null) && (Model.SelectedTerritories.Count() > 0))
+    {
+        <text>
+            var territory = new Object();
+        </text>
+        foreach (var selectedTerritory in Model.SelectedTerritories)
+        {  
+                <text>
+                {
+                    territory = new Object();
+                    territory.Id = @selectedTerritory;
+                    selectedTerritories[territory.Id] = territory;
+                }
+                </text>
+        }
+    }
+        
+        function onClickFill(sourceCheckbox){
+            var checkedBox = $(sourceCheckbox);
+            var val = checkedBox.parent().find("input:hidden").val();
+            if(sourceCheckbox.checked){
+                territory = new Object();
+                territory.Id = val;
+                selectedTerritories[val] = territory;   
+            }
+            else{
+                if(selectedTerritories[val]  != null){
+                    delete selectedTerritories[val];
+                }
+            }
+            renderAllowedTerritories();
+        }
+
+        function renderAllowedTerritories() {
+            $("#selectedTerritoryContainer").empty();
+            $.each(selectedTerritories, function (key, terr) {
+                $("#selectedTerritoriesTemplate").tmpl(terr).appendTo("#selectedTerritoryContainer");
+            });
+        }
+
+    </script>
+    <script id="selectedTerritoriesTemplate" type="text/x-jquery-tmpl">
+        <div style="display:none;">
+            <input type="hidden" name="SelectedTerritories.Index" value="${Id}" />
+            <input type="text" name="SelectedTerritories[${Id}]" value="${Id}" />
+        </div>                  
+    </script>
+</div>

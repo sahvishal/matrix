@@ -1,0 +1,481 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Users.Enum
+@model QualityAssuranceResultViewModel
+<style type="text/css">
+    .left-float {
+        float: left;
+    }
+
+    .QARFinfo div {
+        font-size: 9pt;
+        padding-bottom: 2px;
+        padding-top: 2px;
+    }
+
+    .QARFinfo .row-div {
+        float: left;
+        width: 850px;
+        margin: 0px!important;
+        padding: 0px 0px 0 3px;
+        border-left: solid 1px black;
+        border-right: solid 1px black;
+    }
+
+        .QARFinfo .row-div.thickbox {
+            width: 848px !important;
+        }
+
+
+    .thickbox {
+        border: 2px solid black !important;
+    }
+
+    .bg-grey {
+        background-color: #e7e7e7;
+        height: 20px;
+    }
+
+    .txt-center {
+        text-align: center;
+    }
+
+    .right-float {
+        float: right;
+    }
+
+    .txt-align-right {
+        text-align: right;
+    }
+
+    .txt-align-left {
+        text-align: left;
+    }
+
+    .txt-align-center {
+        text-align: center;
+    }
+
+    .div5width {
+        width: 5%;
+    }
+
+    .div10width {
+        width: 10%;
+    }
+
+    .div15width {
+        width: 15%;
+    }
+
+    .div24width {
+        width: 24%;
+    }
+
+    .div50width {
+        width: 50%;
+    }
+
+    .div49width {
+        width: 49%;
+    }
+
+    .div48width {
+        width: 48%;
+    }
+
+    .div47width {
+        width: 47%;
+    }
+
+    .div95width {
+        width: 95%;
+    }
+
+    .div90width {
+        width: 90%;
+    }
+
+    .div85width {
+        width: 85%;
+    }
+
+    .div75width {
+        width: 75%;
+    }
+
+    .div33width {
+        width: 33%;
+    }
+
+    .div17width {
+        width: 17%;
+    }
+
+    .divborderleft {
+        border-left: solid 1px #000000;
+        margin-right: 2px;
+    }
+
+    .divborderright {
+        border-right: solid 1px #000000;
+        margin-right: 3px;
+    }
+
+    .divborderbottom {
+        border-bottom: solid 1px #000000;
+    }
+
+    .QARFinfo input[type="text"] {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .bg-grey input[type="text"] {
+        background-color: #e7e7e7;
+    }
+
+    .div40width {
+        width: 40%;
+    }
+
+    .div65width {
+        width: 65%;
+    }
+</style>
+@{
+    var bmiIndex = (Model.Weight < 1 || Model.Height < 1) ? 0 : (Model.Weight / Math.Pow(Model.Height, 2)) * 703;
+     
+}
+<div class="section-withborder" style="margin-top: 30px; padding-left: 15px; padding-bottom: 30px">
+   <div class="QARFinfo">
+        <div class="row-div bg-grey txt-align-center thickbox">
+            HCP QA Results Form
+        </div>
+        <div class="row-div divborderbottom">
+            <div class="left-float divborderright" style="width:120px">
+                PID:&nbsp;@Model.CustomerId
+            </div>
+            <div class="left-float divborderright" style="width:500px;">
+                Name:&nbsp;@Model.CustomerName
+            </div>
+            <div class="left-float" style="width:120px;">
+                DOB:&nbsp;@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.Date.ToShortDateString() : "")
+            </div>
+        </div>
+        <div class="row-div">
+            <div class="left-float div33width divborderright">
+                Age:&nbsp;@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.GetDetailAge().ToString() : "")
+            </div>
+            <div class="left-float divborderright" style="width: 20%;">
+                Gender:&nbsp;@(Model.Gender > 0 ? ((Gender)Model.Gender).GetDescription() : string.Empty)
+            </div>
+            <div class="left-float div24width">
+                Ethnicity:&nbsp;@(Model.Race > 0 ? ((Race)Model.Race).GetDescription() : string.Empty)
+            </div>
+        </div>
+        <div class="row-div bg-grey txt-align-center thickbox">
+            Intake&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" />
+        </div>
+        <div class="row-div">
+            <div class="left-float divborderright" style="width: 270px;">
+                HIPPA Consent:&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;]                                
+            </div>
+            <div class="left-float div33width divborderright" style="width: 300px;">
+                Flu Consent:  Accepted [&nbsp;&nbsp;&nbsp;&nbsp;]  Rejected [&nbsp;&nbsp;&nbsp;&nbsp;]                
+            </div>
+            <div class="left-float" style="width: 30%">
+                ID Check:[&nbsp;&nbsp;&nbsp;&nbsp;]                
+            </div>
+        </div>
+        <div class="row-div bg-grey txt-align-center thickbox">
+            Basic Biometric Values&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" />
+        </div>
+        <div class="row-div divborderbottom">
+            <div class="left-float divborderright div24width">
+                Height(Inches):&nbsp;@(Model.Height <= 0 ? "" : Model.Height.ToString())
+            </div>
+            <div class="left-float div24width divborderright">
+                Weight: @(Model.Weight <= 0 ? "" : Model.Weight.ToString())
+            </div>
+            <div class="left-float div50width">
+                BMI : @if (bmiIndex <= 0)
+                      {<text><input type="text" style="width: 40px;" /></text>}
+                      else
+                      { <text> @bmiIndex.ToString("0.0")</text> } (W/H^2)*703
+            </div>
+        </div>
+        <div class="row-div">
+            <div class="left-float div24width divborderright">
+                BP:&nbsp;                   
+                <input type="text" class="div10width" />/<input type="text" class="div10width" />
+            </div>
+            <div class="left-float div75width ">
+                Pulse:
+            </div>
+        </div>
+        <div class="row-div bg-grey txt-align-center thickbox">
+            Other Assessments&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" /> *Note: Attach to Form
+        </div>
+        <div class="row-div">
+            <div class="left-float div50width divborderright">
+                GAIT Assessment:&nbsp;&nbsp; Pass&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp; Fail&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;]
+            </div>
+            <div class="left-float div49width">
+                Cognitive Assessment:&nbsp;&nbsp; Pass&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;Fail&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;]
+                
+            </div>
+        </div>
+        <div class="row-div bg-grey txt-align-center thickbox">
+            Vision Screening&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" />
+        </div>
+        <div class="row-div divborderbottom  divborderright">           
+            <div class="left-float" style="width:165px">Vision Levels - Right Eye</div>
+            <div class="left-float div5width">
+                <input type="text" class="div90width" />
+            </div>
+            <div class="left-float">/</div>
+            <div class="left-float div5width">
+                <input type="text" class="div90width" />
+            </div>
+            <div class="left-float" style="width:70px;">& Left Eye</div>
+            <div class="left-float div5width">
+                <input type="text" class="div90width" />
+            </div>
+            <div class="left-float">/</div>
+            <div class="left-float div5width">
+                <input type="text" class="div90width" />
+            </div>
+        </div>
+        <div class="row-div divborderbottom divborderleft divborderright txt-align-left">
+            Vision - Confrontation Section 1 (Both eyes open)
+        </div>
+        <div class="row-div">
+            <div class="left-float div40width divborderright divborderbottom">
+                <div class="left-float div65width">Left upper quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+        </div>
+        <div class="row-div">
+            <div class="left-float div40width divborderright divborderbottom">
+                <div class="left-float div65width">Left lower quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+        </div>
+        <div class="row-div ">
+            <div class="left-float div40width divborderright divborderbottom">
+                <div class="left-float div65width">Right upper quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+        </div>
+        <div class="row-div ">
+            <div class="left-float div40width divborderright">
+                <div class="left-float div65width">Right lower quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+        </div>
+        <div class="row-div divborderbottom divborderleft divborderright txt-align-left" style="border-top: 1px solid black;">
+            Vision - Confrontation Section 2 (One eye at a time)
+        </div>
+        <div class="row-div">
+            <div class="left-float div40width divborderright divborderbottom">
+                <div class="left-float div65width">Right Eye</div>
+                <div class="left-float div17width">&nbsp;</div>
+                <div class="left-float div17width">&nbsp;</div>
+            </div>
+            <div class="left-float " style="width: 9%">
+                &nbsp;
+            </div>
+            <div class="left-float div50width divborderbottom divborderleft">
+                <div class="left-float div65width" style="padding-left: 3px;">Left Eye</div>
+                <div class="left-float div17width">&nbsp;</div>
+                <div class="left-float div17width">&nbsp;</div>
+            </div>
+        </div>
+        <div class="row-div ">
+            <div class="left-float div40width divborderright divborderbottom">
+                <div class="left-float div65width">Left upper quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+            <div class="left-float " style="width: 9%; margin-right: 0px !important">
+                &nbsp;
+            </div>
+            <div class="left-float div50width divborderbottom divborderleft">
+                <div class="left-float div65width" style="padding-left: 3px;">Left upper quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+        </div>
+        <div class="row-div ">
+            <div class="left-float div40width divborderright divborderbottom">
+                <div class="left-float div65width">Left lower quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+            <div class="left-float" style="width: 9%;">
+                &nbsp;
+            </div>
+            <div class="left-float div50width divborderleft divborderbottom">
+                <div class="left-float div65width" style="padding-left: 3px">Left lower quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+        </div>
+        <div class="row-div">
+            <div class="left-float div40width divborderright divborderbottom">
+                <div class="left-float div65width">Right upper quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+            <div class="left-float" style="width: 9%">
+                &nbsp;
+            </div>
+            <div class="left-float div50width divborderleft divborderbottom">
+                <div class="left-float div65width" style="padding-left: 3px">Right upper quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+        </div>
+        <div class="row-div">
+            <div class="left-float div40width divborderright">
+                <div class="left-float div65width">Right lower quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+            <div class="left-float" style="width: 9%;">
+                &nbsp;
+            </div>
+            <div class="left-float div50width divborderleft">
+                <div class="left-float div65width" style="padding-left: 3px">Right lower quadrant</div>
+                <div class="left-float div17width">Pass</div>
+                <div class="left-float div17width">Fail</div>
+            </div>
+        </div>
+        <div class="row-div thickbox txt-align-left bg-grey">
+            Spirometry Test:&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" />*Note: Attach to Form
+        </div>
+        <div class="row-div thickbox " style="border-top: 0 !important; border-bottom: 0!important;">
+            <div class="left-float div50width txt-align-left bg-grey" style="border-right: 2px solid black !important;">
+                Osteoperosis Test(*If Qualified):&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+                <input type="text" style="width: 100px;" />
+            </div>
+            <div class="left-float div47width txt-align-left">
+                &nbsp;T-Score:
+            </div>
+        </div>
+
+        <div class="row-div txt-align-center bg-grey thickbox" style="border-bottom: 2px solid black; border-right: 2px solid black; border-left: 2px solid black;">
+            Blood screenings &nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" />
+        </div>
+        <div class="row-div divborderbottom">
+            <div class="left-float div33width divborderright">
+                Total Cholesterol:                
+            </div>
+            <div class="left-float div33width  divborderright">
+                Triglycerides:                
+            </div>
+            <div class="left-float" style="width: 30%">
+                HDL:                
+            </div>
+        </div>
+        <div class="row-div">
+            <div class="left-float div33width divborderright">
+                LDL:                
+            </div>
+            <div class="left-float div33width  divborderright">
+                Glucose:                
+            </div>
+            <div class="left-float" style="width: 30%">
+                HbA1c:                
+            </div>
+        </div>
+        <div class="row-div thickbox txt-align-center bg-grey ">
+            Hearing Screening &nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" />*Note: Attach to Form
+        </div>
+        <div class="row-div divborderbottom">
+            <div class="left-float divborderright div24width">Frequency:</div>
+            <div class="left-float divborderright div10width">Right(Ear)</div>
+            <div class="left-float divborderright div10width">Left(Ear)</div>
+            <div class="left-float">Summary Result:  PASS / FAIL</div>
+        </div>
+        <div class="row-div">
+            <div class="left-float divborderright div24width divborderbottom">500 Hz</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+        </div>
+        <div class="row-div">
+            <div class="left-float divborderright div24width divborderbottom">1000 Hz</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+        </div>
+        <div class="row-div">
+            <div class="left-float divborderright div24width divborderbottom">2000 Hz</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+        </div>
+        <div class="row-div">
+            <div class="left-float divborderright div24width divborderbottom">3000 Hz</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+        </div>
+        <div class="row-div">
+            <div class="left-float divborderright div24width divborderbottom">4000 Hz</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+        </div>
+        <div class="row-div">
+            <div class="left-float divborderright div24width divborderbottom">6000 Hz</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+            <div class="left-float divborderright div10width divborderbottom txt-align-right">dB</div>
+        </div>
+        <div class="row-div">
+            <div class="left-float divborderright div24width ">8000 Hz</div>
+            <div class="left-float divborderright div10width  txt-align-right">dB</div>
+            <div class="left-float divborderright div10width  txt-align-right">dB</div>
+        </div>
+        <div class="row-div thickbox txt-align-left bg-grey">
+            EKG Test:&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" />*Note: Attach to Form
+        </div>
+        <div class="row-div thickbox bg-greay txt-align-left" style="border-top: 0 !important;">
+            Comprehensive Evaluation: &nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] Staff Initial
+            <input type="text" style="width: 100px;" />
+        </div>
+        <div class="row-div thickbox bg-grey" style="border-top: 0 !important;">
+            <div class="left-float div50width txt-align-left" style="border-right: 2px solid black !important;">
+                Prequalified Testing:
+            </div>
+            <div class="left-float div47width txt-align-left">
+                &nbsp;NP Ordered(Write in additional HF tests)
+            </div>
+        </div>
+        <div class="row-div">
+            <div class="left-float div50width txt-align-left" style="border-right: 1px solid black !important;">
+                @Model.AlCarteTests
+            </div>
+            <div class="left-float div47width txt-align-left">
+            </div>
+        </div>
+        <div class="row-div thickbox txt-align-center bg-grey ">
+            QA
+        </div>
+    </div>
+    <div class="row-div">
+        Data entry signature(data has been copied to hip) :______________________________
+    </div>
+      <div class="row-div">
+        Copy to HCP :______________________________
+    </div>
+</div>

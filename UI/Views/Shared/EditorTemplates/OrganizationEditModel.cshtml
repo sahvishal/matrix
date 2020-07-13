@@ -1,0 +1,101 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@{
+    ViewBag.Title = "Organization Edit Model";
+}
+@model Falcon.App.Core.Users.ViewModels.OrganizationEditModel
+<div style="margin-top: 25px;">
+    @Html.EditorFor(m => m.Id)
+    @Html.EditorFor(m => m.Name)
+    <div class="editor-label">
+        @Html.LabelFor(m => m.Email)
+    </div>
+    <div class="editor-label">
+        @Html.EditorFor(m => m.Email)
+    </div>
+    <div class="editor-field">
+        @Html.EditorFor(m => m.PhoneNumber)
+    </div>
+    <div class="editor-field">
+        @Html.EditorFor(m => m.FaxNumber)
+    </div>
+    <div class="editor-label">
+        @Html.LabelFor(m => m.OrganizationType)
+    </div>
+    <div class="editor-field">
+        @Html.DropDownList("OrganizationType", DropDownHelper.OrganizationTypes())
+    </div>
+    <span class="editor-label">Business Address</span> @Html.ValidationMessageFor(m => m.BusinessAddress)
+    <div class="editor-field business-address">
+        @Html.EditorFor(m => m.BusinessAddress)
+    </div>
+    <span class="editor-label">Billing Address
+        <input type="checkbox" id="SameAddressCheckbox" onclick="sameAddressBlockClicked();" />
+        Is Same as Business Address </span>
+    <div class="editor-field billing-address">
+        @Html.EditorFor(m => m.BillingAddress)
+    </div>
+    <div class="editor-label">
+        @Html.LabelFor(m => m.Description)
+    </div>
+    <div class="editor-field">
+        @Html.EditorFor(m => m.Description)
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+
+    function sameAddressBlockClicked() {//debugger;
+        if ($("#SameAddressCheckbox").attr("checked")) {
+            $(".billing-address input").attr("readonly", "readonly");
+            $(".billing-address select").attr("disabled", "disabled");
+
+            copyStreetAddressOne();
+            copyStreetAddressTwo();
+            copyCity();
+            copyCountry();
+            copyState();
+            copyZip();
+        }
+        else {
+            $(".billing-address input").removeAttr("readonly");
+            $(".billing-address select").removeAttr("disabled");
+        }
+    }
+
+    function copyStreetAddressOne() {
+        $(".billing-address .street-address1").val($(".business-address .street-address1").val());
+    }
+
+    function copyStreetAddressTwo() {
+        $(".billing-address .street-address2").val($(".business-address .street-address2").val());
+    }
+
+    function copyCity() {
+        $(".billing-address .address-city").val($(".business-address .address-city").val());
+    }
+
+    function copyCountry() {
+        $(".billing-address .address-country option[value=" + $(".business-address .address-country").val() + "]").attr("selected", true);
+    }
+
+    function copyState() {
+        $(".billing-address .address-state option[value=" + $(".business-address .address-state").val() + "]").attr("selected", true);
+    }
+
+    function copyZip() {
+        $(".billing-address .address-zip").val($(".business-address .address-zip").val());
+    }
+
+    $(document).ready(function () {
+
+        $(".business-address .street-address1").keyup(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyStreetAddressOne(); });
+        $(".business-address .street-address2").keyup(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyStreetAddressTwo(); });
+        $(".business-address .address-city").keyup(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyCity(); });
+        $(".business-address .address-zip").keyup(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyZip(); });
+
+        $(".business-address .address-country").change(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyCountry(); });
+        $(".business-address .address-state").change(function () { if (!$("#SameAddressCheckbox").attr("checked")) return; copyState(); });
+
+        $("form").submit(function () { $(".billing-address select").removeAttr("disabled"); });
+    });
+    
+</script>

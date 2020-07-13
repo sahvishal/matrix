@@ -1,0 +1,9 @@
+﻿<div ng-if="question.ControlType == displayControlTypes.TextArea">
+    <div class="single-question-text-full">
+        <p class="bottom-buffer-0" ng-bind="question.Question"></p>
+    </div>
+    <div class="clearfix additional-que-next top-buffer-10">
+        <textarea ng-blur="SaveSelectedObject(question,'')" ng-model="question.Answer" ng-disabled="question.disable" class="form-control"></textarea>
+    </div>
+</div>
+

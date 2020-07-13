@@ -1,0 +1,1168 @@
+﻿@using Falcon.App.Core.Medical.Enum
+@model Falcon.App.Core.Marketing.ViewModels.OrderPlaceEditModel
+@{
+    var configRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IConfigurationSettingRepository>();
+    var upsellCd = Convert.ToBoolean(configRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.UpsellCd));
+    var upsellPackage = Convert.ToBoolean(configRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.UpsellPackage));
+    var upsellTest = Convert.ToBoolean(configRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.UpsellAlaCarte));     
+}
+
+@if (Model.AllEventPackages != null && Model.AllEventPackages.Count() > 0)
+{
+    var index = 0;  
+    <div class="mb15">
+        <div class="border-grey bg-ltgrey">	
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    @foreach (var item in Model.AllEventPackages)
+                    {
+                        <td width="233px" valign="top" @(index >= 4 ? "style=display:none" : "") class="package-item">
+                            <div class="pricing_package">
+                                @if (item.ImageUrlForOnlineDisplay != null && File.Exists(item.ImageUrlForOnlineDisplay.PhysicalPath))
+                                {
+                                    <img src="@item.ImageUrlForOnlineDisplay.Url" alt="Pkg Imsge" style="width: 233px; height: 490px; display:block; margin-top:3px;" />
+                                }
+                                else
+                                {
+                                    <div class="package_header header_blue">
+                            	        <div class="heading">                                	
+                                	        <h4><strong>@item.Name.ToUpper()</strong></h4>
+                                        </div>
+                                    </div>
+                                    <div class="package_content">
+                                        <h3 class="pl10 mb10 txt-green"><strong>Includes:</strong></h3>
+                                        <div class="include_list">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            @foreach (var test in item.Tests)
+                                            {
+                                                <tr>
+                                                    <td>@test.Name</td>
+                                                </tr>
+                                            }
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="package_footer txt-align-center"><h2 class="pt10"><strong>$@item.Price.ToString("0.00")</strong></h2></div>
+                                }
+                                @foreach (var test in item.Tests)
+                                {
+                                    <input type="text" class="package-test-Id" style="display:none;" value="@test.TestId" />                                        
+                                    <input type="text" class="package-test" style="display:none;" value="@test.EventTestId" />
+                                    <input type="text" class="package-test-name" style="display:none;" value="@test.Name" />
+                                }
+                                <div class="mt10 p5 txt-align-center">                                
+                                    @if (item.NotAvailable)
+                                    {
+                                        <input type="image" class="select-button" @(item.EventPackageId == Model.SelectedPackageId ? "style=display:none" : "") onclick="PackageNotavailable('@item.NotAvailabilityMessage'); return false;" 
+                                            src="/Config/Content/Images/select_uncheck_btn.png"  />
+                                    }
+                                    else
+                                    {
+                                        <input type="image" class="select-button" @(item.EventPackageId == Model.SelectedPackageId ? "style=display:none" : "") onclick="selectPackage($(this), '@item.EventPackageId'); return false;" 
+                                            src="/Config/Content/Images/select_uncheck_btn.png" />
+                                    }
+                                    <input type="image" class="select-button-selected" @(item.EventPackageId != Model.SelectedPackageId ? "style=display:none" : "") onclick="return false;" 
+                                        src="/Config/Content/Images/selected_check_btn.png" />
+                                </div>
+                                @if (!string.IsNullOrEmpty(item.PackageInfoUrl))
+                                {
+                                    <div class="txt-align-center p5">
+                                        <a href="javascript:void(0);" onclick="window.open('@item.PackageInfoUrl', 'PackageDetails', 'width=600, height=400, resizable=1, scrollbars = 1');">View Package Details</a>
+                                    </div>
+                                }
+                            </div>
+                            <input type="hidden" value="@item.EventPackageId" />
+                            <input type="text" style="display:none;" class="item-id" value="@item.PackageId" />
+                            <input type="text" style="display:none;" class="item-name" value="@item.Name" />
+                            <input type="text" style="display:none;" class="item-price" value="@item.Price.ToString("0.00")" />
+                        </td>
+                        @*<td valign="top">&nbsp;</td>*@
+                                index++;
+                    }
+                </tr>
+            </table>
+            @if (index > 4)
+            {                
+                <div class="p15" id="package-scroll-div">
+                    <div class="left-float">
+                        <input type="button" class="button_green ml5" id="prev-nav-pkg-btn" style="display: none;" value="◄ Show Previous Packages"  onclick="navigatePrevPackage();" />
+                    </div>
+                    <div class="right-float">
+	                    <input type="button" class="button_green ml5" id="next-nav-pkg-btn" value="More Packages ►" onclick="navigateNextPackage();" />
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            } 
+        </div>
+    </div>
+}
+@if (Model.AllEventTests != null && Model.AllEventTests.Count() > 0)
+{
+    
+    <div class="table_box mt15" id="ala-carte-test-div" style="display:none;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <th>Complete your package with these recommended tests </th>
+            </tr>            
+            <tr>
+                <td valign="top" class="addon_tests">                    
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tests_addons">
+                        <tr>
+                            <th width="30%">Test Name</th>
+                            <th width="35%">Test Description</th>
+                            <th width="15%">Price</th>
+                            <th width="20%">Action</th>
+                        </tr>
+                        @foreach (var item in Model.AllEventTests)
+                        {
+                            var selected = Model.SelectedTestIds != null ? Model.SelectedTestIds.Contains(item.EventTestId) : false;
+                            <tr class="test-item">
+                                <td valign="top">
+                                    <h4 class="txt-ltblue title"><strong>@item.Name.ToUpper()</strong></h4>
+                                </td>
+                                <td valign="top">
+                                    <div class="desc">
+                                        @Html.Raw(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "... (<a href='javascript:void(0);' class='view-more-anchor'> more </a>)" : item.Description)
+                                    </div>
+                                    <div style="display: none;" class="description-tip">
+                                        @item.Description
+                                    </div>
+                                </td>
+                                <td valign="top">
+                                    <h3 class="price test-price">$ @item.Price.ToString("0.00")</h3>   
+                                    <h3 class="price test-price-withpackage" style="display:none;">$ @item.WithPackageprice.ToString("0.00")</h3>                                 
+                                </td>
+                                <td valign="top">                                    
+                                    @if (item.NotAvailable)
+                                    {
+                                        <input type="button" class="select_btn select-button" @(selected ? "style=display:none" : "") onclick="TestNotavailable('@item.NotAvailabilityMessage'); return false; "  />
+                                    }
+                                    else
+                                    {
+                                        <input type="button" class="select_btn select-button" @(selected ? "style=display:none" : "") onclick="onClickSelectTestBox($(this), '@item.EventTestId'); return false;" />
+                                    }
+                                    <input type="button" class="selected_btn select-button-selected" @(!selected ? "style=display:none" : "") onclick="onClickRemoveTestBox($(this), '@item.EventTestId'); return false;" />
+
+                                    <input type="hidden" value="@item.EventTestId" />
+                                    <input type="text" style="display:none;" class="item-id" value="@item.TestId" />
+                                    <input type="text" style="display:none;" class="item-name" value="@item.Name" />
+                                    <input type="text" style="display:none;" class="item-price" value="@item.Price.ToString("0.00")" />
+                                    <input type="text" style="display:none;" class="item-price-withpackage" value="@item.WithPackageprice.ToString("0.00")" />
+                                </td>                    
+                            </tr>    
+                        }
+                    </table>
+                </td>
+                <td>
+                    <div id="no-test-available-div" style="display: none; width: 500px; margin: 0px auto; padding-top: 50px;"> 
+                        <h2>
+                            No More options for Add on Tests</h2>
+                    </div> 
+                </td>
+            </tr>
+        </table>
+    </div>    
+}
+
+<div id="select-order-div" style="display: none;">
+    @Html.HiddenFor(m => m.SelectedPackageId)
+    @Html.HiddenFor(m => m.SelectedShippingOptionId)
+    <div id="selectedtest-div">
+    </div>
+    <div id='selectedproduct-div'>
+    </div>
+</div>
+@Html.Partial("/Config/Content/Views/Shared/UpsellPackage.cshtml", Model)
+
+<div class="jdbox-package" id="testUpsellJDiv">
+    <div class="popup_wrapper">
+        @if (Model.AllEventTests != null && Model.AllEventTests.Count() > 0)
+        {
+            <h3 class="pl10 ml5 txt-green">
+                <strong>These are some of the important test(s) that are not included in your selected Package</strong>
+            </h3>
+            <h5 class="pl10 ml5 mb10">
+                You can select out of these test(s) according to your health requirement
+            </h5>            
+            <div class="upsell_popup_tests">
+            @{
+            var testInDesc = Model.AllEventTests.OrderByDescending(p => p.Price).ToArray();
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tests_addons">
+                    <tr>
+                        <th width="30%">Test Name</th>
+                        <th width="35%">Test Description</th>
+                        <th width="15%">Price</th>
+                        <th width="20%">Action</th>
+                    </tr>
+                    @foreach (var item in testInDesc)
+                    {
+                    <tr class="upsell-block">
+                        <td valign="top">
+                            <h3 class="txt-ltblue title"><strong>@item.Name.ToUpper()</strong></h3>
+                        </td>
+                        <td valign="top">
+                            <div class="desc">
+                                @item.Description
+                            </div>
+                        </td>
+                        <td valign="top">
+                            <h3 class="price">$ @item.Price.ToString("0.00")</h3>
+                            <input type="hidden" value="@item.EventTestId" />
+                            <input type="text" style="display:none;" class="price" value="@item.Price" />
+                        </td>
+                        <td valign="top">
+                            <input type="button" class="select_btn" onclick="purchaseTest('@item.EventTestId');"/>
+                        </td>                    
+                    </tr>
+                    }
+                </table>
+            }
+            </div>
+            <div class="mt10 pt5 txt-align-right">
+                <input type="button" class="button_grey" value="Close" onclick="$('#testUpsellJDiv').dialog('close');" />
+            </div>
+        }
+    </div>
+</div>
+
+<div id="productUpsellJDiv" style="display: none;" class="jdbox-package">
+    <div class="popup_wrapper">
+        @if (Model.AllProducts != null && Model.AllProducts.Count() > 0 && Model.EnableImageUpsell)
+        {   
+            @Html.Partial("/Config/Content/Views/Shared/Product.cshtml", Model)                  
+        }
+        @if (Model.AllShippingOptions != null && Model.AllShippingOptions.Count() > 0)
+        {                
+            @Html.Partial("/Config/Content/Views/Shared/ShippingOption.cshtml", Model)                
+        }
+        <div class="mt10 pt5 txt-align-right">
+          	<input type="button" id="product-upsell-close-btn" class="button_grey" value="Save" onclick="onCloseProductupsell();" />
+            <input type="button" class="button_green ml5" value="Save &amp; Continue &rsaquo;" onclick="onCloseAndContinueProductupsell();" />
+        </div>
+    </div>
+</div>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<script src="/Scripts/jquery.tinycarousel.min.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+
+
+    $('.test-item .view-more-anchor').qtip({
+        content: {
+            title: function (api) {
+                return "";
+            },
+            text: function (api) {
+                return $(this).parents(".test-item:first").find('.description-tip').html();
+            }
+        },
+        style: {
+            width: '300px'
+        }
+    });
+
+    var firstBlock_package = null;
+    var lastBlock_package = null;
+    var max_numberofpackagestoshow = 4;
+    var toggleOption = 'fade';
+
+
+    function navigatePrevPackage() {
+
+        if (firstBlock_package == null && $(".package-item").length <= max_numberofpackagestoshow) return;
+
+        if (firstBlock_package == null) {
+            firstBlock_package = $(".package-item:visible:first");
+            lastBlock_package = $(".package-item:visible:nth-child(" + max_numberofpackagestoshow + ")");
+        }
+
+        if (!firstBlock_package.prev().hasClass("package-item")) return;
+
+        var newBlock = firstBlock_package.prev();
+        var nextContender = lastBlock_package.prev();
+
+        var options = {};
+        lastBlock_package.toggle(toggleOption, options, 500, function () { newBlock.toggle(toggleOption, options, 500); });
+
+        lastBlock_package = nextContender;
+        firstBlock_package = newBlock;
+
+        checkNextPrevPackage();
+    }
+
+    function navigateNextPackage() {
+        //debugger;
+        if (lastBlock_package == null && $(".package-item").length <= max_numberofpackagestoshow) return;
+        if (lastBlock_package == null) {
+            firstBlock_package = $(".package-item:visible:first");
+            lastBlock_package = $(".package-item:visible:nth-child(" + max_numberofpackagestoshow + ")");
+        }
+
+        if (!lastBlock_package.next().hasClass("package-item")) return;
+
+        var newBlock = lastBlock_package.next();
+        var nextContender = firstBlock_package.next();
+
+        var options = {};
+
+        firstBlock_package.toggle(toggleOption, options, 500, function () { newBlock.toggle(toggleOption, options, 500); });
+
+        firstBlock_package = nextContender;
+        lastBlock_package = newBlock;
+
+        checkNextPrevPackage();
+    }
+
+    function checkNextPrevPackage() {//debugger;
+        $("#next-nav-pkg-btn").show();
+        $("#prev-nav-pkg-btn").show();
+
+        if (!lastBlock_package.next().hasClass("package-item")) {
+            $("#next-nav-pkg-btn").hide();
+        }
+
+        if (!firstBlock_package.prev().hasClass("package-item")) {
+            $("#prev-nav-pkg-btn").hide();
+        }
+    }
+
+    function showSelectedPackage() {
+        //debugger;
+        if ($(".package-item").length <= max_numberofpackagestoshow) return;
+
+        if ($(".package-item:visible .select-button-selected:visible").length > 0) {
+            $("#prev-nav-pkg-btn").hide();
+            return;
+        }
+
+        //var index = 4;
+        while ($(".package-item:visible .select-button-selected:visible").length < 1) {
+            $(".package-item:visible:first").hide();
+            $(".package-item:visible:last").next().show();
+            $("#prev-nav-pkg-btn").show();
+        }
+
+        if ($(".package-item:last .select-button-selected:visible").length > 0) {
+            $("#next-nav-pkg-btn").hide();
+            return;
+        }
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+    var firstBlock_test = null;
+    var lastBlock_test = null;
+    var maxNumberofTesttoDisplay = 3;
+
+    function navigatePrevTest() {
+
+        if (firstBlock_test == null && $(".test-item").length <= maxNumberofTesttoDisplay) return;
+
+        if (firstBlock_test == null) {
+            firstBlock_test = $(".test-item:first");
+            lastBlock_test = $(".test-item:nth-child(" + maxNumberofTesttoDisplay + ")");
+        }
+
+        if (!firstBlock_test.prev().hasClass("test-item")) return;
+
+        var newBlock = firstBlock_test.prev();
+        var nextContender = lastBlock_test.prev();
+
+        while (nextContender.hasClass("blocked")) {
+            nextContender = nextContender.prev();
+            if (!nextContender.hasClass("test-item")) return;
+        }
+
+        while (newBlock.hasClass("blocked")) {
+            newBlock = newBlock.prev();
+            if (!newBlock.hasClass("test-item")) return;
+        }
+
+        var options = {};
+        lastBlock_test.toggle(toggleOption, options, 500, function () { newBlock.toggle(toggleOption, options, 500); });
+
+        lastBlock_test = nextContender;
+        firstBlock_test = newBlock;
+
+        checkNextPrevTest();
+    }
+
+    function navigateNextTest() {
+
+        if (lastBlock_test == null && $(".test-item").length <= maxNumberofTesttoDisplay) return;
+        if (lastBlock_test == null) {
+            firstBlock_test = $(".test-item:first");
+            lastBlock_test = $(".test-item:nth-child(" + maxNumberofTesttoDisplay + ")");
+        }
+
+        if (!lastBlock_test.next().hasClass("test-item")) return;
+
+        var newBlock = lastBlock_test.next();
+        var nextContender = firstBlock_test.next();
+
+        while (newBlock.hasClass("blocked")) {
+            newBlock = newBlock.next();
+            if (!newBlock.hasClass("test-item")) return;
+        }
+
+        while (nextContender.hasClass("blocked")) {
+            nextContender = nextContender.next();
+            if (!nextContender.hasClass("test-item")) return;
+        }
+        var options = {};
+
+        firstBlock_test.toggle(toggleOption, options, 500, function () { newBlock.toggle(toggleOption, options, 500); });
+
+        firstBlock_test = nextContender;
+        lastBlock_test = newBlock;
+
+        checkNextPrevTest();
+    }
+
+
+    function checkNextPrevTest() {//debugger;
+        $("#next-nav-test-btn").show();
+        $("#prev-nav-test-btn").show();
+
+        var nextContender = lastBlock_test.next();
+        if (!nextContender.hasClass("test-item")) {
+            $("#next-nav-test-btn").hide();
+        }
+        else {
+            while (nextContender.hasClass("blocked")) {
+                nextContender = nextContender.next();
+                if (!nextContender.hasClass("test-item")) {
+                    $("#next-nav-test-btn").hide();
+                    break;
+                }
+            }
+        }
+
+        var prevContender = firstBlock_test.prev();
+        if (!prevContender.hasClass("test-item")) {
+            $("#prev-nav-test-btn").hide();
+        }
+        else {
+            while (prevContender.hasClass("blocked")) {
+                prevContender = prevContender.prev();
+                if (!prevContender.hasClass("test-item")) {
+                    $("#prev-nav-test-btn").hide();
+                    break;
+                }
+            }
+        }
+
+    }
+
+    function managePackageTest() {
+        $(".test-item").each(function () {
+            if ($(this).hasClass("blocked")) $(this).hide();
+            else $(this).show();
+        });
+    }
+
+    function manageNextPrevious() {
+        //if ($(".test-item").length <= maxNumberofTesttoDisplay) return;
+
+        var totalTests = $(".test-item").length;
+        var blockedTests = $(".test-item[class*='blocked']").length;
+        var unBlockedTests = totalTests - blockedTests;
+
+        if (unBlockedTests <= maxNumberofTesttoDisplay) {
+            $(".test-scroll-div").hide();
+            $(".test-item").each(function () {
+                if ($(this).hasClass("blocked")) $(this).hide();
+                else $(this).show();
+            });
+
+            firstBlock_test = null;
+            lastBlock_test = null;
+        }
+        else {
+            $(".test-scroll-div").show();
+
+            $(".test-item:visible").each(function () {
+                $(this).hide();
+            });
+
+            var index = 0;
+            $(".test-item").each(function () {
+                if ($(this).hasClass("blocked") == false) {
+                    $(this).show();
+                    index++;
+                }
+
+                if (index >= maxNumberofTesttoDisplay) return false;
+            });
+
+            firstBlock_test = $(".test-item:visible:first");
+            lastBlock_test = $(".test-item:visible:last");
+
+
+            checkNextPrevTest();
+        }
+
+
+        //$(".test-item[class='selected']")
+    }
+
+
+</script>
+
+<script type="text/javascript" language="javascript">
+
+    var packageForUpsell = false;
+
+    function unHideAllinPackageUpsell() {
+        $("#packageUpsellJDiv .upsell-block").show();
+        packageForUpsell = true;
+    }
+
+    function upgradeToPackage(eventPackageId) {
+        var selectedPackageInput = $("input[type=hidden][id*='SelectedPackageId']");
+        selectedPackageInput.val(eventPackageId);
+        hideTestforSelectedPackage($(".package-item input[type=hidden][value=" + eventPackageId + "]").parents(".package-item:first"));
+        $("#packageUpsellJDiv").dialog("close");
+    }
+
+    var productForUpsell = false;
+
+    function manageForProductinUpsell() { //debugger;
+        productForUpsell = false;
+        var selectedProductLength = 0;
+
+        $("#productUpsellJDiv .upsell-block").each(function() { //debugger;
+            var upsellProductId = $(this).find("input[type=hidden]").val();
+            var found = false;
+
+            $.each(selectedProducts, function() {
+                selectedProductLength += 1;
+                if (upsellProductId == this.ProductId) {
+                    found = true;
+                    return false;
+                }
+            });
+
+//            if(found){
+//                $(this).hide();
+//            }
+//            else{
+//                $(this).show();
+//                productForUpsell = true;
+//            }
+        });
+
+        //debugger;
+        var hasTestForUpsell = false;
+
+        var selectedTests = getSelectedTest == null ? null : getSelectedTest();
+        $(".test-item.blocked").each(function() {
+            //debugger;
+            var testId = $(this).find("input[type=text].item-id").val();
+            if (testId == parseInt('@((long) TestType.AAA)') || testId == parseInt('@((long) TestType.Stroke)') || testId == parseInt('@((long) TestType.Echocardiogram)')) {
+                hasTestForUpsell = true;
+            }
+        });
+        //debugger;
+        var selectedPackage = getSelectedPackage == null ? null : getSelectedPackage();
+        if (selectedPackage != null) {
+            var refTag = $(".package-item input[type=text][value=" + selectedPackage.PackageId + "]");
+            var packageDiv = $(refTag).parent();
+            $(packageDiv).find('.package-test-Id').each(function() {
+                //debugger;
+                var testId = $(this).val();
+                if (testId == parseInt('@((long) TestType.AAA)') || testId == parseInt('@((long) TestType.Stroke)') || testId == parseInt('@((long) TestType.Echocardiogram)')) {
+                    hasTestForUpsell = true;
+                }
+            });
+        }
+        
+        if (selectedTests != null) {
+            $.each(selectedTests, function(key, test) {
+                if (test.TestId == parseInt('@((long) TestType.AAA)') || test.TestId == parseInt('@((long) TestType.Stroke)') || test.TestId == parseInt('@((long) TestType.Echocardiogram)')) {
+                    hasTestForUpsell = true;
+                }
+            });
+        }
+        if (hasTestForUpsell == false){
+            //if(selectedProductLength > 0){
+            //    $.each(selectedProducts, function() {
+            //        $("#productUpsellJDiv .upsell-block input[type=text][value=" + this.ProductId + "].item-id").parent().find(".select-button-selected").click();
+            //        $("#productUpsellJDiv .upsell-block input[type=text][value=" + this.ProductId + "].item-id").parent().find(".select-button-selected").hide();
+            //        $("#productUpsellJDiv .upsell-block input[type=text][value=" + this.ProductId + "].item-id").parent().find(".select-button").show();
+            //    });
+            //}
+            $(".image-upsell-div").hide();
+        }
+        else 
+            $(".image-upsell-div").show();
+        
+        var selectedShippingId = parseInt($("input[type=hidden][id*='SelectedShippingOptionId']").val());
+
+        if ((selectedProductLength == 0 && $("#productUpsellJDiv .upsell-block").length > 0 && hasTestForUpsell == true) || selectedShippingId < 0) {
+            productForUpsell = true;
+
+//            if(selectedProductLength == 0 && $("#productUpsellJDiv .upsell-block").length > 0){
+//                $("#productUpsellJDiv .upsell-block").show();
+//            }
+        }
+        
+    }
+
+    var testForUpsell = false;
+    function manageForTestUpsell(){
+        testForUpsell = false;
+
+        var selectedPackage = getSelectedPackage == null ? null : getSelectedPackage();
+
+        $("#testUpsellJDiv .upsell-block").show();
+
+        $("#testUpsellJDiv .upsell-block").each(function(){
+            var upsellTestId = $(this).find("input[type=hidden]").val();
+            var found = false;
+
+            $.each(selectedTests, function(){              
+                  if(this.TestId == upsellTestId){
+                        found = true;
+                        return false;
+                  }
+            });
+            
+            $(".test-item.blocked").each(function(){
+                if($(this).find("input[type=hidden]").val() == upsellTestId){
+                    found = true;
+                    return false;
+                }
+            });
+
+            if(found){
+                $(this).hide();
+            }
+            else if(selectedPackage != null){
+                testForUpsell = true;
+            }
+
+        });
+        
+    }
+
+    function purchaseTest(testId){   
+        var testItemBlock = $(".test-item input[type=hidden][value=" + testId + "]").parents(".test-item:first");        
+        onClickSelectTestBox(testItemBlock, testId);
+        if (!testForUpsell) {
+            $("#testUpsellJDiv").dialog("close");
+        }
+    }
+
+    function purchaseProduct(productId) {//debugger;
+        addProduct(productId);
+        manageForProductinUpsell();
+        if (!productForUpsell) {
+            $("#productUpsellJDiv").dialog("close");
+        }
+    }
+
+    function manageUpsellDialogs() {//debugger;
+        
+        @if (!upsellPackage)
+        {
+            <text> packageForUpsell = false; </text>
+        }
+
+        if (packageForUpsell) {
+            $("#packageUpsellJDiv").dialog("open");
+            return;
+        }
+
+        @if (!upsellTest)
+        {
+            <text> testForUpsell = false; </text>
+        }
+
+        if(testForUpsell){
+            $("#testUpsellJDiv").dialog('open');
+            return;
+        }
+
+        @if (!upsellCd)
+        {
+            <text> productForUpsell = false; </text>
+        }
+
+        if (productForUpsell) {
+            $("#productUpsellJDiv").dialog("open");
+            return;
+        }
+
+        $("form").submit();
+    }
+
+    
+    $(document).ready(function () {
+        $("#packageUpsellJDiv").dialog({ width: 680, autoOpen: false, modal: true, resizable: false, draggable: true });
+        $("#packageUpsellJDiv").bind('dialogclose', onClosePackageupsell);
+                
+        $("#testUpsellJDiv").dialog({ width: 900, autoOpen: false, title: 'Add to the Order', modal: true, resizable: false, draggable: true });
+        $("#testUpsellJDiv").bind('dialogclose', onCloseTestupsell);
+
+        $("#productUpsellJDiv").dialog({ width: 900, autoOpen: false, title: 'Add to the Order', modal: true, resizable: false, draggable: true });
+        //$("#productUpsellJDiv").bind('dialogclose', onCloseProductupsell);
+
+        setShipping();
+    });
+
+    function onClosePackageupsell() {
+        packageForUpsell = false;
+        manageUpsellDialogs();
+    }
+
+    
+    function onCloseTestupsell() {
+        testForUpsell = false;
+        manageUpsellDialogs();
+    }
+
+    function onCloseProductupsell() {//debugger;
+        var selectedShippingId = parseInt($("input[type=hidden][id*='SelectedShippingOptionId']").val());
+        if(selectedShippingId < 0)
+        {
+            productForUpsell = true;
+            $("#productUpsellJDiv").dialog("open");
+            alert("Please select one of the Result shipping option.");
+            return false;
+        }
+        productForUpsell = false; 
+        $("#productUpsellJDiv").dialog("close");       
+    }
+
+    function onCloseAndContinueProductupsell() {//debugger;
+        var selectedShippingId = parseInt($("input[type=hidden][id*='SelectedShippingOptionId']").val());
+        if(selectedShippingId < 0)
+        {
+            productForUpsell = true;
+            $("#productUpsellJDiv").dialog("open");
+            alert("Please select one of the Result shipping option.");
+            return false;
+        }
+        productForUpsell = false;
+        $("#productUpsellJDiv").dialog("close");
+        manageUpsellDialogs();
+    }
+
+
+</script>
+<script type="text/javascript" language="javascript">
+
+    var _editOrder = function(){ return; };
+
+    $(document).ready(function () {
+        onStartTestSelection();
+        @if (Model.SelectedPackageId > 0)
+        {
+            <text> 
+                var selectedPackageBlock = $(".package-item input[type=hidden][value=@Model.SelectedPackageId]").parents(".package-item:first");
+                manageTestPrice(true);
+                $("#ala-carte-test-div").show();
+                hideTestforSelectedPackage(selectedPackageBlock); 
+                hideByPackageinPackageUpsell(@Model.SelectedPackageId);
+                showSelectedPackage();
+                createRefForSelectedPackage(); 
+                manageForTestUpsell();               
+            </text>
+        }
+        onStartProductSelection();
+        
+    });
+    
+    
+    function selectPackage(selectTagReference, packageId) {//debugger;
+        $(".package-item .select-button-selected:visible").parent().find("input[type=image]").toggle();
+
+        var selectedPackageInput = $("input[type=hidden][id*='SelectedPackageId']");
+        selectedPackageInput.val(packageId);
+        selectTagReference.parent().find("input[type=image]").toggle();
+        var parentTag = selectTagReference.parents(".package-item:first");        
+        
+        manageTestPrice(true);
+        $("#ala-carte-test-div").show();
+        
+        hideTestforSelectedPackage(parentTag);
+        hideByPackageinPackageUpsell(packageId);
+        createRefForSelectedPackage();
+
+        manageForTestUpsell();
+
+        _editOrder(); 
+    }
+
+    function removePackage(selectTagReference) {//debugger;
+        var selectedPackageInput = $("input[type=hidden][id*='SelectedPackageId']");
+        selectedPackageInput.val(0);
+        selectTagReference.parent().find("input[type=image]").toggle();
+
+        removeAllTest();
+
+        unHideTestforSelectedPackage();
+        unHideAllinPackageUpsell();
+
+        createRefForSelectedPackage();
+
+        //hide ala carte if no package is selected
+        //removeAllTest(); 
+        renderTestHtmlTemplate();
+        manageForTestUpsell(); 
+        manageTestPrice(false);     
+        $("#ala-carte-test-div").hide();
+        
+        _editOrder();
+    }
+
+    var getSelectedPackage = null;
+    function createRefForSelectedPackage(){
+        getSelectedPackage = null;
+                
+        var selectedPackageInput = $("input[type=hidden][id*='SelectedPackageId']");
+        if(isNaN(selectedPackageInput.val()) || Number(selectedPackageInput.val()) < 1) return;
+
+        var selectedTag = $(".package-item input[type=hidden][value=" + selectedPackageInput.val() + "]").parents(".package-item:first");
+
+        
+        if(selectedTag.length < 1) return;
+
+        var packageTests = new Array();
+        selectedTag.find(".package-test-name").each(function(){
+            packageTests.push($(this).val());
+        });
+
+        var package = {'EventPackageId': selectedPackageInput.val(),
+                    'PackageId': selectedTag.find(".item-id").val(),
+                    'Name': selectedTag.find(".item-name").val(),
+                    'Price': selectedTag.find(".item-price").val(),
+                    'PackageTests': packageTests};
+
+        getSelectedPackage = function(){
+            return package;
+        };
+    }
+
+    var getSelectedShipping = null;
+    function onClick_SelectShippingOption(selectTagReference, shippingOptionId) {//debugger;
+        $("#shippingoptions-list .select-button-selected:visible").parent().find("input[type=image]").toggle();
+
+        var selectedShippingOptionInput = $("input[type=hidden][id*='SelectedShippingOptionId']");
+        selectedShippingOptionInput.val(shippingOptionId);
+        selectTagReference.parent().find("input[type=image]").toggle();
+
+        setShipping();
+
+        _setOrderSummary();
+    }
+
+    function setShipping(){
+        var shippingOptionId = $("input[type=hidden][id*='SelectedShippingOptionId']").val();
+        var shipping = null;
+        $("#shippingoptions-list .item-block").each(function(){
+            var currentShippingtId = $(this).find(".item-id").val();
+
+            if(currentShippingtId == shippingOptionId){
+                shipping = new Object({'Id' : currentShippingtId, 'Name' : $(this).find(".item-name").val(), 'Price': $(this).find(".item-price").val() });
+            }
+        });
+        getSelectedShipping = function(){
+            return shipping;
+        };
+    }
+
+    function PackageNotavailable(message){
+        alert("The package you are trying to select " + message);
+        return false;
+    }
+    
+    function TestNotavailable(message){
+        alert("You can not select this test. " + message);
+        return false;
+    }
+    
+</script>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script language="javascript" type="text/javascript">
+    
+    var selectedTests = new Object();
+
+    var selectedTest = null;
+    var keyTest = 1;
+
+    function onStartTestSelection(){
+        
+        @if (Model.SelectedTestIds != null && Model.SelectedTestIds.Count() > 0)
+        {
+            foreach (var item in Model.SelectedTestIds)
+            {
+                <text>
+                    selectedTest = new Object();
+                    selectedTest.TestId = '@item';
+                    selectedTest.Key = keyTest;
+                    selectedTests[keyTest++] = selectedTest;
+                </text>
+            }
+            <text>
+                renderTestHtmlTemplate();
+            </text>
+        }
+    }
+        
+    function hideTestforSelectedPackage(packageBlock){
+        unHideTestforSelectedPackage();
+        
+        packageBlock.find(".package-test").each(function(){
+            var packageTestId = $(this).val();
+            removeTest(packageTestId);
+            
+            var testBlockChild = $(".test-item input[type=hidden][value=" + packageTestId + "]");
+            if(testBlockChild.length > 0){
+                var parentBox = testBlockChild.parents(".test-item:first");
+                parentBox.find(".select-button-selected").hide();
+                parentBox.find(".select-button").show();
+                parentBox.addClass("blocked");
+            }
+        });
+        
+        manageForTestUpsell();
+        renderTestHtmlTemplate();
+        managePackageTest();
+    }
+        
+    function unHideTestforSelectedPackage(){
+        $(".test-item[class*='blocked']").each(function(){
+            $(this).removeClass("blocked");
+        });
+
+        manageForTestUpsell();
+        renderTestHtmlTemplate();
+        managePackageTest();
+    }
+    
+    function onClickSelectTestBox(selectTagRef, testId){//debugger;
+        //alert(selectTagRef.html());
+        //selectTagRef.parent().find("input[type=image]").toggle();
+        //alert(selectTagRef.html());
+
+        $(".test-item input[type=hidden][value=" + testId + "]").parent().find("input[type=button]").toggle();
+
+        selectedTest = new Object();
+        selectedTest.TestId = testId;
+        selectedTest.Key = keyTest;
+        selectedTests[keyTest++] = selectedTest;                
+        
+        manageForTestUpsell();
+        renderTestHtmlTemplate();
+        _editOrder();
+    }
+
+    function onClickRemoveTestBox(selectTagRef, testId){//debugger;
+        selectTagRef.parent().find("input[type=button]").toggle();
+        
+        removeTest(testId);
+
+        manageForTestUpsell();
+        renderTestHtmlTemplate();
+        _editOrder();
+    }
+    
+    function removeTest(testId){
+        var key = null;
+        $.each(selectedTests, function(){
+            if(this.TestId == testId){
+                key = this.Key;
+                return false;
+            }
+        });
+
+        if(key == null) return;
+        delete selectedTests[key];
+    }
+
+    function removeAllTest(){
+        var key = null;
+        var alaCarteTestsSelected = selectedTests;
+        $.each(alaCarteTestsSelected, function(){
+            //var selectTagRef = $(".test-item input[type=hidden][value=" + this.TestId + "]")
+            //onClickRemoveTestBox(selectTagRef,this.TestId);
+            key = this.Key;  
+            delete selectedTests[key]; 
+            $(".test-item input[type=hidden][value=" + this.TestId + "]").parent().find("input[type=button]").toggle();
+        });        
+    }
+
+    function renderTestHtmlTemplate(){//debugger;
+        $("#selectedtest-div").empty();
+        $.each(selectedTests, function (key, test) {            
+            $("#selectedtest-div").append($("#selectedTestTemplate").tmpl(test));            
+        });
+
+        
+        if ($(".test-item[class*='blocked']").length == $(".test-item").length) {
+            $("#no-test-available-div").show();            
+        }
+        else {
+            $("#no-test-available-div").hide();            
+        }
+
+        createRefForSelectedTest();
+    }
+
+    var getSelectedTest = null;
+    
+    function createRefForSelectedTest(){
+        var selectedPackage = getSelectedPackage == null ? null : getSelectedPackage();
+        getSelectedTest = null;
+        var tests = new Array();
+        $(".test-item").each(function(){
+            var currentTestId = $(this).find("input[type=hidden]").val();
+            if($("#selectedtest-div .selectedtest-value[value=" + currentTestId + "]").length < 1)
+                return;
+            var testPrice;
+            if(selectedPackage == null){               
+                testPrice = $(this).find(".item-price").val();
+            }
+            else{
+                testPrice = $(this).find(".item-price-withpackage").val();
+            }
+            tests.push({'EventTestId' : currentTestId, 'TestId' : $(this).find(".item-id").val(), 'Name' : $(this).find(".item-name").val(), 'Price': testPrice });
+        });
+
+        getSelectedTest = function(){
+            return tests;
+        };
+    }
+
+    function manageTestPrice(isPackageSelected){
+        if(isPackageSelected){
+            $('.test-item .test-price').hide();
+            $('.test-item .test-price-withpackage').show();
+        }
+        else{
+            $('.test-item .test-price').show();
+            $('.test-item .test-price-withpackage').hide();
+        }
+    }
+</script>
+<script id="selectedTestTemplate" type="text/x-jquery-tmpl">
+    
+    <input type="hidden" name="SelectedTestIds.Index" class='selectedtest-key' value="${Key}" />
+    <input type="text" name="SelectedTestIds[${Key}]" class='selectedtest-value' value="${TestId}" />
+    
+</script>
+<script language="javascript" type="text/javascript">
+    var selectedProducts = new Object();
+
+    var selectedProduct = null;
+    var keyProduct = 1;
+    var getSelectedProduct = null;
+
+    
+    function createRefForSelectedProduct(){//debugger;
+        getSelectedProduct = null;
+        var products = new Array();
+        $("#product-list .item-block").each(function(){
+            var currentProductId = $(this).find(".item-id").val();
+            if($("#selectedproduct-div .selectedproduct-value[value=" + currentProductId + "]").length < 1)
+                return;
+
+            
+                products.push({'Id' : currentProductId, 'Name' : $(this).find(".item-name").val(), 'Price': $(this).find(".item-price").val() });
+        });
+
+        getSelectedProduct = function(){
+            return products;
+        };
+    }
+
+    function onStartProductSelection(){
+        @if (Model.SelectedProductIds != null && Model.SelectedProductIds.Count() > 0)
+        {
+            foreach (var item in Model.SelectedProductIds)
+            {
+                <text>
+                    selectedProduct = new Object();
+                    selectedProduct.ProductId = '@item';
+                    selectedProduct.Key = keyProduct;
+                    selectedProducts[keyProduct++] = selectedProduct;
+                </text>
+            }
+            <text>
+                renderProductHtmlTemplate();
+            </text>
+        }
+
+        
+        manageForProductinUpsell();
+    }
+    
+    function onClickSelectProductBox(selectTagRef, productId){     
+        selectTagRef.parent().find("input[type=image]").toggle();
+        addProduct(productId);
+        manageForProductinUpsell();
+        _setOrderSummary();
+    }
+
+    function addProduct(productId){
+        selectedProduct = new Object();
+        selectedProduct.ProductId = productId;
+        selectedProduct.Key = keyProduct;
+        selectedProducts[keyProduct++] = selectedProduct;
+
+        renderProductHtmlTemplate();
+    }
+    
+
+    function removeProduct(productId){
+        var key = null;
+        $.each(selectedProducts, function(){
+            if(this.ProductId == productId){
+                key = this.Key;
+                return false;
+            }
+        });
+
+        if(key == null) return;
+        delete selectedProducts[key];
+        renderProductHtmlTemplate();
+    }
+    
+
+    function onClickRemoveProduct(selectTagRef, productId){//debugger;
+        var key = null;
+        $.each(selectedProducts, function(){
+            if(this.ProductId == productId){
+                key = this.Key;
+                return false;
+            }
+        });
+
+        if(key == null) return;
+
+        delete selectedProducts[key];
+
+        selectTagRef.parent().find("input[type=image]").toggle();
+        renderProductHtmlTemplate();
+        manageForProductinUpsell();
+        _setOrderSummary();
+    }
+        
+    function renderProductHtmlTemplate(){
+        $("#selectedproduct-div").empty();
+        $.each(selectedProducts, function (key, product) {            
+            $("#selectedproduct-div").append($("#selectedProductTemplate").tmpl(product));            
+        });
+                
+        createRefForSelectedProduct();
+    }
+
+</script>
+<script id="selectedProductTemplate" type="text/x-jquery-tmpl">    
+    
+    <input type="hidden" name="SelectedProductIds.Index" class='selectedproduct-key' value="${Key}" />
+    <input type="text" name="SelectedProductIds[${Key}]" class='selectedproduct-value' value="${ProductId}" />    
+    
+</script>

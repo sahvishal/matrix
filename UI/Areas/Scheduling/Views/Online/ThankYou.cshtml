@@ -1,0 +1,480 @@
+﻿@using System.Messaging
+@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@using MattBerseth.WebControls.AJAX.Progress
+@model OnlineSchedulingThankYouAndAdditionalInfo
+<style type="text/css">
+    .ui-widget-content {
+        background: #B3D4A7;
+        border: 2px solid #496340;
+    }
+
+    .ui-widget-header {
+        background: #B3D4A7;
+        color: #000000;
+        border: none;
+        font-size: 11pt;
+    }
+
+    #health-assessment-container-div div.sequence-block {
+        font-size: 11pt;
+    }
+
+     #health-assessment-container-div tr.sequence-block {
+        font-size: 11pt;
+    }
+    .custome-ui-widget-content {
+        background: #ffffff !important;
+    }
+
+    .custome-ui-widget-header {
+        background: #f6a828 !important;
+        border: 2px solid #f6a828 !important;
+    }
+
+    #health-assessment-container-div input[type=checkbox] {
+        margin: 2px;
+    }
+</style>
+@{
+    ViewBag.Title = "Check-In";
+    var settings = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>();
+}
+@{Html.BeginForm("ThankYou", "Online", FormMethod.Post);}
+@Html.HiddenFor(m => m.ProcessAndCartViewModel.CartGuid)
+@Html.HiddenFor(m => m.ProcessAndCartViewModel.CustomerId)
+@Html.Partial("/Config/Content/Views/Shared/Conversion.cshtml", Model.EventCustomerOrderSummaryModel)
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/QCTag_ThankYou.cshtml")))
+{
+    @Html.Partial("/Config/Content/Views/Shared/QCTag_ThankYou.cshtml")
+}
+
+<div class="scheduling-main-container">
+
+    @Html.Partial("SchedulingProcessHeader", Model.ProcessAndCartViewModel)
+    @Html.Partial("OnlineSchedulingSummary", Model.EventCustomerOrderSummaryModel)
+    @if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Error)
+    {
+        <div class="warning-message">
+            @Model.FeedbackMessage.Message
+        </div>
+    }
+    <div class="content">
+        <div class="table_box">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th>
+                        Congratulations on taking this positive step towards a healthier life.  Your appointment is now registered and your payment was successful.
+                        @if (Model.CaptureHafOnline)
+                        {
+                            <span>Please take some time to complete the below health history questions required for your screening(s).</span>
+                        }
+                        You will be provided with additional appointment information after this step.
+                    </th>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        <div class="highlight_box form txt-grey p15">
+                            <left>
+                                <label><strong>Date of Birth</strong> </label>
+                                @Html.TextBoxFor(m => m.DateofBirth, new { @class = "datePicker-dob textbox", @style = "width:100px;" })
+
+                                <label><strong>Gender</strong></label>
+                                @Html.DropDownListFor(m => m.Gender, DropDownHelper.Genders(), new { @class = "select" })
+
+                                <label class="ml5 pl5"><strong>Race</strong> </label>
+                                @Html.DropDownListFor(m => m.Race, DropDownHelper.AllRace())
+
+
+                                <label><strong>Height</strong> </label>
+                                <select id="heightFeetSelectBox" style="min-width: 60px;">
+                                    <option value="-1">Feet </option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                </select>
+                                <select id="heightInchSelectBox" style="min-width: 60px;">
+                                    <option value="-1">Inches</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                </select>
+                                @Html.HiddenFor(m => m.Height)
+                                <label class="ml5 pl5"><strong>Weight</strong> </label>
+                                @Html.TextBoxFor(m => m.Weight, new { @style = "width:70px;" }) lbs
+                            </left>
+                            <left>
+                                <div style="margin-top: 10px;">
+                                    <label><strong>Waist</strong> </label>
+                                    @Html.TextBoxFor(m => m.Waist, new { @style = "width:70px;" }) inch
+                                </div>
+                            </left>
+                        </div>
+                        <div class="information_form" style="float:left; width:100%; clear: both; background-color: #ffffff; margin-top: 10px;">
+                            <div style="clear: both;">
+                                <ul style="padding:0px;">
+                                    <li style="margin-bottom: 0px;">
+                                        <h4 class="highlight_box p10 txt-brown" style="background-color: #F8F8F8;">
+                                            @Html.CheckBoxFor(m => m.EnterPcpDetail, new { onclick = "showPcpDetail();" })
+                                            <em> Enter Primary Care Physician Detail </em>
+                                        </h4>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="pcp-detail" style="margin-top: 15px; display: none; clear: both;">
+                                <div style="float:left; width: 451px;">
+                                    <ul style="padding-bottom:0px; padding-top:0px;">
+                                        <li><h3 class="title_green"><strong>Primary Care Physician Detail</strong></h3></li>
+                                    </ul>
+                                    <ul>
+                                        @if (Model.Pcp.FeedbackMessage != null)
+                                        {
+                                            <li>
+                                                <div class="error-message" style="clear: both;">
+                                                    @Html.Raw(Model.Pcp.FeedbackMessage.Message)
+                                                </div>
+                                            </li>
+                                        }
+                                        <li>
+                                            <div class="left-float half">
+                                                <label>First Name</label>
+                                                @Html.TextBoxFor(m => m.Pcp.FullName.FirstName, new { autocomplete = "off", @class = "textbox" })
+                                            </div>
+                                            <div class="right-float half">
+                                                <label>Last Name</label>
+                                                @Html.TextBoxFor(m => m.Pcp.FullName.LastName, new { autocomplete = "off", @class = "textbox" })
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </li>
+                                        <li>
+                                            <div class="left-float half">
+                                                <label>Email</label>
+                                                @Html.TextBoxFor(m => m.Pcp.Email, new { autocomplete = "off", @class = "textbox" })
+                                            </div>
+                                            <div class="right-float half phone-number-div">
+                                                <label>Phone Number</label>
+                                                <div class="right-float half">
+                                                    @Html.ValidationMessageFor(m => m.Pcp.PhoneNumber) @Html.ValidationMessageFor(m => m.Pcp.PhoneNumber.AreaCode) @Html.ValidationMessageFor(m => m.Pcp.PhoneNumber.Number)
+                                                </div>
+                                                @Html.TextBoxFor(m => m.Pcp.PhoneNumber.CountryCode, new { @style = "display:none;" })
+                                                @Html.TextBoxFor(m => m.Pcp.PhoneNumber.AreaCode, new { autocomplete = "off", @class = "textbox", @style = "width:52px;", size = 3, maxlength = 3 })
+                                                @Html.TextBoxFor(m => m.Pcp.PhoneNumber.Number, new { autocomplete = "off", @class = "textbox number-after-areacode", @style = "width:120px;" })
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="pcp-address" style="float:left; width: 451px; margin-top: 55px;">
+                                    @Html.EditorFor(m => m.Pcp.Address, "OnlineAddressEditModel")
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.CaptureHafOnline)
+                        {
+                            <div class="p15" style="float:left; width:98%; clear: both;">
+                                <h3 class="title_green"><strong>Health Assessment Questions</strong></h3>
+                                <div id="health-assessment-container-div">
+                                    @Html.Partial("/Config/Content/Views/Shared/HealthAssessmentForm.cshtml", Model.AssessmentQuestionEditModel)
+                                </div>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="mt10 pt5 txt-align-right">
+            <input type="button" class="button_green ml5" style="text-align: center;" value="Next &rsaquo;" onclick="onFinish();" />
+        </div>
+    </div>
+    <div id="fillassesmentform-confirmation" class="jdbox" style="display: none;">
+        <p style="padding: 20px 10px; margin: 0px; font-size: 10pt; background: #ffffff; line-height:1.35;">
+            In order to speed up your check-in time please complete the Health Assessment Form.
+        </p>
+        <p style="text-align: right; margin-top: 15px;">
+            <input type="button" value="Yes, I will fill it now." style="width: 180px;" class="button_green"
+                   onclick="$('#fillassesmentform-confirmation').dialog('close');" />
+            <input type="button" value="No, I will fill it later." style="width: 180px;" class="button_green"
+                   onclick="$('form').submit();" />
+        </p>
+    </div>
+</div>
+@Html.HiddenFor(m=>m.CaptureHafOnline)
+@*<div id="confirmation-message" style="display: none;">
+        @Html.Partial("/Config/Content/Views/Shared/ThankYouContent.cshtml")
+    </div>*@
+
+@{Html.EndForm();}
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+<script type="text/javascript" src="/Scripts/addresseditmodel.helper.js"></script>
+<script type="text/javascript">
+    function showPcpDetail() {//debugger;
+        if ($("#EnterPcpDetail").is(":checked")) {
+            $("#pcp-detail").show();
+        }
+        else {
+            $("#pcp-detail").hide();
+        }
+    }
+
+    function trimName() {//debugger;
+
+        parentDiv = $("#pcp-detail");
+
+        firstNameControl = parentDiv.find("input[type=text][id*='FirstName']");
+        lastNameControl = parentDiv.find("input[type=text][id*='LastName']");
+
+        $(firstNameControl).val($.trim($(firstNameControl).val()));
+        $(lastNameControl).val($.trim($(lastNameControl).val()));
+    }
+
+    function autoTabPhoneAreaCodeonKeyUp(elementRef) {
+        if (elementRef.val().length >= 3) {
+            var parent = elementRef.parents("div.phone-number-div:first");
+            parent.find("input[type=text].number-after-areacode").focus();
+        }
+    }
+</script>
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function () {
+        $("#thankyoucontent-div").css({ 'height': $("#ordersummary-div").height() });
+        setHeight(Number('@Model.Height'));
+        $("#heightFeetSelectBox, #heightInchSelectBox").change(onChangeHeight);
+        $("#fillassesmentform-confirmation").dialog({ width: 440, autoOpen: false, title: 'Health Assessment Form', modal: true, resizable: false, draggable: true });
+
+        $("#ShowOrderSummary").show();
+
+        $('#ShowOrderSummary').click(function () {//debugger;
+            var pos = $('#ShowOrderSummary').position();
+            $("#order_summary_details").css({
+                position: 'absolute',
+                zIndex: 99999,
+                left: (pos.left) + "px",
+                top: (pos.top + 40) + "px"
+            });
+
+            $('#order_summary_details').slideToggle('slow', function () { });
+        });
+        setAlternateShading();
+        showPcpDetail();
+        $("div.phone-number-div input[type=text].number-after-areacode").mask('999-9999');
+        $("div.phone-number-div input[type=text][id*='AreaCode']").keyup(function () { autoTabPhoneAreaCodeonKeyUp($(this)); });
+    });
+
+    function setAlternateShading() {
+        //debugger;
+        var counter = 0;
+        $('#health-assessment-container-div .section-withborder .alternate-color:visible').each(function (i) {
+            if ($(this).hasClass("sequence-block")) {
+                if (counter % 2 == 0)
+                    $(this).css("background-color", "#F2EDED");
+                else
+                    $(this).css("background-color", "#FFFFFF");
+                counter++;
+            }
+            else if ($(this).find(".sequence-block:visible").length > 0) {
+                if (counter % 2 == 0)
+                    $(this).css("background-color", "#F2EDED");
+                else
+                    $(this).css("background-color", "#FFFFFF");
+                counter++;
+            }
+        });
+    }
+
+    var minAge = '@settings.MinimumAgeForScreening';
+
+    function getAge(dob) {
+        var today = new Date();
+        var birthDate = new Date(dob);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
+    }
+
+    var captureHafOnline = "@Model.CaptureHafOnline";
+    function onFinish() {
+
+        var dob = $("#DateofBirth").val();
+        if (dob == "") {
+            $("#dob-dialog-message").dialog("open");
+        } else if (dob != "" && getAge(dob) < parseInt(minAge)) {
+            $("#age-dialog-message").dialog("open");
+        } else {
+            //debugger;
+            if (captureHafOnline == "@Boolean.TrueString") {
+                updateHAFAnswers();
+                @if (Model.IsKynPurchased)
+                {
+                    <text>
+                    if (validateDemographicInfo() == false)
+                    return false;
+                    </text>
+                }
+
+                var result = validateHealthAssessmentSection();
+                if (!result) {
+                    $("#fillassesmentform-confirmation").dialog('open');
+                }
+                else {
+
+                    @if (Model.IsKynPurchased)
+                    {
+                        <text>
+                        if (!ValidateHealthQuestionsOnline()) {
+                            var confirmation = confirm("Are you sure you want to continue without completing all questions?");
+                            if (!confirmation)
+                                return false;
+                        }
+                        </text>
+                    }
+
+                    trimName();
+                    var valPhone = $("#pcp-detail").find("div.phone-number-div input[type=text].number-after-areacode").val();
+                    $("#pcp-detail").find("div.phone-number-div input[type=text].number-after-areacode").val(valPhone.replace(/-/gi, ""));
+
+                    $('form').submit();
+                }
+            } else {
+                trimName();
+                var valPhone = $("#pcp-detail").find("div.phone-number-div input[type=text].number-after-areacode").val();
+                $("#pcp-detail").find("div.phone-number-div input[type=text].number-after-areacode").val(valPhone.replace(/-/gi, ""));
+
+                $('form').submit();
+            }
+        }
+
+    }
+
+    function validateDemographicInfo() {
+
+        if ($.trim($('#DateofBirth').val()).length < 1) {
+            alert("Please enter Date of Birth.");
+            return false;
+        }
+
+        var regExPattern = /^(?=\d)(?:(?:(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})|(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))|(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2}))($|\ (?=\d)))?(((0?[1-9]|1[012])(:[0-5]\d){0,2}(\ [AP]M))|([01]\d|2[0-3])(:[0-5]\d){1,2})?$/;
+        if ($('#DateofBirth').val().match(regExPattern) == null) {
+            alert("Please enter Date of Birth in mm/dd/yyyy format.");
+            return false;
+        }
+
+        if (Number($("#Gender").val()) <= 0) {
+            alert("Please select Gender.");
+            return false;
+        }
+
+        if (Number($("#Race").val()) <= 0) {
+            alert("Please select Race.");
+            return false;
+        }
+
+        if (Number($("#heightFeetSelectBox option:selected").val()) <= 0) {
+            alert("Please enter Height.");
+            return false;
+        }
+
+        if (Number($("#Weight").val()) <= 0) {
+            alert("Please enter Weight.");
+            return false;
+        }
+
+        if (Number($("#Waist").val()) <= 0) {
+            alert("Please enter Waist.");
+            return false;
+        }
+
+        return true;
+    }
+
+    function setHeight(totalInches) {
+        if (totalInches < 1) return;
+
+        var feet = parseInt(Number(totalInches / 12));
+        var inch = totalInches % 12;
+
+        $("#heightFeetSelectBox option[value='" + feet + "']").attr("selected", true);
+        $("#heightInchSelectBox option[value='" + inch + "']").attr("selected", true);
+
+    }
+
+    function onChangeHeight() {
+        var valueFeet = Number($("#heightFeetSelectBox option:selected").val());
+        var valueInch = Number($("#heightInchSelectBox option:selected").val());
+
+        $("input[type=hidden][id*='Height']").val("0");
+
+        if (valueFeet < 1) return;
+        if (valueInch < 1) valueInch = 0;
+
+        $("#heightInchSelectBox option[value='" + valueInch + "']").attr("selected", true);
+        var totalInches = (valueFeet * 12) + valueInch;
+
+        $("input[type=hidden][id*='Height']").val(totalInches);
+    }
+
+    function validateHealthAssessmentSection() {//debugger;
+        if ($("#health-assessment-container-div input[type=checkox]:checked, #health-assessment-container-div input[type=radio]:checked").length > 0) {
+            return true;
+        }
+
+        var count = 0;
+        $("#health-assessment-container-div input[type=text]:visible").each(function () {
+            if ($.trim($(this).val()).length > 0) {
+                count++;
+            }
+        });
+
+        $("#health-assessment-container-div textarea").each(function () {
+            if ($.trim($(this).val()).length > 0) {
+                count++;
+            }
+        });
+
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @* this dialog box will open if customer is below 18 years *@
+
+    $(document).ready(function () {
+        $("<div id='age-dialog-message' class='hide' ><p><span class='ui-icon ui-icon-alert' style='float:left; margin:0 7px 20px 0;'></span> Age cannot be below @settings.MinimumAgeForScreening years.</p></div>").dialog({
+            width: 350, autoOpen: false, title: 'Minimum Age Alert', modal: true, resizable: false, draggable: true, close: function () {
+                $(this).dialog("close");
+            }
+        });
+
+        $("<div id='dob-dialog-message' class='hide' ><p><span class='ui-icon ui-icon-alert' style='float:left; margin:0 7px 20px 0;'></span> Date of Birth is mandatory field cann't be left blank.</p></div>").dialog({
+            width: 350, autoOpen: false, title: 'Date of Birth Missing', modal: true, resizable: false, draggable: true, close: function () {
+                $(this).dialog("close");
+            }
+        });
+
+        $("#age-dialog-message, #dob-dialog-message").closest(".ui-dialog").addClass("custome-ui-widget-content");
+        $("#age-dialog-message, #dob-dialog-message").closest(".ui-dialog").find(".ui-widget-header").addClass("custome-ui-widget-header");
+
+    });
+
+</script>
+@section googleanalyitcs{
+    @Html.Partial("/Config/Content/Views/Shared/GoogleAnalyticsEnableReporting.cshtml", Model.GoogleAnalyticsReportingDataModel)
+}

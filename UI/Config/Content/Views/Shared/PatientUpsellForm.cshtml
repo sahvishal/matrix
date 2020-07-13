@@ -1,0 +1,366 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Medical.ValueType
+@using Falcon.App.Core.Scheduling.Domain
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.DependencyResolution
+@model Falcon.App.Core.Operations.ViewModels.PatientWorksheet
+@{
+
+    var purchasedTests = new List<EventTest>();
+    if (Model.Package != null)
+    {
+        purchasedTests.AddRange(Model.Package.Tests);
+    }
+
+    if (Model.Tests != null && Model.Tests.Any())
+    {
+        purchasedTests.AddRange(Model.Tests);
+    }
+    
+    
+    var settings = IoC.Resolve<ISettings>();
+    var purchasedTestsId = purchasedTests.Select(x => x.TestId);
+    var alacarteTests = Model.AlaCarteTest.Where(x => !purchasedTestsId.Contains(x.TestId) && (x.Test.Gender == (long)Gender.Unspecified || x.Test.Gender == (long)Model.Gender)).Select(x => x.Test);
+    var isPanelTestPurchased = false;
+
+    if (Model.Gender == Gender.Male)
+    {
+        isPanelTestPurchased = purchasedTests.Any(x => TestGroup.MensBloodPanelTestIds.Contains(x.TestId));
+    }
+    else
+    {
+        isPanelTestPurchased = purchasedTests.Any(x => TestGroup.WomenBloodPanelTestIds.Contains(x.TestId));
+    }
+
+    var isKynOrLipidPurchased = purchasedTests.Any(x => x.TestId == (long) TestType.Kyn || x.TestId == (long) TestType.Lipid);
+    if (alacarteTests != null && alacarteTests.Any() && isKynOrLipidPurchased)
+    {
+        alacarteTests = alacarteTests.Where(x => x.Id != (long) TestType.Cholesterol && x.Id != (long) TestType.Diabetes).Select(x => x).ToArray();
+    }
+}
+
+<style type="text/css">
+    .full-width-abn {
+        float: left;
+        width: 865px;
+        margin-top: 5px;
+    }
+
+    .half-width-abn {
+        float: left;
+        width: 432px;
+    }
+
+    .test-info {
+        padding-left: 0px;
+        page-break-before: auto;
+        margin-top: 5px;
+        line-height: 25px;
+    }
+
+    .test-info input {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .heading {
+        font-weight: bold;
+        text-align: left;
+        font-size: 14px;
+        margin-top: 25px;
+    }
+
+
+    .header-info {
+        background-color: #000000;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .two-column {
+        width: 45%;
+        float: left;
+    }
+    .three-column {
+        width: 33%;
+        float: left;
+    }
+
+    .test-column {
+        width: 80%;
+        float: left;
+    }
+
+    .price-column {
+        width: 20%;
+        float: left;
+    }
+
+    .container {
+        width: 865px;
+        float: left;
+    }
+
+    .row {
+        width: 800px;
+        float: left;
+        clear: both;
+    }
+
+    .header-row {
+        width: 865px;
+        float: left;
+        clear: both;
+        margin-left: -10px;
+        padding-left: 40px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .contentBody {
+        float: left;
+        font-size: 16px;
+        margin-top: 30px;
+        margin-left: 30px;
+        clear: both;
+        width: 865px;
+    }
+
+    .container-box {
+        background-color: #F2F2F3;
+    }
+
+    ul {
+        list-style-type: square;
+    }
+
+    .circle {
+        position: relative;
+        margin: auto;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        border-radius: 50%;
+        background: #AAABAE;
+    }
+
+    .circle div {
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: bold;
+        padding-top: 14px;
+    }
+</style>
+
+
+
+<div class="row patientUpsell">
+    <div style="float: right;margin-top: 30px;">
+        <img src="@settings.MediumLogo" height="75" width="271" />
+    </div>
+</div>
+<div class="header-row header-info patientUpsell">
+    PATIENT SCREENING INFORMATION
+</div>
+
+<div class="contentBody patientUpsell">
+    <div class="full-width-abn">
+        <div class="full-width-abn">
+            Hi @Model.Name,
+        </div>
+
+        <div class="full-width-abn" style="margin-top: 10px">
+            Welcome to Matrix Medical Network's Mobile Health Center. Please review your information below for accuracy.
+        </div>
+        <div class="full-width-abn" style="margin-top: 10px">
+            You are scheduled for the following:
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: 20px;">
+
+        @if (purchasedTests != null && purchasedTests.Any())
+        {
+            var column = 1;
+            foreach (var purchasedTest in purchasedTests)
+            {
+                column = column > 3 ? 1 : column;
+
+                if (column == 1)
+                {
+                    @Html.Raw("<div class='row'>")
+                }
+
+                <div class="three-column"><ul><li><b>@purchasedTest.Test.Name</b></li></ul> </div>
+
+                if (column == 3)
+                {
+                    @Html.Raw("</div>")
+                }
+
+                column++;
+
+            }
+            if (column <= 3)
+            {
+                @Html.Raw("</div>")
+            }
+        }
+    </div>
+    <div class="full-width-abn" style="margin-top: 10px; margin-bottom: 10px;">
+        Following test(s) are also available on event:
+    </div>
+    <div class="container container-box" style="float: left;">
+        @{
+            var showSeprator = false;
+            var echoCardiogram = alacarteTests.SingleOrDefault(x => x.Id == (long)TestType.Echocardiogram);
+
+            if (echoCardiogram != null && !purchasedTestsId.Contains((long)TestType.Echocardiogram))
+            {
+                <div class="row" style="padding: 5px 30px 5px 30px; clear: both;">
+                    <div style="float: left; width: 80%;">
+                        <div>
+                            <b><img src="/Config/Content/Images/checkbox-unchecked.png" alt="" /> @echoCardiogram.Name.ToUpper()</b>
+                        </div>
+                        <div style="font-size: 13px; text-align: justify; padding-left: 20px">
+                            @echoCardiogram.Description
+                        </div>
+                    </div>
+                    <div style="width: 10%; float: left;">
+                        <div style="text-align: right;padding-right: 10px;"><b>$99</b></div>
+                    </div>
+                </div>
+                showSeprator = true;
+            }
+
+            var kyn = alacarteTests.SingleOrDefault(x => x.Id == (long)TestType.Kyn);
+
+            if (kyn != null && !purchasedTestsId.Contains((long)TestType.Kyn))
+            {
+                <div style="width: 100%;border-bottom: solid 1px black; clear: both;"></div>
+                <div class="row" style="padding:5px 30px 5px 30px;clear: both;">
+                    <div style="float: left; width: 80%; min-height: 70px;">
+                        <div><b><img src="/Config/Content/Images/checkbox-unchecked.png" alt="" /> @kyn.Name.ToUpper()</b></div>
+                        <div style="padding-left: 20px">5-Year Disease Risk Analysis & Lipid Panel</div>
+                        <div style="font-size: 13px; text-align: justify; padding-left: 20px">
+                            @kyn.Description
+                        </div>
+                    </div>
+                    <div style="float: left; width: 10%; min-height: 70px;">
+                        <div style="border-bottom: solid 2px black;padding-left: 10px; float: right;">
+                            <div style="text-align: right;padding-right: 10px;"><b>$99</b></div>
+                            <div style="text-align: right;padding-right: 10px;"><b>-$20</b></div>
+                        </div>
+                        <div style="padding-left: 24px;margin-top: 5px !important;"><img src="/Config/Content/Images/79_Img.JPG" height="49" width="52" /></div>
+                    </div>
+                </div>
+                showSeprator = true;
+            }
+
+            if (!isPanelTestPurchased)
+            {
+                if (Model.Gender == Gender.Male && (alacarteTests.Any(x => x.Id == (long)TestType.MenBloodPanel)))
+                {
+                    showSeprator = true;
+                    <div style="width: 100%; border-bottom: solid 1px black; clear: both;"></div>
+                    <div class="row" style="padding:5px 30px 5px 30px;clear: both;">
+                        <div style="float: left; width: 80%;">
+                            <div><b><img src="/Config/Content/Images/checkbox-unchecked.png" alt="" /> MEN'S COMPREHENSIVE LAB PANEL</b></div>
+                            <ul style="margin-top: 0;">
+                                @foreach (var testid in TestGroup.MensBloodPanelTestIds)
+                                {
+                                    <li>@(((TestType)testid).ToString().ToUpper())</li>
+                                }
+                            </ul>
+                        </div>
+                        <div style="float: left; width: 10%;">
+                            <div style="border-bottom: solid 2px black; padding-left: 10px; float: right;">
+                                <div style="text-align: right;padding-right: 10px;"><b>$99</b></div>
+                                <div style="text-align: right;padding-right: 10px;"><b>-$20</b></div>
+                            </div>
+                            <div style="padding-left: 24px; padding-top: 10px !important; "><img src="/Config/Content/Images/79_Img.JPG" height="49" width="52" /></div>
+                        </div>
+                    </div>
+                }
+                if (Model.Gender == Gender.Female && (alacarteTests.Any(x => x.Id == (long)TestType.WomenBloodPanel)))
+                {
+                    showSeprator = true;
+                    <div style="width: 100%; border-bottom: solid 1px black; clear: both;"></div>
+                    <div class="row" style="padding:5px 30px 5px 30px;clear: both;">
+                        <div style="float: left; width: 80%;">
+                            <div><b><img src="/Config/Content/Images/checkbox-unchecked.png" alt="" /> WOMEN'S COMPREHENSIVE LAB PANEL</b></div>
+                            <ul style="margin-top: 0;">
+                                @foreach (var testid in TestGroup.WomenBloodPanelTestIds)
+                                {
+                                    <li>@(((TestType)testid).ToString().ToUpper())</li>
+                                }
+                            </ul>
+                        </div>
+                        <div style="float: left; width: 10%;">
+                            <div style="border-bottom: solid 2px black;padding-left: 10px; float: right;">
+                                <div style="text-align: right;padding-right: 10px;"><b>$99</b></div>
+                                <div style="text-align: right;padding-right: 10px;"><b>-$20</b></div>
+                            </div>
+                            <div style="padding-left: 24px; padding-top: 10px !important;"><img src="/Config/Content/Images/79_Img.JPG" height="49" width="52" /></div>
+                        </div>
+                    </div>
+                }
+            }
+
+            var bloodPanelTestId = (long)(Model.Gender == Gender.Male ? TestType.MenBloodPanel : TestType.WomenBloodPanel);
+
+            alacarteTests = alacarteTests.Where(x => x.Id != bloodPanelTestId && x.Id != (long)TestType.Kyn && x.Id != (long)TestType.Echocardiogram);
+
+            if (purchasedTestsId.Any(x => x == bloodPanelTestId))
+            {
+                alacarteTests = Model.Gender == Gender.Male ?
+                    alacarteTests.Where(x => !TestGroup.MensBloodPanelTestIds.Contains(x.Id)) :
+                    alacarteTests.Where(x => !TestGroup.WomenBloodPanelTestIds.Contains(x.Id));
+
+            }
+
+            if (alacarteTests != null && alacarteTests.Any())
+            {
+                if (showSeprator)
+                {
+                    <div style="border-bottom: solid 1px black; width: 100%; clear: both;"></div>
+                }
+
+                showSeprator = true;
+                <div class="row" style="padding:10px 10px 10px 30px;clear: both;">
+                    <div style="padding-left: 1px;"><b>SINGLE LAB TESTS</b></div>
+                    @foreach (var alacarteTest in alacarteTests)
+                    {
+                        <div style="float: left;width: 25%"><img src="/Config/Content/Images/checkbox-unchecked.png" alt="" />  @(alacarteTest.Alias) $@(alacarteTest.Price.ToString("G29"))</div>
+                    }
+                </div>
+            }
+
+            if (Model.AllProducts != null && Model.AllProducts.Any())
+            {
+                var src = Model.ProductId > 0 ? "/Config/Content/Images/checkbox-checked.png" : "/Config/Content/Images/checkbox-unchecked.png";
+                if (showSeprator)
+                {
+                    <div style="width: 100%; border-bottom: solid 1px black; clear: both;"></div>
+                }
+                <div class="row" style="padding:10px 30px 30px 30px;clear: both;">
+
+                    <div style="padding-left: 2px;width: 200px;"><b>ULTRASOUND IMAGES</b></div>
+                    <div style="width: 100%;clear: both;">
+
+                        <div style="width: 80%;float: left;"><img src="@src" /> Don't forget to order your Ultrasound Images to review with your Physician. </div>
+                        <div style="width: 10%; float: left;">
+                            <div style="text-align: right;padding-right: 10px;"><b>$25</b></div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div style="width: 90%;padding-left: 50px;padding-top: 20px">
+        <div style="width: 100%; border-bottom: solid 1px black; clear: both;"></div>
+        <div style="float: left; width: 95%;">Patient Signature</div><div style="float: left;">Date</div>
+    </div>
+</div>

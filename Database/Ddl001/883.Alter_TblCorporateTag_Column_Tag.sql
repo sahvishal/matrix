@@ -1,0 +1,6 @@
+USE [$(dbName)]
+GO
+
+ALTER TABLE TblCorporateTag
+ALTER COLUMN Tag NVARCHAR(255)
+GO

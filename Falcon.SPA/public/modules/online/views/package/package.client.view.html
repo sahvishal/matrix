@@ -1,0 +1,89 @@
+﻿<div data-ng-controller="PackageController" class="container no-padding bg-default" us-spinner spinner-key="online-spinner"> 
+    <quantcast name1="Healthfair" name2="Package"></quantcast>
+        <div class="sub-header bg-success relative">
+            <div class="header-right">
+                <progressbar-view></progressbar-view>
+                <order-summary></order-summary>
+            </div>
+            <div class="header-left">
+                <h2 class="no-margin">Please choose from the following screening packages:</h2>
+            </div>
+        </div>
+
+        <div class="main-container border-default">
+            <div class="package-container">                
+                <div class="ca-container">
+                    <!--ca-wrapper-->
+                    <div class="ca-wrapper" style="overflow: hidden;">
+                        <div ng-repeat="packagedetail in AllPackage" class="panel ca-item  package pull-left" ng-class="getClass(packagedetail,$index)" content-carousel>
+                            <div class="col-sm-12" ng-if="packagedetail.ImageUrlForOnlineDisplay != null">
+                                <img src="{{packagedetail.ImageUrlForOnlineDisplay.Url}}" class="img-responsive package-image" />
+                                <div class="panel-body bg-success no-padding">
+                                    <div class="table-look">
+                                        <div class="table-row">
+                                            <div class="radio-wrap">
+                                                <input type="radio" class="pak-radio" value="true" ng-checked="packagedetail.isChecked===true" ng-click="selectPackage(packagedetail.EventPackageId)" id="{{packagedetail.PackageId}}" name="package-select"><label for="{{packagedetail.PackageId}}"> select<span ng-show="packagedetail.isChecked">ed</span> package</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 event-package-detail" ng-if="packagedetail.ImageUrlForOnlineDisplay==null" ng-class="{'active-package':packagedetail.isChecked===true,'package-faded':packagedetail.isChecked===false}">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">{{packagedetail.Name}} <a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+                                </div>
+                                <div class="panel-sub-heading clearfix ">
+                                    <div class="clearfix">
+                                        <div class="package-light-text pull-left">
+                                            Available For
+                                        </div>
+                                        <span class="text-right pull-right left-buffer-10  package-price-total" >{{ packagedetail.Price | currency}} </span>
+                                    </div>
+                                    <div class="font-size-13 center-align offer-wrap text-danger" ng-show="packagedetail.IsHighestPrice">
+                                       ( Save <span><b>{{(packagedetail.TestPriceTotal - packagedetail.Price) | currency}}</b> </span>)
+                                    </div>
+                                </div>
+                                <div class="panel-body bg-success no-padding">
+                                    <div class="table-look">
+                                        <div class="table-row">
+                                            <div class="table-cell package-info">
+                                                <ul>
+                                                    <li ng-repeat="prop in packagedetail.Tests | orderBy : 'RelativeOrder' ">
+                                                        <a href="javascript:void(0);" ng-click="learnMoreAboutTest(prop)">{{ prop.Name }}</a>
+                                                        <ul ng-if="prop.Tests != null" style="min-height: 0 !important;">
+                                                            <li ng-repeat="test in prop.Tests | orderBy : 'Id'"><a href="javascript:void(0);" ng-click="learnMoreAboutTest(test)">{{test.Name}}</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="radio-wrap">
+                                                <input type="radio" class="pak-radio" value="true" ng-checked="packagedetail.isChecked===true" ng-click="selectPackage(packagedetail.EventPackageId)" id="{{packagedetail.PackageId}}" name="package-select">
+                                                <label for="{{packagedetail.PackageId}}"> select<span ng-show="packagedetail.isChecked">ed</span> package</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                                                    
+                </div>
+                <div ng-show="showPreviousButton()" class="short-package-info text-center package-prev">
+                    <p ng-bind="DisplayPackage.PrePackageName"></p>
+                    <h4 ng-show="DisplayPackage.PrePackagePrice > 0" ng-bind="DisplayPackage.PrePackagePrice | currency"></h4>
+                </div>
+                <div class="short-package-info text-center package-next">
+                    <p ng-bind="DisplayPackage.NextPackageName"></p>
+                    <h4 ng-show="DisplayPackage.NextPackagePrice > 0" ng-bind="DisplayPackage.NextPackagePrice | currency"></h4>
+                </div>                
+            </div>
+                    
+            <div class="clearfix lower-btns">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary pull-left" ng-click="goToPreviousStep()" ng-disabled="isPosted"><span ng-hide="loader_back">&#60;</span> Back <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_back"></i></button>
+                    <button class="btn btn-primary btn-solid pull-right" ng-click="goToNextStep()" ng-disabled="isPosted">Continue <span ng-hide="loader_next">&#62;</span><i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_next"></i></button>
+                </div>
+            </div>
+        </div>
+</div>
+

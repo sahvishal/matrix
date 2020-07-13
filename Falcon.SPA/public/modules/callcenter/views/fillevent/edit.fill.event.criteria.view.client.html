@@ -1,0 +1,30 @@
+﻿<div style="padding: 10px;">
+    <fieldset>
+        <legend> Fill Event Criteria </legend>
+        {{model.CallQueueId}}
+        <div class="col-sm-12" >
+            <div class="form-group">
+                <label>No of Days <span ng-show="InvalidNoOfDays" class="error-text"> *required </span></label>
+                <div>
+                    <input type="text" ng-model='modal.NoOfDays' only-digits dmin="1" dmax="999" ng-class="{'error-message' : fillEventCriteriaFormIsSubmitted != undefined && fillEventCriteriaFormIsSubmitted && InvalidNoOfDays}" />
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12" >
+            <div class="form-group">
+                <label>Percentage <span ng-show="InvalidPercentage" class="error-text"> *required </span></label>
+                <div>
+                    <input type="text" ng-model='modal.Percentage' only-digits dmin="1" dmax="99" ng-class="{'error-message' : fillEventCriteriaFormIsSubmitted != undefined && fillEventCriteriaFormIsSubmitted && InvalidPercentage}" />
+                </div>
+            </div>
+        </div>
+        <div class="ng-hide">
+            <input type="text" ng-model="model.CallQueueId" />
+        </div> 
+        <div class="col-sm-12">
+            <button class="pull-right" ng-click="SaveCriteria()">Save</button>
+            <button class="pull-right" ng-click="Cancel()" style="margin-right: 10px;">Cancel</button>
+        </div>
+    </fieldset>
+</div>

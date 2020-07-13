@@ -1,0 +1,24 @@
+﻿@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.Medical.ViewModels
+@model HealthAssessmentTemplateEditModel
+
+@if (Model != null)
+{
+
+    if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+    {<text>
+        <script type="text/javascript">
+            @if (Model.IsNewTemplate)
+        {
+            <text>loadEditTemplate('@Model.Id');</text>
+        }
+        else
+        {
+            <text> $("#tabs").tabs({ selected: 1 }); </text>
+        }
+        </script>
+    </text>
+    }
+}
+@Html.HiddenFor(m => m.IsNewTemplate)
+@Html.EditorForModel()

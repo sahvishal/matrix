@@ -1,0 +1,86 @@
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Finance.ViewModels.GiftCertificateReportFilter
+
+<style type="text/css">
+    .select2-dropdown {
+        width: 200px;
+    }
+
+    .select2-selection__choice {
+        background-color: #00A6d8 !important;
+        border: solid 1px #00A6d8 !important;
+        font-size: 14px;
+        color: #ffffff;
+    }
+
+    .select2-selection__choice__remove {
+        color: #ffffff;
+    }
+</style>
+
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden; padding-top: 5px;width: 100%;float: left;">
+    <div class="editor-column" style="width: 100%; padding-top: 5px;">
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                Customer Id
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.CustomerId, new { @style = "width:170px;" })
+            </div>
+        </div>
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                Event Id
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.EventId, new { @style = "width:170px;" })
+            </div>
+        </div>
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                Member Id
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.MemberId, new { @style = "width:170px;" })
+            </div>
+        </div>
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                <b>Event </b>From
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.EventFrom, new { @class = "datePicker" })
+            </div>
+        </div>
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                To
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.EventTo, new { @class = "datePicker" })
+            </div>
+        </div>
+    </div>
+    <div class="editor-column" style="width: 100%; float: left; padding-top: 5px;">
+        <div style="width: 190px; float: left;">
+            <div class="small-text">
+                POD
+            </div>
+            <div>
+                @Html.TextBoxFor(m => m.Pod, new { @style = "width:170px;" })
+            </div>
+        </div>
+        <div class="small-text">
+            Health Plan
+        </div>
+        <div style="float: left;">
+            @Html.DropDownListFor(x => x.HealthPlanId, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width:294px;" })
+        </div>
+    </div>
+    <div class="editor-column" style="padding-top: 10px; float:right; text-align:right;">
+        @Html.ActionLink("Clear", "GiftCertificate", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>

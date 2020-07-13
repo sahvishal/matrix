@@ -1,0 +1,377 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@model Falcon.App.Core.Marketing.ViewModels.ProspectCustomerListModel
+@{
+    ViewBag.Title = "Manage Customer Prospects";
+}
+<style type="text/css">
+    .spinner
+    {
+        position: fixed;
+        top: 0;
+        left: 0;
+        text-align: center;
+        vertical-align: middle;
+        z-index: 1234;
+        overflow: auto;
+        width: 100%; /* width of the spinner gif */
+        height: 100%; /*hight of the spinner gif +2px to fix IE8 issue */
+        background: #cccccc;
+        opacity: 0.65;
+    }
+</style>
+<h1>
+    Manage Customer Prospects</h1>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<div id="list-filter">
+    @{Html.BeginForm("ProspectCustomerAbandonedReport", "Reports", FormMethod.Get);}
+    @Html.Partial("ProspectCustomerListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    var currentRoleId = IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.GetSystemRoleId;
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Marketing/ExportableReports/ProspectCustomerAbandonedReport?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <input type="button" value="Delete Selected" onclick="deleteMultipleProspect();" />
+        <table id="list-view" style="margin-top: 5px; margin-bottom: 5px; width: 100%;">
+            <tr>
+                <th>
+                    <input type="checkbox" onclick="SelectAll(this);" />
+                </th>
+                <th style="width:300px;">
+                    Customer Info
+                </th>                
+                <th>
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Source)
+                </th>
+                <th style="text-align: center;">
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().Tag)
+                </th>
+                <th style="text-align: right;">
+                    @Html.LabelFor(m => m.Collection.FirstOrDefault().CreatedOn)
+                </th>
+                <th style="text-align: right; width: 120px;">
+                    Contacted Info
+                </th>
+                <th style="text-align: right;">
+                    Action
+                </th>
+            </tr>
+            @foreach (var prospectCustomer in Model.Collection)
+            {               
+                <tr>
+                    <td>
+                        <input type="checkbox" id="@prospectCustomer.Id" onclick="CheckSelectAll(this);" />
+                        <input type="hidden" id="@prospectCustomer.Id" value="@prospectCustomer.Id" />
+                    </td>
+                    <td style="width:300px;">
+                        <div>
+                        @(prospectCustomer.FirstName + " " + prospectCustomer.LastName)
+                        </div>
+                        <div style="margin-top: 4px;">                            
+                            @if (prospectCustomer.Status == Falcon.App.Core.Marketing.Enum.ProspectCustomerConversionStatus.Declined)
+                            {
+                                <b>Phone:</b> @prospectCustomer.CallBackPhoneNumber                            
+                                <img src="/Content/Images/Do-Not-Call.gif" alt="Do not call" style="width: 20px;
+                                    height: 20px;" />                            
+                            }
+                            else
+                            {
+                                <b>Phone:</b> @prospectCustomer.CallBackPhoneNumber
+                            }
+                            <br />
+                            <b>Address:</b> @prospectCustomer.Address.StreetAddressLine1, @prospectCustomer.City, @prospectCustomer.State, @prospectCustomer.Zip
+                            <br />
+                            <b>Email:</b> @prospectCustomer.Email<br />
+                            @if (prospectCustomer.Gender != Falcon.App.Core.Users.Enum.Gender.Unspecified)
+                            {
+                                <b>Gender:</b> @prospectCustomer.Gender <br />
+                            }
+                            <b>Member Id:</b> @prospectCustomer.MemberId 
+                            @if (!string.IsNullOrEmpty(prospectCustomer.CorporateSponsor))
+                            {
+                            <br />
+                            <b>Corporate Sponsor:</b> @prospectCustomer.CorporateSponsor   
+                            }
+                            
+                        </div>
+                    </td>
+                    <td>
+                        @prospectCustomer.Source
+                    </td>
+                    <td >
+                        <span>
+                           <b>Prospect Tag:</b> @prospectCustomer.Tag.GetDescription() <br/>
+                        </span>
+                        
+                        <b>Corporate Tag:</b> @prospectCustomer.CorporateTag<br/>
+
+                        <b>Custom Tag:</b> @prospectCustomer.CustomTags
+                    </td>
+                    <td style="text-align: right;">
+                        @prospectCustomer.CreatedOn.ToShortDateString()
+                    </td>
+                    <td style="text-align: right; width: 120px;">
+                        @if (prospectCustomer.IsContacted)
+                        {
+                            <b>Date:</b> @(prospectCustomer.ContactedDate.HasValue ? prospectCustomer.ContactedDate.Value.ToShortDateString() : "")
+                            <br />
+                            <b>By:</b>@prospectCustomer.ContactedBy
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </td>
+                    <td style="text-align: right; width: 120px;">
+                        @if (currentRoleId == (long)Falcon.App.Core.Enum.Roles.CallCenterRep && prospectCustomer.Status != Falcon.App.Core.Marketing.Enum.ProspectCustomerConversionStatus.Declined)
+                        {
+                            <a href="/Marketing/Reports/Register?customerId=@(prospectCustomer.CustomerId.HasValue ? prospectCustomer.CustomerId.Value : 0)&prospectCustomerId=@(prospectCustomer.Id)">
+                                Call</a>
+                            <br />
+                        }
+                        <a href="javascript:void(0);" onclick="deleteSingleProspect(@prospectCustomer.Id);">
+                            Delete</a>
+                        <br />
+                        <a href="javascript:void(0);" onclick="UpdateContactedStatus(@prospectCustomer.Id)">
+                            Contacted</a>
+                        @if (prospectCustomer.Status == Falcon.App.Core.Marketing.Enum.ProspectCustomerConversionStatus.Declined)
+                        {
+                            <br />
+                            <a href="javascript:void(0)" onclick="UpdateDoNotCallStatus(@prospectCustomer.Id, false)">Revert Don't call</a>
+                        }
+                        else
+                        {
+                            <br />
+                            <a href="javascript:void(0)" onclick="UpdateDoNotCallStatus(@prospectCustomer.Id, true)">Don't call</a>
+                        }
+                        @if (!prospectCustomer.Notes.IsNullOrEmpty())
+                        {
+                            <br />
+                            <a class="tag-notes" href="javascript:void(0);"> <b>Notes</b></a>
+                            <div style="display: none;" class="tag-notes-tip">                           
+                                @foreach (var note in prospectCustomer.Notes)
+                                {
+                                    if (string.IsNullOrEmpty(note.CreatedByUser))
+                                    {
+                                        @Html.Raw(note.Note) 
+                                    }
+                                    else
+                                    {
+                                        <div style="float: left; width: 400px;"> 
+                                            <span style="float: left; width: 190px;"><b>On: </b>@(note.EnteredOn.HasValue ? note.EnteredOn.Value.ToShortDateString() : string.Empty)</span>
+                                            <span style="float: right; width: 190px;"><b>By: </b>@note.CreatedByUser</span>
+                                        </div>
+                                        <div style="float: left; width: 400px; border-bottom: solid 1px; margin-bottom:10px; padding-top:2px;"><b>Notes: </b>@note.Note</div> <br />
+                                    }
+                                }
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+        <input type="button" value="Delete Selected" onclick="deleteMultipleProspect();" />
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.</h2>
+    </div>
+}
+<div id="spinner" class="spinner" style="display: none;">
+    <img id="img-spinner" src="/App/Images/loading_Big_orng.gif" alt="Loading" style="width: 150px;
+        height: 150px;" />
+</div>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+@section scripts {
+    <script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(document).ready(function() {
+            $('.tag-notes').qtip({
+                position: {
+                    my: 'right top'
+                },
+                content: {
+                    text: function(api) {
+                        return $(this).parent().find('.tag-notes-tip').html();
+                    }
+                },
+                style: {
+                    width: '450px'
+                }
+            });
+        });
+
+        $(function() {
+            $("tr:not(:has(th))").hover(function() {
+                    $(this).addClass('row-hover');
+                },
+                function() {
+                    $(this).removeClass('row-hover');
+                });
+        });
+
+    </script>
+    <script type="text/javascript">
+        function SelectAll(sourceCheckbox) { //debugger;          
+            var checkbox = $(sourceCheckbox);
+            checkbox.parents('table:first').find('input[type=checkbox]').attr('checked', sourceCheckbox.checked);
+        }
+
+        function CheckSelectAll(sourceCheckbox) { //debugger;
+            var allSelected = true;
+            var checkbox = $(sourceCheckbox);
+            checkbox.parents('table:first').find('input[type=checkbox]').each(function() {
+                //debugger;
+                if ($(this).is(':checked') == false && (checkbox.parents('table:first').find('input[type=checkbox]').first().attr('id') != $(this).attr('id')))
+                    allSelected = false;
+            });
+            checkbox.parents('table:first').find('input[type=checkbox]').first().attr('checked', allSelected);
+        }
+    </script>
+    <script type="text/javascript">
+        function deleteSingleProspect(prospectCustomerId) {
+            var ans = confirm('Are you sure that you want to delete this record?');
+            if (!ans) return false;
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                url: "/Marketing/Reports/DeleteSingleProspectCustomer",
+                data: "{'prospectCustomerId':'" + prospectCustomerId + "'}",
+                success: function(result) { DeleteSuccessFunction(result); },
+                error: function(a, b, c) {
+                    if (a.status == 401) {
+                        alert('You do not have the permission to delete the prospect');
+                    }
+                }
+            });
+        }
+
+        function deleteMultipleProspect() { //debugger;
+
+            var ans = confirm('Are you sure that you want to delete the selected records?');
+            if (!ans) return false;
+            var checkboxes = $('input[type=checkbox]:checked');
+            if (checkboxes.length > 0) {
+                var proespectCustomerIds = new Array();
+                var index = 0;
+                checkboxes.each(function() {
+                    if ($(this).attr('id') != '') {
+                        proespectCustomerIds[index] = $(this).next().val();
+                        index++;
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    url: "/Marketing/Reports/DeleteMultipleProspectCustomer",
+                    data: "{'prospectCustomerIds':[" + proespectCustomerIds + "]}",
+                    success: function(result) { DeleteSuccessFunction(result); },
+                    error: function(a, b, c) {
+                        if (a.status == 401) {
+                            alert('You do not have the permission to delete the prospect!');
+                        }
+                    }
+                });
+            } else {
+                alert("Please select atleast one to delete.");
+            }
+        }
+
+        function DeleteSuccessFunction(result) {
+            //debugger;
+            if (result == '@(Boolean.TrueString)') {
+                alert("Prospect(s) deleted successfully.");
+                showSpinner();
+                $('input[type=submit]').click();
+            } else {
+                alert("Can not delete prospect.");
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function UpdateContactedStatus(prospectCustomerId) { //debugger;
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                url: "/Marketing/Reports/UpdateContactedInfo",
+                data: "{'prospectCustomerId':'" + prospectCustomerId + "'}",
+                success: function(result) { ContactedSuccessFunction(result); },
+                error: function(a, b, c) {
+                    if (a.status == 401) {
+                        alert('You do not have the permission to update contacted info!');
+                    }
+                }
+            });
+        }
+
+        function ContactedSuccessFunction(result) {
+            if (result == '@(Boolean.TrueString)') {
+                alert("Prospect contacted status updated successfully.");
+                $('input[type=submit]').click();
+            } else {
+                alert("contacted status can not be updated.");
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function UpdateDoNotCallStatus(prospectCustomerId, isDoNotCall) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                url: "/Marketing/Reports/UpdateDoNotCallStatus",
+                data: "{'prospectCustomerId':'" + prospectCustomerId + "','isDoNotCall':'" + isDoNotCall + "'}",
+                success: function(result) { DoNotCallSuccessFunction(result, isDoNotCall); },
+                error: function(a, b, c) {
+                    if (a.status == 401) {
+                        alert('You do not have the permission to update do not call status!');
+                    }
+                }
+            });
+        }
+
+        function DoNotCallSuccessFunction(result, isDoNotCall) {
+            if (result == '@(Boolean.TrueString)') {
+                if (isDoNotCall)
+                    alert("Prospect do not call status updated successfully.");
+                else
+                    alert("Prospect do not call status reverted successfully.");
+                $('input[type=submit]').click();
+            }
+            else {
+                if (isDoNotCall)
+                    alert("Do not call status can not be updated.");
+                else
+                    alert("Do not call status can not be reverted.");
+            }
+        }
+
+        function showSpinner() {
+            $('#spinner').show().css("padding-top", (($(window).height() / 2) - 40));
+        }
+    </script>
+}
+

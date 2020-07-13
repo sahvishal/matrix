@@ -1,0 +1,388 @@
+﻿<div view-load-completed>
+    <div data-ng-controller="PaymentController" class="container no-padding bg-default" us-spinner spinner-key="online-spinner">
+        <quantcast name1="Healthfair" name2="Payment"></quantcast>
+        <div class="sub-header bg-success relative">
+            <div class="header-right">
+                <progressbar-view></progressbar-view>
+                <order-summary></order-summary>
+            </div>
+            <div class="header-left">
+                <h2 class="no-margin">Payment Options</h2>
+            </div>
+        </div>        
+        <div class="main-container border-default">
+            <div class="col-md-9 payment-mode bg-primary-xs ">
+                <div role="tabpanel" class="hf-tabs top-buffer-10">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+
+                        <li role="presentation" class="active text-center"><a href="#home" aria-controls="home" role="tab" data-toggle="tab" ng-click="setSelectedTab(1)">CARD PAYMENT</a></li>
+                        <li role="presentation" class="text-center"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" ng-click="setSelectedTab(2)">eCHECK</a></li>
+                    </ul>
+                    <!-- Tab panes payment details -->
+                    <div class="tab-content bg-primary-xs">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <form name="cardForm" data-ng-submit="payByCard(cardForm)" novalidate>
+                                <div class="row gift-coupon-wrap">
+                                    <div class="col-md-6 pad-right-5" ng-show="showApplyGiftCeritficate">
+                                        <p class="no-margin big-text">Have a gift certificate?</p>
+                                        <div class="clearfix top-buffer-10">
+                                            <input type="text" class="form-control gift-code-field" placeholder="Gift Code" ng-model="giftCertificateCode" />
+                                            <button type="button" class="btn btn-success btn-sm-text" ng-disabled="isPosted" ng-click="applyGiftCertificate()">APPLY <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_ApplyGc"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 top-buffer-10" ng-show="showApplyGiftCeritficate">
+                                        <div class="well well-sm well-primary bottom-buffer-0" ng-show="giftCertificateApplyAmount > 0"> Gift Certifcate amounted to {{ giftCertificateApplyAmount | currency}}</div>
+                                    </div>
+
+                                    <div class="col-md-6" ng-hide="true">
+                                        <p class="no-margin big-text">Card type</p>
+                                        <div class="clearfix top-buffer-10">
+                                            <div class="pull-left styled-radio">
+                                                <input type="radio" name="select-card" value="1" ng-model="Card" /><label class="mastero"><span>&nbsp;</span></label>
+                                            </div>
+                                            <div class="pull-left styled-radio">
+                                                <input type="radio" name="select-card" value="2" ng-model="Card" /><label class="visa"><span>&nbsp;</span></label>
+                                            </div>
+                                            <div class="pull-left styled-radio">
+                                                <input type="radio" name="select-card" value="3" ng-model="Card" /><label class="american"><span>&nbsp;</span></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--<div class="col-md-6 pad-right-5 hidden-lg hidden-md hidden-sm">
+                                        <p class="no-margin big-text">Coupon Code</p>
+                                        <div class="clearfix top-buffer-10 bottom-buffer-10">
+                                            <input type="text" class="form-control gift-code-field" placeholder="Coupon Code" ng-model="SourceCodeApplyEditModel.SourceCode" />
+                                            <button class="btn btn-success btn-sm-text" ng-disabled="isPosted" ng-click="applySourceCode()">APPLY <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_ApplySource"></i></button>
+                                        </div>
+                                    </div>-->
+                                </div>
+                                <div ng-show="IsPayedByAmericanExpress">
+                                    <h5><em>If payment is made by American Express card, you will be charged 50% of the total amount now.</em></h5>
+                                </div>
+                                <div class="row top-buffer-20" ng-show="showPaymentPanel">
+                                    <div class="col-sm-6 pad-right-5 pad-right-15-xs bottom-buffer-xs-10" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.nameOnCard.$error.required}">
+                                        <input type="text" class="form-control no-mouseflow" name="nameOnCard" placeholder="Name on Card" ng-required="showPaymentPanel" ng-model="ChargeCard.NameOnCard" />
+                                    </div>
+                                    <div class="col-sm-6 pad-left-5 pad-left-15-xs" ng-class="{'error-message' : (cardForm.submitted != undefined && cardForm.submitted && cardForm.chargeCardNumber.$error.required) || (showPaymentPanel && IsCardTypeNumberProvided && cardTypeId==0)}">
+                                        <input type="text" class="form-control card-field no-mouseflow" name="chargeCardNumber" ng-required="showPaymentPanel" ng-model="ChargeCard.Number" maxlength="16" ng-blur="setCardType()" placeholder="&#9679;&#9679;&#9679;&#9679; &#9679;&#9679;&#9679;&#9679; &#9679;&#9679;&#9679;&#9679; &#9679;&#9679;&#9679;&#9679;" />
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12" ng-show="showPaymentPanel">
+                                    <div class="col-sm-4 pad-right-5 pad-right-15-xs">
+                                        <div class="table-look" validationfor="ExpirationDate">
+                                            <div class="table-row">
+                                                <div class="table-cell expiry-heading">
+                                                    <label for="signup-dob">Expiry Date</label>
+                                                </div>
+                                                <div class="table-cell xs-input-wrap" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.chargeCardMonth.$error.required}">
+                                                    <input type="text" placeholder="MM" ng-show="showPaymentPanel" ng-required="showPaymentPanel" name="chargeCardMonth" ng-model="ChargeCard.Month" only-digits dmin="0" dmax="12" class="form-control xs-input no-mouseflow xs-input-xs">
+                                                </div>
+                                                <div class="table-cell year-input" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.chargeCardYear.$error.required}">
+                                                    <div class="select-wrap" ng-class="{ 'select-focus': pyfocus, 'select-blur': pyblur }">
+                                                        <select class="form-control no-mouseflow" ng-model="ChargeCard.Year" name="chargeCardYear" ng-required="showPaymentPanel" ng-focus="pyfocus=true;pyblur=false;" ng-blur="pyblur=true;pyfocus=false;" ng-options="year.value as year.text for year in ExpiryDateYear">
+                                                            <option value="">Year</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="table-cell hidden-hf hidden-cvv">
+                                                    <label for="card-cvv">CVV</label>
+                                                </div>
+                                                <div class="table-cell hidden-hf xs-input-cvv-wrap" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.chargeCardCVV.$error.required}">
+                                                    <input type="password" ng-model="ChargeCard.CVV" ng-if="showPaymentPanel" name="chargeCardCVV" ng-required="showPaymentPanel" class="form-control no-mouseflow xs-input-cvv" maxlength="4" />
+                                                </div>
+                                                <div class="table-cell hidden-hf whats-this-wrap">
+                                                    <label for="card-cvv"><span class="whats-this info-text" tooltip-placement="bottom" tooltip-html-unsafe="{{getSourceCVVHelpDescription()}}" tooltip-trigger="mouseenter">Whats This?</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 pad-left-5 pad-left-15-xs hidden-hf-all">
+                                        <div class="table-look">
+                                            <div class="table-row">
+                                                <div class="table-cell card-cvv-wrap">
+                                                    <label for="card-cvv">CVV</label>
+                                                </div>
+                                                <div class="table-cell" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.chargeCardCVV.$error.required}">
+                                                    <input type="password" ng-model="ChargeCard.CVV" ng-if="showPaymentPanel" name="chargeCardCVV" ng-required="showPaymentPanel" class="form-control no-mouseflow xs-input-cvv" maxlength="4" />
+                                                </div>
+                                                <div class="table-cell">
+                                                    <label for="card-cvv"><span class="whats-this info-text" tooltip-placement="bottom" tooltip-html-unsafe="{{getSourceCVVHelpDescription()}}" tooltip-trigger="mouseenter">Whats This?</span></label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12" ng-show="showPaymentPanel">
+                                    <div class="col-sm-12">
+                                        <legend class="legend">billing address</legend>
+                                    </div>
+                                    <div class="col-sm-6 pad-right-5 pad-right-15-xs" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.billingStreet.$error.required}">
+                                        <input type="text" class="form-control bottom-buffer-xs-10" placeholder="Street" name="billingStreet" ng-required="showPaymentPanel" ng-model="PaymentEditModel.ExistingBillingAddress.StreetAddressLine1" />
+                                    </div>
+                                    <div class="col-sm-6 pad-left-5 pad-left-15-xs">
+                                        <input type="text" class="form-control" placeholder="Suit/Apt." ng-model="PaymentEditModel.ExistingBillingAddress.StreetAddressLine2" />
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12 address-table" ng-show="showPaymentPanel">
+                                    <div class="col-sm-12">
+                                        <div class="table-look">
+                                            <div class="table-row">
+                                                <div class="table-cell pad-right-5" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.billingState.$error.required}">
+                                                    <div class="select-wrap" ng-class="{ 'select-focus': psfocus, 'select-blur': psblur }">
+                                                        <select class="form-control" name="billingState" ng-required="showPaymentPanel" ng-model="PaymentEditModel.ExistingBillingAddress.StateId" ng-focus="psfocus=true;psblur=false;" ng-blur="psblur=true;psfocus=false;" ng-options="year.FirstValue as year.SecondValue for year in states">
+                                                            <option value="">State</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="table-cell pad-left-5 pad-right-5" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.city.$error.required}">
+                                                    <div class="auto-comp">
+                                                        <input type="text" placeholder="City" name="city" ng-required="showPaymentPanel" online-autocomplete="Scheduling/OnlineEvent/GetCityByPrefixText" autocomplete-position="top" ng-model="PaymentEditModel.ExistingBillingAddress.City" class="form-control" />
+                                                    </div>
+                                                    <!--<input type="text" class="form-control" name="billingCity" required placeholder="City" ng-model="PaymentEditModel.ExistingBillingAddress.City" />-->
+                                                </div>
+                                                <div class="table-cell pad-left-5" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.billingZipCode.$error.required}">
+                                                    <input type="text" class="form-control" name="billingZipCode" ng-required="showPaymentPanel" placeholder="Zip" ng-model="PaymentEditModel.ExistingBillingAddress.ZipCode" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix" ng-show="showPaymentPanel">
+                                    <div class="well well-sm top-buffer-16">
+                                        <div class="styled-check small-check">
+                                            <input type="checkbox" ng-model="PaymentEditModel.ShippingAddressSameAsBillingAddress" /><label>Shipping Address same as Billing Address</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix text-danger top-buffer-12" ng-show="!showPaymentPanel">
+                                    No payment required!
+                                </div>
+
+                                <div class="row" ng-hide="PaymentEditModel.ShippingAddressSameAsBillingAddress">
+                                    <div class="col-sm-12">
+                                        <legend class="legend">shipping address</legend>
+                                    </div>
+                                    <div class="col-sm-6 pad-right-5 pad-right-15-xs" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.shippingStreet.$error.required}">
+                                        <input type="text" class="form-control bottom-buffer-xs-10" placeholder="Street" name="shippingStreet" ng-required="!PaymentEditModel.ShippingAddressSameAsBillingAddress" ng-model="PaymentEditModel.ExistingShippingAddress.StreetAddressLine1" />
+                                    </div>
+                                    <div class="col-sm-6 pad-left-5 pad-left-15-xs">
+                                        <input type="text" class="form-control" placeholder="Suit/Apt." ng-model="PaymentEditModel.ExistingShippingAddress.StreetAddressLine2" />
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12 address-table" ng-hide="PaymentEditModel.ShippingAddressSameAsBillingAddress">
+                                    <div class="col-sm-12 bottom-buffer-20">
+                                        <div class="table-look">
+                                            <div class="table-row">
+                                                <div class="table-cell pad-right-5" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.shippingStateId.$error.required}">
+                                                    <div class="select-wrap" ng-class="{ 'select-focus': sffocus, 'select-blur': sfblur }">
+                                                        <select class="form-control" name="shippingStateId" ng-focus="sffocus=true;sfblur=false;" ng-blur="sfblur=true;sffocus=false;" ng-required="!PaymentEditModel.ShippingAddressSameAsBillingAddress" ng-model="PaymentEditModel.ExistingShippingAddress.StateId" ng-options="year.FirstValue as year.SecondValue for year in states">
+                                                            <option value="">State</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="table-cell pad-left-5 pad-right-5" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.shippingCity.$error.required}">
+                                                    <div class="auto-comp">
+                                                        <input type="text" class="form-control" name="shippingCity" online-autocomplete="Scheduling/OnlineEvent/GetCityByPrefixText" autocomplete-position="top" ng-required="!PaymentEditModel.ShippingAddressSameAsBillingAddress" placeholder="City" ng-model="PaymentEditModel.ExistingShippingAddress.City" />
+                                                    </div>
+
+                                                </div>
+                                                <div class="table-cell pad-left-5" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.shippingZip.$error.required}">
+                                                    <input type="text" class="form-control" name="shippingZip" ng-required="!PaymentEditModel.ShippingAddressSameAsBillingAddress" placeholder="Zip" ng-model="PaymentEditModel.ExistingShippingAddress.ZipCode" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" style="display: none;" id="submitform1">form 1 submit</button>
+                            </form>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="profile">
+                            <form name="echeckForm" data-ng-submit="payByecheck(echeckForm)" novalidate>
+                                <div class="row gift-coupon-wrap hidden-lg hidden-md hidden-sm">
+                                    <div ng-show="showApplyGiftCeritficate" class="col-md-6 pad-right-5">
+                                        <p class="no-margin big-text">Have a gift certificate?</p>
+                                        <div class="clearfix top-buffer-10">
+                                            <input type="text" class="form-control gift-code-field" placeholder="Gift Code" ng-model="giftCertificateCode">
+                                            <button type="button" class="btn btn-success btn-sm-text" ng-disabled="isPosted" ng-click="applyGiftCertificate()">APPLY <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_ApplyGc"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hidden-xs">
+                                    <div class="col-md-6" ng-show="showApplyGiftCeritficate">
+                                        <p class="no-margin big-text">Have a gift certificate?</p>
+                                        <div class="clearfix top-buffer-10">
+                                            <input type="text" class="form-control gift-code-field" placeholder="Gift Code" ng-model="giftCertificateCode">
+                                            <button type="button" class="btn btn-success btn-sm-text" ng-disabled="isPosted" ng-click="applyGiftCertificate()">APPLY <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_ApplyGc"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 top-buffer-10">
+                                        <div class="well well-sm well-primary" ng-show="giftCertificateApplyAmount > 0"> Gift Certifcate amounted to {{ giftCertificateApplyAmount | currency}}</div>
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12" ng-show="showPaymentPanel">
+                                    <div class="col-sm-6 pad-right-5 pad-right-15-xs" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckBankName.$error.required}">
+                                        <input type="text" class="form-control bottom-buffer-xs-10 no-mouseflow" ng-required="showPaymentPanel" name="eCheckBankName" placeholder="Bank Name" ng-model="eCheck.BankName">
+                                    </div>
+                                    <div class="col-sm-6 pad-left-5 pad-left-15-xs" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckRoutingNumber.$error.required}">
+                                        <input type="text" class="form-control no-mouseflow" ng-required="showPaymentPanel" name="eCheckRoutingNumber" placeholder="Routing Number" ng-model="eCheck.RoutingNumber">
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12" ng-show="showPaymentPanel">
+                                    <div class="col-sm-6 pad-right-5 pad-right-15-xs" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckCheckNumber.$error.required}">
+                                        <input type="text" class="form-control bottom-buffer-xs-10 no-mouseflow" ng-required="showPaymentPanel" name="eCheckCheckNumber" placeholder="Check Number" ng-model="eCheck.CheckNumber">
+                                    </div>
+                                    <div class="col-sm-6 pad-left-5 cheque-date pad-left-15-xs">
+                                        <div class="table-look">
+                                            <div class="table-row">
+                                                <div class="table-cell">
+                                                    <label for="cheque-date">Check Date</label>
+                                                </div>
+                                                <div class="table-cell" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckDay.$error.required}">
+                                                    <input type="text" class="form-control xs-input" dmax="31" dmin="0" placeholder="DD" only-digits name="eCheckDay" id="cheque-date" ng-required="showPaymentPanel" ng-model="eCheck.Day">
+                                                </div>
+                                                <div class="table-cell" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckMonth.$error.required}">
+                                                    <input type="text" class="form-control xs-input no-mouseflow" dmax="12" dmin="0" placeholder="MM" only-digits name="eCheckMonth" ng-required="showPaymentPanel" ng-model="eCheck.Month">
+                                                </div>
+                                                <div class="table-cell year-input" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckYear.$error.required}">
+                                                    <div class="select-wrap" ng-class="{ 'select-focus': cdfocus, 'select-blur': cdblur }">
+                                                        <select class="form-control no-mouseflow" ng-model="eCheck.Year" name="eCheckYear" ng-required="showPaymentPanel" ng-focus="cdfocus=true;cdblur=false;" ng-blur="cdblur=true;cdfocus=false;" ng-options="year.value as year.text for year in ExpiryDateYear"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12" ng-show="showPaymentPanel">
+                                    <div class="col-sm-6 pad-right-5 pad-right-15-xs" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckAccountNumber.$error.required}">
+                                        <input type="text" class="form-control bottom-buffer-xs-10 no-mouseflow" placeholder="Account Number" name="eCheckAccountNumber" ng-required="showPaymentPanel" ng-model="eCheck.AccountNumber">
+                                    </div>
+                                    <div class="col-sm-6 pad-left-5 pad-left-15-xs" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckAcountHolderName.$error.required}">
+                                        <input type="text" class="form-control no-mouseflow" placeholder="Account Holder Name" name="eCheckAcountHolderName" ng-required="showPaymentPanel" ng-model="eCheck.AcountHolderName">
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12" ng-show="!showPaymentPanel">
+                                    <div class="col-md-12 text-danger">
+                                        No payment required!
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12" ng-show="showPaymentPanel">
+                                    <div class="col-sm-12">
+                                        <legend class="legend">billing address</legend>
+                                    </div>
+                                    <div class="col-sm-6 pad-right-5 pad-right-15-xs" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckBillingStreetAddressLine1.$error.required}">
+                                        <input type="text" class="form-control bottom-buffer-xs-10" placeholder="Street" name="eCheckBillingStreetAddressLine1" ng-required="showPaymentPanel" ng-model="PaymentEditModel.ExistingBillingAddress.StreetAddressLine1" />
+                                    </div>
+                                    <div class="col-sm-6 pad-left-5 pad-left-15-xs">
+                                        <input type="text" class="form-control" placeholder="Suit/Apt." ng-model="PaymentEditModel.ExistingBillingAddress.StreetAddressLine2" />
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12 address-table" ng-show="showPaymentPanel">
+                                    <div class="col-sm-12">
+                                        <div class="table-look">
+                                            <div class="table-row">
+                                                <div class="table-cell pad-right-5" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckBillingState.$error.required}">
+                                                    <div class="select-wrap" ng-class="{ 'select-focus': ssfocus, 'select-blur': ssblur }">
+                                                        <select class="form-control" ng-required="showPaymentPanel" name="eCheckBillingState" ng-focus="ssfocus=true;ssblur=false;" ng-blur="ssblur=true;ssfocus=false;" ng-model="PaymentEditModel.ExistingBillingAddress.StateId"
+                                                                ng-options="year.FirstValue as year.SecondValue for year in states">
+                                                            <option value="">State</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="table-cell pad-left-5 pad-right-5" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckBillingCity.$error.required}">
+                                                    <div class="auto-comp">
+                                                        <input type="text" class="form-control" name="eCheckBillingCity" online-autocomplete="Scheduling/OnlineEvent/GetCityByPrefixText" autocomplete-position="top" ng-required="showPaymentPanel" placeholder="City" ng-model="PaymentEditModel.ExistingBillingAddress.City" />
+                                                    </div>
+
+                                                </div>
+                                                <div class="table-cell pad-left-5" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckBillingZipCode.$error.required}">
+                                                    <input type="text" class="form-control" name="eCheckBillingZipCode" ng-required="showPaymentPanel" placeholder="Zip" ng-model="PaymentEditModel.ExistingBillingAddress.ZipCode" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix" ng-show="showPaymentPanel">
+                                    <div class="well well-sm top-buffer-16">
+                                        <div class="styled-check small-check">
+                                            <input type="checkbox" ng-model="PaymentEditModel.ShippingAddressSameAsBillingAddress" /><label>Shipping Address same as Billing Address</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" ng-hide="PaymentEditModel.ShippingAddressSameAsBillingAddress">
+                                    <div class="col-sm-12">
+                                        <legend class="legend">shipping address</legend>
+                                    </div>
+                                    <div class="col-sm-6 pad-right-5" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckShippingStreetAddressLine1.$error.required}">
+                                        <input type="text" class="form-control" placeholder="Street" name="eCheckShippingStreetAddressLine1" ng-required="!PaymentEditModel.ShippingAddressSameAsBillingAddress" ng-model="PaymentEditModel.ExistingShippingAddress.StreetAddressLine1" />
+                                    </div>
+                                    <div class="col-sm-6 pad-left-5">
+                                        <input type="text" class="form-control" placeholder="Suit/Apt." ng-model="PaymentEditModel.ExistingShippingAddress.StreetAddressLine2" />
+                                    </div>
+                                </div>
+                                <div class="row top-buffer-12 address-table" ng-hide="PaymentEditModel.ShippingAddressSameAsBillingAddress">                                                  
+                                    <div class="col-sm-12 bottom-buffer-20">
+                                        <div class="table-look">
+                                            <div class="table-row">
+                                                <div class="table-cell pad-right-5" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckShippingStateId.$error.required}">
+                                                    <div class="select-wrap" ng-class="{ 'select-focus': sssfocus, 'select-blur': sssblur }">
+                                                        <select class="form-control" name="eCheckShippingStateId" ng-focus="sssfocus=true;sssblur=false;" ng-blur="sssblur=true;sssfocus=false;" ng-required="!PaymentEditModel.ShippingAddressSameAsBillingAddress" ng-model="PaymentEditModel.ExistingShippingAddress.StateId" ng-options="year.FirstValue as year.SecondValue for year in states">
+                                                            <option value="">State</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="table-cell pad-left-5 pad-right-5" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckShippingCity.$error.required}">
+                                                    <div class="auto-comp">
+                                                        <input type="text" class="form-control" name="eCheckShippingCity" ng-required="!PaymentEditModel.ShippingAddressSameAsBillingAddress" online-autocomplete="Scheduling/OnlineEvent/GetCityByPrefixText" autocomplete-position="top" placeholder="City" ng-model="PaymentEditModel.ExistingShippingAddress.City" />
+                                                    </div>
+
+                                                </div>
+                                                <div class="table-cell pad-left-5" ng-class="{'error-message' : echeckForm.submitted != undefined && echeckForm.submitted && echeckForm.eCheckShippingZip.$error.required}">
+                                                    <input type="text" class="form-control" name="eCheckShippingZip" ng-required="!PaymentEditModel.ShippingAddressSameAsBillingAddress" placeholder="Zip" ng-model="PaymentEditModel.ExistingShippingAddress.ZipCode" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  
+                                </div>
+                                <button type="submit" style="display: none;" id="submitform2">form 2 submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ng-show="showPaymentPanel">
+                    <div class="col-sm-6 pad-right-5 pad-right-15-xs bottom-buffer-xs-10 top-buffer-2">
+                        <p class="no-margin">Do you have a discount coupon?  &#40;<span class="whats-this" tooltip-placement="bottom" tooltip-html-unsafe="{{getSourceCodeHelpDescription()}}" tooltip-trigger="mouseenter">Whats This?</span>&#41;</p>
+                    </div>
+                    <div class="col-sm-4 pad-right-5 pad-right-15-xs bottom-buffer-xs-10">
+                        <input type="text" class="form-control" ng-model="SourceCodeApplyEditModel.SourceCode" />
+                    </div>
+                    <div class="col-sm-2 pad-left-5 pad-left-15-xs" ng-class="{'error-message' : cardForm.submitted != undefined && cardForm.submitted && cardForm.chargeCardNumber.$error.required}">
+                        <button class="btn btn-success btn-sm-text " ng-disabled="isPosted" ng-click="applySourceCode()">APPLY <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_ApplySource"></i></button>
+                    </div>
+                </div>
+
+                <div class="large-checks top-buffer-10">
+                    <input id="AcceptTerms" name="AcceptTerms" type="checkbox" value="true" ng-model="OnlineSchedulingCustomerInfoEditModel.AcceptTerms">
+                    I agree with <a href="javascript:void(0);" ng-click="openTermsAndConditions($event)">Terms &amp; conditions and cancellation policy. </a>
+                </div>
+                <div class="large-checks top-buffer-6-xs" ng-show="OnlineSchedulingCustomerInfoEditModel.ShowNewsLetterPrompt">
+                    <input id="RequestForNewsLetter" name="RequestForNewsLetter" type="checkbox" value="true" ng-model="OnlineSchedulingCustomerInfoEditModel.RequestForNewsLetter">
+                    <span> {{OnlineSchedulingCustomerInfoEditModel.RequestForNewsLetterDescription }}</span>
+                </div>
+            </div>
+
+            <div class="col-md-3 hidden-xs hidden-md hidden-sm no-padding-right">
+                <order-summary-right-pannel></order-summary-right-pannel>
+            </div>
+            <div class="clearfix lower-btns">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary pull-left" ng-click="goToPreviousStep()" ng-disabled="isPosted"><span ng-hide="loader_back">&#60;</span> Back <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_back"></i></button>
+                    <button class="btn btn-primary btn-solid pull-right" ng-click="goToNextStep()" ng-disabled="isPosted">Submit Payment <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_Payment"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

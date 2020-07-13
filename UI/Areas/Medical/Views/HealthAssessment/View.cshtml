@@ -1,0 +1,44 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model HealthAssessmentEditModel
+@{
+    ViewBag.Title = "Health Assessment Template Questions";
+    Layout = "~/Views/Shared/_LayoutPopUp.cshtml"; ;
+}
+
+<div id="divcontent_haf" style="float: left; width:100%;">
+@Html.Partial("/Config/Content/Views/Shared/HealthAssessmentForm.cshtml")
+</div>
+
+<script type="text/javascript" language="javascript">
+    $.ajaxSetup({
+        cache: false
+    });
+
+    function makeFormReadonly() {
+        $('#divcontent_haf').find('input[type="radio"]').attr('disabled', 'disabled');
+        $('#divcontent_haf').find('input[type="checkbox"]').attr('disabled', 'disabled');
+        $('#divcontent_haf').find('input[type="text"]:visible').attr('disabled', 'disabled');
+        $('#divcontent_haf').find('textarea').attr('disabled', 'disabled');
+    }
+
+    function BlankAllQuestions() {
+        $('#divcontent_haf').find('input[type="radio"]').attr('checked', false);
+        $('#divcontent_haf').find('input[type="checkbox"]').attr('checked', false);
+        $('#divcontent_haf').find('input[type="text"]').val('');
+        $('#divcontent_haf').find('textarea').val('');
+    }
+
+    function adjustKynDiv() {
+        //debugger;
+        $('#divcontent_haf').find('.medication-question .front-radio-block').css('width', '18%');
+        //$('#divcontent_haf').find('.lifestyle-question .front-radio-block').css('width', '18%');
+        $('#divcontent_haf').find('.lifestyle-question').find('div:first').css('width', '18%');
+    }
+    
+    $(document).ready(function () {
+        makeFormReadonly();
+        BlankAllQuestions();
+        adjustKynDiv();
+    });
+</script>
+

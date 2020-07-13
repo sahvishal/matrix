@@ -1,0 +1,27 @@
+﻿<table width="100%" CssClass="divgrid_cl">
+    <tr>
+        <th>Workshop Name</th>
+        <th>Workshop Date</th>
+        <th>Workshop Time</th>
+        <th>Action</th>
+    </tr>
+    {#foreach $T as ESeminar}
+        <tr>
+            <td>
+               {$T.ESeminar.Name}
+            </td>                        
+            <td>
+                {DateDeserialize($T.ESeminar.SeminarDate).format("shortDate")}
+            </td>
+            <td>
+                {DateDeserialize($T.ESeminar.SeminarTimeFrom).format("shortTime")}
+                &nbsp;-&nbsp;
+                {DateDeserialize($T.ESeminar.SeminarTimeTo).format("shortTime")}
+            </td>
+            <td>
+               <a href="#" onclick="EditSeminar({$T.ESeminar.SeminarID})">Edit</a>
+               <a href="#" onclick="Delete({$T.ESeminar.SeminarID})">Delete</a>
+            </td>
+        </tr>
+        {#/for}
+</table>

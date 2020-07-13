@@ -1,0 +1,61 @@
+﻿body, html {font: normal 12px Arial, Helvetica, tahoma; background-color:Transparent; margin:0px; color:#000; line-height: 1.5em;}
+form{ margin: 0; padding:0; }
+img{ border:0px; }
+p{margin:0px; padding:0px;}
+span{margin:0px; padding:0px;}
+a:link{font-size:12px; font-family: arial; color:#287AA8; text-decoration:underline;}
+a:visited{font-size:12px; font-family: arial; color:#287AA8; text-decoration:underline;}
+a:hover{font-size:12px; font-family: arial; color:#ff6600; text-decoration:underline;}
+
+/*.upload
+{
+	width: 720px;
+	height: 375px;
+    border: solid 1px #004792;
+    margin: 10px 0px;
+    padding: 10px 25px;
+    background-color: #F0F8FF;
+}
+.upload H3
+{
+	margin:0;
+	padding-bottom:5px;
+	font-size:14px;
+}        
+.upload IFRAME
+{
+	text-align:center;
+	vertical-align:middle;
+	border-style:none;
+	margin:0px;
+	width:100%;
+	
+}*/
+#status, .commands{ height:25px; line-height:25px; }
+.upload .commands{ float:right; }
+.hidden { display:none; }        
+#status { float:left; }
+#status.error{ color:Red;}
+#status.info{ color:#333;}
+#status.success{ color:green;}
+/* CSS for Upload Result Design ****/
+.lgtgrayboxrow_cl{float:left; width:700px; padding: 3px 0px 0px 15px;}
+.titletext_default{ float:left; width:110px; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+.inputfldnowidth_default{ float:left; margin:0px; padding:0px;}
+.inputf_def{ border: 1px solid #7F9DB9; Background-color:#fff; z-index:-5; font: normal 12px arial; color:#333; padding:2px;}
+.inputfieldcon_ur_fileupload{ float:left; width:268px; padding:2px 5px 0px 0px; font:bold 12px arial; color:#000;}
+.inputf_ur_fileupload{ border: 1px solid #7F9DB9; height: 22px; Background-color:#fff; font: normal 12px arial; color:#333; width:475px;}
+.maindiv_inner_crlist{float:left; width:550px; border: solid 1px #b8b8b8; z-index:100;}
+
+.main_area_bdrnone{ float:left; width:753px;}
+.divmainbody_cd{float:left; width:748px;}
+.grayboxtop_cl{float:left; width:746px;}
+.grayboxtopbg_cl{float:left; width:746px; background:url(../../Images/topbggraybox_cl.gif) no-repeat;}
+.grayboxheader_cl{float:left; width:731px; background-color:#EAEAEA; padding:0px 0px 8px 15px; font-weight:bold; font-size:14px; color:#333; }
+.lgtgraybox_cl{float:left; width:746px; background-color:#F5F5F5;}
+.uploadbuttrow_ur{float:left; width:610px; text-align:right; margin-top:10px;}
+.buttoncon3_default{float:right; width:68px; height:32px; margin-bottom:10px; padding-right:5px;}
+.blueboxtopbg_ur{float:left; width:746px; background:url(../../Images/topbglightbluebox.gif) no-repeat;}
+.instructiontxt_ur{float:left; width:746px; background-color:#F0F9FF;}
+.blktextbig_default{font:bold 16px arial; color:#000;}
+.blueboxbotbg_cl{float:left; width:746px; background:url(../../Images/botbgbluebox_cl.gif) no-repeat;}

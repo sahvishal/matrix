@@ -1,0 +1,175 @@
+﻿@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+
+@model OtpModel
+
+@{
+    ViewBag.Title = "Verify Google Authenticator Pin";
+    ViewBag.IsOtpBySmsEnabled = true;
+    ViewBag.IsOtpByEmailEnabled = true;
+    ViewBag.IsOtpByAppEnabled = true;
+}
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+
+@{Html.BeginForm();}
+
+<div class="login" id="leftPane">
+    <h2>@ViewBag.Title</h2>
+    <div class="input-wrapper">
+        @Html.ValidationMessageFor(x => x.Otp)
+        @Html.TextBoxFor(x => x.Otp, new { @class = "text-box numericOnly", autocomplete = "off", maxlength = "6" })
+    </div>
+
+
+    @if (Model.IsAllowSafeComputerEnabled)
+    {
+        <div style="padding-top: 5px;">
+            @Html.EditorFor(m => m.MarkAsSafe)
+        </div>
+    }
+    <div class="submit-button-row">
+        @Html.SubmitButton("Verify")
+    </div>
+    @if (ViewBag.IsOtpBySmsEnabled || ViewBag.IsOtpByEmailEnabled)
+    {
+        <div class="submit-button-row" style="padding-top: 0px;">
+            Switch to <a id="otherMode" href="javascript:void(0)">other</a> mode.
+        </div>
+    }
+
+</div>
+@{ Html.EndForm(); }
+<div class="login" id="rightPane">
+    <h2>Please enter the pin Generated From Google Authenticator App</h2>
+    <p style="color:red;">
+        Note: @if (ViewBag.IsOtpBySmsEnabled || ViewBag.IsOtpByEmailEnabled)
+        {
+            @:  You can switch to other modes if you are unable to login using the Authenticator.
+              }
+    </p> 
+
+</div>
+
+
+
+<div id="otherModeDiv" style="display: none;" class="login">
+    @if (ViewBag.IsOtpBySmsEnabled || ViewBag.IsOtpByEmailEnabled)
+    {
+        <h2>Please use any one of the Below Option</h2>
+        <text>
+            <div id="otpModes">
+                @if (ViewBag.IsOtpBySmsEnabled)
+                {
+                    <input id="bySms" type="radio" name="smsOrEmail" /> @:SMS
+
+                }
+                @if (ViewBag.IsOtpByEmailEnabled)
+                {
+                    <input id="byEmail" type="radio" name="smsOrEmail" /> @:Email
+
+                }
+                <br />
+                <br />
+                <div style="min-height: 30px;">
+                    <input id="txtSms" type="text" name="sms" style="display: none;" />
+                    <input id="txtEmail" type="text" name="email" style="display: none; width: 250px;" />
+                </div>
+            </div>
+        </text>
+        <br />
+        <div class="submit-button-row">
+            <input id="sentOtpBtn" type="button" value="Send Otp" />
+        </div>
+    }
+</div>
+
+
+
+<script language="javascript" type="text/javascript">
+    $('#txtSms').mask('(999)-999-9999');
+    $('#bySms').attr('checked',false);
+    
+    $('#otherMode').click(function () {
+        $('#otherModeDiv').show();
+        $('#rightPane').hide();
+    });
+    $('#bySms').click(function () {
+        $('#txtSms').show();
+        $('#txtEmail').hide();
+    });
+    $('#byEmail').click(function () {
+        $('#txtEmail').show();
+        $('#txtSms').hide();
+    });
+    $('#sentOtpBtn').click(function () {
+        var useSms = 'false';
+        var useEmail = 'false';
+        var sms = $('#txtSms').val();
+        var email = $('#txtEmail').val();
+        if ($('#bySms').is(":checked")) {
+            useSms = 'true';
+        }
+        if ($('#byEmail').is(":checked")) {
+            useEmail = 'true';
+        }
+        var model = { UseSms: useSms, Email:email , Phone:sms  };
+        if (sms == '' && email =='') {
+            if(useSms == 'true')
+                alert('Please Enter Cell Phone Number');
+            else if (useEmail == 'true')
+                alert('Please Enter Email Address');
+            else
+                alert('Please Select OTP Mode');
+            return false;
+        }
+        $('#sentOtpBtn').attr('disabled', true);
+        $.ajax({
+            type: "post",
+            cache: false,
+            data: model,
+            url: "/Login/RedirectToOtp",
+            success: function (result) {
+                if (result.IsValid == true) {
+                    window.location = "/Login/Otp";
+                } else {
+                    if ($('#byEmail').is(":checked"))
+                    {
+                        alert('Email is Invalid');
+                        $('#txtEmail').val('').focus();
+                    }
+                    else
+                        alert('Invalid input');
+                }
+                $('#sentOtpBtn').removeAttr("disabled");
+            },
+            error: function() {
+                alert('Some error'); 
+                $('#sentOtpBtn').removeAttr("disabled");
+            }
+        });
+    });
+
+    
+
+    $('.numericOnly').bind('keypress', function (evt) {
+        var key = (evt.which ? evt.which : ((evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : 0)));
+        if (evt.shiftKey == false) {
+            if ((key >= 48 && key <= 57) || (evt.charCode == 0 && (key == 8 || key == 46))) {
+                return true;
+            }
+        }
+        evt.preventDefault();
+        return false;
+    });
+
+    $(document).ready(function() {
+        $('#rightPane').css("height", $('#leftPane').innerHeight() - 20);
+        $('#otherModeDiv').css("height", $('#leftPane').innerHeight() - 20);
+    });
+    
+</script> 
+

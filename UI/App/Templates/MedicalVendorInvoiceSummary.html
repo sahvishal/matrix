@@ -1,0 +1,13 @@
+﻿<h3>Invoice Summary</h3>
+<div style="float:left;width:30%;overflow:hidden;">                
+    Invoice Number: {$T.Id}<br />
+    Period: {DateDeserialize($T.PayPeriodStartDate).format("shortDate")} - {DateDeserialize($T.PayPeriodEndDate).format("shortDate")}
+</div>
+<div style="float:left;width:34%">            
+    Physician Name: {$T.PhysicianName}<br />
+    Payable To: {$T.MedicalVendorName}
+</div>
+<div style="float:left;width:32%" >
+    Total # Evaluations: {$T.NumberOfEvaluations}<br />
+    <span class="amt">Total Amount Earned: {FormatCurrency($T.InvoiceAmount)}</span> 
+</div>

@@ -1,0 +1,39 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Portal.master.cs" Inherits="Falcon.App.UI.App.Portals.Portal" %>
+
+<%@ Register Src="~/App/UCCommon/Footer.ascx" TagName="Footer" TagPrefix="FooterControl" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Untitled Page</title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+        <script src="/scripts/jquery-1.5.2.min.js" type="text/javascript"></script>
+    </asp:ContentPlaceHolder>
+    <link href="../StyleSheets/Commonstyle.css" rel="Stylesheet" type="text/css" />
+    <link href="../StyleSheets/UC.css" rel="Stylesheet" type="text/css" />
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div class="maintopcontainer">
+        <div class="topintercontainer" id="header">
+            <div class="datepanelmain">
+                <div>
+                    Today is: <span id="spcurdate" runat="server"></span>
+                </div>
+            </div>
+            <div class="logoside">
+            </div>
+            <div class="toprlnk">
+                <a href="#">My Account</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#">Settings</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
+                    href="#">Help</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/app/Portals/MarketingPartner/Logoff.aspx">Logout</a></div>
+        </div>
+        <div class="botm_hdr">
+        </div>
+        <div class="mainbodyouter" id="content">
+            <asp:ContentPlaceHolder ID="ContentPlaceHolderMain" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+        <footercontrol:footer id="FooterControl" runat="server" />
+    </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,15 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model LabFormViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Microalbumin Lab Form";
+}
+
+<div style="float:left; width: 860px;">
+    @if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/MicroalbuminLabForm.cshtml")))
+    {
+        @Html.Partial("/Config/Content/Views/Shared/MicroalbuminLabForm.cshtml", Model)
+    }
+</div>
+

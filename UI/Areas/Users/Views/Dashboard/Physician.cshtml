@@ -1,0 +1,166 @@
+﻿@model Falcon.App.Core.Users.ViewModels.PhysicianDashboardViewModel
+@{
+    ViewBag.Title = "Dashboard";
+}
+<h1>
+    Welcome! Dr. @Model.Name</h1>
+<div class="leftside-div-with-roundborder margin-top" style="width: 99%">
+    <div class="eventdetail-row">
+        <h4>
+            Total Evaluation Done -  @Model.PhysicianEvaluationsQueue.ItemsDone</h4>
+    </div>
+    <div class="eventdetail-row">
+        <div style="float: left">
+            <h4>
+                Total Evaluation Available / Critical(s) / Priority in queue(s) -  @Model.PhysicianEvaluationsQueue.ItemsAvailable / @Model.PhysicianEvaluationsQueue.CriticalsInQueue / @Model.PhysicianEvaluationsQueue.PriorityInQueueCount</h4>
+        </div>
+        
+        <div style="float: right">
+            @if (Model.PhysicianEvaluationsQueue.ItemsAvailable > 0)
+            {
+                <a href="javascript:CallforEvaluation(); void(0);"><b>Start Evaluation</b> </a>}
+        </div>
+    </div>
+    <br />
+    <div class="eventdetail-row">
+        <div style="float: left">
+            <h4>
+                Total Overreads Available / Critical(s) / Priority in queue(s) -  @Model.PhysicianOverReadsQueue.ItemsAvailable / @Model.PhysicianOverReadsQueue.CriticalsInQueue / @Model.PhysicianOverReadsQueue.PriorityInQueueCount</h4>
+        </div>
+        <div style="float: right">
+            @if (Model.PhysicianOverReadsQueue.ItemsAvailable > 0)
+            {
+                <a href="javascript:CallforOverread(); void(0);"><b>Start OverRead</b> </a>
+            }
+        </div>
+    </div>
+</div>
+<br />
+<br />
+<div class="leftside-div-with-roundborder margin-top">
+    <div class="editor-row" style="font-size:14px; color: #EE8111; font-weight:bold; padding-bottom:4px; border-bottom:solid 1px #72BDDB;">
+        As per our record your...
+    </div>
+    <br/>
+    <div class="editor-row">
+        <b>
+            Specialization : @Model.Specialization
+        </b>
+    </div>
+    <br />
+    <div class="editor-row">
+        <b>
+            Tests you can examine:
+        </b>
+        <br />
+        &nbsp;&nbsp;&nbsp;&bull;@Html.Raw((string.Join("<br/>&nbsp;&nbsp;&nbsp;&bull;", Model.PermittedTests.Select(t => t.Name))))
+    </div>
+    <br />
+    <div class="editor-row">
+        <b>
+            Signature (will be used to sign each evaluation(s)):
+        </b>
+        <br />
+        <img src="@Model.SignaturePath" style="height:50px; width:150px;" />
+    </div>
+    <div class="editor-row" style="text-align: right;">
+        @{ var userSession = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISessionContext>().UserSession; }
+        <a href="/Users/Profile/Edit/?id=@userSession.UserId&roleId=@userSession.CurrentOrganizationRole.RoleId">Edit Profile </a>
+    </div>
+</div>
+<div class="rightside-div-with-roundborder" style="display: none">
+    <h4>
+        You have following Licenses in our records:
+    </h4>
+    <div class="eventdetail-row">
+        @if (Model.Licenses != null && Model.Licenses.Count() > 0)
+        {
+            <table id="list-view">
+                <tr>
+                    <th>
+                        State
+                    </th>
+                    <th>
+                        License
+                    </th>
+                    <th>
+                        Expiry Date
+                    </th>
+                </tr>
+                @foreach (var license in Model.Licenses)
+                {
+                    <tr>
+                        <td>
+                            @license.State
+                        </td>
+                        <td>
+                            @license.LicenseNumber
+                        </td>
+                        <td>
+                            @license.ExpiryDate.ToShortDateString()
+                        </td>
+                    </tr>            
+                }
+            </table>
+
+        }
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+    function CallforEvaluation() {
+        $.ajax({
+            type: "POST",
+            url: "/Users/Dashboard/GetAvailableEventCustomerIdforEvaluation",
+            contentType: "application/json; charset=utf-8",
+            data: "{}",
+            dataType: "json",
+            error: function (xmlHttpRequest) {
+                if (xmlHttpRequest.status == 401) {
+                    alert("You do not have the permission.");
+                }
+                else
+                {
+                    alert("System Failure! Some error occured.");
+                }
+                window.location.reload();
+            },
+            success: function (result) {
+                if (result > 0) {
+                    window.location = "/App/MedicalVendor/Evaluation.aspx?EventCustomerId=" + result;
+                } else {
+                    alert("No Record Acquired!");
+                    window.location.reload();
+                }
+            } 
+        });
+    }
+
+    function CallforOverread() {
+        $.ajax({
+            type: "POST",
+            url: "/Users/Dashboard/GetAvailableEventCustomerIdforOverread",
+            contentType: "application/json; charset=utf-8",
+            data: "{}",
+            dataType: "json",
+            error: function (xmlHttpRequest) {
+                if (xmlHttpRequest.status == 401) {
+                    alert("You do not have the permission.");
+                }
+                else
+                {
+                    alert("System Failure! Some error occured.");
+                }
+                window.location.reload();
+            },
+            success: function (result) {
+                if (result > 0) {
+                    window.location = "/App/MedicalVendor/Evaluation.aspx?EventCustomerId=" + result;
+                } else {
+                    alert("No Record Acquired!");
+                    window.location.reload();
+                }
+            }
+        });
+    }
+        
+</script>

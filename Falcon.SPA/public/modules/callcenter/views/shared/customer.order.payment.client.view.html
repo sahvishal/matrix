@@ -1,0 +1,63 @@
+﻿<h3>
+    Payment History
+</h3>
+<table id="PaymentViewDataTemplateTable" class="divgrid_cl">
+    <thead>
+        <tr class="row1" style="text-align: center; font-size: 11px">
+            <th>
+                Mode
+            </th>
+            <th>
+                Transaction Date
+            </th>
+            <th class="executed-by-role">
+                Received By/Role
+            </th>
+            <th class="amt">
+                Amount
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+         
+        <tr class="smalltxt11" ng-repeat="pd in Paymentdetails">
+            <td>
+                <span ng-if="pd.PaymentInstrumentName == 'Cash'" ng-bind="pd.PaymentInstrumentName"></span>
+                <span ng-if="pd.PaymentInstrumentName == 'Credit Card'">
+                    {{pd.PaymentInstrumentName}} ({{pd.InstrumentNumber}} Exp:{{pd.InstrumentDate}}
+                    <span ng-if="RoleId == '1'">
+                        <br />
+                        Request Id: {{pd.ProcessorResponse}}
+                    </span>
+                    )
+                </span>
+
+                <span ng-if="pd.PaymentInstrumentName == 'Check'"> {{pd.PaymentInstrumentName}} (Check Number:  <span ng-if="pd.InstrumentNumber == ''">No Check# </span> <span ng-if="pd.InstrumentNumber != ''"> {{pd.InstrumentNumber}} </span>) </span>
+
+
+
+                <span ng-if="pd.PaymentInstrumentName == 'eCheck'"> {{pd.PaymentInstrumentName}} (Check Number: {{pd.InstrumentNumber}} <span ng-if="RoleId == '1'"> <br /> Request Id:{{pd.ProcessorResponse}}</span> )</span>
+
+                <span ng-if="pd.PaymentInstrumentName == 'Gift Certificate'" ng-bind="pd.PaymentInstrumentName"></span>
+
+                <span ng-if="pd.PaymentInstrumentName == 'Insurance'">{{pd.PaymentInstrumentName}} {{pd.ProcessorResponse}}</span>
+
+            </td>
+            <td class="amt">
+                <span ng-bind="pd.DateCreated != null ? pd.DateCreated : 'N/A'"></span>
+            </td>
+            <td class="amt executed-by-role">
+                <span ng-bind="pd.CreatorRoleName == 'Customer' ? 'Self' : pd.CreatorUserName + ' / '+ pd.CreatorRoleName"></span>
+            </td>
+            <td class="amt">
+                <span> {{pd.Amount >= 0 ? pd.Amount: (-1)*pd.Amount | currency}}</span>
+            </td>
+        </tr>
+        
+        <tr>
+            <td colspan="4" style="text-align: right">
+                <strong>Payment Total: {{PaymentTotal| currency}} </strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

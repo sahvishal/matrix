@@ -1,0 +1,28 @@
+﻿
+@model IEnumerable<Falcon.App.Core.Operations.ViewModels.AssignedPhysicianBasicInfoModel>
+@{
+    Layout = null;
+}
+
+<div>
+    <div style="width: 335px; min-height: 20px;">        
+        @if (Model == null || Model.Count() < 1)
+        {
+                           
+            <div>No Physicians assigned for the Event.</div>           
+        }
+        else
+        {            
+            <table>
+                @foreach (var physician in Model)
+                {
+                    <tr class="data-row">
+                        <td>@(physician.IsOverReadPhysician ? "Over Read Physician:" : "Primary Physician:")</td>
+                        <td>@physician.Name (@physician.Specialization)</td>                                                
+                    </tr>
+                }
+	        </table>
+        }
+        <input type="hidden" value='@(Model == null?"0":Model.Count().ToString())' />
+    </div>
+</div>

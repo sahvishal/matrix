@@ -1,0 +1,460 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D4BA8A2D-401A-4A64-837E-637ED0FFDDA2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Falcon.UnitTests</RootNamespace>
+    <AssemblyName>Falcon.UnitTests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Testing|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Testing\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\Falcon.UnitTests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;d:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;d:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'qa-phs|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\qa-phs\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Testing\Falcon.UnitTests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'qa-hf|AnyCPU'">
+    <OutputPath>bin\qa-hf\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'prod-phs|AnyCPU'">
+    <OutputPath>bin\prod-phs\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'prod-hf|AnyCPU'">
+    <OutputPath>bin\prod-hf\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'qa-iw|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\qa-iw\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Testing\Falcon.UnitTests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'prod-iw|AnyCPU'">
+    <OutputPath>bin\prod-iw\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\prod-phs\Falcon.UnitTests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v100|AnyCPU'">
+    <OutputPath>bin\v100\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip1-hf|AnyCPU'">
+    <OutputPath>bin\hip1-hf\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'hip3-hf|AnyCPU'">
+    <OutputPath>bin\hip3-hf\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'dev-hf|AnyCPU'">
+    <OutputPath>bin\dev-hf\</OutputPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Compile Include="Core\Communication\BroadCastNotifierTester.cs" />
+    <Compile Include="Core\Communication\NotificationMapperTester.cs" />
+    <Compile Include="Core\Domain\AdvertiserTerritoryTester.cs" />
+    <Compile Include="Core\Domain\CheckTester.cs" />
+    <Compile Include="Core\Domain\Marketing\PhoneNumberResolverTester.cs" />
+    <Compile Include="Core\Domain\Marketing\SourceCodeTester.cs" />
+    <Compile Include="Core\Domain\Order\GiftCertificateItemTester.cs" />
+    <Compile Include="Core\Domain\Order\Impl\OrderItemStatusFactoryTester.cs" />
+    <Compile Include="Core\Domain\Order\OrderDetailTester.cs" />
+    <Compile Include="Core\Domain\Order\EventPackageItemTester.cs" />
+    <Compile Include="Core\Domain\Order\OrderTester.cs" />
+    <Compile Include="Core\Domain\Order\ProductItemTester.cs" />
+    <Compile Include="Core\Domain\Order\RefundItemTester.cs" />
+    <Compile Include="Core\Domain\Order\TestItemTester.cs" />
+    <Compile Include="Core\Domain\Payment\CashPaymentTester.cs" />
+    <Compile Include="Core\Domain\Payment\ChargeCardPaymentTester.cs" />
+    <Compile Include="Core\Domain\Payment\GiftCertificatePaymentTester.cs" />
+    <Compile Include="Core\Domain\PodTerritoryTester.cs" />
+    <Compile Include="Core\Domain\ReadingPhysicianTerritoryTester.cs" />
+    <Compile Include="Core\Domain\SalesRepTerritoryTester.cs" />
+    <Compile Include="Core\Domain\FranchiseeTerritoryTester.cs" />
+    <Compile Include="Core\Domain\HospitalPartnerTerritoryTester.cs" />
+    <Compile Include="Core\Domain\MedicalVendorInvoiceBaseTester.cs" />
+    <Compile Include="Core\Domain\Screening\ASITestResultTester.cs" />
+    <Compile Include="Core\Domain\Territories\TerritoryZipCodeUpdaterTester.cs" />
+    <Compile Include="Core\Domain\UserTester.cs" />
+    <Compile Include="Core\Domain\ViewData\GlobalCallCenterRepMetricViewData.cs" />
+    <Compile Include="Core\Geo\AddressEditModelValidatorTester.cs" />
+    <Compile Include="Core\Geo\AddressTester.cs" />
+    <Compile Include="Core\Geo\AddressValidatorTester.cs" />
+    <Compile Include="Core\Impl\RegularExpressionHelperTester.cs" />
+    <Compile Include="Core\NullArgumentCheckerTester.cs" />
+    <Compile Include="Core\Services\Common\Environment\ClockTester.cs" />
+    <Compile Include="Fakes\FakeTypeSafeEnum.cs" />
+    <Compile Include="Core\Impl\CallCenterMetricFactoryTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\CSVExporterTester.cs" />
+    <Compile Include="Core\Impl\DataRecorderMetaDataFactoryTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\DistanceCalculatorTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\EmailFactoryTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\EncryptionHelperTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\EventCustomerAggregateCSVExporterTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\MedicalVendorPaymentPodViewDataFactoryTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\PhoneNumberFactoryTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\RandomStringGeneratorTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\SourceCodeGeneratorTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\SystemInformationFactoryTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\ValidationErrorMessageFormatterTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\ValidationPrePersistenceStrategyTester.cs" />
+    <Compile Include="Core\Impl\ValidatorTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\Impl\ZipCodeParserTester.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\TypeSafeEnumTester.cs" />
+    <Compile Include="Core\ValidationRuleFactories\CheckPaymentValidationRuleFactoryTester.cs" />
+    <Compile Include="Core\ValidationRules\DataRecorderMetaDataMustBeValidRuleTester.cs" />
+    <Compile Include="Core\ValueTypes\DateTimeCalendarTester.cs" />
+    <Compile Include="Core\ValueTypes\EmailTester.cs" />
+    <Compile Include="Core\ValueTypes\HeightTester.cs" />
+    <Compile Include="Core\ValueTypes\PhoneNumberTester.cs" />
+    <Compile Include="Core\ValueTypes\RepositoryStrategySetTester.cs" />
+    <Compile Include="Core\ValueTypes\WeightTester.cs" />
+    <Compile Include="Core\Extensions\StringExtensionsTester.cs" />
+    <Compile Include="Core\Extensions\DateTimeExtensionsTester.cs" />
+    <Compile Include="Core\ValueTypes\NameTester.cs" />
+    <Compile Include="Core\ValidationRuleFactories\CheckValidationRuleFactoryTester.cs" />
+    <Compile Include="Core\ValidationRuleFactories\MedicalVendorEarningValidationRuleFactoryTester.cs" />
+    <Compile Include="Core\ValidationRuleFactories\MedicalVendorInvoiceBaseValidationRuleFactoryTester.cs" />
+    <Compile Include="Core\ValidationRuleFactories\MedicalVendorInvoiceItemValidationRuleFactoryTester.cs" />
+    <Compile Include="Core\ValidationRuleFactories\MedicalVendorInvoiceValidationRuleFactoryTester.cs" />
+    <Compile Include="Core\ValidationRuleFactories\MedicalVendorPaymentValidationRuleFactoryTester.cs" />
+    <Compile Include="Core\ValidationRuleFactories\PaymentInstrumentValidationRuleFactoryTester.cs" />
+    <Compile Include="Core\ValidationRules\CannotBeNullRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\CollectionCannotBeEmptyRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\CollectionMustBeValidRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\ComposedObjectMustBeValidRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\DateCannotExceedOtherDateRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\DateMustBeInRangeRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\GuidMustBeValidRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\NumberMustBeInRangeRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\ObjectMustBeEnumMemberRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\StringCannotBeNullOrEmptyRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\InheritedObjectMustBeValidRuleTester.cs" />
+    <Compile Include="Core\ValidationRules\StringLengthMustBeInRangeRuleTester.cs" />
+    <Compile Include="Core\Extensions\EnumerableExtensionsTester.cs" />
+    <Compile Include="Core\Domain\MedicalVendorInvoiceTester.cs" />
+    <Compile Include="Fakes\FakeDomainObject.cs" />
+    <Compile Include="Fakes\FakeEntity.cs" />
+    <Compile Include="Fakes\FakeEntityFields.cs" />
+    <Compile Include="Fakes\FakeEnum.cs" />
+    <Compile Include="Fakes\FakeMedicalVendorInvoiceBase.cs" />
+    <Compile Include="Fakes\FakeObjectToValidate.cs" />
+    <Compile Include="Fakes\FakeOrderable.cs" />
+    <Compile Include="Fakes\FakeOrderItem.cs" />
+    <Compile Include="Fakes\FakeOrderItemStatus.cs" />
+    <Compile Include="Fakes\FakePaymentInstrument.cs" />
+    <Compile Include="Fakes\FakeTerritory.cs" />
+    <Compile Include="Fakes\FakeUniqueItemRepository.cs" />
+    <Compile Include="Fakes\FakeValidator.cs" />
+    <Compile Include="Infrastructure\Application\AutoMapperBootstrapperTester.cs" />
+    <Compile Include="Infrastructure\Application\ConfigurationSettingRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Application\DomainEntityMapperTester.cs" />
+    <Compile Include="Infrastructure\Application\FileHelperTester.cs" />
+    <Compile Include="Infrastructure\Application\RepositoryTesterBase.cs" />
+    <Compile Include="Infrastructure\Factories\AddressFactoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\CombinedPaymentInstrumentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\ElectronicProductRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\EventPackageOrderItemTraitsTester.cs" />
+    <Compile Include="Infrastructure\Finance\GiftCertificateOrderItemTraitsTester.cs" />
+    <Compile Include="Infrastructure\Finance\GiftCertificateRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningAggregateRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningCustomerAggregateRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningMapperTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorEarningServiceTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorInvoiceRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorPaymentMapperTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorPaymentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\MedicalVendorPaymentServiceTester.cs" />
+    <Compile Include="Infrastructure\Finance\OrderControllerTester.cs" />
+    <Compile Include="Infrastructure\Finance\OrderDetailMapperTester.cs" />
+    <Compile Include="Infrastructure\Finance\OrderDetailRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\OrderMapperTester.cs" />
+    <Compile Include="Infrastructure\Finance\OrderRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\PaymentInstrumentRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\ProductOrderItemTraitsTester.cs" />
+    <Compile Include="Infrastructure\Finance\RefundMapperTester.cs" />
+    <Compile Include="Infrastructure\Finance\RefundOrderItemTraitsTester.cs" />
+    <Compile Include="Infrastructure\Finance\RefundRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Finance\TestOrderItemTraitsTester.cs" />
+    <Compile Include="Infrastructure\Finance\UniqueItemRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Geo\AddressRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Geo\FranchiseeTerritoryMapperTester.cs" />
+    <Compile Include="Infrastructure\Geo\HospitalPartnerTerritoryMapperTester.cs" />
+    <Compile Include="Infrastructure\Geo\OrganizationRoleUserMapperTester.cs" />
+    <Compile Include="Infrastructure\Geo\StateMapperTester.cs" />
+    <Compile Include="Infrastructure\Geo\TerritoryMapperTester.cs" />
+    <Compile Include="Infrastructure\Geo\TerritoryRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Geo\ZipCodeMapperTester.cs" />
+    <Compile Include="Fakes\FakeDomainEntityMapper.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorEarningAggregateFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorEarningCustomerAggregateFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorInvoiceBaseFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorInvoiceItemFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorInvoiceStatisticsFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorMedicalVendorUserAggregateFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorMedicalVendorUserFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\Order\OrderDetailFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\Order\OrderFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\Order\OrderItemTraitsFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\TerritoryFactoryTester.cs" />
+    <Compile Include="Fakes\FakeTerritoryMapper.cs" />
+    <Compile Include="Infrastructure\Factories\UserFactoryTester.cs" />
+    <Compile Include="Fakes\FakeRepository.cs" />
+    <Compile Include="Infrastructure\Impl\RepositoryTester.cs" />
+    <Compile Include="Core\Impl\MapperTester.cs" />
+    <Compile Include="Fakes\FakeMapper.cs" />
+    <Compile Include="Infrastructure\Factories\EventCustomerAggregateFactoryTester.cs" />
+    <Compile Include="Core\Impl\MedicalVendorEarningFactoryTester.cs" />
+    <Compile Include="Infrastructure\Factories\MedicalVendorInvoiceFactoryTester.cs" />
+    <Compile Include="Core\Domain\MedicalVendorPaymentTester.cs" />
+    <Compile Include="Infrastructure\Factories\PaymentInstrumentFactoryTester.cs" />
+    <Compile Include="Infrastructure\Marketing\GiftCertificateMapperTester.cs" />
+    <Compile Include="Infrastructure\Marketing\HospitalPartnerFactoryTester.cs" />
+    <Compile Include="Infrastructure\Medical\ResultArchiveParserTester.cs" />
+    <Compile Include="Infrastructure\Medical\TestMapperTester.cs" />
+    <Compile Include="Infrastructure\Medical\TestRepositoryTester.cs" />
+    <Compile Include="Infrastructure\Operations\PodMapperTester.cs" />
+    <Compile Include="Infrastructure\Users\UserRepositoryTester.cs" />
+    <Compile Include="UI\Controllers\TerritoryControllerTester.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=1.1.0.188, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a82054b837897c66, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FluentValidation.5.5.0.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\NUnit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.5.0.2, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.LinqSupportClasses.NET35, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SD.LLBLGen.Pro.LinqSupportClasses.NET35.dll</HintPath>
+    </Reference>
+    <Reference Include="SD.LLBLGen.Pro.ORMSupportClasses.NET20, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ca73b74ba4e3ff27, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SD.LLBLGen.Pro.ORMSupportClasses.NET20.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{A170C6CA-FC12-4074-A822-027DEE8218A1}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Falcon.Data.csproj">
+      <Project>{2E11C425-09CE-48D8-9A9B-58F3816A58E3}</Project>
+      <Name>Falcon.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DependencyResolution\DependencyResolution.csproj">
+      <Project>{1FD7D18D-EE02-4AB8-91E7-C4F40FB4C591}</Project>
+      <Name>DependencyResolution</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
+      <Project>{674848DB-9FE6-4C62-BA79-F77A69E1FFC0}</Project>
+      <Name>Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UI\UI.csproj">
+      <Project>{7e630385-fe3f-455e-b0dd-8975216ea564}</Project>
+      <Name>UI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Application\" />
+    <Folder Include="Core\Users\" />
+    <Folder Include="Infrastructure\CallCenter\" />
+    <Folder Include="Infrastructure\Impl\Order\" />
+    <Folder Include="Infrastructure\Mappers\" />
+    <Folder Include="Infrastructure\Medicare\" />
+    <Folder Include="Infrastructure\Sales\" />
+    <Folder Include="Infrastructure\Scheduling\" />
+    <Folder Include="Infrastructure\Users\Scheduling\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y ..\..\..\..\lib\PDfGenerator $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,128 @@
+﻿
+<div class="mainbodyouter" data-ng-controller="callroundqueuecController" us-spinner spinner-key="online-spinner">
+    <h3>{{HealthPlan}}</h3>
+    <h4>
+        Customer Queue: {{selectedCategory.text}}
+    </h4>
+    <div style="padding-bottom: 10px;">
+        <span ng-show="isDefaultSearch && selectedCategory.Category == CallQueueCategory.FillEventsHealthPlan">Showing list of customers within 25 miles of {{FillEventZipCode}}</span>
+        <span ng-show="isDefaultSearch==false && selectedCategory.Category == CallQueueCategory.FillEventsHealthPlan">Showing list of customers within <span ng-hide="CustomerFilters.Radius > 0">Exact search</span><span ng-show="CustomerFilters.Radius > 0">{{CustomerFilters.Radius}} miles</span> of {{FilterZipCode}}</span>
+    </div>
+    <div class="row" style="padding-top: 10px; padding-bottom: 10px;" ng-if="selectedCategory.Category == CallQueueCategory.CallRound">
+        <div class="col-xs-12 col-md-10"><call-round-criteria-view method="ClearData()" model="healthPlanCriteria"></call-round-criteria-view></div>
+    </div>
+    <div class="row" style="padding-top: 10px; padding-bottom: 10px;" ng-if="selectedCategory.Category == CallQueueCategory.NoShows">
+        <div class="col-xs-12 col-md-10"><no-show-criteria-view method="ClearData()" model="healthPlanCriteria"></no-show-criteria-view></div>
+    </div>
+    <div class="row" style="padding-top: 10px; padding-bottom: 10px;" ng-if="selectedCategory.Category == CallQueueCategory.ZipRadius">
+        <div class="col-xs-12 col-md-10"><zip-radius-criteria-view method="ClearData()" model="healthPlanCriteria"></zip-radius-criteria-view></div>
+    </div>
+    <div class="row" style="padding-top: 10px; padding-bottom: 10px;" ng-if="selectedCategory.Category == CallQueueCategory.UncontactedCustomers">
+        <div class="col-xs-12 col-md-10"><uncontacted-customer-criteria-view method="ClearData()" model="healthPlanCriteria"></uncontacted-customer-criteria-view></div>
+    </div>
+    <div id="list-filter">
+        <form name="filterCustomerForm" data-ng-submit="filterCustomer(filterCustomerForm)" novalidate autocomplete="off">
+            <h2> Filter Customer Prospects</h2>
+            <div style="padding-left: 5px; overflow: hidden;">
+                <div class="editor-column callQueueCustomer-Search-filter-19">
+                    <div class="small-text">Zip Code</div>
+                    <input type="text" class="small-text-box" placeholder="ZipCode" maxlength="5" ng-model="CustomerFilters.ZipCode" />
+                </div>
+                <div class="editor-column callQueueCustomer-Search-filter-14">
+                    <div class="small-text">Radius</div>
+                    <select style="height: 26px;" ng-model="CustomerFilters.Radius">
+                        <option ng-if="false"></option>
+                        <option value="0">Exact search</option>
+                        <option value="5">5 miles</option>
+                        <option value="10">10 miles</option>
+                        <option value="15">15 miles</option>
+                        <option value="20">20 miles</option>
+                        <option value="25">25 miles</option>
+                        <option value="50">50 miles</option>
+                    </select>
+                </div>
+                <div class="editor-column" ng-if="selectedCategory.Category == CallQueueCategory.MailRound" style="width: 20%;height: 26px;">
+                    <div class="small-text">Direct Mail Date</div>
+                    <select style="height: 26px;" name="repeatSelect" id="repeatSelect" ng-model="CustomerFilters.DirectMailDate" ng-if="selectedCategory.Category == CallQueueCategory.MailRound">
+                        <option value="">-- Direct Mail Date --</option>
+                        <option ng-repeat="option in DirectMailDateDropDown" ng-selected="CustomerFilters.DirectMailDate==option" value="{{option}}">{{option}}</option>
+                    </select>
+                </div>
+                <div class="editor-column" ng-show="selectedCategory.Category == CallQueueCategory.MailRound" style="width: 20%;">
+                    <div class="small-text">Direct Mail Start Date</div>
+                    <input type="text" ng-model="CustomerFilters.DirectMailStartDate" date-picker-simple="" />
+                </div>
+                <div class="editor-column" ng-if="selectedCategory.Category == CallQueueCategory.MailRound" style="width: 20%;">
+                    <div class="small-text">End Date</div>
+                    <input type="text" ng-model="CustomerFilters.DirectMailEndDate" date-picker-simple="" />
+                </div>
+            </div>
+            <div class="editor-column" style="padding-top: 10px; width: 40%; float: right; text-align:right;">
+                <a href="" ng-if="selectedCategory.Category != CallQueueCategory.FillEventsHealthPlan && selectedCategory.Category != CallQueueCategory.MailRound" ng-disabled="isPosted" ng-click="ManageCategory()">Change Category</a>
+                <a href="" ng-if="selectedCategory.Category == CallQueueCategory.MailRound" ng-disabled="isPosted" ng-click="ManageCategory()">Change Campaign</a>
+                <a href="" ng-if="selectedCategory.Category == CallQueueCategory.FillEventsHealthPlan" ng-disabled="isPosted" ng-click="ManageCategory()">Change Event</a> | <a href="" ng-disabled="isPosted" ng-click="clearFilter()">Clear</a> | <button type="submit" ng-disabled="isPosted">Search<i class="spin spin-right" ng-show="loader_filter"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <div class="main-container border-default">
+        <!--Customer Grid and Pager-->
+        <div class="event-search-list-wrap customer-list healthPlan-customer-list">
+            <paging-model model="PagingModel" url="GetPage(number)"></paging-model>
+            <table id="list-view" style="margin-top: 5px; margin-bottom: 5px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th class="customer-info">Customer Info</th>
+                        <th>Tags/CustomTags</th>
+                        <th class="history text-center">Call History</th>
+                        <th class="text-center" ng-hide="selectedCategory.Category == CallQueueCategory.FillEventsHealthPlan">Event(s)</th>
+                        <th class="Action text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="customer in data.Customers" ng-show="data.Customers != null && data.Customers.length > 0" ng-class-even="'alt-row'">
+                        <td class="customer-info">
+                            <span class="location-name no-margin host-name-transfrom" ng-bind="customer.FirstName + ' ' + (customer.MiddleName == null? '' : (customer.MiddleName + ' ')) + customer.LastName"></span>
+                            <br />
+                            <b>Zip Code: </b> <span ng-if="customer.ZipCode == null || customer.ZipCode == ''">N/A</span> <span ng-if="customer.ZipCode != null && customer.ZipCode != ''" ng-bind="customer.ZipCode"></span><br />
+                        </td>
+                        <td>
+                            <b>Tag: </b><span ng-bind="HealthPlanTag"></span>
+                            <br />
+                            <b>Custom Tags: </b> <span ng-if="customer.CustomCorporateTags == null || customer.CustomCorporateTags == ''">N/A</span> <span ng-if="customer.CustomCorporateTags != null && customer.CustomCorporateTags != ''" ng-bind="customer.CustomCorporateTags"></span>
+                        </td>
+                        <td class="history text-center">
+                            <div class="event-distance no-margin" ng-if="customer.CallHistory == null"> No Previous Calls</div>
+                            <div class="event-distance no-margin" ng-if="customer.CallHistory != null">
+                                <a class="call-history link-button" custom-tool-tip tool-tip-header="Call History" tool-tip-container="call-div">{{customer.CallHistory.length}} Previous Calls</a>
+                                <div class="call-div qtip" style="width:300px; display: none;">
+                                    <div ng-repeat="history in customer.CallHistory | orderBy:'-DateCreated'" class="callhistory-notes-border" ng-class="{ 'callhistory-notes-pading': $index > 0 }">
+                                        <div> On <span ng-bind="history.DateCreated | date: 'MM/dd/yyyy' "></span> @ <span ng-bind="history.DateCreated | date: 'shortTime' "></span></div>
+                                        <div ng-if="history.Notes != null">
+                                            <div><b>Notes:</b></div>
+                                            <div ng-repeat="item in history.Notes" ng-bind="item.Note"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center" ng-hide="selectedCategory.Category == CallQueueCategory.FillEventsHealthPlan"><a href="javascript:void(0)" ng-disabled="isPosted" ng-click="ShowEventPreview(customer)">View</a></td>
+                        <td class="Action text-center">
+                            
+                            <div>
+                                <a href="javascript:void(0)" ng-disabled="isPosted" ng-click="StartOutboundCall(customer)" ng-hide="customer.CallQueueCustomerId==callingCustomer">Start Call</a>
+                                <a href="javascript:void(0)" ng-disabled="isPosted" ng-show="customer.CallQueueCustomerId==callingCustomer"><i class="spin"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr ng-show="data.Customers == null || data.Customers.length <= 0">
+                        <td colspan="7" class="text-center"><h4>No Records Found!</h4></td>
+                    </tr>
+                </tbody>
+            </table>
+            <paging-model model="PagingModel" url="GetPage(number)"></paging-model>
+        </div>
+
+    </div>
+
+</div>

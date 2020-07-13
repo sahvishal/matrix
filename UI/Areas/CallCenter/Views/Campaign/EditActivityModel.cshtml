@@ -1,0 +1,32 @@
+@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.CallCenter.ViewModels
+@model CampaignActivityEditModel
+@{
+    Layout = null;
+}
+
+@Html.HiddenFor(m => m.ActivityEditMode)
+@if (Model != null && Model.FeedbackMessage != null)
+{
+    @Html.Partial("Message", Model.FeedbackMessage)
+}
+@Html.Partial("CampaignActivity", Model)
+<div class="btnrow">
+    <input type="submit" class="btn campaign-activity-toggle-btn" style="float: right;margin-right: 10px;display: block" value="Update" />
+    <a href="javascript:void(0)" onclick="closePopup();" style="float: right;padding-right: 10px;padding-top: 6px">Close</a>
+</div>
+<div class="campaign-activity-toggle-btn" style="display: none; text-align: right;">
+    <img src="/App/Images/loading.gif" alt="" />Saving
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        @if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+        {
+            <text>                
+        SavedSucessFully();
+        parent.location.reload(true);
+            </text>
+        }
+    });
+</script>

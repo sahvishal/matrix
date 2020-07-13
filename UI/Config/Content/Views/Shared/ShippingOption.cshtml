@@ -1,0 +1,52 @@
+﻿@model Falcon.App.Core.Marketing.ViewModels.OrderPlaceEditModel
+
+@{
+    var shippingOptions = Model.AllShippingOptions.ToList();
+    if(Model.EventType == Falcon.App.Core.Scheduling.Enum.EventType.Corporate)
+    {
+       if(shippingOptions.Where(so=>so.ShippingOptionId>0).Any())
+       {
+           shippingOptions.RemoveAll(so => so.ShippingOptionId == 0);
+       }
+    }
+}
+
+<div class="table_box mt15">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" id="shippingoptions-list">
+        <tr>
+            <th colspan="2">Select how you would like to receive your results</th>
+        </tr>
+        <tr>
+            @foreach (var item in shippingOptions)
+            {
+                <td class="p15 item-block" @(item.ShippingOptionId > 0 ? "width=55%":"") valign="top">
+                    @if (item.ShippingOptionId > 0)
+                    {                    
+                        <h1 class="txt-green"><img src="/Config/Content/Images/shipping_mail_icon.png" width="38" height="38" alt="" /><strong>&nbsp;Mail</strong></h1>
+                    }
+                    else
+                    {
+                        <h1 class="txt-green"><img src="/Config/Content/Images/shipping_onlin_icon.png" width="38" height="38" alt="" /> <strong>Online</strong></h1>
+                    }
+                    <h3 class="txt-grey">
+                        @item.Description
+                    </h3>
+                    <div class="mt10">
+                        <h3 class="left-float price">$ @item.Price.ToString("0.00")</h3>
+                        <div class="left-float price_btn">
+                            <input type="image" class="select-button" onclick="onClick_SelectShippingOption($(this), '@item.ShippingOptionId'); return false;" @(item.ShippingOptionId == Model.SelectedShippingOptionId ? "style=display:none" : "") 
+                                src="/Config/Content/Images/select_uncheck_btn.png" />
+                            <input type="image" class="select-button-selected" onclick="return false;" @(item.ShippingOptionId != Model.SelectedShippingOptionId ? "style=display:none" : "") 
+                                src="/Config/Content/Images/selected_check_btn.png" />
+                        </div>
+                        <div class="clearfix"></div>
+                        <input type="text" style="display:none;" class="item-id" value="@item.ShippingOptionId" />
+                        <input type="text" style="display:none;" class="item-name" value="@item.Name" />
+                        <input type="text" style="display:none;" class="item-price" value="@item.Price.ToString("0.00")" />
+                    </div>
+                </td>
+            }
+        </tr>        
+    </table>
+</div>
+

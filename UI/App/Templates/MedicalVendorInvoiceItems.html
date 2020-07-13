@@ -1,0 +1,39 @@
+﻿<table id="MedicalVendorInvoiceItemTable" class="divgrid_clnew" cellspacing="3" cellpadding="0" width="100%" style="font-size: smaller"> 
+    <tr>
+        <th style="white-space:nowrap;">
+            <b>Review Date</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Event Name</b> 
+        </th>                        
+        <th style="white-space:nowrap;">
+            <b>Customer Name</b>
+        </th>
+        <th style="white-space:nowrap;">
+            <b>Package Name</b>
+        </th>              
+        <th class="amt">
+            <b>Amount</b>
+        </th>
+    </tr>
+    {#foreach $T as MedicalVendorInvoiceItem}
+    <tr>
+        <td style="white-space:nowrap;">
+           {DateDeserialize($T.MedicalVendorInvoiceItem.ReviewDate).format("shortDate")}
+        </td>
+        <td style="white-space:nowrap;">
+           {$T.MedicalVendorInvoiceItem.EventName}
+        </td>                        
+        <td style="white-space:nowrap;">
+            {$T.MedicalVendorInvoiceItem.CustomerName}
+        </td>
+        <td style="white-space:nowrap;">
+            {$T.MedicalVendorInvoiceItem.PackageName}
+        </td>
+        
+        <td style="white-space:nowrap;" class="amt">
+            {FormatCurrency($T.MedicalVendorInvoiceItem.MedicalVendorAmountEarned)}
+        </td>                    
+    </tr>  
+    {#/for}                                              
+</table>

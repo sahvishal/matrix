@@ -1,0 +1,25 @@
+﻿<h3>Breakdown by Pod</h3>
+<table id="PodViewDataTemplateTable" class="divgrid_clnew">
+    <thead>
+        <tr>
+            <th>Pod Name</th>
+            <th># Evaluations</th>
+            <th class="amt" style="text-align: right;">Amount Earned</th>
+        </tr>
+    </thead>
+    <tbody>
+        {#foreach $T as PodViewDataItem}
+        <tr>
+            <td style="white-space:nowrap;">
+               {$T.PodViewDataItem.Pod.PodName}
+            </td>
+            <td style="white-space:nowrap;">
+               {$T.PodViewDataItem.NumberOfEvaluations}
+            </td>                        
+            <td class="amt" style="white-space:nowrap;text-align: right;">
+                {FormatCurrency($T.PodViewDataItem.AmountEarned)}
+            </td>
+        </tr>  
+        {#/for} 
+    </tbody>
+</table>

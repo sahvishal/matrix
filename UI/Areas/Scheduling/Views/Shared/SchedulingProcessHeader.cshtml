@@ -1,0 +1,285 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@model Falcon.App.Core.Scheduling.ViewModels.OnlineSchedulingProcessAndCartViewModel
+@*@if (!string.IsNullOrEmpty(Model.SponsoredBy))
+    {
+        <div style="float: left;">
+            <strong>Sponsored By: </strong><b>@Model.SponsoredBy </b>
+        </div>
+    }*@
+<div class="navigation">
+    @{
+        var imagePathUrl = "/Config/Content/Images/moving_bus_img.png";
+    }
+    @if (!File.Exists(Server.MapPath(imagePathUrl)))
+    {
+        <div class="flowstep-tab-container">
+            <div style="width:180px;" class='@(Model.CurrentStep == OnlineSchedulingProcessStep.LocationAndAppointmentSlot ? "flowstep-tab-title active-title" : "flowstep-tab-title")'>
+                Step 1
+            </div>
+            <div class='@(Model.CurrentStep == OnlineSchedulingProcessStep.Package ? "flowstep-tab-title active-title" : "flowstep-tab-title")'>
+                Step 2
+            </div>
+            <div class='@(Model.CurrentStep == OnlineSchedulingProcessStep.Info ? "flowstep-tab-title active-title" : "flowstep-tab-title")'>
+                Step 4
+            </div>
+            <div class='@(Model.CurrentStep == OnlineSchedulingProcessStep.Checkin ? "flowstep-tab-title active-title" : "flowstep-tab-title")'>
+                Step 5
+            </div>
+        </div>
+    }
+    else
+    {
+        <ul class="nav">
+            <li @(Model.CurrentStep == OnlineSchedulingProcessStep.LocationAndAppointmentSlot ? "class=moving_bus" : "")>
+                <a href="javascript:void(0);" id="tab-location" @(Model.CurrentStep == OnlineSchedulingProcessStep.LocationAndAppointmentSlot ? "class=active" : "")>
+                    <span class="number">1</span>Location
+                </a>
+            </li>
+            <li @(Model.CurrentStep == OnlineSchedulingProcessStep.Package ? "class=moving_bus" : "")>
+                <a href="javascript:void(0);" id="tab-package" @(Model.CurrentStep == OnlineSchedulingProcessStep.Package ? "class=active" : "")>
+                    <span class="number">2</span>Packages &amp;
+                    Time
+                </a>
+            </li>
+            <li @(Model.CurrentStep == OnlineSchedulingProcessStep.Info ? "class=moving_bus" : "")>
+                <a href="javascript:void(0);" id="tab-info" @(Model.CurrentStep == OnlineSchedulingProcessStep.Info ? "class=active" : "")><span class="number">3</span>Info &amp; Payment</a>
+            </li>
+            <li @(Model.CurrentStep == OnlineSchedulingProcessStep.Checkin ? "class=moving_bus" : "")>
+                <a href="javascript:void(0);" id="tab-checkin" @(Model.CurrentStep == OnlineSchedulingProcessStep.Checkin ? "class=active" : "")><span class="number">4</span>Health History</a>
+            </li>
+            <li @(Model.CurrentStep == OnlineSchedulingProcessStep.Confirmation ? "class=moving_bus" : "")>
+                <a href="javascript:void(0);" id="tab-confirmation" @(Model.CurrentStep == OnlineSchedulingProcessStep.Confirmation ? "class=active" : "")><span class="number">5</span>Confirmation</a>
+            </li>
+            <div class="clearfix">
+            </div>
+        </ul>
+    }
+    @Html.HiddenFor(m => m.CartGuid)
+    @Html.HiddenFor(m => m.CustomerId)
+    @Html.HiddenFor(m => m.ScreenResolution)
+
+</div>
+<div class="time_expire_box txt-align-center" id="appointmentcounter" style="display: none;">
+    <h5 class="txt-dkgrey">
+        Your appointment for <span id="expirycounter-header-appt"><strong>@(Model.AppointmentTime.HasValue ? Model.AppointmentTime.Value.ToShortTimeString() : "")</strong></span> <br />
+        is temporarily booked.
+    </h5>
+    <h2>Expires in <span id="expirytime-minutes"></span>:<span id="expirytime-seconds"></span> minutes</h2>
+</div>
+<div id="appointment-expiry-confirmation" class="jdbox" style="display: none;">
+    <p style="padding: 20px 10px; margin: 0px; font-size: 10pt; background: #ffffff;">
+        Appointment slot you have booked is about to expire. Please choose to 'Extend' or
+        it will Expire in due time!
+    </p>
+    <p style="text-align: right; margin: 5px;" class="expiry-confirmation-btn-toggle">
+        <input type="button" value="Extend" class="action-button" style="width: 100px; min-width: 80px;"
+               onclick="raiseCommandforExtension();" />
+        <input type="button" value="Close" class="action-button" style="width: 100px; min-width: 80px;"
+               onclick="$('#appointment-expiry-confirmation').dialog('close');" />
+    </p>
+    <p style="text-align: right; display: none;" class="expiry-confirmation-btn-toggle">
+        <img src="/App/Images/loading.gif" alt="" />
+    </p>
+</div>
+<script language="javascript" type="text/javascript">
+
+    function goToLocationPage(){
+        var currentHost = window.location.host;
+        window.location.href = "http://" + currentHost + "/Scheduling/Online/LocationAndAppointmentSlot?guid=@Model.CartGuid";
+    }
+
+    function goToPackagePage(){
+        var currentHost = window.location.host;
+        window.location.href = "http://" + currentHost + "/Scheduling/Online/Package?guid=@Model.CartGuid";
+    }
+
+    function goToInfoPage(){
+        var currentHost = window.location.host;
+        window.location.href = "http://" + currentHost + "/Scheduling/Online/Info?guid=@Model.CartGuid";
+    }
+
+    $(document).ready(function () {
+
+        $("#appointment-expiry-confirmation").dialog({ width: 380, autoOpen: false, title: 'Extend Booking!', modal: true, resizable: false, draggable: true });
+        $("#appointment-expiry-confirmation").bind('dialogclose', function(){ isUsedAppointmentSlotExpiryExtension = true; });
+
+
+
+        @if (string.IsNullOrEmpty(Model.CartGuid))
+        {
+            <text>
+        $("#CartGuid").val('@System.Guid.NewGuid().ToString()');
+        </text>
+        }
+
+        @if (Model.CurrentStep != OnlineSchedulingProcessStep.LocationAndAppointmentSlot)
+        {
+            <text>
+        $("#tab-location").addClass("box-cursor").click(function(){
+            goToLocationPage();
+        });
+        </text>
+        }
+
+        @if (Model.EventId != null && Model.EventId.Value > 0)
+        {
+            if (Model.CurrentStep != OnlineSchedulingProcessStep.Package)
+            {
+                <text>
+        $("#tab-package").addClass("box-cursor").click(function(){
+            goToPackagePage();
+        });
+        </text>
+            }
+
+
+            if (Model.CurrentStep != OnlineSchedulingProcessStep.Info)
+            {
+                <text>
+        //$("#tab-info").addClass("box-cursor").click(function(){
+        //    goToInfoPage();
+        //});
+        </text>
+            }
+        }
+
+        @if (Model.AppointmentId.HasValue && ((int)Model.CurrentStep < (int)OnlineSchedulingProcessStep.Checkin))
+        {
+            <text>
+        getAppointmentSlotExpiryTimer('@Model.AppointmentId.Value');
+        </text>
+        }
+
+        $("input[type=hidden][id*='ScreenResolution']").val(screen.width + ", " + screen.height);
+    });
+
+    function getGuid() {
+        return $("#CartGuid").val();
+    }
+
+
+    var hideShowEffect = "higlight";
+    var turnCounterOff = false;
+    var _callBackonAppointmentExpiry = null;
+
+    function setCallBackonAppointmentExpiry(methodRef){
+        _callBackonAppointmentExpiry = methodRef;
+    }
+
+    function getAppointmentSlotExpiryTimer(appointmentId){
+
+        $("#appointmentcounter").hide(hideShowEffect);
+        $("#appointmentexpired").hide(hideShowEffect);
+        turnCounterOff = true;
+        setTimeout("getTimer(" + appointmentId + ")", 1000);
+    }
+
+
+    function getTimer(appointmentId){
+        $.ajax({    type: 'Get',
+            url: '/Scheduling/Online/GetAppointmentTimeExpirationTime?cartGuid=@Model.CartGuid&appointmentId=' + appointmentId,
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8", data: '{}',
+            success : function(result){
+                setAppointmentTimerClock(appointmentId, result);
+            },
+            error : function(a, b, c){
+
+            }
+        });
+    }
+
+    function setAppointmentTimerClock(appointmentId, jsonResult)
+    {
+        if(jsonResult.IsBooked){
+            $("#appointmentcounter").show(hideShowEffect);
+            $("#expirycounter-header-appt").text(jsonResult.AppointmentTime);
+            turnCounterOff = false;
+            setTimer(appointmentId, jsonResult.Minutes, jsonResult.Seconds);
+        }
+        else
+        { //debugger;
+            $("#appointmentexpired").show(hideShowEffect);
+            $("#appointmentexpired").text(jsonResult.Message);
+            $("#appointment-expiry-confirmation").dialog("close");
+            if(_callBackonAppointmentExpiry != null && typeof(_callBackonAppointmentExpiry) == "function")
+                _callBackonAppointmentExpiry();
+        }
+    }
+
+    var isUsedAppointmentSlotExpiryExtension = @(Model.IsUsedAppointmentSlotExpiryExtension == null ? "null" : (Model.IsUsedAppointmentSlotExpiryExtension.Value ? "true" : "false"));
+    var appointmentIdforExtension = 0;
+
+    function setTimer(appointmentId, minutes, seconds){
+        minutes = (minutes == null ? 0 : Number(minutes));
+        seconds = (seconds == null ? 0 : Number(seconds));
+
+        if(turnCounterOff) return;
+
+        if(minutes < 1 && seconds < 1){
+            getAppointmentSlotExpiryTimer(appointmentId);
+            return;
+        }
+
+
+        if(minutes < 10 ){
+            $("#expirytime-minutes").text(minutes);
+        }
+        else
+        {
+            $("#expirytime-minutes").text(minutes);
+        }
+        minutes = (minutes < 1 ? 0 : ( seconds == 0 ? (minutes - 1) : minutes));
+
+        if(seconds < 10 ){
+            $("#expirytime-seconds").text("0" + seconds);
+        }
+        else
+        {
+            $("#expirytime-seconds").text(seconds);
+        }
+
+        seconds = seconds < 1 && minutes > 0 ? 59 : seconds - 1;
+
+        setTimeout("setTimer(" + appointmentId + ", " + minutes + "," + seconds + ")", 1000);
+
+
+        if(isUsedAppointmentSlotExpiryExtension == null){
+            if(minutes == 1 && seconds < 3 || minutes == 0){
+                $("#appointment-expiry-confirmation").dialog("open");
+                appointmentIdforExtension = appointmentId;
+            }
+        }
+    }
+
+    function raiseCommandforExtension(){
+        $(".expiry-confirmation-btn-toggle").toggle();
+        var guid = getGuid();
+        turnCounterOff = true;
+        isUsedAppointmentSlotExpiryExtension = true;
+
+        $.ajax({    type: 'Get',
+            url: '/Scheduling/Online/ExtendAppointment?guid=' + guid + '&appointmentId=' + appointmentIdforExtension,
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8", data: '{}',
+            success : function(result){
+                setTimeout("getTimer(" + appointmentIdforExtension + ")", 1000);
+                $(".expiry-confirmation-btn-toggle").toggle();
+                $("#appointment-expiry-confirmation").dialog("close");
+                isUsedAppointmentSlotExpiryExtension = null;
+            },
+            error : function(a, b, c){
+                $(".expiry-confirmation-btn-toggle").toggle();
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        @if (!string.IsNullOrWhiteSpace(Model.CheckoutPhoneNumber))
+        {
+            <text>$(".toll-free-number").text('@Model.CheckoutPhoneNumber')</text>
+        }
+    });
+
+
+</script>

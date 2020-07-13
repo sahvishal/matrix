@@ -1,0 +1,95 @@
+﻿@using Falcon.App.Core.Finance.ViewModels;
+@model HealthPlanRevenueEventListModel
+@{
+    ViewBag.Title = "Health Plan Revenue Events";
+}
+@if (Model.Collection != null && Model.Collection.Any())
+{
+    <div style="float: left; width: 100%; margin-right: 5px; padding: 1%; ">
+        @if (Model != null && Model.Collection != null && Model.Collection.Any())
+        {
+            <table id="list-view">
+                <tr>
+                    <th>
+                        EventId
+                    </th>
+                    <th>
+                        Location
+                    </th>
+                    <th>
+                        Screened Customers
+                    </th>
+                </tr>
+                @foreach (var item in Model.Collection)
+                {
+                    <tr>
+                        <td>
+                            @item.EventId
+                        </td>
+                        <td>
+                            @if (item.Location != null)
+                            {
+                              @Html.Raw(item.Location.ToString())
+                            }
+                            else
+                            {
+                                @Html.Raw("N/A")
+                            }
+
+                        </td>
+                        <td>
+                            @item.ScreenedCustomers
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <div>
+                <h2>
+                    No Records found.
+                </h2>
+            </div>
+        }
+    </div>
+    <div class="pager">
+        <div class="record-count">
+            Total Record(s) : @Model.PagingModel.NumberOfItems
+        </div>
+        @if (Model.PagingModel.PageCount > 1)
+        {
+        <div class="page-nav">
+            Pages:
+            @if (Model.PagingModel.CurrentPage > 1)
+                {
+                <a href="javascript:void(0);" onclick="setPage(1)" class="first">&laquo; First</a>
+                <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.CurrentPage - 1)')" class="previous">&lsaquo; Previous</a>
+                }
+
+            @foreach (int pageNumber in Model.PagingModel.GetPages())
+                {
+                    if (pageNumber > 1 && !Model.PagingModel.IsPageIncluded(pageNumber - 1))
+                    {
+                <span class="elide">...</span>
+                    }
+                <a href="javascript:void(0);" onclick="setPage('@pageNumber')" class="page @(Model.PagingModel.CurrentPage == pageNumber ? "current" : "") ">@pageNumber</a>
+                }
+
+            @if (Model.PagingModel.CurrentPage < Model.PagingModel.PageCount)
+                {
+                <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.CurrentPage + 1)')" class="next">Next &rsaquo;</a>
+                <a href="javascript:void(0);" onclick="setPage('@(Model.PagingModel.PageCount)')" class="last">Last &raquo;</a>
+                }
+        </div>
+        }
+    </div>
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}

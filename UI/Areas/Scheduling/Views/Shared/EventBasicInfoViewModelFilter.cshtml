@@ -1,0 +1,106 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@model EventBasicInfoViewModelFilter
+        
+@{
+    var loggedInRole = IoC.Resolve<ISessionContext>().UserSession.CurrentOrganizationRole.RoleId;
+}
+<h2>
+    Search Records
+    <span style="float:right"> Preset Searches: <a href="#" onclick="clickToday(); return false;">Today </a>| <a href="#" onclick="clickThisWeek(); return false;">This Week </a> </span>
+    </h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 16%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.DateFrom, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.DateTo, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.Name)
+        </div>
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.Pod)
+        </div>
+        @Html.TextBoxFor(m => m.Pod)
+    </div>
+    <div class="editor-column" style="width: 14%; float: right; ">
+        <div class="small-text">
+            Event Id
+        </div>
+        @Html.TextBoxFor(m => m.EventId)
+    </div>
+</div>
+<div style="padding-left: 5px; padding-top:5px; overflow: hidden;">
+    <div class="editor-column" style="width: 16%">
+        <div class="small-text">
+            <b>Location </b>State
+        </div>
+        @Html.TextBoxFor(m => m.State)
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            City
+        </div>
+        @Html.TextBoxFor(m => m.City)
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Zip
+        </div>
+        @Html.TextBoxFor(m => m.ZipCode)
+    </div>
+    <div class="editor-column" style="width: 11%">
+        <div class="small-text">
+            Radius
+        </div>
+        @Html.DropDownListFor(m => m.Radius, Falcon.App.UI.HtmlHelpers.DropDownHelper.RadiusRanges())
+    </div>
+    @if (loggedInRole != (long)Falcon.App.Core.Enum.Roles.CallCenterRep)
+    {
+        <div class="editor-column" style="width: 19%">
+            <div class="small-text">
+                Sponsor:
+            </div>
+            @Html.DropDownListFor(m => m.AccountId, DropDownHelper.GetCorporateAccounts(), new { @style = "width:95%;" })
+        </div>
+    }
+    <div class="editor-column" style="padding-top: 10px; width: 14%; float: right; text-align: right;">
+        @Html.ActionLink("Clear", "Index", "Event") | @Html.SubmitButton("Search")
+    </div>
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+    function clickToday() {
+        clearAll();
+        $("input#DateFrom").val('@DateTime.Now.ToShortDateString()');
+        $("input#DateTo").val('@DateTime.Now.ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clickThisWeek() {
+        clearAll();
+        $("input#DateFrom").val('@DateTime.Now.AddDays(-1 * (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("input#DateTo").val('@DateTime.Now.AddDays(6 - (int)DateTime.Now.DayOfWeek).ToShortDateString()');
+        $("#Submit").click();
+    }
+
+    function clearAll() {
+        $("input[type=text]").val("");
+    }
+
+</script>

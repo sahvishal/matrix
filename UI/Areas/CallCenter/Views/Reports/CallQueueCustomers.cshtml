@@ -1,0 +1,585 @@
+﻿@using Falcon.App.Core.CallQueues.Enum
+@using Falcon.App.Core.Extensions
+@using Falcon.App.UI.HtmlHelpers
+@using System;
+@using System.Linq;
+@model Falcon.App.Core.CallQueues.ViewModels.CallQueueCustomersReportModelListModel
+@{
+    ViewBag.Title = "Call Queue Customers Report";
+}
+<h1>
+    @Model.HealthPlanName
+</h1>
+
+<h2>
+    CallQueue: @Model.CallQueueName
+</h2>
+<div style="padding-left: 10px;padding-top: 5px;padding-bottom: 5px;">
+    @{
+        var isLangaugeBarrierQueue = false;
+    }
+    @if (Model != null && Model.CallQueueCriteria != null)
+    {
+        var category = Model.CallQueueCategory;
+        var criteria = Model.CallQueueCriteria;
+        isLangaugeBarrierQueue = Model.CallQueueCategory == HealthPlanCallQueueCategory.LanguageBarrier;
+        if (category == HealthPlanCallQueueCategory.FillEventsHealthPlan)
+        {
+            <b> Showing list of all events whose booking percentage is less than <span>@Model.CallQueueCriteria.Percentage.ToString("##")%</span> and are scheduled in next @Model.CallQueueCriteria.NoOfDays @(@Model.CallQueueCriteria.NoOfDays > 1 ? "days" : "day").</b>
+        }
+        if (category == HealthPlanCallQueueCategory.CallRound)
+        {
+            var roundOfCallText = DropDownHelper.GetCallRoundRoundOfCalls().FirstOrDefault(x => x.Value == criteria.RoundOfCalls.ToString());
+            var roundRoundNumberOfDaysText = DropDownHelper.GetCallRoundNumberOfDays().FirstOrDefault(x => x.Value == criteria.NoOfDays.ToString());
+
+            <b>Showing list of all customers @(criteria.RoundOfCalls > 0 ? "having" : "") @(roundOfCallText != null ? roundOfCallText.Text : "")  @(criteria.RoundOfCalls > 0 ? "number of outbound calls completed" : "") in last @(roundRoundNumberOfDaysText != null ? roundRoundNumberOfDaysText.Text : "")</b>
+        }
+        else if (category == HealthPlanCallQueueCategory.NoShows && criteria.StartDate != null)
+        {
+            <b>
+                Showing list of all customer been marked as No Show
+                @(criteria.EndDate != null ? " between" : " from") @criteria.StartDate.Value.ToShortDateString()
+                @if (criteria.EndDate != null)
+                {
+                    <text>and @criteria.EndDate.Value.ToShortDateString() </text>
+                }
+
+            </b>
+        }
+        else if (category == HealthPlanCallQueueCategory.UncontactedCustomers)
+        {
+            <text>Showing list of all customer who have never been contacted in last one year.</text>
+        }
+
+    }
+
+
+</div>
+<style type="text/css">
+    .stats-box .header {
+        padding: 0.5%;
+        float: left;
+        background-color: #efefef;
+        width: 99%;
+        display: block;
+    }
+
+    .stats-box .row {
+        margin: 5px 0;
+        float: left;
+        clear: both;
+        width: 98%;
+        padding-left: 5px;
+    }
+
+        .stats-box .row .label {
+            float: left;
+            padding-right: 8px;
+            font-weight: bold;
+        }
+
+    .two-column {
+        width: 48%;
+        float: left;
+    }
+
+    .three-column {
+        width: 33%;
+        float: left;
+    }
+
+    .three-column-2 {
+        width: 29%;
+        float: left;
+    }
+
+    .firstColumn-2 {
+        width: 40%;
+        float: left;
+    }
+
+</style>
+
+<script src="/Scripts/reportexportqueue.js"></script>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+
+<div id="list-filter">
+    @{Html.BeginForm("CallQueueCustomers", "Reports", FormMethod.Get);}
+    @Html.Partial("OutboundCallQueueFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+<div id="CustomercallQueueReports">
+    @if (Model.RejectedCustomersStats != null)
+    {
+        <div class="div-with-roundborder stats-box" style="width: 99%; margin: 10px 0;">
+            <div class="header">
+                <div class="editor-column-twoinrow">
+                    <h4>
+                        Customers not in Call Queue
+                    </h4>
+                </div>
+            </div>
+            <div id="stats-div">
+                <div class="row">
+                    <div style="float: left;width: 48%;">
+                        <b>Expected Customer (In Queue):</b> @Model.RejectedCustomersStats.TotalCustomerInCallQueue
+                    </div>
+
+                    <div style="float: right;padding-right: 10px;">
+                        <b>Actual Customers (In Queue): </b>@(!Model.Collection.IsNullOrEmpty() ? Model.PagingModel.NumberOfItems : 0)
+                    </div>
+                </div>
+                <div class="row" style="clear: both; ">
+                    <span class="label">Excluded Customers: </span>@Model.RejectedCustomersStats.CustomersNotInQueue
+                    <div class="row " style="border: solid 1px gray; margin-left: 10px; background-color: #E5ECF3;border-radius: 4px; ">
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Max Contact : </span> @if (Model.RejectedCustomersStats.MaxAttempt > 0)
+                                { <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.MaxAttempt')">@Model.RejectedCustomersStats.MaxAttempt</a>}
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Not Eligible : </span>
+                                @if (Model.RejectedCustomersStats.NotEligible > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NotEligible')">@Model.RejectedCustomersStats.NotEligible</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Do Not Contact : </span>
+                                @if (Model.RejectedCustomersStats.DoNotContact > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.DoNotContact')">@Model.RejectedCustomersStats.DoNotContact</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Home Visit Requested : </span>
+                                @if (Model.RejectedCustomersStats.HomeVisitRequested > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.HomeVisitRequested')">@Model.RejectedCustomersStats.HomeVisitRequested</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                           
+                            <div class="three-column-2">
+                                <span class="label">Call Skipped : </span>
+                                @if (Model.RejectedCustomersStats.CallSkipped > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.CallSkipped')">@Model.RejectedCustomersStats.CallSkipped</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">No Phone : </span>
+                                @if (Model.RejectedCustomersStats.NoPhone > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NoPhone')">@Model.RejectedCustomersStats.NoPhone</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Appointment Booked : </span>
+                                @if (Model.RejectedCustomersStats.AppointmentBooked > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.AppointmentBooked')">@Model.RejectedCustomersStats.AppointmentBooked</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Deceased/Dead : </span>
+                                @if (Model.RejectedCustomersStats.Deceased > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.Deceased')">@Model.RejectedCustomersStats.Deceased</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Do Not Call Activity :</span>
+                                @if (Model.RejectedCustomersStats.Activity > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.DoNotCallActivity')">@Model.RejectedCustomersStats.Activity</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Mobility Issue: No Home Visit Requested : </span>
+                                @if (Model.RejectedCustomersStats.MobilityIssue > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.MobilityIssue')">@Model.RejectedCustomersStats.MobilityIssue</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Debilitating Disease : </span>
+                                @if (Model.RejectedCustomersStats.DebilitatingDisease > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.DebilitatingDisease')">@Model.RejectedCustomersStats.DebilitatingDisease</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Not Interested : </span>
+                                @if (Model.RejectedCustomersStats.NotInterested > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NotInterested')">@Model.RejectedCustomersStats.NotInterested</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Mobility Issues: Left Message With Other : </span>
+                                @if (Model.RejectedCustomersStats.MobilityIssuesLeftMessageWithOther > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.MobilityIssues_LeftMessageWithOther')">@Model.RejectedCustomersStats.MobilityIssuesLeftMessageWithOther</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Left Voice Message : </span>
+                                @if (Model.RejectedCustomersStats.LeftVoiceMessage > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.LeftVoiceMessage')">@Model.RejectedCustomersStats.LeftVoiceMessage</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Call Back Later : </span>
+                                @if (Model.RejectedCustomersStats.CallBackLater > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.CallBackLater')">@Model.RejectedCustomersStats.CallBackLater</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">In Long Term Care/Nursing Home : </span>
+                                @if (Model.RejectedCustomersStats.InLongTermCareNursingHome > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.InLongTermCareNursingHome')">@Model.RejectedCustomersStats.InLongTermCareNursingHome</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Recently Saw Doc : </span>
+                                @if (Model.RejectedCustomersStats.RecentlySawDoc > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.RecentlySawDoc')">@Model.RejectedCustomersStats.RecentlySawDoc</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">No Events In Area : </span>
+                                @if (Model.RejectedCustomersStats.NoEventsInArea > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NoEventsInArea')">@Model.RejectedCustomersStats.NoEventsInArea</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">No Longer On Insurance Plan : </span>
+                                @if (Model.RejectedCustomersStats.NoLongeronInsurancePlan > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NoLongeronInsurancePlan')">@Model.RejectedCustomersStats.NoLongeronInsurancePlan</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            
+                            <div class="three-column-2">
+                                <span class="label">Transportation Issue : </span>
+                                @if (Model.RejectedCustomersStats.TransportationIssue > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.TransportationIssue')">@Model.RejectedCustomersStats.TransportationIssue</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Appointment Cancellation : </span>
+                                @if (Model.RejectedCustomersStats.AppointmentCancelledDate > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.AppointmentCancelledDate')">@Model.RejectedCustomersStats.AppointmentCancelledDate</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Incorrect Phone Number : </span>
+                                @if (Model.RejectedCustomersStats.IncorrectPhone > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.IncorrectPhone')">@Model.RejectedCustomersStats.IncorrectPhone</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Call Initiated : </span>
+                                @if (Model.RejectedCustomersStats.CallInitiated > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.CallInitiated')">@Model.RejectedCustomersStats.CallInitiated</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Moved Relocated : </span>
+                                @if (Model.RejectedCustomersStats.MovedRelocated > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.MovedRelocated')">@Model.RejectedCustomersStats.MovedRelocated</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Will Speak With Physician : </span>
+                                @if (Model.RejectedCustomersStats.WillSpeakWithPhysician > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.WillSpeakWithPhysician')">@Model.RejectedCustomersStats.WillSpeakWithPhysician</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Date Time Conflict : </span>
+                                @if (Model.RejectedCustomersStats.DateTimeConflict > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.DateTimeConflict')">@Model.RejectedCustomersStats.DateTimeConflict</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">No Answer : </span>
+                                @if (Model.RejectedCustomersStats.NoAnswer > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NoAnswer')">@Model.RejectedCustomersStats.NoAnswer</a>
+                                }
+                                else
+                                {<span>0</span>}
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Outcome - No Events In Area : </span>
+                                @if (Model.RejectedCustomersStats.NoEventsInAreaCallStatus > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NoEventsInAreaCallStatus')">@Model.RejectedCustomersStats.NoEventsInAreaCallStatus</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Left Message With Others : </span>
+                                @if (Model.RejectedCustomersStats.LeftMessageWithOthers > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.LeftMessageWithOthers')">@Model.RejectedCustomersStats.LeftMessageWithOthers</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                                <div class="three-column-2">
+                                    <span class="label">No Show : </span>
+                                    @if (Model.RejectedCustomersStats.NoShowCustomers > 0)
+                                    {
+                                        <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NoShowMarkDate')">@Model.RejectedCustomersStats.NoShowCustomers</a>
+                                    }
+                                    else
+                                    {<span>0</span>}
+                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="firstColumn-2">
+                                <span class="label">Member not mammo available, no events in area : </span>
+                                @if (Model.RejectedCustomersStats.MemberNotMammoAvailableNoEventsInAreaCount > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.DeclinedMemberNotMammoAvailableNoEventsInArea')">@Model.RejectedCustomersStats.MemberNotMammoAvailableNoEventsInAreaCount</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Not interested in Mammogram : </span>
+                                @if (Model.RejectedCustomersStats.NotinterestedInMammogramCount > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.DeclinedMammoNotinterestedInMammogram')">@Model.RejectedCustomersStats.NotinterestedInMammogramCount</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                            <div class="three-column-2">
+                                <span class="label">Invalid Number : </span>
+                                @if (Model.RejectedCustomersStats.InvalidNumbers > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.InvalidNumber')">@Model.RejectedCustomersStats.InvalidNumbers</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>
+                        </div>
+                        <div class="row">
+                            @if (!isLangaugeBarrierQueue)
+                            {
+                                <div class="firstColumn-2">
+                                    <span class="label">Language Barrier : </span>
+                                    @if (Model.RejectedCustomersStats.LanguageBarrier > 0)
+                                    {
+                                        <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.LanguageBarrier')">@Model.RejectedCustomersStats.LanguageBarrier</a>
+                                    }
+                                    else
+                                    {<span>0</span>}
+                                </div>
+                            }
+                            <div class="three-column-2">
+                                <span class="label">Non-Targeted : </span>
+                                @if (Model.RejectedCustomersStats.NonTargetedCount > 0)
+                                {
+                                    <a href="javascript:void(0)" onclick="GetExcludedCustomers('@SuppressionFilterType.NonTargeted')">@Model.RejectedCustomersStats.NonTargetedCount</a>
+                                }
+                                else
+                                {<span>0</span>}
+                            </div>                          
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+    @if (Model != null && !Model.Collection.IsNullOrEmpty())
+    {
+        <div class="exportcsvlink">
+            @if (Model.PagingModel.NumberOfItems > 1000)
+            {
+                <a href="javascript:void(0);" onclick='return requestReport("/CallCenter/ReportsQueue/CallQueueCustomers?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                    Export CSV
+                </a>
+            }
+            else
+            {
+                <a target="_blank" href="/CallCenter/ExportableReports/CallQueueCustomers?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+            }
+        </div>
+        @Html.DisplayFor(m => m.PagingModel)
+        <table id="list-view">
+            <tr>
+                <th style="width:15%;">CustomerId</th>
+                <th style="width:15%;">MemberId</th>
+                <th style="width:20%;">Customer Name</th>
+                <th style="width:10%;">Tag</th>
+                <th style="width:30%;">Custom Tag(s)</th>
+                <th style="width:10%;">Zip Code</th>
+            </tr>
+            @foreach (var customer in Model.Collection)
+            {
+                <tr>
+                    <td> @customer.CustomerId </td>
+                    <td> @customer.MemberId </td>
+                    <td> @customer.Name</td>
+                    <td> @customer.Tag</td>
+                    <td>@customer.CustomTag</td>
+                    <td>@customer.ZipCode</td>
+                </tr>
+            }
+        </table>
+        @Html.DisplayFor(m => m.PagingModel)
+    }
+    else
+    {
+        if (Model != null && !Model.IsQueueGenerated)
+        {
+            <div>
+                <h2 style="color: red">
+                    Please wait for 10 minutes(max) as your Call center manager has changed the criteria so that the queue is regenerated.
+                </h2>
+            </div>
+        }
+        else
+        {
+            <div>
+                <h2>
+                    No Records found.
+                </h2>
+            </div>
+        }
+
+    }
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        function GetExcludedCustomers(filterType) {
+            @{
+                 var queryString = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                 queryString.Remove("pageNumber");
+                 queryString.Remove("SuppressionType");
+             }
+            var url = "/CallCenter/Reports/ExcludedCustomers?@Html.Raw(queryString)&SuppressionType=" + filterType;
+            window.open(url, '_blank');
+        }
+    </script>
+}
+
+

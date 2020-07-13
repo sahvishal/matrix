@@ -1,0 +1,128 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.CallCenter.ViewModels.CallCenterTeamListModel
+
+@{
+    ViewBag.Title = "Manage Call Center Teams";
+}
+
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+
+<h1>Manage Call Center Teams
+    <span style="float: right; font-size: 12px;">
+        @Html.ActionLink("Create New", "CreateTeam")
+    </span>
+</h1>
+
+<div id="list-filter">
+    @{Html.BeginForm("ManageCallCenterTeam", "HealthPlanCallQueueCriteria", FormMethod.Get);}
+    @Html.Partial("CallCenterTeamListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+
+@if (Model != null && Model.Collection != null && Model.Collection.Count() > 0)
+{
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="margin-bottom: 10px; overflow: auto;">
+        <table id="list-view">
+            <tr>
+                <th style="width:200px;">Name</th>
+                <th style="width:150px;">
+                    Type
+                </th>
+                <th style="width:300px;">
+                    Description
+                </th>
+                <th style="width:150px;">
+                    Date Created
+                </th>
+                <th style="width:200px;">
+                    Created By
+                </th>
+                <th>
+                    Agents
+                </th>
+                <th>
+                    Action
+                </th>
+
+            </tr>
+            
+            @foreach (var team in Model.Collection)
+            {
+                <tr>
+                    <td>@team.Name</td>
+                    <td>@team.Type</td>
+                    <td>@team.Description</td>
+                    <td>@team.DateCreated.ToShortDateString()</td>
+                    <td>@team.CreatedBy</td>
+                    <td>
+                        @if (!team.Agents.IsNullOrEmpty())
+                        {
+                            <a class="agentInfo">View</a>
+                            <div class="agentInfoText" style="display: none;">
+                                @foreach (var agent in team.Agents)
+                                {
+                                    <span>@agent</span><br/>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="agentInfo">View</a>
+                            <div class="agentInfoText" style="display: none;">No Agents added</div>
+                        }
+                    </td>
+                    <td>
+                        <a href="/CallCenter/HealthPlanCallQueueCriteria/EditTeam?teamId=@team.Id">Edit</a>
+                    </td>
+                    
+
+                </tr>
+            }
+        </table>
+
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records found!
+    </h2>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+        $(".agentInfo").qtip({
+            position: {
+                my: 'right top'
+            },
+            content: {
+                title: function (api) {
+                    return "Agent(s) Assigned";
+                },
+                text: function (api) {
+                    return $(this).parent().find('.agentInfoText').html();
+                }
+            },
+            style: {
+                width: '200px'
+            }
+        });
+    </script>
+}

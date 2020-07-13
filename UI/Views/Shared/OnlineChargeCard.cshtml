@@ -1,0 +1,195 @@
+﻿@using Falcon.App.Core.Finance.Domain
+@using Falcon.App.Core.Finance.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model ChargeCard 
+<div id="charge-card">
+    @Html.HiddenFor(m => m.Id)
+    <ul style="padding-bottom:0px; padding-top:0px;">
+        <li><h4 class="title_blue"><strong>Credit Card</strong></h4></li>
+        <li class="amex-info-div" style="display:none;">
+            <h5 class="highlight_box p10 txt-brown"><em>If payment is made by American Express card, you will be charged 50% of the total amount now.</em></h5>
+        </li>
+        <li>
+            <div class="left-float half">
+                <label>Name on Card</label>@Html.ValidationMessageFor(m => m.NameOnCard)
+                @Html.TextBoxFor(m => m.NameOnCard, new { @class = "textbox no-mouseflow" })
+            </div>
+            <div class="right-float half">
+                <label>Card Number</label>@Html.ValidationMessageFor(m => m.Number)
+                @Html.TextBoxFor(m => m.Number, new { maxlength = 16, @class = "textbox no-mouseflow" })
+            </div>            
+            <div class="clearfix"></div>
+        </li>
+        <li>
+            <div class="left-float half">
+                @Html.HiddenFor(m => m.ExpirationDate)
+                <label>Expiration Date <span class="txt-grey"><em>(mm/yyyy)</em></span></label>
+                <div class="mini_half left-float mr5">
+                    <select class="select no-mouseflow" id="expiryDate-month">
+                        <option value="0">- mm - </option>
+                        <option value="1">01 </option>
+                        <option value="2">02 </option>
+                        <option value="3">03 </option>
+                        <option value="4">04 </option>
+                        <option value="5">05 </option>
+                        <option value="6">06 </option>
+                        <option value="7">07 </option>
+                        <option value="8">08 </option>
+                        <option value="9">09 </option>
+                        <option value="10">10 </option>
+                        <option value="11">11 </option>
+                        <option value="12">12 </option>
+                    </select>
+                </div>
+                <div class="mini_half left-float">
+                    <select class="select no-mouseflow" id="expiryDate-year">
+                        <option value="0">- yyyy - </option>
+                    </select>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="right-float half">
+                <div class="mini_half left-float mr5" style="width:150px; display: none;">
+                    <label>Card Type</label>@Html.ValidationMessageFor(m => m.TypeId)
+                    @Html.DropDownListFor(m => m.TypeId, DropDownHelper.CardTypes((long)Model.TypeId), new { @class = "select no-mouseflow", @style = "width:145px;" })
+                </div>
+                <div class="mini_half left-float" style="width:50px;">
+                    <label>CVV</label>@Html.ValidationMessageFor(m => m.CVV)
+                    @Html.PasswordFor(m => m.CVV, new { maxlength = 4, @class = "textbox no-mouseflow", @style = "width:45px;" })
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="clearfix"></div>
+        </li>
+    </ul>    
+</div>
+<script language="javascript" type="text/javascript">
+
+    $(document).ready(function () {
+        clearChargeCard();
+        setCardType();
+        $("#charge-card [id*='Number']").blur(function () { setCardType(); });
+    });
+
+    function setCardonFileDetails(cardDetails) {
+        
+        setCardDetails(cardDetails);
+        var cardNumber = $("#charge-card [id*='Number']").val();
+
+        var modifiedNumber = "";
+        for (var i = 0; i < cardNumber.length; i++) {
+            if ((cardNumber.length - i) <= 4) modifiedNumber += cardNumber[i];
+            else modifiedNumber += "x";
+        }
+
+        $("#charge-card [id*='Number']").val(modifiedNumber);
+        $("#charge-card input, #charge-card select").attr("disabled", "disabled");
+    }
+
+    function clearChargeCard() {
+        $("#charge-card input").val("");
+        $("#charge-card input[type=hidden][id*='Id']").val("0");
+        $("#charge-card select option:first").attr("selected", true);
+        $("#charge-card input, #charge-card select").attr("disabled", "");
+    }
+
+    function setCardDetails(cardDetails) {
+        clearChargeCard();
+        $("#charge-card [id*='NameOnCard']").val(cardDetails.NameOnCard);
+
+        $("#charge-card [id*='ExpirationDate']").val(setExpirationDate(cardDetails.ExpirationDate));
+
+        $("#charge-card [id*='Number']").val(cardDetails.Number);
+        $("#charge-card [id*='CVV']").val(cardDetails.CVV);
+        $("#charge-card [id*='TypeId'] option[value=" + cardDetails.TypeId + "]").attr("selected", true);
+        $("#charge-card input[type=hidden][id*='Id']").val(cardDetails.Id);
+    }
+
+    function getCardDetails() {
+        var cardDetails = new Object();
+        cardDetails.NameOnCard = $("#charge-card [id*='NameOnCard']").val();
+        cardDetails.ExpirationDate = getValidDate($("#charge-card [id*='ExpirationDate']").val());
+        cardDetails.Number = $("#charge-card [id*='Number']").val();
+        cardDetails.CVV = $("#charge-card [id*='CVV']").val();
+        cardDetails.TypeId = $("#charge-card [id*='TypeId']").val();
+        cardDetails.Id = $("#charge-card input[type=hidden][id*='Id']").val();
+        return cardDetails;
+    }
+
+    function getValidDate(value) {
+        var dateToValidate = $.trim(value);
+        var parts = dateToValidate.split("/");
+
+        if (parts.length < 2 || parts[0].length < 1 || isNaN(parts[0]) || isNaN(parts[1]) || parts[1].length < 4) {
+            return null;
+        }
+
+        var correctDate = value;
+        return correctDate;
+    }
+
+    function setExpirationDate(expiryDate) {
+        
+        var parts = expiryDate.split("/");
+
+        if (parts.length < 2 || parts[0].length < 1 || isNaN(parts[0]) || isNaN(parts[1]) || parts[1].length < 4 || Number(parts[1]) < 1950) //the last check is just a hack to prevent filling in 01/0001
+        {
+            return "";
+        }
+
+        $("#expiryDate-year option[value=" + Number(parts[1]) + "]").attr("selected", true);
+        $("#expiryDate-month option[value=" + Number(parts[0]) + "]").attr("selected", true);
+
+        return expiryDate;
+    }
+
+    var currentYear_expDate = Number('@(DateTime.Now.Year)');
+    var currentMonth_expDate = Number('@(DateTime.Now.Month)');
+
+    function setExpiryDateBox() {
+        var index = 0;
+        while (index <= 15) {
+            var yearToSet = currentYear_expDate + index;
+            $("#expiryDate-year").append("<option value='" + yearToSet + "'> " + yearToSet + " </option>");
+            index = index + 1;
+        }
+    }
+
+    function setExpiryDateonSelect() {
+        var yearSelected = Number($("#expiryDate-year option:selected").val());
+        var monthSelected = Number($("#expiryDate-month option:selected").val());
+
+        if (yearSelected < 1 || monthSelected < 1) {
+            $("#charge-card [id*='ExpirationDate']").val("");
+            return;
+        }
+
+        $("#charge-card [id*='ExpirationDate']").val(monthSelected + "/" + yearSelected);
+    }
+    
+    function setCardType() {
+        //debugger;
+        var cardTypeId = '@((int)ChargeCardType.Visa)';
+        $(".amex-info-div").hide();
+
+        var cardNumber = $.trim($("#charge-card [id*='Number']").val());
+        if (cardNumber.length > 0) {
+            if (cardNumber.substring(0, 1) == 4)
+                cardTypeId = '@((int) ChargeCardType.Visa)';
+            else if (cardNumber.substring(0, 2) >= 51 && cardNumber.substring(0, 2) <= 55)
+                cardTypeId = '@((int) ChargeCardType.MasterCard)';
+            else if (cardNumber.substring(0, 2) == 34 || cardNumber.substring(0, 2) == 37) {
+                cardTypeId = '@((int) ChargeCardType.AmericanExpress)';
+                $(".amex-info-div").show();
+            }
+            else if (cardNumber.substring(0, 2) == 60 || cardNumber.substring(0, 2) == 65)
+                cardTypeId = '@((int) ChargeCardType.Discover)';
+        }
+        
+        $("#charge-card [id*='TypeId'] option[value=" + cardTypeId + "]").attr("selected", true);
+    }
+
+
+    setExpiryDateBox();
+    $("#expiryDate-year, #expiryDate-month").change(function () { setExpiryDateonSelect(); });
+</script>

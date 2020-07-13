@@ -1,0 +1,177 @@
+@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Extensions
+@model HealthAssessmentHeaderEditModel
+@{
+    var configurationSettingRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IConfigurationSettingRepository>();
+    bool enableBarCode = Convert.ToBoolean(configurationSettingRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.EnableBarCode));
+}
+<script type="text/javascript" src="/Scripts/json2.min.js"></script>
+<style type="text/css">
+    .row-div
+    {
+        float: left;
+        width: 95%;
+        margin-bottom: 5px;
+    }
+    #info input[type="text"]
+    {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+</style>
+<div id="info" class="section-withborder">
+    <div class="row-div readonly-input">
+        <div style="float: left; width: 40%;">
+            <b>Customer Id:</b>
+            <input type="text" id="CustomerIdTextbox" style="width: 100px;" readonly="readonly" value="@Model.CustomerId" />
+            @Html.HiddenFor(m => m.CustomerId)
+        </div>
+    </div>
+    <div class="row-div readonly-input">
+        <div style="float: left; width: 25%;">
+            Event Date:
+            <input type="text" id="TodayDateMonthTextbox" style="width: 20px;" value="@(@Model.EventDate.Month)" />/<input type="text"
+                id="TodayDateDayTextbox" style="width: 20px;" value="@(@Model.EventDate.Day)" />/<input type="text" id="TodayDateYearTextbox"
+                    style="width: 30px;" value="@(@Model.EventDate.Year)" />
+        </div>       
+        <div style="float: left; width: 73%;">
+            <div style="float: left; width: 28%; text-align: right;">
+                Location of Screening:&nbsp;
+            </div>
+            <div style="float: left; width: 70%;">
+                <input type="text" id="ScreeningLocationTextbox" style="width: 98%;" value="@Model.EventAddress.ToShortAddressString(false)" />
+            </div>
+        </div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 65%;">
+            <div style="float: left; width: 10%;">
+                Name:</div>
+            <div style="float: left; width: 9%;">
+                Last:</div>
+            <div style="float: left; width: 35%;">
+                @Html.TextBoxFor(m => m.CustomerName.LastName, new { @style = "width: 90%;" })
+            </div>
+            <div style="float: left; width: 9%;">
+                First:</div>
+            <div style="float: left; width: 35%;">
+                @Html.TextBoxFor(m => m.CustomerName.FirstName, new { @style = "width: 90%;" })
+            </div>
+            @Html.HiddenFor(m => m.CustomerName.MiddleName)
+        </div>
+        <div style="float: left; width: 35%;">
+            <div style="float: left; width: 20%;">
+                Gender:</div>
+            <div style="float: left; width: 80%;">
+                @Html.DropDownListFor(m => m.Gender, DropDownHelper.Genders(), new {@class = "customer-gender"})
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.Height)
+    @Html.HiddenFor(m => m.Weight)
+    <div class="row-div">
+        <div style="float: left; width: 20%;">
+            Date of Birth:
+            @Html.TextBoxFor(m => m.DateofBirth, new { @class = "datePicker-dob", @style = "width: 70px;" })
+        </div>
+        <div style="float: left; width: 28%;" class="readonly-input">
+            Age:
+            @{
+                var ageString = "";
+                if (Model.DateofBirth.HasValue)
+                {
+                    ageString = Model.DateofBirth.Value.GetDetailAge();
+                }
+            }
+            <input type="text" id="AgeTextbox" value="@ageString" style="width: 170px;" />
+        </div>
+        <div style='float:left; width: 18%; @(Model.CaptureSsn ? "" : "display:none;" )'>
+            SSN:
+            @Html.TextBoxFor(m => m.Ssn, new { @class = "mask-ssn", @style = "width: 110px;" })
+        </div>
+        <div style="float:left;width: 25%">
+            Race:
+            @Html.DropDownListFor(m => m.Race, DropDownHelper.AllRace())
+        </div>
+        <div style="float:left;width: 25%">
+            Language:
+            @Html.TextBoxFor(m => m.Laguage, new { @style = "width: 110px;" })
+        </div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 35%">
+            Address:
+            @Html.TextBoxFor(m => m.Address.StreetAddressLine1, new { @style = "width: 220px;" })
+        </div>
+        <div style="float: left; width: 21%">
+            Apt #/Suite #
+            @Html.TextBoxFor(m => m.Address.StreetAddressLine2, new { @style = "width: 70px;" })
+        </div>
+        <div style="float: left; width: 21%">
+            City:
+            @Html.TextBoxFor(m => m.Address.City, new { @style = "width: 130px;" })
+        </div>
+        <div style="float: left; width: 22%">
+            State:
+            @Html.DropDownListFor(m => m.Address.StateId, DropDownHelper.States(), new { @style = "width: 90px;" })
+        </div>
+    </div>
+    <div class="row-div">
+        <div style="float: left; width: 22%">
+            Country:
+            @Html.DropDownListFor(m => m.Address.CountryId, DropDownHelper.Countries(), new { @style = "width: 110px;" })
+        </div>
+        <div style="float: left; width: 13%;">
+            Zip:
+            @Html.TextBoxFor(m => m.Address.ZipCode, new { @style = "width: 50px;" })
+        </div>
+        @Html.HiddenFor(m => m.Address.CountryId)
+        <div style="float: left; width: 35%">
+            Email:
+            @Html.TextBoxFor(m => m.Email, new { @style = "width: 190px;" })
+        </div>
+        <div style="float: left; width: 30%">
+            Phone Number:
+            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "mask-phone", @style = "width: 110px;" })
+        </div>
+    </div>
+</div>
+@if (enableBarCode)
+{
+    <div class="section-withborder" id="BarCodeDiv">
+        <div class="Bar-Code" style="display: block">
+            <div style="text-align: center; float: left; width: 50%; display: @(Model.CustomerId < 1 ? "none" : "block")">
+                <img alt="" src="/App/Common/BarCodeFeeder.aspx?Text=@Model.CustomerId" /><br />
+                @Model.CustomerId
+            </div>
+            <div style="text-align: center; float: left; width: 50%;">
+                <img alt="" src="/App/Common/BarCodeFeeder.aspx?Text=@(Model.CustomerName.FirstName.Replace(",", ""))" /><br />
+                @Model.CustomerName.FirstName</div>
+            <div style="text-align: center; float: left; width: 50%; display: @(string.IsNullOrEmpty(Model.CustomerName.LastName) ? "none" : "block")">
+                <img alt="" src="/App/Common/BarCodeFeeder.aspx?Text=@(Model.CustomerName.LastName.Replace(",", ""))" /><br />
+                @Model.CustomerName.LastName</div>
+            <div style="text-align: center; float: left; width: 50%;">
+                <img alt="" src="/App/Common/BarCodeFeeder.aspx?Text=@(Model.CustomerName.ToString().Replace(",", ""))" /><br />
+                @Model.CustomerName.ToString()</div>
+            <div style="font-size: 10px; clear: both; width: 98%; text-align: right; float: left;">
+                * for cardiovision use only
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+<script language="javascript" type="text/javascript">
+    $('.mask-phone').mask('999-9999999');
+    $('.mask-ssn').mask('***-**-****');
+    $(".readonly-input input").attr("readonly", true);
+    $("#DisclaimerDiv input").attr("readonly", true);  
+	
+	
+	$(document).ready(function () {
+		@if(Model.DateofBirth.HasValue){
+			<text> $(".datePicker-dob").val('@(Model.DateofBirth.Value.ToShortDateString())'); </text>
+		}	
+	});
+	
+</script>

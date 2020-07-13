@@ -1,0 +1,48 @@
+@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.PcpAppointmentListModelFilter
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>From</b> 
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>To</b>
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">&nbsp;</div>
+        Of @Html.DropDownListFor(m => m.DateType, DropDownHelper.GetPcpDispositionFilterDateType(PcpAppointmentDispositionFilterDateType.AppointmentDate))
+    </div>
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Tag
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.Tag)
+        </div>
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 80%">
+        <div class="small-text">
+            Custom Tag:
+        </div>
+        <div>
+            @Html.ListBoxFor(m => m.CustomTags, DropDownHelper.GetAllCustomTags(), new { @multiple = "multiple", @style = "width: 300px" })
+        </div>
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+
+    <div class="editor-column" style="padding-top: 10px; float:right; text-align:right;">
+        @Html.ActionLink("Clear", "PcpAppointment", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>

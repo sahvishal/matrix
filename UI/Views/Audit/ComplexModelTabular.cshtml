@@ -1,0 +1,28 @@
+﻿@model IEnumerable<KeyValuePair<string,Falcon.App.Core.Audit.ViewModel.ActivityLoggedModelViewModel>>
+@{
+    var complexElements = Model.ToArray();
+    <div class="editor-row">
+        @for (int i = 0; i < complexElements.Count(); i++)
+        {
+            <div style="padding-left:5px; margin: 8px 0 0 0; font-size:12px; font-weight:bold; text-decoration: underline;">@complexElements[i].Key</div>
+            if (complexElements[i].Value.Simple.Any())
+            {
+                <div class="editor-row">
+                    @Html.Partial("SimpleModelTabular", complexElements[i].Value.Simple)
+                </div>
+            }
+            else if (complexElements[i].Value.Complex.Any())
+            {
+                <div class="editor-row">
+                    @Html.Partial("ComplexModelTabular", complexElements[i].Value.Complex)
+                </div>
+            }
+            else
+            {
+                <div class="editor-row">@complexElements[i].Value </div>
+            }
+
+        }
+
+    </div>
+}

@@ -1,0 +1,476 @@
+﻿/*Gift Certificates */
+.loading
+{
+    min-height: 200px;
+    background-image: url(/App/Images/indicator_chartbox.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.button
+{
+    background: #5996b5 url(/App/Images/btn-bg.gif) repeat-x top;
+    height: 25px;
+    color: #fff;
+    font: bold 12px arial;
+    border: 0;
+    padding: 0 5px;
+}
+.headingtxt
+{
+    float: left;
+    font: bold 20px arial;
+    width: 100%;
+    margin: 15px 0 5px;
+    padding: 0;
+    color: #F47E1C;
+}
+.divouter_pw
+{
+    float:left;
+    width: 668px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #eb832a;
+    border-radius: 5px;
+}
+.biglnk a:link,a:visited,a:hover{font:13px verdana;text-decoration:underline}
+.biglnk a:link,a:visited{color:#287aa8}
+.biglnk a:hover{color:#f60}
+.leftbg_headgftc
+{
+    float: left;
+    width: 663px;
+    height: 27px;
+    background-color:#eb832a;
+    font: bold 14px verdana;
+    padding:10px 0px 10px 5px;
+    color:#fff;
+    /*background: url('/Content/Images/leftbg_head_gftc.gif') no-repeat;*/
+}
+
+.bodydiv_gftc
+{
+    float: left;
+    width: 642px;
+    /*border-left: solid 1px #eb832a;
+    border-right: solid 1px #eb832a;*/
+    padding: 5px 12px;
+}
+.bodydiv2_gftc
+{
+    float: left;
+    width: 667px;
+    /*border-left: solid 1px #eb832a;
+    border-right: solid 1px #eb832a;*/
+    padding: 5px 0px;
+    background: #fbfbfb url(/content/images/infobox-bg-gftc.gif) no-repeat;
+}
+.bodydiv_gftc .bdyrow
+{
+    float: left;
+    width: 100%;
+}
+.thumbimg_gftc
+{
+    float: left;
+    width: 66px;
+    height: 98px;
+    background: url('/Public/Images/gftc_thumb_img.gif') no-repeat;
+    padding: 43px 0 0 110px;
+    font: normal 11px arial;
+    color: #fff;
+    text-align: center;
+    line-height: 10px;
+    margin-top: 10px;
+}
+.amonttxt
+{
+    font: bold 12px arial;
+}
+.detailtxt_gftc
+{
+    float: left;
+    width: 68%;
+    padding: 5px 10px;
+    font: normal 12px verdana;
+}
+.detailtxt_gftc h3
+{
+    float: left;
+    width: 100%;
+    color: #04a4e3;
+    font: bold 14px verdana;
+    padding-bottom: 5px;
+    margin: 0;
+}
+.footbg_gftc
+{
+    float: left;
+    width: 668px;
+    height: 5px;
+    background: url('/Public/Images/footbg_gftc.gif') no-repeat;
+}
+.dotdiv_gftc
+{
+    float: left;
+    width: 642px;
+    height: 3px;
+    background: url('/Public/Images/dooted-div-gftc.gif') no-repeat;
+    padding: 5px 0;
+}
+.subhead_gftc
+{
+    width: 97%;
+    float: left;
+    border-bottom: solid 1px #F47E1C;
+    font: bold 16px verdana;
+    color: #F47E1C;
+    padding: 10px 0;
+}
+.subheadtop_gftc
+{
+    width: 97%;
+    float: left;
+    border-bottom: solid 1px #F47E1C;
+    font: bold 14px verdana;
+    color: #F47E1C;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+.sbhead2t_gftc
+{
+    float: left;
+    width: 100%;
+    padding-top: 5px;
+    color: #666;
+}
+.sbhead3t_gftc
+{
+    float: left;
+    width: 100%;
+    color: #666;
+    padding: 5px 0;
+}
+.stxt_gftc
+{
+    font: normal 12px verdana;
+    color: #666;
+}
+.stxt_gftc a:link
+{
+    font: normal 12px verdana;
+    color: #0990e5;
+    text-decoration: underline;
+}
+.stxt_gftc a:visited
+{
+    font: normal 12px verdana;
+    color: #0990e5;
+    text-decoration: underline;
+}
+.stxt_gftc a:hover
+{
+    font: normal 12px verdana;
+    color: #F47E1C;
+    text-decoration: underline;
+}
+.stxt1_gftc
+{
+    font: normal 11px verdana;
+    color: #666;
+}
+.left
+{
+    float: left;
+}
+.right
+{
+    float: right;
+}
+.amntinfobox_gftc
+{
+    float: left;
+    font: normal 11px arial;
+    color: #fff;
+    padding: 28px 0 0 12px;
+    text-align: center;
+    line-height: 10px;
+    text-align: center;
+}
+.amntinfobox_gftc .inner
+{
+    float: left;
+    width: 62px;
+    text-align: center;
+    font: normal 11px arial;
+}
+.amnttxtbox_gftc
+{
+    float: left;
+    width: 560px;
+    padding: 20px 10px;
+    font: normal 16px verdana;
+    color: #F47E1C;
+}
+
+.bdrow2_gftc
+{
+    /*float: left;
+    width: 600px;
+    padding-left: 68px;
+    font: normal 12px verdana;
+    color: #666;*/
+    width:100%;
+    float:left;
+    font: normal 12px verdana;
+    color: #666;
+}
+.lfttxtfld_gftc
+{
+    /*float: left;
+    width: 200px;
+    padding-right: 45px;
+    margin-top: 20px;*/
+    
+    width:245px;
+    float:left;
+    padding-right:40px;
+    padding-left:40px;
+    margin-top: 20px;
+}
+.btnrow_gftc
+{
+    float: left;
+    width: 678px;
+    margin-top:10px;
+}
+.divcertificate
+{
+    float: left;
+    width: 664px;
+    padding:6px;
+}
+.closepreview
+{
+    float: left;
+    width: 664px;
+    padding: 6px;
+}
+.closepreview a:link,a:visited,a:hover{font:12px arial;text-decoration:underline}
+.closepreview a:link,a:visited{color:#287aa8}
+.closepreview a:hover{color:#f60}
+.divcertificate .inner
+{
+    float:left;
+    width:650px;
+    height:385px;
+    border:solid 1px #a2a2a2;
+    background-color:#fefefd;
+   /* background:#fefefd url(/Public/Images/certificate-design.jpg) no-repeat;*/
+}
+.divcertificate .inner .divamount
+{
+    float: right;
+    width: 175px;
+    padding:110px 70px 0 30px;
+    font: normal 11px arial;
+    /*color: #fff;*/  
+}
+
+.divcertificate .inner .divamount label
+{
+    float: left;
+    padding-right: 10px;
+    padding-top: 4px;
+    font: bold 14px verdana;
+    color: #5DCA59;
+}
+
+.amnttxt
+{
+    float: left;
+    width: 75px;
+    text-align: center;
+}
+.divcertificate .inner .divamount .amonttxt
+{
+    float: left;
+    font: bold 18px arial;
+    padding: 4px;
+    border: 1px solid #46AA42;
+    color: #5DCA59;
+    border-radius: 2px;
+}
+
+.divcertificate .inner .custdtlsbox
+{
+    float: left;
+    padding: 15px 0 0 30px;
+}
+.divcertificate .inner .hrow
+{
+    float: left;
+    width: 400px;
+    padding-top: 8px;
+    font: bold 14px verdana;
+    color: #000;
+}
+.divcertificate .inner .hrow label
+{
+    float: left;
+    padding-right: 10px;
+}
+.divcertificate .inner .hrow .labelmsg
+{
+    float: left;
+    padding: 3px 10px 0 0;
+}
+.divcertificate .inner .hrow .totxt
+{
+    float: left;
+    color: #666;
+    padding-left: 10px;
+}
+.divcertificate .inner .hrow .prsnlmsg
+{
+    float: left;
+    color: #666;
+    width: 220px;
+    line-height: 22px;
+    height:70px;             
+}
+.divcertificate .inner .hrow .cupncode
+{
+    float: left;
+    color: #666;
+    width: 220px;
+}
+.divcertificate .inner .hrow1
+{
+    float: left;
+    color: #666;
+    padding-top: 27px;
+    font: bold 14px verdana;
+    color: #000;
+}
+.divcertificate .inner .hrow1 label
+{
+    float: left;
+    padding-right: 10px;
+}
+.divcertificate .inner .hrow1 .cupncode
+{
+    float: left;
+    color: #666;
+}
+.gftctxt
+{
+    float: left;
+    width: 97%;
+    padding: 10px;
+    color: #666;
+}
+.termstxt
+{
+    float: left;
+    width: 630px;
+    padding: 10px;
+    background: #f0f0f0;
+    color: #666;
+    margin-bottom: 10px;
+    font: normal 11px verdana;
+    margin-top: 20px;
+    line-height: 15px;
+}
+
+.paythroughgc
+{
+    float: left;
+    width: 100%;
+    background: #f8f8f8;
+}
+.paythroughgc .drow
+{
+    float: left;
+    width: 97%;
+    font: normal 12px arial;
+    color: #666;
+    padding: 5px 10px;
+}
+.paythroughgc .drowin
+{
+    float: left;
+    width: 97%;
+    font: normal 12px arial;
+    color: #666;
+}
+.paythroughgc .drowin a:link,a:visited,a:hover{font:12px arial;text-decoration:underline}
+.paythroughgc .drowin a:link,a:visited{color:#287aa8}       
+.paythroughgc .drowin a:hover{color:#f60}
+.paythroughgc .drowin2
+{
+    float: left;
+    width: 97%;
+    font: normal 12px arial;
+    color: #666;
+    padding-left: 5px;
+}
+.paythroughgc .drowin .labelb
+{
+    font: bold 12px arial;
+    color: #666;
+    float: left;
+    padding: 9px 10px 0 5px;
+}
+.paythroughgc .drowin .inptbox
+{
+    float: left;
+    padding-right: 10px;
+    padding-top: 2px;
+}
+.paythroughgc .drowin .applybtn
+{
+    float: left;
+    padding-right: 10px;
+    padding-top: 5px;
+}
+.boldblulbl
+{
+    font: bold 12px arial;
+    color: #009FC3;
+}
+
+.divsendoption
+{
+    float: left;
+    width: 640px;
+    font: bold 12px arial;
+    padding: 5px;
+}
+.divsendoption .graybox
+{
+    float: left;
+    width: 640px;
+    border: solid 1px #e7e7e7;
+    background: #f9f9f9;
+    padding: 5px;
+    margin-top: 5px;
+}
+.divsendoption .graybox .hrows
+{
+    float: left;
+    width: 100%;
+    font: normal 12px arial;
+    color: #333;
+}
+.divsendoption .graybox .hlfarea
+{
+    float: left;
+    width: 300px;
+}
+.divsendoption .graybox .hlfarea label
+{
+    font: normal 12px arial;
+    color: #333;
+}
+.grayinfotxt{float:left;width:100%;font:normal 8pt arial;color:#999;padding-top:10px }

@@ -1,0 +1,23 @@
+USE [$(dbName)]
+GO
+
+ALTER TABLE TblEventCustomerResult
+ADD ChatPdfReviewedByPhysicianId BIGINT NULL,
+	ChatPdfReviewedByPhysicianDate DATETIME NULL,
+	ChatPdfReviewedByOverreadPhysicianId BIGINT NULL,
+	ChatPdfReviewedByOverreadPhysicianDate DATETIME NULL,
+
+CONSTRAINT FK_TblEventCustomerResult_TblOrganizationRoleUser_ChatPdfReviewedByPhysicianId FOREIGN KEY(ChatPdfReviewedByPhysicianId) REFERENCES [TblOrganizationRoleUser]([OrganizationRoleUserId]),
+CONSTRAINT FK_TblEventCustomerResult_TblOrganizationRoleUser_ChatPdfReviewedByOverreadPhysicianId FOREIGN KEY(ChatPdfReviewedByOverreadPhysicianId) REFERENCES [TblOrganizationRoleUser]([OrganizationRoleUserId])
+GO
+
+
+ALTER TABLE TblEventCustomerResultHistory
+ADD ChatPdfReviewedByPhysicianId BIGINT NULL,
+	ChatPdfReviewedByPhysicianDate DATETIME NULL,
+	ChatPdfReviewedByOverreadPhysicianId BIGINT NULL,
+	ChatPdfReviewedByOverreadPhysicianDate DATETIME NULL,
+
+CONSTRAINT FK_TblEventCustomerResultHistory_TblOrganizationRoleUser_ChatPdfReviewedByPhysicianId FOREIGN KEY(ChatPdfReviewedByPhysicianId) REFERENCES [TblOrganizationRoleUser]([OrganizationRoleUserId]),
+CONSTRAINT FK_TblEventCustomerResultHistory_TblOrganizationRoleUser_ChatPdfReviewedByOverreadPhysicianId FOREIGN KEY(ChatPdfReviewedByOverreadPhysicianId) REFERENCES [TblOrganizationRoleUser]([OrganizationRoleUserId])
+GO

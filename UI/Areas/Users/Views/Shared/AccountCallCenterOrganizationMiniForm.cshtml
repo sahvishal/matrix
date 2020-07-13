@@ -1,0 +1,17 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Users.Enum
+<div class="mini-container" >
+    <div style="overflow: hidden; border-right: 1px solid red; width: 61%; margin-right: 7px;
+        float: left;">
+        <div class="editor-row">
+            Select Organization:
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">Selected Organizations will appear on callcenter dashboard</div>
+            <br />
+            @Html.DropDownList("callCenterOrganization", DropDownHelper.OrganizationsByOrganizationType(OrganizationType.CallCenter), new { @style = "width:98%;" })
+        </div>
+    </div>
+    <div style="overflow: hidden; width: 36%; float: left; margin-top: 10px;">
+        <input type="button" id="btnAccountCallCenterOrganization" value="Attach" onclick="return assignAccountCallCenterOrganization()" />
+    </div>
+</div>

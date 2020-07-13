@@ -1,0 +1,24 @@
+﻿<div class="pager" >
+    <div class="record-count">
+        Total Record(s) : <span ng-show="model == null || model.NumberOfItems <= 0">0</span> <span ng-show="model != null && model.NumberOfItems > 0" ng-bind="model.NumberOfItems"></span>
+
+    </div>
+    <div class="page-nav" ng-if="model.PageCount > 1">
+        Pages:
+        <span ng-if="model.CurrentPage > 1">
+            <a href="javascript:void(0)" ng-click="PageUrl(1)" class="first">&laquo; First</a>
+            <a href="javascript:void(0)" ng-click="PageUrl(model.CurrentPage - 1)" class="previous">&lsaquo; Previous</a>
+        </span>
+
+        <span ng-repeat="pageNumber in GetPages()">
+            <span ng-if="pageNumber > 1 && !IsPageIncluded(pageNumber - 1)">
+                <span class="elide">...</span>
+            </span>
+            <a href="javascript:void(0)" ng-click="PageUrl(pageNumber)" class="page" ng-class="model.CurrentPage == pageNumber ? 'current' : '' " ng-bind="pageNumber"></a>
+        </span>
+        <span ng-if="model.CurrentPage < model.PageCount">
+            <a href="javascript:void(0)" ng-click="PageUrl(model.CurrentPage + 1)" class="next">Next &rsaquo;</a>
+            <a href="javascript:void(0)" ng-click="PageUrl(model.PageCount)" class="last">Last &raquo;</a>
+        </span>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentTemplateListModelFilter
+<h2>
+    Search Records
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 18%">
+        <div class="small-text">
+            Name:
+        </div>
+        @Html.TextBoxFor(m => m.Name)
+    </div>
+    <div class="editor-column" style="width: 22%">
+        <div class="small-text">
+            Type:
+        </div>
+        @Html.DropDownListFor(m => m.TemplateType, DropDownHelper.HealthAssessmentTemplateTypes(), new { @style = "width: 85%" })
+    </div>
+    <div class="editor-column" style="width: 35%">
+        <div class="small-text">
+            &nbsp;
+        </div>
+        <b>Records: </b>
+        &nbsp; &nbsp; &nbsp; All <input type="radio" id="records-all" name="AllRecords" onclick="setActive(false, false);" @(!Model.Inactive && !Model.Active ? "checked=checked" : "") />
+        &nbsp; &nbsp; &nbsp; Active <input type="radio" id="records-active" name="AllRecords" onclick="setActive(true, false);" @(Model.Active ? "checked=checked" : "") />
+        &nbsp; &nbsp; &nbsp; InActive <input type="radio" name="AllRecords" onclick="setActive(false, true);" @(Model.Inactive ? "checked=checked" : "") />
+
+        @Html.HiddenFor(m => m.Active, new { @class = "records-active-hidden" })
+        @Html.HiddenFor(m => m.Inactive, new { @class = "records-inactive-hidden" })
+        @Html.HiddenFor(m => m.Category)
+    </div>
+
+    <div class="editor-column" style="padding-top: 10px; width: 18%; float: right; text-align:right;">
+        @Html.ActionLink("Clear", "Index", "HealthAssessment") | @Html.SubmitButton("Search")
+    </div>
+</div>
+
+<script language="javascript" type="text/javascript">
+
+    function setActive(isActive, isInactive) {
+        $(".records-active-hidden").val(isActive);
+        $(".records-inactive-hidden").val(isInactive);
+    }
+
+</script>

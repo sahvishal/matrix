@@ -1,0 +1,41 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.ClientEventVolumeListModelFilter
+<h2>
+    Search Events
+</h2>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 20%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.Vehicle)
+        </div>
+        @Html.TextBoxFor(m => m.Vehicle)
+    </div>
+    <div style="padding-left: 5px; overflow: hidden;">
+        <div class="editor-column" style="width:80%">
+            <div class="small-text">
+                Sponsor:
+            </div>
+            <div>
+                @Html.DropDownListFor(m => m.Sponsers, DropDownHelper.GetHealthPlanCorporateAccounts(), new { @style = "width: 355px" })
+            </div>
+        </div>
+    </div>
+    <div style="padding-left: 5px; overflow: hidden;">
+        <div class="editor-column" style="padding-top: 10px; float: right; text-align: right;">
+            @Html.ActionLink("Clear", "ClientEventVolume", "Reports", new { showThisYear = true },null) | @Html.SubmitButton("Search")
+        </div>
+    </div>
+</div>

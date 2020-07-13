@@ -1,0 +1,359 @@
+﻿<div view-load-completed>
+    <div data-ng-controller="CustomerController" class="container no-padding bg-default" us-spinner spinner-key="online-spinner">
+        <quantcast name1="Healthfair" name2="Info"></quantcast>
+        <div class="sub-header bg-success relative">
+            <div class="header-right">
+                <progressbar-view></progressbar-view>
+                <order-summary></order-summary>
+            </div>
+            <div class="header-left">
+                <h2 class="no-margin">Customer Information</h2>
+            </div>
+        </div>
+        <div class="main-container border-default" style="padding-left:1px">
+            <div class="left-pannel-lg">
+                <div class="ci-wrapper">
+                    <div role="tabpanel" class="hf-tabs">
+
+                        <!-- Nav tabs nav nav-tabs mobile-tab -->
+                        <ul class="nav nav-tabs mobile-tab" role="tablist">
+                            <li role="presentation" ng-show="ReturningCustomer" class="active"><a href="#home" id="tab1" aria-controls="home" role="tab" data-toggle="tab" ng-click="setTab(1)">RETURNING CUSTOMER</a></li>
+                            <li role="presentation" ng-hide="ReturningCustomer" class="active"><a href="#home" id="tab1" aria-controls="home" role="tab" data-toggle="tab" ng-click="setTab(1)">NEW CUSTOMER</a></li>
+                            <li ng-show="showTab2" role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" ng-click="setTab(2)">RETURNING CUSTOMER</a></li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content mobile-tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="home" ng-class="{'active' : !showTab2}">
+                                <form class="row" name="newCustomerForm" data-ng-submit="registerCustomer(newCustomerForm)" novalidate autocomplete="off" focus-on-invalid>
+                                    <div class="clearfix">
+
+                                        <div class="clearfix">
+                                            <div class="col-sm-12">
+                                                <legend class="legend">PERSONAL INFORMATION</legend>
+                                            </div>
+                                        </div>
+
+                                        <!--stack begins-->
+                                        <div class="clearfix">
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        First Name
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left required-field" ng-class="{'error-message' : newCustomerForm.submitted != undefined && newCustomerForm.submitted && newCustomerForm.firstname.$error.required}">
+                                                        <input type="text" class="form-control bottom-buffer-xs-10" name="firstname" placeholder="First Name" ng-model="SchedulingCustomer.FullName.FirstName" required ng-blur="saveProspectCustomer()" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Middle Name
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left">
+                                                        <input type="text" class="form-control" placeholder="Middle Name" ng-model="SchedulingCustomer.FullName.MiddleName" ng-blur="saveProspectCustomer()" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+
+                                        <!--stack begins-->
+                                        <div class="clearfix">
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Last Name
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left required-field" ng-class="{'error-message' : newCustomerForm.submitted != undefined && newCustomerForm.submitted && newCustomerForm.lastname.$error.required}">
+                                                        <input type="text" class="form-control bottom-buffer-xs-10" name="lastname" placeholder="Last Name" ng-model="SchedulingCustomer.FullName.LastName" required ng-blur="saveProspectCustomer()" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Gender
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left">
+                                                        <div class="table-look">
+                                                            <div class="table-row">
+                                                                <div class="table-cell">
+                                                                    <div class="select-wrap" ng-class="{ 'select-focus': gefocus, 'select-blur': geblur }">
+                                                                        <select class="form-control" name="gender" required ng-model="SchedulingCustomer.Gender" ng-focus="gefocus=true;geblur=false;" ng-blur="geblur=true;gefocus=false;" ng-options="gender.value as gender.text for gender in genderDropDown"></select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+
+                                        <!--stack begins-->
+                                        <div class="clearfix">
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        D.O.B.
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left">
+                                                        <div class="table-cell">
+                                                            <div class="select-wrap dob-month" ng-class="{ 'select-focus': dmfocus, 'select-blur': dmblur }">
+                                                                <select class="form-control" ng-model="Month" ng-change="MonthChange()" ng-focus="dmfocus=true;dmblur=false;" ng-blur="dmblur=true;dmfocus=false;" ng-options="u as u.text for u in MonthDropwdown track by u.value"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="table-cell">
+                                                            <div class="select-wrap dob-day" ng-class="{ 'select-focus': ddfocus, 'select-blur': ddblur }">
+                                                                <select class="form-control" ng-model="Day" ng-change="DateChange()" ng-focus="ddfocus=true;ddblur=false;" ng-blur="ddblur=true;ddfocus=false;" ng-options="u as u.text for u in DaysDropwdown track by u.value"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="table-cell year-input">
+                                                            <div class="select-wrap" ng-class="{ 'select-focus': dyfocus, 'select-blur': dyblur }">
+                                                                <select class="form-control" ng-model="Year" ng-change="YearChange()" ng-focus="dyfocus=true;dyblur=false;" ng-blur="dyblur=true;dyfocus=false;" ng-options="u as u.text for u in YearDropwdown track by u.value"></select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 top-buffer-10" ng-if="IsCorporateEvent">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Email
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left" ng-class="{'error-message' : newCustomerForm.submitted != undefined && newCustomerForm.submitted && (newCustomerForm.email.$error.required  || newCustomerForm.email.$error.email) }">
+                                                        <input type="email" class="form-control" name="email" placeholder="Email Address" ng-model="SchedulingCustomer.Email" ng-blur="saveProspectCustomer()" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+
+                                        <!--stack begins-->
+                                        <div class="clearfix">
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Phone Number
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left required-field" ng-class="{'error-message' : newCustomerForm.submitted != undefined && newCustomerForm.submitted && newCustomerForm.bestNumber.$error.required}">
+                                                        <input type="tel" class="form-control" name="bestNumber" placeholder="Best Number to Call" mask-format="phone" ng-model="SchedulingCustomer.HomeNumber" required ng-blur="saveProspectCustomer(); efblur=true;" ng-focus="efblur=false;" ng-class="{'placeholder2': efblur && (SchedulingCustomer.HomeNumber ==null || SchedulingCustomer.HomeNumber =='')}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 top-buffer-10" ng-show="SchedulingCustomer.CaptureSsn">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        SSN
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left">
+                                                        <input type="text" class="form-control" name="ssn" placeholder="SSN" ng-show="SchedulingCustomer.CaptureSsn" ng-model="SchedulingCustomer.Ssn" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+
+                                        <!--stack begins-->
+                                        <div class="clearfix">
+                                            <div class="col-md-6 top-buffer-10" ng-show="SchedulingCustomer.InsuranceIdRequired">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Insurance Id
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left">
+                                                        <input type="text" class="form-control" name="insuranceId" placeholder="Insurance Id" ng-show="SchedulingCustomer.InsuranceIdRequired" ng-model="SchedulingCustomer.InsuranceId" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+                                        <!--stack begins-->
+                                        <div class="clearfix top-buffer-10" ng-show="SchedulingCustomer.EnableTexting">
+                                            <!--col-sm-12-->
+                                            <div class="col-lg-9">
+                                                <div class="ci-send-sms sms-text-wrap-sm">Would you like us to send you reminders about appointment via Text Message (<i class="glyphicon glyphicon-phone"></i>) &nbsp; ? <span class="required">&#42;</span></div>
+                                            </div>
+                                            <div class="col-lg-3 ci-send-sms">
+                                                <div class="styled-radio small">
+                                                    <input type="radio" name="confirmationToEnablTexting" ng-checked="SchedulingCustomer.ConfirmationToEnablTexting===true" ng-model="SchedulingCustomer.ConfirmationToEnablTexting" ng-value="true" /> <label>Yes</label>
+                                                </div>
+                                                <div class="styled-radio small">
+                                                    <input type="radio" name="confirmationToEnablTexting" ng-checked="SchedulingCustomer.ConfirmationToEnablTexting!=true" ng-model="SchedulingCustomer.ConfirmationToEnablTexting" ng-value="false" /> <label>No</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+
+                                        <!--stack begins-->
+                                        <div class="clearfix top-buffer-10" ng-show="SchedulingCustomer.EnableVoiceMail">
+                                            <!--col-sm-12-->
+                                            <div class="col-lg-9">
+                                                <div class="ci-send-sms sms-text-wrap-sm">Do you wish to receive voice mail reminder for your appointment (<i class="glyphicon glyphicon-phone"></i>) &nbsp; ? <span class="required">&#42;</span></div>
+                                            </div>
+                                            <div class="col-lg-3 ci-send-sms">
+                                                <div class="styled-radio small">
+                                                    <input type="radio" name="confirmationToEnableVoiceMail" ng-checked="SchedulingCustomer.ConfirmationToEnableVoiceMail===true" ng-model="SchedulingCustomer.ConfirmationToEnableVoiceMail" ng-value="true" /> <label>Yes</label>
+                                                </div>
+                                                <div class="styled-radio small">
+                                                    <input type="radio" name="confirmationToEnableVoiceMail" ng-checked="SchedulingCustomer.ConfirmationToEnableVoiceMail!=true" ng-model="SchedulingCustomer.ConfirmationToEnableVoiceMail" ng-value="false" /> <label>No</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+                                        <!--stack begins-->
+                                        <div class="clearfix" ng-show="SchedulingCustomer.ConfirmationToEnablTexting">
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Cell Number
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left">
+                                                        <input type="tel" class="form-control" name="phoneCell" placeholder="Cell Number" mask-format="phone" ng-model="SchedulingCustomer.PhoneCell" ng-blur="pcblur=true;" ng-focus="pcblur=false;" ng-class="{'placeholder2': pcblur && (SchedulingCustomer.PhoneCell ==null || SchedulingCustomer.PhoneCell =='') }" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+
+                                        <!--stack begins-->
+                                        <div class="clearfix top-buffer-20">
+                                            <div class="referral-wrap">
+                                                <div class="legend clearfix">
+                                                    <p class="pull-left">
+                                                        How did you hear about us?
+                                                    </p>
+                                                    <div class="referral-box pull-left col-sm-12">
+                                                        <div class="auto-comp">
+                                                            <input type="text" class="form-control" placeholder="Type here for quick search" ng-model="SchedulingCustomer.MarketingSource" online-autocomplete="Scheduling/OnlineCustomer/FetchMarketingSourceByZip?guid={{guid}}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+
+                                        <div class="clearfix">
+                                            <div class="col-sm-12">
+                                                <legend class="legend top-buffer-10" ng-show="showTab2">login information</legend>
+                                            </div>
+                                        </div>
+                                        <!--stack begins-->
+                                        <div class="clearfix">
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix" ng-if="!IsCorporateEvent">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Email
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left" ng-class="{'error-message' : newCustomerForm.submitted != undefined && newCustomerForm.submitted && (newCustomerForm.email.$error.required  || newCustomerForm.email.$error.email),'required-field':!IsCorporateEvent }">
+                                                        <input type="email" class="form-control" name="email" ng-required="!IsCorporateEvent" placeholder="Email Address" ng-model="SchedulingCustomer.Email" ng-blur="saveProspectCustomer()" />
+                                                        <span class="help-block" ng-show="showTab2 && !IsCorporateEvent">
+                                                            This email will be your username for the login
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix top-buffer-10" ng-hide="SchedulingCustomer.Id!=0 || !IsCorporateEvent" ng-class="{'top-buffer-10':SchedulingCustomer.Id==0 && IsCorporateEvent}">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Username
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left required-field" ng-class="{'error-message' : newCustomerForm.submitted != undefined && newCustomerForm.submitted && (newCustomerForm.username.$error.required || newCustomerForm.username.$error.minlength || newCustomerForm.username.$error.maxlength)}">
+                                                        <input type="text" class="form-control" user-name-validator name="username" ng-required="SchedulingCustomer.Id==0 && IsCorporateEvent" placeholder="User Name" ng-model="SchedulingCustomer.UserName" ng-blur="checkUserNameAvailability();showStatus=true;" ng-focus="showStatus=false" ng-minlength="6" ng-maxlength="64" />
+                                                        <div class="clearfix">
+                                                            <p ng-show="loader_availablity" class="info-text top-buffer-10">
+                                                                <i class="glyphicon glyphicon-refresh glyphicon-spin"></i> Checking For availablity...
+                                                            </p>
+                                                            <p class="info-text top-buffer-6 bottom-buffer-0">Your username must be between 6 and 64 characters.</p>
+                                                            <p ng-show="showStatus && !loader_availablity && isUserNameAvailable && SchedulingCustomer.UserName !=null &&  SchedulingCustomer.UserName !='' " class="username-available text-primary info-text"> User name is available</p>
+                                                            <p ng-show="showStatus && !loader_availablity && !isUserNameAvailable && SchedulingCustomer.UserName !=null &&  SchedulingCustomer.UserName !='' " class="username-un-available text-danger info-text"> User name is not available</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 top-buffer-10">
+                                                <div class="clearfix" ng-show="showTab2">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Password
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left required-field" ng-class="{'error-message' : newCustomerForm.submitted != undefined && newCustomerForm.submitted && newCustomerForm.password.$error.required}">
+                                                        <input type="password" class="form-control no-mouseflow" name="password" placeholder="Password" ng-model="SchedulingCustomer.Password" ng-required="showTab2" />
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix top-buffer-10" ng-show="showTab2">
+                                                    <div class="col-sm-4 no-padding">
+                                                        Re Password
+                                                    </div>
+                                                    <div class="col-sm-8 no-padding-left no-padding-left required-field no-mouseflow" ng-class="{'error-message' : newCustomerForm.submitted != undefined && newCustomerForm.submitted && newCustomerForm.confirmPassword.$error.required}">
+                                                        <input type="password" class="form-control" name="confirmPassword" placeholder="Re Enter Password" ng-model="SchedulingCustomer.ConfirmPassword" ng-required="showTab2" />
+                                                        <p class="info-text top-buffer-6 bottom-buffer-0">Your password must be between 6 and 64 characters.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--stack ends-->
+
+                                        <!--stack begins-->
+                                        <!--<div class="clearfix top-buffer-20">
+                                            <div class="col-sm-12">
+                                                <div class="legend clearfix">
+                                                    <p class="pull-left">
+                                                        SELECT HOW WOULD YOU LIKE TO RECEIVE YOUR RESULTS.
+                                                    </p>
+                                                </div>
+                                                <shipping-box ng-repeat="shippingdetail in ShippingOptions.AllShippingOptions"></shipping-box>
+                                            </div>
+                                        </div>-->
+                                        <!--stack ends-->
+                                    </div>
+                                    <button type="submit" style="display: none;" id="submitform1">form 1 submit</button>
+                                </form>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="profile" ng-show="showTab2">
+                                <form class="row" name="returningCustomerForm" novalidate>
+                                    <!--col-md-offset-4 login-info-wrapper-->
+                                    <div class="login-info-wrapper col-sm-offset-2 col-sm-8">
+                                        <legend class="legend text-center">ENTER YOUR LOGIN INFORMATION</legend>
+
+                                        <div class="row">
+                                            <div class="col-sm-12 required-field" ng-class="{'error-message' : returningCustomerForm.submitted != undefined && returningCustomerForm.submitted && (returningCustomerForm.returningEmail.$error.required)}">
+                                                <input type="text" class="form-control" placeholder="Username" name="returningEmail" ng-model="loginDetail.UserName" required />
+                                            </div>
+                                        </div>
+                                        <div class="row top-buffer-10">
+                                            <div class="col-sm-12 required-field" ng-class="{'error-message' : returningCustomerForm.submitted != undefined && returningCustomerForm.submitted && returningCustomerForm.returningPassword.$error.required}">
+                                                <input type="password" class="form-control no-mouseflow" placeholder="Password" name="returningPassword" ng-model="loginDetail.Password" required />
+                                                <span class="help-block">
+                                                    User Name/Password Required
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row top-buffer-10">
+                                            <div class="col-sm-12">
+                                                <button type="button" class="btn btn-primary pull-right" ng-disabled="isPosted" ng-click="loginCustomer(returningCustomerForm)">Log in <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_login"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="row top-buffer-20">
+                                            <div class="col-sm-12">
+                                                <p class="text-center link-bold">Forgot Password? <a href="/Public/Account/ResetPasswordStep1.aspx" target="_blank"> Click Here </a> </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-pannel-lg hidden-md hidden-sm">
+                <order-summary-right-pannel></order-summary-right-pannel>
+            </div>
+
+            <div class="clearfix lower-btns">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary pull-left" ng-click="goToPreviousStep()" ng-disabled="isPosted"><span ng-hide="loader_back">&#60;</span> Back <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_back"></i></button>
+                    <a href="javascript:void(0)" class="btn btn-primary btn-solid pull-right" ng-click="goToNextStep()" ng-disabled="isPosted">Continue <span ng-hide="loader_next">&#62;</span><i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_next"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

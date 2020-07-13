@@ -1,0 +1,57 @@
+﻿@using Falcon.App.UI.App.Franchisee.Technician
+@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Scheduling.ViewModels.CustomerUpsellListModelFilter
+<h2>Search Records</h2>
+
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="width: 24%">
+        <div class="small-text">
+            <b>Event</b> From
+        </div>
+        @Html.TextBoxFor(m => m.FromDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 24%">
+        <div class="small-text">
+            To
+        </div>
+        @Html.TextBoxFor(m => m.ToDate, new { @class = "datePicker" })
+    </div>
+    <div class="editor-column" style="width: 24%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.Vehicle)
+        </div>
+        @Html.TextBoxFor(m => m.Vehicle)
+    </div>
+    <div class="editor-column" style="width: 24%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.ZipCode)
+        </div>
+        @Html.TextBoxFor(m => m.ZipCode)
+    </div>
+
+</div>
+<div style="padding-left: 5px; overflow: hidden">
+    <div class="editor-column" style="width: 24%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.Territory)
+        </div>
+        @Html.TextBoxFor(m => m.Territory)
+    </div>
+    <div class="editor-column" style="width: 24%;">
+        <div class="small-text">
+            @Html.LabelFor(m => m.UpSellRole)
+        </div>
+        @Html.DropDownListFor(m => m.UpSellRole, DropDownHelper.UpSellByRole())
+    </div>
+    <div class="editor-column" style="width: 24%;">
+        <div class="small-text">
+            @Html.LabelFor(m => m.CorporateAccountId)
+        </div>
+        @Html.DropDownListFor(m => m.CorporateAccountId, DropDownHelper.GetCorporateAccounts(Model.CorporateAccountId))
+    </div>
+</div>
+<div style="padding-left: 5px; overflow: hidden;">
+    <div class="editor-column" style="padding-top: 10px; float: right; text-align: right;">
+        @Html.ActionLink("Clear", "Upsell", "Reports") | @Html.SubmitButton("Search")
+    </div>
+</div>

@@ -1,0 +1,153 @@
+@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentFooterEditModel
+
+<style type="text/css">
+    #DisclaimerDiv input[type="text"]
+    {
+        border: none;
+        border-bottom: 1px solid black;
+    }
+</style>
+<div style="float: left; width: 99%; font-size: 12px; padding-top: 20px; page-break-before: always;" class="disclaimerdiv_css" id="DisclaimerDiv">
+    <div class="row-div1 header-footer disclaimerdiv_css" style="font-size: 11px; display: none;">
+        <div style="float: left; width: 210px;">
+            <b>Customer Id:</b>@Model.CustomerId
+        </div>
+        <div style="float: left; width: 420px;">
+            <b>Customer Name:</b>@Model.CustomerName.ToString()
+        </div>
+        <div style="float: right; width: 200px; text-align: right;">
+            <b>Event Date:</b>@Model.EventDate.ToShortDateString()
+        </div>
+    </div>
+</div>
+<div style="float: left; width: 97%; font-size: 12pt;" class="disclaimerdiv_css" id="DisclaimerDiv">
+
+    <div class="row-div" style="margin-top: 10px;" id="emergencycontact">
+        <div style="float: left; width: 48%;">
+            Contact in case of emergency:
+            @Html.TextBoxFor(m => m.EmergencyContact, new { @style = "width: 120px;" })
+        </div>
+        <div style="float: left; width: 25%;">
+            Relationship:
+            @Html.TextBoxFor(m => m.Relationship, new { @style = "width: 80px;" })
+        </div>
+        <div style="float: left; width: 27%;">
+            Phone Number:
+            @Html.TextBoxFor(m => m.ContactPhoneNumber, new { @class = "mask-phone", @style = "width: 80px;" })
+        </div>
+    </div>
+    <div class="row-div1" style="text-align: justify;">
+        By signing below, I acknowledge that I am participating in a screening exam. I authorize
+        the personnel of Matrix Medical Network to perform the screening tests being offered. If applicable,
+        I hereby consent to the drawing of a blood sample for the purpose of measuring my
+        CMP (comprehensive metabolic panel), blood cholesterol, glucose, PSA, TSH, hs-CRP
+        and/or liver enzyme levels. In consideration of undergoing these tests, I hereby
+        release Matrix Medical Network and/or any of its respective divisions, subsidiaries and affiliates,
+        and each of its directors, officers, employees, successors and assigns (collectively
+        referred to in this Consent and Release as Matrix Medical Network, respectively) from any liability
+        arising from the data. I also understand that:
+    </div>
+    <div class="row-div1" style="text-align: justify;">
+        <ol style="list-style-type: decimal;">
+            <li style="list-style-type: decimal;">
+                The data derived from my tests are considered
+                preliminary. Matrix Medical Network is not providing a diagnosis. Matrix Medical Network shall not be held
+                liable for any conditions that are not detected through this screening.
+            </li>
+            <li style="list-style-type: decimal;">
+                If the results of my tests suggest that I may
+                be at risk of stroke, aortic aneurysm, heart disease, and/or osteoporosis, I should
+                contact my personal physician for follow-up. I understand that more comprehensive
+                follow-up diagnostic tests by my personal physician may indicate that no significant
+                abnormalities exist.
+            </li>
+            <li style="list-style-type: decimal;">
+                The responsibility for initiating follow-up exams
+                to confirm the results of this screening and obtain professional medical assistance
+                is mine alone and not that of any organization associated with this testing.
+            </li>
+            <li style="list-style-type: decimal;">
+                Sonography has many limitations and may not find
+                many abnormalities. This sonogram may be limited by many reasons, such as body shape,
+                weight, and position. Although the sonogram is a helpful diagnostic tool, it should
+                not be considered absolute proof of the absence of an abnormality.
+            </li>
+        </ol>
+    </div>
+    <div class="row-div1" style="text-align: justify;">
+        NOTE: The test results and other information provided by Matrix Medical Network are not intended
+        to be, and are not a substitute for, professional medical advice. Always seek the
+        advice of your physician, nurse, or other qualified health care provider before
+        you undergo any treatment or for answers to any questions you may have regarding
+        a medical condition. Nothing contained in the health information provided by Matrix Medical Network
+        is intended to be used for medical diagnosis or treatment without first consulting
+        with your physician.
+        <br />
+        Confidentiality Statement: Confidentiality of data relating to individual clients
+        and visitors to Matrix Medical Network mobile screening units, including their identity, is
+        respected by Matrix Medical Network. Matrix Medical Network makes every effort not only to honor, but to
+        exceed the legal requirements of medical/health information privacy that applies
+        to the Health Insurance Portability and Accountability Act of 1996, public law 104-191.Services
+        are completely confidential. All records and screening results are kept strictly
+        within Matrix Medical Network's main office and will not be released to anyone without your
+        written consent.
+    </div>
+    <div class="row-div1">
+        I have received and understand the Notice of Privacy Practices and attest that all
+        information provided above is correct.
+    </div>
+    <div class="row-div1">
+        <div style="float: left; width: 80%;">
+            Signature of Client:
+            <input type="text" id="ClientSignatureTextbox" style="width: 440px;" />
+        </div>
+        <div style="float: left; width: 20%;">
+            Date:
+            <input type="text" id="ClientSignatureDateTextbox" style="width: 90px;" />
+        </div>
+    </div>
+    <div class="row-div1">
+        <div style="float: left; width: 80%;">
+            Signature of Legal Guardian or Custodian:
+            <input type="text" id="GuardianSignatureTextbox" style="width: 230px;" />
+        </div>
+        <div style="float: left; width: 20%;">
+            Date:
+            <input type="text" id="GuardianSignatureDateTextbox" style="width: 90px;" />
+        </div>
+    </div>
+    <div class="row-div1">
+        <div style="float: left;clear: both;width: 99%;">
+            <div style="float: left;padding-right: 5px;">Office Use Only:</div> <div style="margin-right: 10px;float: left;">
+                <input type="checkbox" />HAF
+            </div><div style="margin-right: 10px;float: left;">
+                <input type="checkbox" />Echo
+            </div><div style="margin-right: 10px; float: left;">
+                <input type="checkbox" />EKG
+            </div><div style="margin-right: 10px; float: left;">
+                <input type="checkbox" />ASI
+            </div><div style="margin-right: 10px; float: left;">
+                <input type="checkbox" />Carotid
+            </div><div style="margin-right: 10px; float: left;">
+                <input type="checkbox" />Aorta
+            </div><div style="margin-right: 10px; float: left;">
+                <input type="checkbox" />ABI
+            </div><div style="margin-right: 10px; float: left;">
+                <input type="checkbox" />Osteo
+            </div><div style="margin-right: 10px; float: left;">
+                <input type="checkbox" />BP
+            </div><input type="checkbox" />BW
+        </div>
+    </div>
+    <div class="row-div1 header-footer disclaimerdiv_css" style="font-size: 12px; display:none;padding-top: 20px">
+        <div style="float: left; width: 210px;">
+            <b>Customer Id:</b>@Model.CustomerId
+        </div>
+        <div style="float: left; width: 420px;">
+            <b>Customer Name:</b>@Model.CustomerName.ToString()
+        </div>
+        <div style="float: right; width: 200px; text-align: right;">
+            <b>Event Date:</b>@Model.EventDate.ToShortDateString()
+        </div>
+    </div>
+</div>

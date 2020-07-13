@@ -1,0 +1,67 @@
+﻿<div class="campaignBody" data-ng-controller="healthplanCampaignClientController" us-spinner spinner-key="online-spinner">
+    <div class="main-container border-default">
+        <h4>
+            {{CriteriaName}} | {{selectedCategory.text}} 
+            <a ng-click="backToDashboard()" href="javascript:void(0)" style="float: right;">Back to Call Queue Selection</a><br />
+        </h4>
+        <div>
+            <div id="list-filter" style="margin-top: 15px ">
+                <form name="campaignForm" novalidate autocomplete="off" ng-submit="filterCampaign(campaignForm)">
+                    <div style="padding-left: 5px; overflow: hidden; float: left; clear: both; width: 100%;">
+                        <div style="padding: 15px; float: left; width: 79%; ">
+                            <div class="editor-column" style="width: 35%; float: left;  ">
+                                <div class="small-text">From Date</div>
+                                <input type="text" ng-model="campaignFilters.StartDate" date-picker-simple="" />
+                            </div>
+                            <div class="editor-column" style="width: 30%;float: left; ">
+                                <div class="small-text">To Date</div>
+                                <input type="text" ng-model="campaignFilters.EndDate" date-picker-simple="" />
+                            </div>
+                        </div>
+                        <div class="editor-column" style="padding-top: 30px;  width: 19%; float: right; text-align: right;">
+                            <!--<a href="" ng-disabled="isPosted" ng-click="ManageCategory()">Change Category</a> |--> <a href="" ng-disabled="isPosted" ng-click="clearFilter()">Clear</a>
+                            | <button  type="submit" ng-disabled="isPosted">Search<i class="spin spin-right" ng-show="loader_filter"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div>
+                <paging-model model="PagingModel" url="GetCampaignByPageNumber(number)"></paging-model>
+                <table id="list-view" style="margin-top: 5px; margin-bottom: 5px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th class="event-list-date">Name</th>
+                            <th class="event-list-available">Start Date</th>
+                            <th class="event-list-available">End Date</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="alt-row">
+                        <tr ng-repeat="campagin in CampaignList" ng-if="CampaignList != null && CampaignList.length >= 1">
+                            <td class="col-lg-2">
+                                <span ng-bind="campagin.Name"></span>
+                            </td>
+                            <td class="col-lg-3">
+                                <span ng-bind="campagin.StartDate | date : 'MM/dd/yyyy'"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="campagin.EndDate | date : 'MM/dd/yyyy'"></span>
+                            </td>
+                            <td>
+                                <div class="text-center no-margin startCallingButton">
+                                    <input ng-disabled="disableStartCallingButton" class="btn btn-primary " type="button" name="campagin" value="Start Call" ng-click="getCustomerForCall(campagin)">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr ng-if="showNoCampaignInList == true">
+                            <td colspan="7">
+                                <h4>No data found</h4>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <paging-model model="PagingModel" url="GetCampaignByPageNumber(number)"></paging-model>
+            </div>
+        </div>
+    </div>
+</div>

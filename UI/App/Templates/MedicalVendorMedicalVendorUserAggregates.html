@@ -1,0 +1,44 @@
+﻿<div id="medicalVendorMedicalVendorUserAggregateRepeaterDiv" runat="server">
+    <table id="MedicalVendorMedicalVendorUserAggregateTable" class="divgrid_clnew" cellspacing="3" width="100%">
+        <thead>
+            <tr>
+                <th style="white-space:nowrap;text-align:right;">
+                    <b>Physician Name</b> 
+                </th> 
+                <th style="white-space:nowrap;text-align:right;">
+                    <b>Number of Evaluations</b>
+                </th>
+                <th style="white-space:nowrap;text-align:right;">
+                    <b>Current Rate</b>
+                </th>
+                <th style="white-space:nowrap;text-align:right;">
+                    <b>Total Earnings</b> 
+                </th>                        
+                <th style="white-space:nowrap;text-align:right;">
+                    <b>Total Payments</b>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {#foreach $T as MedicalVendorMedicalVendorUserAggregate}
+            <tr>
+                <td style="white-space:nowrap;text-align:right;">
+                    {$T.MedicalVendorMedicalVendorUserAggregate.MedicalVendorMedicalVendorUser.Name.FullName}
+                </td>                        
+                <td style="white-space:nowrap;text-align:right;">
+                    {$T.MedicalVendorMedicalVendorUserAggregate.NumberOfEvaluations}
+                </td>
+                <td style="white-space:nowrap;text-align:right;">
+                    {FormatCurrency($T.MedicalVendorMedicalVendorUserAggregate.PayRate)}
+                </td>
+                <td style="white-space:nowrap;text-align:right;">
+                    {FormatCurrency($T.MedicalVendorMedicalVendorUserAggregate.TotalEarnings)}
+                </td>
+                <td style="white-space:nowrap;text-align:right;">
+                    {FormatCurrency($T.MedicalVendorMedicalVendorUserAggregate.TotalPayments)}
+                </td>                 
+            </tr>  
+            {#/for}
+        </tbody>
+    </table>
+</div>

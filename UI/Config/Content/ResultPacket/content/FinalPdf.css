@@ -1,0 +1,994 @@
+﻿body, html {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+    font-size: 11px;
+}
+
+fieldset {
+    border-radius: 4px;
+}
+
+    fieldset legend {
+        font-weight: bold;
+    }
+
+td {
+    margin-top: 5px;
+    padding-right: 3px;
+}
+
+span.tech-notes {
+    display: block;
+    width: 500px;
+    display: block;
+    height: 50px;
+    overflow: hidden;
+    font-style: italic;
+}
+
+input[type=text] {
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 1px solid #000;
+    background: none;
+}
+
+input[type=checkbox] {
+    background: none;
+    padding-right: 2px;
+    border-style: none;
+}
+
+.page-break {
+}
+
+.front-page-title {
+    font-size: 26px;
+    font-weight: normal;
+    color: #330170;
+    font-family: Garamond;
+    padding-bottom: 10px;
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: normal;
+    color: #330170;
+    font-family: Garamond;
+    padding-bottom: 10px;
+}
+
+
+.mainContainer {
+    width: 950px;
+    margin: 10px auto 10px auto;
+    padding: 10px 0px;
+    min-height: 940px;
+    page-break-before: always;	
+}
+
+
+.rpp-pagebreak {
+    page-break-after: always;
+}
+
+.small-width {
+    width: 60px;
+}
+
+.mainContainer-wopb {
+    width: 950px;
+    margin: 10px auto 10px auto;
+    padding: 10px 0px;
+    min-height: 940px;
+}
+
+.mainContainer-wopb-widthsp880 {
+    width: 900px;
+    margin: 10px auto 10px auto;
+    padding: 10px 0px;
+    min-height: 940px;
+    page-break-before: always;
+}
+
+.mainContainer-frontpage {
+    width: 800px;
+    margin: 10px auto 10px auto;
+    padding: 10px 0px;
+    min-height: 940px;
+}
+
+.mainContainer-lw {
+    width: 800px;
+    margin: 10px auto 10px auto;
+    padding: 10px 0px;
+    min-height: 940px;
+    page-break-before: always;
+}
+
+.mainContainer-lw-wopb {
+    width: 800px;
+    margin: 10px auto 10px auto;
+    padding: 10px 0px;
+    min-height: 940px;
+}
+
+.mainContainer-img{
+    width: 950px;
+    margin: 10px auto 10px auto;
+    padding: 10px 0px;
+    min-height: 960px;
+	float:left;
+	clear:both;
+    page-break-before: always;		
+}
+
+.mainContainer-img img {
+    width: 92%;
+	min-height:930px;		
+	
+}
+
+.divtestsection-withborder {
+    background: url(whitebackgroundwithgreenborder.jpg) no-repeat;
+    width: 810px;
+    padding: 20px;
+    height: 960px;
+    margin: 0px auto;
+    font-size: 12px;
+}
+
+.font-description {
+    font-size: 10pt;
+    text-align: justify;
+}
+
+.font-reading {
+    font-size: 11px;
+}
+
+.centeralignimgtitlediv {
+    width: 880px;
+    margin: 0px auto;
+}
+
+.testsection-header {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #330170;
+    padding: 5px 5px 5px 0;
+}
+
+.section {
+    width: 100%;
+    padding: 5px 0px;
+    float: left;
+    margin: 5px 0px;
+}
+
+.section-left {
+    float: left;
+    width: 65%;
+}
+
+.section-right {
+    float: right;
+    text-align: right;
+    width: 33%;
+}
+
+.top-border {
+    border-top: solid 1px #000000;
+}
+
+.topcontainer {
+    width: 100%;
+    float: left;
+    padding: 40px 0px;
+}
+
+.topcontainer-img {
+    width: 100%;
+    float: left;
+    padding: 0px 0px;
+}
+
+.followup-recommended {
+    display: block;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    background-color: #b8d6aa;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.sectionUpper-frontpage {
+    width: 86%;
+    float: left;
+    margin: 0.5% 3.5%;
+    padding: 0.5% 1%;
+}
+
+.sectionUpper {
+    width: 92%;
+    float: left;
+    margin: 0.5%;
+    padding: 0.5% 3%;
+}
+
+.frontpage-section-withmargin-border {
+    width: 86%;
+    margin: 3.5%;
+    padding: 4% 3%;
+    float: left;
+    font-size: 18px;
+    line-height: 24px;
+}
+
+    .frontpage-section-withmargin-border p {
+        padding-bottom: 20px;
+    }
+
+.rightCorner {
+    float: right;
+    padding-right: 5px;
+    width: 250px;
+}
+
+.logoSide {
+    float: left;
+    padding-left: 5px;
+    width: 300px;
+    padding-bottom: 10px;
+}
+
+.talign-middle {
+    text-align: center;
+}
+
+.imgsection {
+    float: left;
+    width: 35%;
+    padding-right: 2%;
+}
+
+    .imgsection img {
+        width: 95%;
+        height: 200px;
+        border: solid 1ps #cccccc;
+    }
+
+.textsection {
+    float: left;
+    width: 60%;
+}
+
+.findings-testsection {
+    font-size: 13px;
+}
+
+.testSection {
+    float: left;
+    width: 95%;
+    margin: 0px;
+    padding: 5px 0px;
+}
+
+.testHeaderfont {
+    font-size: 18px;
+}
+
+.test-textcontent {
+    font-size: 16px;
+    text-align: justify;
+}
+
+.test-textcontent-rpp {
+    font-size: 14px;
+    text-align: justify;
+}
+
+.phyRecolabel {
+    float: left;
+    width: 150px;
+    padding-right: 5px;
+    font-weight: bold;
+}
+
+.phyRecoReading {
+    float: left;
+    width: 75%;
+    padding-right: 5px;
+}
+
+h1, h2, h3, h4 {
+    padding: 0px;
+    margin: 0px;
+}
+
+p {
+    margin: 0px;
+    padding: 5px 0px;
+}
+
+ul, li {
+    margin: 0px 5px;
+    padding: 0px 5px;
+}
+
+.textReading-small {
+    width: 50px;
+}
+
+.testReading-medium {
+    width: 160px;
+}
+
+.sectionReading {
+    width: 50%;
+    float: left;
+    display: block;
+}
+
+.fontsize-small {
+    font-size: 14px;
+}
+
+.margin-large {
+    margin: 15px 0px;
+}
+
+.margin-medium {
+    margin: 10px 0px;
+}
+
+.margin-small {
+    margin: 5px 0px;
+}
+
+.resultHeader {
+    width: 100%;
+    float: left;
+    padding: 5px;
+    margin-top: 15px 5px;
+    background-color: Green;
+}
+
+    .resultHeader input {
+        color: #ffffff;
+    }
+
+.rhleft {
+    float: left;
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
+}
+
+.rhright {
+    float: right;
+    font-weight: bold;
+    color: #fff;
+    font-size: 13px;
+}
+
+.resultContent {
+    width: 99%;
+    padding: 1%;
+    float: left;
+    font-size: 12px;
+}
+
+.resultSection {
+    width: 100%;
+    float: left;
+    margin-top: 4px;
+}
+
+.aaaReadingwidth, .AwvAaaReadingwidth {
+    float: left;
+    width: 98%;
+    padding-left: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+#HcpAaaFindingDiv {
+    float: left;
+    width: 45%;
+}
+
+    #HcpAaaFindingDiv span {
+        display: block;
+        width: 100%;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        float: left;
+    }
+
+#HcpAaaReadingDiv {
+    float: left;
+    width: 55%;
+    background-color: #EEEEE2;
+    font-size: 12px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+#AaaFindingDiv, #AwvAaaFindingDiv {
+    float: left;
+    width: 45%;
+}
+
+    #AaaFindingDiv span, #AwvAaaFindingDiv span {
+        display: block;
+        width: 100%;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        float: left;
+    }
+
+#PpAaaFindingDiv {
+    float: left;
+    width: 45%;
+}
+
+    #PpAaaFindingDiv span {
+        display: block;
+        width: 100%;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        float: left;
+    }
+
+#AaaReadingDiv, #AwvAaaReadingDiv {
+    float: left;
+    width: 55%;
+    background-color: #EEEEE2;
+    font-size: 12px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+#PpAaaReadingDiv {
+    float: left;
+    width: 55%;
+    background-color: #EEEEE2;
+    font-size: 12px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+#strokeFindingDiv {
+    float: left;
+    width: 74%;
+    font-size: 12px;
+}
+
+#AwvCarotidFindingDiv {
+    float: left;
+    width: 49%;
+    font-size: 12px;
+}
+
+    #strokeFindingDiv div, #AwvCarotidFindingDiv div {
+        display: block;
+    }
+
+#strokeReadingDiv {
+    float: left;
+    width: 26%;
+    background-color: #EEEEE2;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.AwvCarotidReadingDiv {
+    float: left;
+    width: 49%;
+    background-color: #EEEEE2;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 2px;
+}
+
+    .AwvCarotidReadingDiv div.left_box, .AwvCarotidReadingDiv div.right_box {
+        width: 48%;
+        float: left;
+    }
+
+    .AwvCarotidReadingDiv div.blockLeft {
+        width: 100%;
+        float: left;
+        padding-top: 0;
+    }
+
+    .AwvCarotidReadingDiv.row {
+        width: 100%;
+        clear: both;
+        float: left;
+        padding-top: 0;
+    }
+
+    #strokeReadingDiv input[type=text], .AwvCarotidReadingDiv input[type=text] {
+        width: 50px;
+    }
+
+/********HcpCarotid*********/
+#HcpCarotidFindingDiv {
+    float: left;
+    width: 74%;
+    font-size: 12px;
+}
+
+    #HcpCarotidFindingDiv div {
+        display: block;
+    }
+
+#HcpCarotidReadingDiv {
+    float: left;
+    width: 26%;
+    background-color: #EEEEE2;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+    #HcpCarotidReadingDiv input[type=text] {
+        width: 50px;
+    }
+/*******************/
+
+#leadFindingDiv {
+    float: left;
+    width: 55%;
+    font-size: 12px;
+}
+
+    #leadFindingDiv div {
+        display: block;
+    }
+
+#leadReadingDiv {
+    float: left;
+    width: 44%;
+    background-color: #EEEEE2;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+    #leadReadingDiv input[type=text] {
+        width: 50px;
+    }
+
+.blockLeft {
+    float: left;
+    width: 25%;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-weight: bold;
+    padding-top: 8px;
+}
+
+.blockRight {
+    float: left;
+    width: 65%;
+    padding-right: 5px;
+    padding-top: 4px;
+}
+
+#ekgFindingDiv {
+    float: left;
+    width: 15%;
+    padding: 1% 1% 1% 0px;
+}
+
+#ekgPhysicianReadingDiv {
+    float: left;
+    width: 55%;
+    padding: 1%;
+}
+
+#ekgReadingDiv {
+    float: left;
+    width: 25%;
+    padding: 1%;
+    background-color: #EEEEE2;
+}
+
+    #ekgReadingDiv input[type=text] {
+        width: 100px;
+    }
+
+#padFindingDiv {
+    float: left;
+    width: 50%;
+}
+
+    #padFindingDiv span {
+        display: block;
+        width: 100%;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        float: left;
+    }
+
+#padReadingDiv {
+    float: left;
+    width: 50%;
+    background-color: #EEEEE2;
+    font-size: 12px;
+    padding-bottom: 5px;
+}
+
+    #padReadingDiv div {
+        float: left;
+        width: 98%;
+        padding: 1%;
+    }
+
+        #padReadingDiv div span {
+            float: left;
+            width: 36%;
+        }
+
+            #padReadingDiv div span label {
+                width: 90px;
+                float: left;
+            }
+
+            #padReadingDiv div span input[type=text] {
+                width: 40px;
+                float: left;
+            }
+
+#asiFindingDiv {
+    float: left;
+    width: 27%;
+    padding: 1% 1% 1% 0px;
+    font-size: 11px;
+}
+
+    #asiFindingDiv span {
+        display: block;
+        width: 100%;
+        margin-bottom: 2px;
+        float: left;
+    }
+
+#asiFindingStaticDiv {
+    float: left;
+    width: 44%;
+    padding: 1%;
+}
+
+    #asiFindingStaticDiv div {
+        float: left;
+        width: 50%;
+    }
+
+        #asiFindingStaticDiv div span {
+            padding-top: 4px;
+            padding-bottom: 4px;
+            float: left;
+            display: block;
+        }
+
+#asiReadingDiv {
+    float: left;
+    width: 24%;
+    padding: 1%;
+    background-color: #EEEEE2;
+    font-size: 12px;
+    padding-bottom: 5px;
+}
+
+    #asiReadingDiv div {
+        float: left;
+        width: 98%;
+        padding: 2px 1%;
+    }
+
+        #asiReadingDiv div span {
+            float: left;
+            width: 50%;
+        }
+
+            #asiReadingDiv div span input[type=text] {
+                width: 40px;
+            }
+
+.override-section {
+    position: absolute;
+    z-index: 99999;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=50);
+    -moz-opacity: 0.5;
+    -khtml-opacity: 0.5;
+    opacity: 0.5;
+    background-color: #A3A49B;
+}
+
+#customer-info {
+    background-color: #EEEEE2;
+    width: 88%;
+    margin: 1% 3.5%;
+    padding: 0.5% 2%;
+    font-size: 12px;
+}
+
+.row {
+    width: 100%;
+    float: left;
+    padding: 5px 0px;
+}
+
+.label {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+fieldset.signing-physician {
+    border-color: #D1D1CB;
+    border-radius: 4px;
+}
+
+    fieldset.signing-physician legend {
+        color: #A0A09C;
+    }
+
+.rsleft {
+    float: left;
+    font-size: 12px;
+}
+
+.rsright {
+    float: right;
+    font-size: 12px;
+}
+
+#footer .push {
+    float: left;
+    width: 95%;
+    border-top: 1px solid green;
+    color: #343434;
+    font-size: 8pt;
+    margin-top: 10px;
+    padding: 5px 5px 15px 20px;
+    height: 4em;
+}
+
+.grey-border {
+    border: 1px solid grey;
+}
+
+.black-border {
+    border: 2px solid black;
+}
+
+.ekg-finding-div {
+    float: left;
+    width: 98%;
+    clear: both;
+    border-bottom: solid 1px black;
+}
+
+.ekg-finding-table {
+    border-collapse: collapse;
+    float: left;
+    width: 500px;
+}
+
+.ekg-physicianvalue-div {
+    float: left;
+    width: 98%;
+    clear: both;
+}
+
+.ekg-physicianvalue-inner-div {
+    float: right;
+    text-align: right;
+    width: 60%;
+    border-bottom: solid 1px black;
+}
+
+.test-resultspan-font {
+    font-size: 11pt;
+}
+
+#imtFindingDiv {
+    float: left;
+    width: 30%;
+}
+
+    #imtFindingDiv div {
+        display: block;
+    }
+
+#imtunablescreenDiv {
+    float: left;
+    width: 28%;
+}
+
+#imtReadingDiv {
+    float: left;
+    width: 40%;
+    background-color: #EEEEE2;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+    #imtReadingDiv input[type=text] {
+        width: 50px;
+    }
+
+#osteoFindingDiv, #AwvBoneMassFindingDiv {
+    float: left;
+    width: 50%;
+}
+
+    #osteoFindingDiv span, #AwvBoneMassFindingDiv span {
+        display: block;
+        width: 100%;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        float: left;
+    }
+
+#osteoReadingDiv, #AwvBoneMassReadingDiv {
+    float: left;
+    width: 50%;
+    background-color: #EEEEE2;
+    font-size: 12px;
+    padding-bottom: 5px;
+}
+
+    #osteoReadingDiv div, #AwvBoneMassReadingDiv div {
+        float: left;
+        width: 98%;
+        padding: 1%;
+    }
+
+        #osteoReadingDiv div span, #AwvBoneMassReadingDiv div span {
+            float: left;
+            width: 90%;
+        }
+
+            #osteoReadingDiv div span label, #AwvBoneMassReadingDiv div span label {
+                width: 140px;
+                float: left;
+            }
+
+            #osteoReadingDiv div span input[type=text], #AwvBoneMassReadingDiv div span input[type=text] {
+                width: 60px;
+                float: left;
+            }
+
+.FindingSection {
+    padding: 10px 0;
+}
+
+.OtherModalitiesAdditionalImages {
+    width: 55%;
+}
+
+#AwvEchoEstimatedEjacFinding td {
+    display: inline;
+    padding-right: 15px;
+}
+
+.test-header-text {
+    color: #330170;
+    font-size: 30pt;
+    font-weight: bold;
+    text-align: center;
+}
+
+.test-header-for-Image {
+    color: #330170;
+    font-size: 30pt;
+    font-weight: bold;
+    text-align: center;
+}
+
+.VisionReadingDiv {
+    float: left;
+    width: 45%;
+    background-color: #EEEEE2;
+    font-size: 12px;
+    padding: 5px;
+}
+
+    .VisionReadingDiv div {
+        float: left;
+        width: 98%;
+        padding: 1%;
+    }
+
+        .VisionReadingDiv div span {
+            float: left;
+            width: 257px;
+            float: left;
+        }
+
+            .VisionReadingDiv div span label {
+                width: 60px;
+                float: left;
+            }
+
+            .VisionReadingDiv div span span {
+                width: 5px;
+                float: left;
+            }
+
+            .VisionReadingDiv div span input[type=text] {
+                width: 60px;
+                float: left;
+            }
+#IfobtFinding td, #urinemicroalbuminFinding td { padding-top: 2px;padding-bottom: 2px;}
+
+.MonofilamentReadingDiv {
+    float: left;
+    width: 45%;
+    /*background-color: #EEEEE2;*/
+    font-size: 12px;
+    padding: 5px;
+}
+
+    .MonofilamentReadingDiv div {
+        float: left;
+        width: 98%;
+        padding: 1%;
+    }
+
+        .MonofilamentReadingDiv div span {
+            float: left;
+            width: 257px;
+            float: left;
+        }
+
+            .MonofilamentReadingDiv div span label {
+                width: 75px;
+                float: left;
+            }
+
+            .MonofilamentReadingDiv div span span {
+                width: 5px;
+                float: left;
+            }
+           
+ .test-not-performed-header-text {
+    color: #4CA748;
+    font-size: 30pt;
+    font-weight: bold;
+    text-align: center;
+}
+
+ .testNotPerformed-section {
+     padding-top: 20px;
+ }
+ .testnotperformed-name {
+     padding: 5px;
+     clear: both; 
+ }
+ .testnotperformed-reason {
+     padding: 5px; 
+     clear: both;
+     margin-left: 20px;
+ }
+ .testnotperformed-notes {
+     padding: 5px; 
+     clear: both;
+     margin-left: 20px;
+ }
+ .tnp-pagebreak-before {
+    page-break-before: always;
+}
+.margin-0
+{
+	margin:0 !important;
+}.margin-0
+{
+	margin:0 !important;
+}

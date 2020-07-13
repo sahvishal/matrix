@@ -1,0 +1,122 @@
+﻿<div class="clearfix">
+    <div class="row" ng-show="popupmodel===false">
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>Zip Code</label>
+                <input type="text" class="form-control" maxlength="5" placeholder="Zip Code" ng-model="EventFilters.zipcode" />
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>Radius</label>
+                <select class="form-control" ng-model="EventFilters.radius">
+                    <option value="0" selected="selected">Exact search</option>
+                    <option value="5">5 miles</option>
+                    <option value="10">10 miles</option>
+                    <option value="15">15 miles</option>
+                    <option value="20">20 miles</option>
+                    <option value="25">25 miles</option>
+                    <option value="50">50 miles</option>
+                    <option value="60">60 miles</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>State</label>
+                <select class="form-control" ng-model="EventFilters.state" ng-options="item.SecondValue as item.SecondValue for item in States">
+                    <option value="">State</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>City</label>
+                <input type="text" class="form-control" online-autocomplete="Scheduling/OnlineEvent/GetCityByPrefixText" ng-model="EventFilters.city" placeholder="City" />
+            </div>
+        </div>
+        <div class="col-sm-2" ng-if="patientInfo.HasMammo" style="padding-top:30px;">
+            <div class="form-group">
+                <input type="checkbox" name="searchAll" ng-model="EventFilters.SearchAllEvents" /> <label>Show All Events</label>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label>&nbsp;</label><br />
+                <button type="button" class="pull-left" style="margin-top: 5px" ng-disabled="isPostBack" ng-click="SeachByFilters()">Search<i class="spin spin-right" ng-show="loader_customerEventSearch"></i> </button>
+            </div>
+        </div>
+    </div>
+    <span><b><i>If you don't see an event of patient's choice, try searching by changing the radius.</i></b></span><br/>
+    <span ng-if="patientInfo.HasMammo && EventFilters.SearchMammoEvents"><b><i>Only events with Mammography test are appearing. To view all events click on Show All Events and hit Search.</i></b></span>
+    <div class="event-search-list-wrap contact-screen-eventlist" ng-class="{'contact-screen-eventlist-height':Events!=null && Events.length>4}">
+        <div class="event-list-inner">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width: 260px" ng-click="eventShortBy(CallQueueSortOrderBy.EventName)"><a class="customer-event-list" href="javascript:void(0)">EVENT INFO <i class="fa fa-arrows-v" aria-hidden="true" ng-show="CallQueueSortOrderBy.EventName===pagingFilters.SortByOrder"></i></a></th>
+                        <th style="width: 150px;text-align: center" ng-click="eventShortBy(CallQueueSortOrderBy.EventDate)"><a class="customer-event-list" href="javascript:void(0)">DATE <i class="fa fa-arrows-v" aria-hidden="true" ng-show="CallQueueSortOrderBy.EventDate===pagingFilters.SortByOrder"></i></a></th>
+                        <th style="width: 150px; text-align: center" ng-click="eventShortBy(CallQueueSortOrderBy.Distance)"><a class="customer-event-list" href="javascript:void(0)">DISTANCE <i class="fa fa-arrows-v" aria-hidden="true" ng-show="CallQueueSortOrderBy.Distance===pagingFilters.SortByOrder"></i></a></th>
+                        <th style="width: 180px;text-align: center" ng-click="eventShortBy(CallQueueSortOrderBy.AvailableAppointmentSlots)"><a class="customer-event-list" href="javascript:void(0)">AVAILABLE SLOTS <i class="fa fa-arrows-v" aria-hidden="true" ng-show="CallQueueSortOrderBy.AvailableAppointmentSlots===pagingFilters.SortByOrder"></i></a></th>
+                        <th ng-show="popupmodel===false">PODS</th>
+                        <th style="width: 190px; text-align: center" ng-show="popupmodel===false">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-show="Events!=null || Events.length > 0" ng-repeat="event in Events" ng-class="{'event-highlight':event.EventId == toBeFilledEventId}">
+                        <td class="event-list-location">
+                            <span>
+                                <b>Id: </b>{{event.EventId}}
+                                <img src="/Content/Images/female-sign.png" ng-if="event.IsFemaleOnly">
+                                <img src="/Content/Images/bca.gif" ng-if="event.HasBreastCancerTest" title="This event has mammography test">
+                            </span>
+                            <br />
+                            <span><b>Location: </b> <span class="location-name no-margin host-name-transfrom" ng-bind="event.Name"></span></span> <br />
+
+                            <span class="location-address no-margin">
+                                <span ng-bind="event.StreetAddressLine1"></span>
+                                <span ng-show="event.StreetAddressLine2 != null">,<span ng-bind="event.StreetAddressLine2"></span></span>
+                                <span ng-bind="event.City"></span>,<span ng-bind="event.State"></span> -<span ng-bind="event.Zip"></span>
+                                <br />
+                                <span ng-if="event.EventType !=null">
+                                    <img ng-if="event.EventType == 'Public'" src="/App/Images/public-icon.gif" alt="Public" />
+                                    <img ng-if="event.EventType == 'Private'" src="/App/Images/private-icon.gif" alt="Private" />
+                                </span>
+                            </span><br />
+                        </td>
+                        <td style="width: 150px;text-align: center">
+                            <p class="event-day no-margin">{{event.EventDate | date:'MMMM dd,y'}}</p>
+                        </td>
+                        <td style="width: 150px;text-align: center">
+                            <p class="event-distance no-margin">{{event.DistanceFromZip}} Miles</p>
+                        </td>
+                        <td style="width: 150px;text-align: center">
+                            <p ng-if="event.IsDynamicScheduling===true">
+                                <span>Dynamic Scheduling</span>
+                                <br />
+                                <a href="javascript:void(0)" ng-click="ViewAll(event.EventId)">View All</a>
+                            </p>
+                            <span ng-if="event.IsDynamicScheduling===false">{{event.TotalAppointmentSlots-event.BookedSlots}}</span>
+                        </td>
+                        <td ng-show="popupmodel===false">
+                            {{getPodName(event.Pods)}}
+                        </td>
+
+                        <td class="text-center" ng-show="popupmodel===false">
+                            <div class=" no-margin">
+                                <button id="event_{{event.EventId}}" ng-hide="event.BookedSlots == event.TotalAppointmentSlots" ng-disabled="callId==0" name="event" ng-click="CustomerRegistration(event)">Book Now <i class="spin spin-right" ng-show="loader_booknow"></i></button>
+                                <img src="/App/Images/no-slots-available-icongif.gif" ng-show="event.BookedSlots == event.TotalAppointmentSlots" />
+                            </div>
+
+                        </td>
+                    </tr>
+                    <!--<tr ng-show="Events==null || Events.length <= 0">
+                        <td colspan="6" class="contact-screen-no-event text-center"> No Record Found</td>
+                    </tr>-->
+                </tbody>
+            </table>
+            <div class="col-sm-12 text-center contact-screen-no-event" ng-show="Events==null || Events.length <= 0">No Record Found</div>
+        </div>
+    </div>
+    <paging-model model="PagingModel" url="GetEventPage(number)" ng-show="popupmodel===false"></paging-model>
+</div>

@@ -1,0 +1,223 @@
+﻿<div view-load-completed>
+    <div data-ng-controller="EventController as event" class="container no-padding bg-default">
+        <quantcast name1="Location" name2="Search"></quantcast>
+        <form class="eventForm">
+            <div class="sub-header bg-success relative">
+                <div class="header-right">
+                    <progressbar-view></progressbar-view>
+                    <order-summary></order-summary>
+                </div>
+                <div class="header-left">
+                    <h2 class="no-margin small-header" ng-hide="eventFilter.invitationCode !== 'null' && eventFilter.invitationCode !== ''">
+
+                        {{ isSearchInProgress ? 'Searching' : 'Found' }}    <span ng-hide="isSearchInProgress" ng-bind="data.PagingModel!=null && data.PagingModel.NumberOfItems > 0 ? data.PagingModel.NumberOfItems :0"></span>  event(s) near <span class="eventListCountCount-color" ng-bind="changeZipCode == false ? zipCode : ''"></span>
+
+                        <span ng-show="changeZipCode">
+                            <input type="text" class="form-control filter-zip-field" maxlength="5" ng-value="eventFilter.zipCode" ng-model="zipCode" /> <button class="btn btn-primary filter-zip-btn" tabindex="1" ng-disabled="isPosted" ng-click="searchEventsByZipCode()">Search <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_EventsByZip"></i></button>
+                        </span>
+                        <span ng-if="data.PagingModel.NumberOfItems > 0" ng-hide="changeZipCode" class="changeZipcode-btn">
+                            &#40;<a href="javascript:void(0);" ng-click="showSearchZipcode()">Change zipcode</a>&#41;
+                        </span>
+                        <span ng-if="data.PagingModel.NumberOfItems > 0" ng-hide="changeZipCode" class="changeZipcode-btn small">
+                            &#40;<a href="javascript:void(0)" ng-click="toggleZipWrap()">Change zipcode</a>&#41;
+                        </span>
+                    </h2>
+                    <h2 class="no-margin small-header" ng-show="eventFilter.invitationCode !== 'null' && eventFilter.invitationCode !== ''">
+                        <span>
+                            Found <span ng-bind="data.PagingModel!=null && data.PagingModel.NumberOfItems > 0 ? data.PagingModel.NumberOfItems :0"></span>  events for <span class="eventListCountCount-color" ng-bind="eventFilter.invitationCode"></span>
+                        </span>
+                    </h2>
+
+                    <!--<p >Click</p>-->
+                    <div class="select-wrap event-filter hidden-sm hidden-xs top-buffer-m9" ng-class="{ 'select-focus': effocus, 'select-blur': efblur }">
+                        <select class="form-control hidden-sm hidden-xs" ng-model="orderby" ng-change="eventShortBy()" ng-focus="effocus=true;efblur=false;" ng-blur="efblur=true;effocus=false;" ng-options="u as u.text for u in sortByOrderHelper track by u.value"></select>
+                        <select class="form-control hidden-lg hidden-md" ng-model="orderby" ng-change="eventShortBy()" ng-focus="effocus=true;efblur=false;" ng-blur="efblur=true;effocus=false;" ng-options="u as u.text for u in sortByOrderHelperMobile track by u.value"></select>
+
+                    </div>
+                    <div class="select-wrap event-filter hidden-lg hidden-md" ng-class="{ 'select-focus': effocus, 'select-blur': efblur }">
+                        <select class="form-control" ng-model="orderby" ng-change="eventShortBy()" ng-focus="effocus=true;efblur=false;" ng-blur="efblur=true;effocus=false;" ng-options="u as u.text for u in sortByOrderHelperMobile track by u.value"></select>
+                    </div>
+                </div>
+                <div class="change-zip-wrap clearfix" collapse="changezipwrap">
+                    <div class="change-zip-inner">
+                        <div class="table-look">
+                            <div class="table-row">
+                                <div class="table-cell table-cell1">
+                                    <h2 class="">location</h2>
+                                </div>
+                                <div class="table-cell">
+                                    <input type="text" class="form-control filter-zip-field" placeholder="Search for City, State or Zip" ng-value="eventFilter.zipCode" ng-model="zipCode">
+                                </div>
+                                <div class="table-cell table-cell3">
+                                    <a class="btn btn-primary filter-zip-btn pull-right" href="javascript:void(0);" ng-click="searchEventsByZipCode()">Search</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-container border-default">
+                <div ng-show="ShowTryDiffrentLocation===false">
+                    <div class="event-search-list-wrap">
+                        <div class="event-list-inner hidden-lg hidden-md">
+                            <div class="event-list-header clearfix">
+                                <h4 class="pull-left no-margin text-uppercase">location</h4>
+                                <h4 class="pull-right no-margin text-uppercase">select</h4>
+                            </div>
+                            <div class="clearfix">
+                                <div class="single-event" ng-repeat="event in data.Events">
+                                    <div class="clearfix single-event-next" ng-click="selectEventOnRowClick(event)" ng-class="{'event-highlighted' : eventId==event.EventId}">
+                                        <div class="pull-left single-event-info">
+                                            <p class="no-margin"><span class="text-primary semibold" ng-bind="event.EventDate | date:'EEEE'"></span>, <span ng-bind="event.EventDate | date:'MMMM dd,y'"></span></p>
+                                            <p class="location-name no-margin semibold host-name-transfrom" ng-bind="event.HostName"></p> 
+                                            <img src="Images/female-sign.png" ng-if="event.IsFemaleOnly">
+                                            <img src="/Content/Images/bca.gif" title="This event has mammography test" ng-if="event.HasBreastCancer">
+                                            <p class="location-address no-margin"><address-view address="event.EventLocation"></address-view></p>
+                                        </div>
+                                        <div class="pull-right text-center single-event-select">
+                                            <div class="styled-radio no-margin" ng-if="event.AvailableSlots >= 1 && event.IsMarkedOffforSelection===false">
+                                                <input id="event_lg_{{event.EventId}}" type="radio" name="event_lg" ng-value="event.EventId" ng-model="eventId" ng-checked="event.EventId==eventFilter.eventId" ng-click="selectEvent(event)">
+                                                <label class="top-buffer-10 bottom-buffer-0" for="event_{{event.EventId}}"></label>
+                                            </div>
+                                            <div class="styled-radio no-margin" ng-if="event.AvailableSlots < 1 || event.IsMarkedOffforSelection!==false">
+                                                <input id="event_lg_{{event.EventId}}" type="radio" disabled name="event">
+                                                <label class="top-buffer-10 bottom-buffer-0" for="event_{{event.EventId}}" disabled></label>
+                                            </div>
+                                        </div>
+                                        <div class="pull-right text-center single-event-collapse top-buffer-20" ng-click="isCollapsed = !isCollapsed; $event.stopPropagation();" ng-class="{'open': !isCollapsed}">
+                                            <a href="javascript:void(0);">&nbsp;</a>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix bg-default single-event-inner" collapse="!isCollapsed">
+                                        <div class="table-look">
+                                            <div class="table-row">
+                                                <div class="table-cell appointment-slot text-center">
+                                                    <div ng-if="event.AvailableSlots < 1 || event.IsMarkedOffforSelection">
+                                                        <label ng-if="event.EventType === constants.EventType.Corporate && event.RegistrationMode === constants.RegistrationMode.Private"><i>Event Full</i></label>
+                                                        <label ng-if="event.EventType !== constants.EventType.Corporate || event.RegistrationMode !== constants.RegistrationMode.Private">
+                                                            <i>
+                                                                Call for Availability<br />{{phoneTollFree}}
+                                                            </i>
+                                                        </label>
+                                                    </div>
+                                                    <div ng-if="event.AvailableSlots >= 1 && event.IsMarkedOffforSelection===false">
+                                                        {{eventAvilability(event)}}
+                                                    </div>
+                                                </div>
+                                                <div class="table-cell direction-slot text-center">
+                                                    <p class="event-distance no-margin semibold">{{event.DistanceFromZip}} Miles</p>
+                                                    <p class="no-margin"><event-location address="event.EventLocation" text="'Find Location'">Find Direction</event-location></p>
+                                                </div>
+                                                <div class="table-cell sponsor-slot text-center">
+                                                    <img ng-if="event.SponsorImage!==null" ng-src="{{event.SponsorImage}}" class="sponsor-logo" />
+                                                    <img ng-if="event.SponsorImage===null" src="Images/sponsors-icon.png" class="sponsor-logo" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="event-list-inner table-responsive hidden-sm hidden-xs">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Location details</th>
+                                        <th class="text-center event-list-sponsor">Sponsor</th>
+                                        <th class="text-center event-list-select">Select</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="event in data.Events" ng-click="selectEventOnRowClick(event)" ng-class="{'event-highlighted' : eventId==event.EventId}">
+                                        <td>
+                                            <div class="clearfix">
+                                                <div class="pull-left">
+                                                    <div class="col-xs-12 no-padding-left">
+                                                        <p class="no-margin text-right"><span class="semibold">Screening Date :</span></p>
+                                                        <p class="no-margin text-right"><span class="semibold">Availability :</span></p>
+                                                        <p class="no-margin text-right"><span class="semibold">Distance :</span></p>
+                                                        <p class="no-margin text-right"><span class="semibold">Location Details :</span></p>
+                                                    </div>
+                                                </div>
+                                                <div class="pull-left event-detail-block">
+                                                    <p class="no-margin"><span class="text-primary" ng-bind="event.EventDate | date:'EEEE'"></span>, <span ng-bind="event.EventDate | date:'MMMM dd,y'"></span></p>
+                                                    <p class="no-margin" ng-if="event.AvailableSlots >= 1 && event.IsMarkedOffforSelection===false"><span>{{eventAvilability(event)}}</span></p>
+                                                    <p class="no-margin" ng-if="event.AvailableSlots < 1 || event.IsMarkedOffforSelection">
+                                                        <label ng-if="event.EventType === constants.EventType.Corporate && event.RegistrationMode === constants.RegistrationMode.Private"><i>Event Full</i></label>
+                                                        <label ng-if="event.EventType !== constants.EventType.Corporate || event.RegistrationMode !== constants.RegistrationMode.Private">
+                                                            <i>
+                                                                <span class="semibold"> Call for Availability {{phoneTollFree}}</span>
+                                                            </i>
+                                                        </label>
+                                                    </p>
+                                                    <p class="no-margin"><span>{{event.DistanceFromZip}} Miles</span></p>
+                                                    <p class="location-name no-margin semibold host-name-transfrom"> <span>{{event.HostName}}</span> 
+                                                        <img src="Images/female-sign.png" style="margin-top: -4px;" ng-if="event.IsFemaleOnly">
+                                                        <img src="/Content/Images/bca.gif" ng-if="event.HasBreastCancer" title="This event has mammography test"> </p>
+                                                    <p class="location-address no-margin">
+                                                       <div >
+                                                           <span ng-bind="event.EventLocation.StreetAddressLine1"></span>,
+                                                           <span ng-if="event.EventLocation.StreetAddressLine2 != null && event.EventLocation.StreetAddressLine2 != ''"><span ng-bind="event.EventLocation.StreetAddressLine2"></span>,</span>
+                                                           <span ng-bind="event.EventLocation.City"></span>,
+                                                           <span ng-bind="event.EventLocation.State"></span>,
+                                                           <span ng-bind="event.EventLocation.Country"></span>-
+                                                           <span ng-bind="event.EventLocation.ZipCode"></span>                                                           
+                                                           <event-location class="text-underline left-buffer-10 text-nowrap" address="event.EventLocation" text="'View On Map'">View On Map</event-location>
+                                                        </div> 
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <img ng-if="event.SponsorImage!==null" ng-src="{{event.SponsorImage}}" class="sponsor-logo" />
+                                            <img ng-if="event.SponsorImage===null" src="Images/sponsors-icon.png" class="sponsor-logo" />
+                                        </td>
+                                        <td>
+                                            <div ng-if="event.AvailableSlots >= 1 && event.IsMarkedOffforSelection===false && event.EventId==eventFilter.eventId">
+                                                <button type="button" class="btn btn-primary pull-right btn-select-event" ng-click="goForPreQualificationCheck(event)" ng-disabled="isPosted" ng-class="{'active' :glowContinueButtonOnSelection}">Select & Continue <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loadergoForPreQualification && eventId==event.EventId"></i></button>
+                                            </div>
+                                            <div ng-if="event.AvailableSlots >= 1 && event.IsMarkedOffforSelection===false && event.EventId!=eventFilter.eventId">
+                                                <button type="button" class="btn btn-primary pull-right btn-select-event" ng-click="goForPreQualificationCheck(event)" ng-disabled="isPosted">Select & Continue <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loadergoForPreQualification && eventId===event.EventId"></i></button>
+                                            </div>
+                                            <div ng-if="event.AvailableSlots < 1 || event.IsMarkedOffforSelection!==false">
+                                                <button type="button" class="btn disabled pull-right btn-select-event" ng-click="goForPreQualificationCheck(event)" ng-disabled="isPosted" disabled>Select & Continue</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="event-search-wrap top-buffer-20" ng-show="ShowTryDiffrentLocation===true">
+                    <h4 class="text-center no-margin">Currently we don’t have a screening event in your location. try <span>Different Location</span></h4>
+                    <div class="top-buffer-10 clearfix">
+                        <div class="form-inline text-center top-buffer-20">
+                            <div class="form-group">
+                                <input type="text" class="form-control search-box" ng-value="eventFilter.zipCode" ng-model="zipCode" placeholder="Search for City, State or Zip" maxlength="5">
+                            </div>
+                            <button type="button" class="btn btn-primary" ng-disabled="isPosted" ng-click="searchEventsByZipCode()"> &nbsp;<i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_EventsByZip"></i> Search</button>
+                        </div>
+                    </div>
+                    <div class="top-buffer-20 clearfix">
+                        <h4 class="text-center top-buffer-20">or <span>Request an Event.</span></h4>
+                    </div>
+                    <div class="clearfix text-center">
+                        <button type="button" class="btn btn-primary" ng-disabled="isPosted" ng-click="RequestForScreening()">&nbsp; <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loaderRequestForScreening"></i>Request for a Screening in My Area</button>
+                    </div>
+                </div>
+                <div class="load-more-wrap text-center" ng-show="showPaging()">
+                    <a class="line-height-36 text-primary load-more-text" ng-disabled="isPosted" href="javascript:void(0);">Load more Locations</a>
+                    <a class="load next pull-right" ng-show="showNextButton()" ng-disabled="isPosted" ng-click="nextButtonClick()" href="javascript:void(0);">&nbsp;</a>
+                    <a class="load prev pull-right" ng-show="showPreviousButton()" ng-disabled="isPosted" ng-click="previousButtonClick()" href="javascript:void(0);">&nbsp;</a>
+                </div>
+                <div class="clearfix lower-btns hidden-lg" ng-show="ShowTryDiffrentLocation!=true">
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-primary btn-solid pull-right" ng-click="goForPreQualification()" ng-disabled="isPosted" ng-class="{'active' :glowContinueButtonOnSelection}">Continue <span ng-hide="loadergoForPreQualification">&#62;</span><i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loadergoForPreQualification"></i></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

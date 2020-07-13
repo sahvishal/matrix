@@ -1,0 +1,100 @@
+﻿@using System.Linq
+@using Falcon.App.Core.Medical.ViewModels
+@model DisqualifiedTestReportListModel
+@{
+    ViewBag.Title = "Disqualified Test Report";
+}
+
+<script src="/Scripts/reportexportqueue.js"></script>
+
+<h1>Disqualified Test Report</h1>
+
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+
+<div id="list-filter">
+    @{Html.BeginForm("DisqualifiedTestReport", "Reports", FormMethod.Get);}
+    @Html.Partial("DisqualifiedTestReportFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && Model.Collection != null && Model.Collection.Any())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 5000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/Medical/ReportsQueue/DisqualifiedTestReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                Export CSV
+            </a>
+        }
+        else
+        {
+            <a target="_blank" href="/Medical/ExportableReports/DisqualifiedTestReport?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr>
+            <th>
+                PatientId
+            </th>
+            <th>
+                EventId
+            </th>
+            <th>
+                HealthPlan
+            </th>
+            <th>
+                Test Rejected
+            </th>
+            <th>
+                Reason
+            </th>
+        </tr>
+        @foreach (var item in Model.Collection)
+        {
+            <tr>
+                <td>
+                    @item.CustomerId
+                </td>
+                <td>
+                    @item.EventId
+                </td>
+                <td>
+                    @item.HealthPlan
+                </td>
+                <td>
+                    @item.TestName
+                </td>
+                <td>
+                    @item.Reason
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records found!
+    </h2>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

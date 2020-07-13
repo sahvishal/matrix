@@ -1,0 +1,48 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.MammoConsentEditModel
+
+@{
+    Layout = "LayoutPrintableHealthAssessment.cshtml";
+}
+
+@{Html.BeginForm("MammoConsent", "Results", "POST");}
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+
+@Html.HiddenFor(m => m.Print)
+@Html.HiddenFor(m => m.RefrrerUrl)
+@Html.HiddenFor(m => m.EventId)
+@Html.HiddenFor(m => m.CustomerId)
+
+ @Html.Partial("/Config/Content/Views/Shared/MammoConsentForm.cshtml", Model)
+
+@if (!Model.Print)
+{
+    <div style="float: right; width: 100%; text-align: right; padding-top: 10px; border-top: solid 1px;">
+        <input type="button" value="Print" onclick="MarkPrint();" />
+        <input type="button" value="Cancel" onclick="window.location.href = '@Model.RefrrerUrl';" />
+    </div>
+}
+
+<script type="text/javascript" language="javascript">
+
+    function saveForm() {
+        $('form').submit();
+    }
+    
+    function MarkPrint() {
+        $("#Print").val("@Boolean.TrueString");
+        saveForm();
+    }
+
+    $(document).ready(function() {
+        @if (!string.IsNullOrEmpty(Model.PrintUrl))
+        {
+            <text>
+                window.open("@(Model.PrintUrl)");
+            </text> 
+        }
+    });
+</script>
+@{Html.EndForm();}

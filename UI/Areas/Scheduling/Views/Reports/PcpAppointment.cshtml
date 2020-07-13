@@ -1,0 +1,102 @@
+﻿@using Falcon.App.Core.Extensions
+@model Falcon.App.Core.Scheduling.ViewModels.PcpAppointmentListModel
+
+@{
+    ViewBag.Title = "PCP Appointment Disposition";
+}
+
+<h2>
+    PCP Appointment Disposition
+</h2>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<div id="list-filter">
+    @{Html.BeginForm("PcpAppointment", "Reports", FormMethod.Get);}
+    @Html.Partial("PcpAppointmentListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        <a target="_blank" href="/Scheduling/ExportableReports/PcpAppointmentDisposition?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">
+            Export CSV
+        </a>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <table id="list-view">
+            <tr>
+                <th style="width: 25%;">
+                    Customer Info
+                </th>
+                <th style="width: 25%;">
+                    Event Info
+                </th>
+                <th style="width: 22%;">
+                    PCP Info
+                </th>
+                <th style="width: 27%;">
+                    Appointment/Disposition
+                </th>
+            </tr>
+            @foreach (var pcpAppointment in Model.Collection)
+            {
+                <tr>
+                    <td>
+                        <div><b>CustomerId:</b> @pcpAppointment.CustomerId</div>
+                        <div><b>Name:</b> @pcpAppointment.CustomerName</div>
+                        <div><b>Member Id:</b> @pcpAppointment.InsuranceId</div>
+                        <div><b>HICN Number:</b> @pcpAppointment.Hicn</div>
+                        <div><b>MBI Number:</b> @pcpAppointment.Mbi</div>
+                        <div><b>IsEligible:</b> @pcpAppointment.IsEligible</div>
+                        <div><b>Tag:</b> @pcpAppointment.Tag</div>
+                        <div><b>Custom Tag:</b> @pcpAppointment.CustomerTag</div>
+                    </td>
+                    <td>
+                        <div><b>EventId:</b> @pcpAppointment.EventId</div>
+                        <div><b>EventName:</b> @pcpAppointment.EventName</div>
+                        <div><b>Event Date:</b> @pcpAppointment.EventDate.Value.ToShortDateString()</div>
+                        <div><b>Pod(s):</b> @pcpAppointment.Pod</div>
+                    </td>
+                    <td>
+                        <div><b>PCP Name:</b> @pcpAppointment.PcpName</div>
+                        <div><b>Phone Number:</b> @pcpAppointment.PcpPhoneNumber</div>
+                        <div><b>Fax:</b> @pcpAppointment.PcpFax</div>
+                    </td>
+                    <td style="width: 250px;">
+                        
+                        @if (pcpAppointment.AppointmentDateTime.HasValue)
+                        {
+                            <div><b>Appointment Time:</b> @(pcpAppointment.AppointmentDateTime.Value.ToShortDateString() + " at " + pcpAppointment.AppointmentDateTime.Value.ToShortTimeString())</div>
+                            <div><b>Created On:</b> @(pcpAppointment.AppointmentCreatedOn.HasValue ? pcpAppointment.AppointmentCreatedOn.Value.ToShortDateString() : "N/A")</div>
+                            <div><b>Created By:</b> @pcpAppointment.AgentName</div>
+                            <div><b>Modified On:</b>@(pcpAppointment.AppointmentModifiedOn.HasValue ? pcpAppointment.AppointmentModifiedOn.Value.ToShortDateString() : "N/A")</div>
+                            <div><b>Modified By:</b> @pcpAppointment.ModifiedByAgentName</div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(pcpAppointment.PcpDisposition))
+                        {
+                            <div><b>Disposition:</b> @pcpAppointment.PcpDisposition</div>
+                            <div><b>Notes:</b> @pcpAppointment.Notes</div>
+                            <div><b>Created On:</b> @(pcpAppointment.DispositionsCreatedOn.Value.ToShortDateString())</div>
+                            <div><b>Created By:</b> @pcpAppointment.DispositionsCreatedBy</div>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+

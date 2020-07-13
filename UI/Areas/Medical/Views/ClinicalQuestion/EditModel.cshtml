@@ -1,0 +1,64 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.ClinicalTemplateEditModel
+<style type="text/css">
+    .reqiredmark {
+        color: red;
+        font: 11px arial;
+    }
+
+    .custom-textbox {
+        width: 94% !important;
+    }
+
+    #ui-tabs-1, #tab-content {
+        background: #ffffff !important;
+    }
+
+    .ui-tabs .ui-tabs-panel {
+        padding: 0 !important;
+    }
+
+    .ui-widget-content {
+        border: 0px solid #ffffff !important;
+        background: #ffffff !important;
+    }
+   
+</style>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+
+<div id="tabs" class="corporate-account-settings ui-tabs ui-widget ui-widget-content ui-corner-all" style="margin-bottom:2px;">
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+        <li class="@(Model.TemplateId > 0 ? "tab-on" : "tab-off") ui-state-default ui-corner-top ui-tabs-selected">
+            <a id="BasicInfo" modelid="@Model.TemplateId" href="/Medical/ClinicalQuestion/QuestionTemplate?id=@Model.TemplateId">Template Info</a>
+        </li>
+        <li class="@(Model.TemplateId > 0 ? "tab-on" : "tab-off") ui-state-default ui-corner-top ">
+            <a id="RegistrationConfig" modelid="@Model.TemplateId" href="/Medical/ClinicalQuestion/TemplateCriteria?templateId=@Model.TemplateId">Define Criteria</a>
+        </li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tabs").tabs({ cache:false });
+
+        @if (Model.TemplateId <= 0)
+        {
+            <text>$("#tabs").tabs({ disabled: [1] });</text>
+        }
+        @if (!Model.OpenNextTab)
+        {
+            <text> $("#tabs").tabs({ selected: 0 });</text>
+        }else
+        {
+           <text> $("#tabs").tabs({ selected: 1 }); </text>
+        }
+
+        $(document).ready(function () {
+            var $tabs = $("#tabs").tabs({
+                select: function (event, ui) {
+                    $(ui.panel).empty();
+                }
+            });
+        });
+    });
+</script>

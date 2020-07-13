@@ -1,0 +1,163 @@
+﻿
+<div data-ng-controller="PrequalificationController as pre" class="container no-padding bg-default">
+    <form name="questionForm" data-ng-submit="questionSubmit(questionForm)" novalidate="">
+
+        <div class="sub-header bg-success relative">
+            <div class="header-right">
+                <progressbar-view></progressbar-view>
+                <order-summary></order-summary>
+            </div>
+            <div class="header-left">
+                <h2 class="no-margin">The following information will help us customize a package for you</h2>
+            </div>
+        </div>
+
+        <div class="main-container border-default ">
+            <div class="event-search-wrap event-search-dob">                
+                <div class="top-buffer-10 clearfix left-buffer-30">
+                    <div class="text-center top-buffer-20 clearfix">
+                        <div class="pull-left no-float-xs">
+                            <div class="table-look">
+                                <div class="table-row">
+                                    <div class="table-cell gender-label">
+                                        <label for="signup-gender">Gender <span class="required">*</span></label>
+                                    </div>
+                                    <div class="table-cell" ng-class="{'error-message' : isSubmitted != undefined && isSubmitted && questionForm.gender.$error.required}">
+                                        <div class="select-wrap gender-select" ng-class="{ 'select-focus': gfocus, 'select-blur': gblur }">
+                                            <select class="form-control" ng-model="gender" name="gender" ng-focus="gfocus=true;gblur=false;" ng-blur="gblur=true;gfocus=false;" ng-options="period.value as period.text for period in genderDropDown" required>
+                                                <option value="">Select</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-left no-float-xs">
+                            <div class="table-look">
+                                <div class="table-row">
+                                    <div class="table-cell dob-label">
+                                        <label for="signup-dob">Enter Date of Birth</label>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="select-wrap dob-month" ng-class="{ 'select-focus': mfocus, 'select-blur': mblur }">
+                                            <select class="form-control" ng-model="Month" ng-change="MonthChange()" ng-focus="mfocus=true;mblur=false;" ng-blur="mblur=true;mfocus=false;" ng-options="u as u.text for u in MonthDropwdown track by u.value"></select>
+                                        </div>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="select-wrap dob-day" ng-class="{ 'select-focus': dfocus, 'select-blur': dblur }">
+                                            <select class="form-control" ng-model="Day" ng-change="DateChange()" ng-focus="dfocus=true;dblur=false;" ng-blur="dblur=true;dfocus=false;" ng-options="u as u.text for u in DaysDropwdown track by u.value"></select>
+                                        </div>
+                                    </div>
+                                    <div class="table-cell year-input">
+                                        <div class="select-wrap" ng-class="{ 'select-focus': yfocus, 'select-blur': yblur }">
+                                            <select class="form-control" ng-model="Year" ng-change="YearChange()" ng-focus="yfocus=true;yblur=false;" ng-blur="yblur=true;yfocus=false;" ng-options="u as u.text for u in YearDropwdown track by u.value"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <fieldset class="prequalificationQuestion" ng-hide="hideQuestions">
+                    <legend>Answer questionnaire</legend>
+                    <div class="clearfix top-buffer-10 questionnaire-wrap">
+                        <p class="no-margin pull-left">1. Have you experienced severe chest pain from exertion, activity, or while at rest within the last 4 days?</p>
+                        <div class="pull-right age-options">
+                            <div class="styled-radio small">
+                                <input type="radio" value="178" name="chestPain_raidogrp" ng-model="questionsResult.ChestPain"><label>YES</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" value="179" name="chestPain_raidogrp" ng-model="questionsResult.ChestPain"><label>NO</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix top-buffer-10 questionnaire-wrap">
+                        <p class="no-margin pull-left">2. In the last 30 days have you seen a Cardiologist for a diagnosed heart condition?</p>
+                        <div class="pull-right age-options">
+                            <div class="styled-radio small">
+                                <input type="radio" value="178" name="diagnoseheartProblem_radiogrp" ng-model="questionsResult.DiagnosedHeartProblem" /><label>YES</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" value="179" name="diagnoseheartProblem_radiogrp" ng-model="questionsResult.DiagnosedHeartProblem" /><label>NO</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix top-buffer-10 questionnaire-wrap">
+                        <p class="no-margin pull-left">3. Have you ever been told you have high blood pressure?</p>
+                        <div class="pull-right age-options">
+                            <div class="styled-radio small">
+                                <input type="radio" value="178" name="highhloodpressure_radiogrp" ng-model="questionsResult.HighBloodPressure" /><label>YES</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" value="179" name="highhloodpressure_radiogrp" ng-model="questionsResult.HighBloodPressure" /><label>NO</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix top-buffer-10 questionnaire-wrap">
+                        <p class="no-margin pull-left">4. Have you ever been told you have elevated cholesterol?</p>
+                        <div class="pull-right age-options">
+                            <div class="styled-radio small">
+                                <input type="radio" value="178" name="highcholestrol_radiogrp" ng-model="questionsResult.HighCholestrol" /><label>YES</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" value="179" name="highcholestrol_radiogrp" ng-model="questionsResult.HighCholestrol" /><label>NO</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix top-buffer-10 questionnaire-wrap">
+                        <p class="no-margin pull-left">5. Do you currently smoke or have you smoked in the past?</p>
+                        <div class="pull-right age-options">
+                            <div class="styled-radio small">
+                                <input type="radio" value="178" name="smoker_radiogrp" ng-model="questionsResult.Smoker" /><label>YES</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" value="179" name="smoker_radiogrp" ng-model="questionsResult.Smoker" /><label>NO</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix top-buffer-10 questionnaire-wrap">
+                        <p class="no-margin pull-left">6. Do you have a family history of any heart related disease or illness?</p>
+                        <div class="pull-right age-options">
+                            <div class="styled-radio small">
+                                <input type="radio" value="178" name="heartdisease_radiogrp" ng-model="questionsResult.HeartDisease" /><label>YES</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" value="179" name="heartdisease_radiogrp" ng-model="questionsResult.HeartDisease" /><label>NO</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix top-buffer-10 questionnaire-wrap">
+                        <p class="no-margin pull-left">7. Are you a diabetic or have been told you are a diabetic?</p>
+                        <div class="pull-right age-options">
+                            <div class="styled-radio small">
+                                <input type="radio" value="178" name="diabetic_radiogrp" ng-model="questionsResult.Diabetic" /><label>YES</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" value="179" name="diabetic_radiogrp" ng-model="questionsResult.Diabetic" /><label>NO</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix top-buffer-10 questionnaire-wrap">
+                        <p class="no-margin pull-left">8. Are you overweight or have you been told you are overweight?</p>
+                        <div class="pull-right age-options">
+                            <div class="styled-radio small">
+                                <input type="radio" value="178" name="overweight_radiogrp" ng-model="questionsResult.OverWeight" /><label>YES</label>
+                            </div>
+                            <div class="styled-radio small">
+                                <input type="radio" value="179" name="overweight_radiogrp" ng-model="questionsResult.OverWeight" /><label>NO</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="clearfix lower-btns">
+                <div class="col-sm-12 relative">
+                    <button class="btn btn-primary pull-left" ng-disabled="isPosted" ng-click="searchEvent()"><span ng-hide="loader_back">&#60;</span> Back <i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_back"></i></button>
+                    <button class="btn btn-primary btn-solid pull-right" ng-click="goForpackageSelection()" ng-disabled="isPosted">Continue <span ng-hide="loader_next">&#62;</span><i class="glyphicon glyphicon-refresh glyphicon-spin" ng-show="loader_next"></i></button>                    
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>

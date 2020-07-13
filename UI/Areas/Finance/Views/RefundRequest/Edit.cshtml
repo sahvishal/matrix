@@ -1,0 +1,420 @@
+﻿@using Falcon.App.Core.Finance.Enum
+@using Falcon.App.Core.Finance.ViewModels
+@using Falcon.App.Core.Scheduling.Interfaces
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Finance.Domain
+@model RefundRequestResultEditModel
+@{
+    ViewBag.Title = "Refund Requests";
+}
+<h1>
+    Refund Request
+</h1>
+<style type="text/css">
+    ul
+    {
+        list-style-type: none;
+        margin: 0;
+        padding: 0 25px;
+        margin: 0px;
+    }
+    li
+    {
+        padding: 5px 0px;
+    }
+    textarea
+    {
+        width: 60%;
+    }
+</style>
+@{Html.BeginForm();}
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+@Html.EditorFor(m => m.RequestId)
+@Html.EditorFor(m => m.OrderId)
+@Html.EditorFor(m => m.EventId)
+@Html.EditorFor(m => m.CustomerId)
+@Html.EditorFor(m => m.RefundType)
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+<div id="eventcustomer-summary" class="editor-row summary-box">
+</div>
+@Html.ValidationMessageFor(m => m.RequestResultType)
+<div style="float: left; width: 52%; padding-right: 1%;">
+    <div id="offer-review" class="editor-row">
+        <h2>
+            1. Offer Review
+        </h2>
+        <ul>
+            <li>
+                <input id="@RequestResultType.AdjustOrder.ToString()" onclick="$('#Submit').val('Proceed to Adjust Order');" class="nouse-paymentsection" type="radio" name="RequestResultType" @(Model.RequestResultType == RequestResultType.AdjustOrder ? "checked='checked'" : "") value="@RequestResultType.AdjustOrder.ToString()" />
+                Adjust Order </li>
+            <li>
+                <input id="@RequestResultType.RescheduleAppointment.ToString()" type="radio" onclick="$('#Submit').val('Proceed to Rescheduling');" class="nouse-paymentsection" name="RequestResultType" @(Model.RequestResultType == RequestResultType.RescheduleAppointment ? "checked='checked'" : "") value="@RequestResultType.RescheduleAppointment.ToString()" />
+                Reshedule Appointment </li>
+            <li>
+                <input id="@RequestResultType.OfferFreeAddonsAndDiscounts.ToString()" type="radio" onclick="$('#Submit').val('Apply Add ons and Discount');" name="RequestResultType" class="nouse-paymentsection" @(Model.RequestResultType == RequestResultType.OfferFreeAddonsAndDiscounts ? "checked='checked'" : "") value="@RequestResultType.OfferFreeAddonsAndDiscounts.ToString()" />
+                Offer Free Add Ons and Do Keep Order as is
+                <ul>
+                    @if (Model.OfferFreeProduct.Count() > 0)
+                    {
+                        int index = 0;
+                        foreach (var product in Model.OfferFreeProduct)
+                        {
+                        <li>
+                            <input type="checkbox" name="ProductAvailed@(index)" id="ProductAvailed@(index)" @(Model.OfferFreeProduct.ElementAtOrDefault(index).ProductAvailed ? "checked='checked'" : "") class="offer-free-product" />
+                            @product.ProductDescription <i>(Cost: @product.ProductPrice.ToString("0.00"))</i>
+                            <input type="hidden" id="OfferFreeProduct[@index].ProductAvailed" name="OfferFreeProduct[@index].ProductAvailed" value="@Model.OfferFreeProduct.ElementAtOrDefault(index).ProductAvailed" />
+                            <input type="hidden" id="OfferFreeProduct[@index].ProductPriceinOrder" name="OfferFreeProduct[@index].ProductPriceinOrder" value="@Model.OfferFreeProduct.ElementAtOrDefault(index).ProductPriceinOrder" />
+                            <input type="hidden" id="OfferFreeProduct[@index].ProductDescription" name="OfferFreeProduct[@index].ProductDescription" value="@Model.OfferFreeProduct.ElementAtOrDefault(index).ProductDescription" />
+                            <input type="hidden" id="OfferFreeProduct[@index].ProductPrice" name="OfferFreeProduct[@index].ProductPrice" value="@Model.OfferFreeProduct.ElementAtOrDefault(index).ProductPrice" />
+                            <input type="hidden" id="OfferFreeProduct[@index].ProductId" name="OfferFreeProduct[@index].ProductId" value="@Model.OfferFreeProduct.ElementAtOrDefault(index).ProductId" />
+                            <input type="hidden" id="OfferFreeProduct[@index].OrderItemId" name="OfferFreeProduct[@index].OrderItemId" value="@Model.OfferFreeProduct.ElementAtOrDefault(index).OrderItemId" />
+                        </li>   
+                        }
+                    }
+                    <li>
+                        <input type="checkbox" id="offer-discount" name="offer-discount" @(Model.OfferDiscount ? "checked='checked'" : "") />
+                        <input type="hidden" id="OfferDiscount" name="OfferDiscount" value="@Model.OfferDiscount" />
+                        Offer Discount Towards Total Order &nbsp; &nbsp; $
+                        <select id="DiscountAmount" name="DiscountAmount" onchange="onChangeOfferedDiscount();">
+                            <option>5</option>
+                            <option>10</option>
+                            <option>15</option>
+                            <option>20</option>
+                        </select>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <input id="@RequestResultType.IssueGiftCertificate.ToString()" type="radio" onclick="$('#Submit').val('Issue Gift Certificate');" class="nouse-paymentsection" @(Model.RequestResultType == RequestResultType.IssueGiftCertificate ? "checked='checked'" : "") name="RequestResultType" value="@RequestResultType.IssueGiftCertificate.ToString()" />
+                Issue Gift Certificate </li>
+            <li>
+                <input id="@RequestResultType.IssueRefund.ToString()" type="radio" name="RequestResultType" onclick="$('#Submit').val('Issue Refund Amount'); setAmountforIssueRefund();" class="use-paymentsection" @(Model.RequestResultType == RequestResultType.IssueRefund ? "checked='checked'" : "") value="@RequestResultType.IssueRefund.ToString()" />
+                Issue Refund and Adjust/Cancel Order
+                <ul>
+                    <li>
+                        <table cellspacing="10">
+                            <tr>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>
+                                    Requested Amount for Refund
+                                </td>
+                                <td>
+                                    $@Model.RequestedRefundAmount
+                                </td>
+                            </tr>
+                            @{ var actualRefund = Model.RequestedRefundAmount;
+
+                               if (Model.CancellationFee > 0 && Model.RefundType == RefundRequestType.CustomerCancellation)
+                               {
+                                   actualRefund = Model.ChargeCancellationFee ? actualRefund - Model.CancellationFee : actualRefund;
+                                <tr>
+                                    <td>
+                                        <input id="chargecancellationfee" type="checkbox" @(Model.ChargeCancellationFee ? "checked='checked'" : "") />
+                                        @Html.HiddenFor(m => m.ChargeCancellationFee)
+                                    </td>
+                                    <td>
+                                        Cancellation Fee
+                                    </td>
+                                    <td>
+                                        $@Model.CancellationFee
+                                    </td>
+                                </tr>
+                               }
+                            }
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    Actual Refund
+                                </td>
+                                <td>
+                                    $<span id="actualrefund">@actualRefund </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <div class="small-text" style="margin-top: 20px;">
+                    @Html.LabelFor(m => m.Notes) @Html.ValidationMessageFor(m => m.Notes)
+                </div>
+                @Html.EditorFor(m => m.Notes)
+            </li>
+        </ul>
+        @Html.HiddenFor(m => m.RequestedRefundAmount)
+        @Html.HiddenFor(m => m.RefundAmount)
+    </div>
+</div>
+<div style="width: 43%; float: right; padding-right: 8px;">
+    <fieldset style="border-color: #72BDDB; border-radius: 4px; border-width: 1px;">
+        <legend>
+            <h4>
+                Request Summary
+            </h4>
+        </legend>
+        <div style="display: block; padding: 5px;">
+            <div style="float: left; display: block;">
+                Requested by: @Model.RequestedBy
+            </div>
+            <div style="float: right;">
+                On @Model.RequestedOn.ToShortDateString()
+            </div>
+            @if (Model.RefundType == RefundRequestType.CustomerCancellation)
+            {
+                <div style="float: left; display: block;clear: both;">
+                    Reason: @Model.CancellationReason
+                </div>
+            }
+            <div style="clear: both; float: left; padding-top: 5px; font-style: italic;">
+                @Model.RefundRequestNotes
+            </div>
+            @Html.HiddenFor(m => m.RefundRequestNotes)
+            @Html.HiddenFor(m => m.RequestedOn)
+            @Html.HiddenFor(m => m.RequestedBy)
+        </div>
+    </fieldset>
+    <br />
+    @if (!string.IsNullOrWhiteSpace(Model.PreviousProcessingNotes))
+    {
+        <fieldset style="border-color: #72BDDB; border-radius: 4px; border-width: 1px;">
+            <legend>
+                <h4>
+                    Earlier Notes
+                </h4>
+            </legend>
+            @Html.Raw(Model.PreviousProcessingNotes)
+        </fieldset>
+    }
+</div>
+<div id="payment-section" style="display: none; clear: both;" class="editor-row">
+    <h2>
+        2. Payment
+    </h2>
+    <ul style="width: 60%">
+        <li>
+            <div class="div-with-roundborder">
+                @Html.EditorFor(m => m.PaymentEditModel)
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="submit-button-row">
+    @Html.ActionLink("Close", "Index", "RefundRequest") &nbsp;&nbsp; <a href="javascript:void(0);"
+        onclick="saveNotesandFinishLater();">Save Notes/Do it Later </a>&nbsp; &nbsp;
+    @Html.SubmitButton("Process Request")
+</div>
+@{Html.EndForm();}
+<script language="javascript" type="text/javascript">
+    function saveNotesandFinishLater() {
+        var requestId = $("#RequestId").val();
+        var notes = $("#Notes").val();
+        if ($.trim(notes).length < 1) {
+            window.location = "/Finance/RefundRequest/Index";
+            return;
+        }
+
+        $.ajax({ url: '/Finance/RefundRequest/SaveNotes?requestId=' + requestId + '&notes=' + notes, type: 'POST', dataType: 'json', data: '{}',
+            success: function (result) {
+                window.location = "/Finance/RefundRequest/Index";
+                return;
+            },
+            error: function (a, b, c) { alert('Some error occured while saving notes.'); }
+        });
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+
+    $(".offer-free-product, #offer-discount").click(function () {
+        if (apptnotSet) {
+            $("input[id*=OfferFreeAddonsAndDiscounts]").attr("checked", true);
+            $("input[id*=OfferFreeAddonsAndDiscounts]").click();
+            $("input[id*=OfferFreeAddonsAndDiscounts]").attr("checked", false);
+            return;
+        }
+
+        if ($(this).attr("checked")) {
+            $("input[id*=OfferFreeAddonsAndDiscounts]").attr("checked", true);
+            $("input[id*=OfferFreeAddonsAndDiscounts]").click();
+
+            if ($(this).hasClass("offer-free-product")) {
+                $("input[type=hidden][id*=ProductAvailed]").val("@bool.TrueString");
+            }
+            else {
+                $("#OfferDiscount").val("@bool.TrueString");
+            }
+        }
+        else {
+
+            if ($(this).hasClass("offer-free-product")) {
+                $("input[type=hidden][id*=ProductAvailed]").val("@bool.FalseString");
+            }
+            else {
+                $("#OfferDiscount").val("@bool.FalseString");
+            }
+        }
+
+        getAmounttoRefundforOfferDiscountsandAddons();
+    });
+
+    function onChangeOfferedDiscount() {
+        if (apptnotSet) {
+            $("input[id*=OfferFreeAddonsAndDiscounts]").attr("checked", true);
+            $("input[id*=OfferFreeAddonsAndDiscounts]").click();
+            $("input[id*=OfferFreeAddonsAndDiscounts]").attr("checked", false);
+            return;
+        }
+
+        $("#offer-discount").attr("checked", true);
+        $("#offer-discount").click();
+        $("#offer-discount").attr("checked", true);
+    }
+
+    function getAmounttoRefundforOfferDiscountsandAddons() {
+        var amount = 0;
+        $(".offer-free-product:checked").each(function () {
+            var priceInOrder = $(this).parent().find("input[type=hidden][id*=ProductPriceinOrder]").val();
+            if (isNaN(parseInt(priceInOrder))) return;
+            amount += parseFloat(priceInOrder);
+        });
+
+        if ($("#offer-discount").attr("checked")) {
+            amount += parseFloat($("#DiscountAmount option:selected").text());
+        }
+
+        amount = parseFloat(amount).toFixed(2);
+        setRefundAmountandupdatePaymentSection(amount);
+
+        if (amount > 0) {
+            $("#payment-section").show();
+        }
+        else {
+            $("#payment-section").hide();
+            clearPaymentSection(true);
+        }
+    }
+
+    $("#DiscountAmount option[text=@Model.DiscountAmount]").attr("selected", true);
+
+</script>
+<script language="javascript" type="text/javascript">
+
+    function setRefundAmountandupdatePaymentSection(amount){
+        $("#RefundAmount").val(amount);
+        setPaymentAmount(amount);
+    }
+
+    $(".nouse-paymentsection").click(function(){ 
+        $("#payment-section").hide(); 
+        clearPaymentSection(true);
+    });
+
+    $(".use-paymentsection").click(function()
+    { 
+        if($(this).attr("checked") == false){
+            $("#payment-section").hide();
+            clearPaymentSection(true);
+        }
+        else                   
+            $("#payment-section").show(); 
+    });
+
+    var apptnotSet = false;
+    @if (Model.RefundType == RefundRequestType.CustomerCancellation)
+    {
+        
+        <text>      
+        var appointmentId = @(IoC.Resolve<IEventCustomerRepository>().Get(Model.EventId, Model.CustomerId).AppointmentId ?? 0);
+          
+        if(appointmentId == null || appointmentId == 0){
+            apptnotSet = true;
+            $("#@RequestResultType.AdjustOrder.ToString(), #@RequestResultType.OfferFreeAddonsAndDiscounts.ToString()").click(function(){
+                if($(this).attr("checked"))
+                {
+                    var bolResult = confirm("This customer needs an appointment first. Press OK to schedule an appointment or Cancel to choose another option.");
+                    if(bolResult){
+                        @if(IoC.Resolve<Falcon.App.Core.Application.ISessionContext>().UserSession.CurrentOrganizationRole.GetSystemRoleId == (long)Falcon.App.Core.Enum.Roles.CallCenterManager){
+                            <text> window.location = "/App/CallCenter/CallCenterRep/CallCenterRepRescheduleCustomerAppointment.aspx?Call=No&@RefundRequest.ProcessRequestId=@Model.RequestId&EventID=@Model.EventId&CustomerID=@Model.CustomerId&@RefundRequest.ProcessRequest=true"; </text>
+                        }
+                        else
+                        {
+                            <text> window.location = "/App/Franchisor/FranchisorRescheduleCustomerAppointment.aspx?@RefundRequest.ProcessRequestId=@Model.RequestId&EventID=@Model.EventId&CustomerID=@Model.CustomerId&@RefundRequest.ProcessRequest=true"; </text>
+                        }
+                    }
+                    $(".offer-free-product, #offer-discount").attr("checked", false);
+                    $("input[name=RequestResultType]").attr("checked", false);
+                    $('#Submit').val("Process Request");
+                }
+            });
+        }
+        </text>
+    }
+    
+    function setAmountforIssueRefund() {
+            var amountToRefund = 0;
+            var cancellationFeeBox = $("input[id*=chargecancellationfee]");
+            if (cancellationFeeBox.attr("checked")) {
+                amountToRefund = '@(Model.RequestedRefundAmount - Model.CancellationFee)';
+                $("input[type=hidden][id*=RefundAmount]").val(amountToRefund);
+                $("#actualrefund").text(amountToRefund);
+                $("#ChargeCancellationFee").val("@bool.TrueString");
+                $("#@RequestResultType.IssueRefund.ToString()").attr("checked", true);
+                $("#@RequestResultType.IssueRefund.ToString()").click();
+            }
+            else {
+                amountToRefund = '@Model.RequestedRefundAmount';
+                $("input[type=hidden][id*=RefundAmount]").val(amountToRefund);
+                $("#actualrefund").text(amountToRefund);
+                $("#ChargeCancellationFee").val("@bool.FalseString");
+            }
+            
+            setRefundAmountandupdatePaymentSection(amountToRefund);
+
+            if (amountToRefund > 0) {
+                $("#payment-section").show();
+            }
+            else {
+                $("#payment-section").hide();
+                clearPaymentSection(true);
+            }
+
+            $("#@Model.RequestResultType.ToString()").attr("checked", "checked");
+        }
+
+    $(document).ready(function () {
+        $("input[id*=chargecancellationfee]").click(function(){setAmountforIssueRefund();});
+        
+        $.post("/Scheduling/Reports/EventCustomerSummaryModel?eventId=@Model.EventId&customerId=@Model.CustomerId", "{}", function(result){ $("#eventcustomer-summary").html(result); }, 'html' );
+        
+        if($(".use-paymentsection:checked, .offer-free-product:checked, #offer-discount:checked").length > 0){
+            $("#payment-section").show(); 
+        }
+
+        if($("input[id*=chargecancellationfee]").attr("checked")){
+            setAmountforIssueRefund();
+        }
+    });
+
+
+    @if (Model.PaymentEditModel != null && Model.PaymentEditModel.Payments != null && Model.PaymentEditModel.Payments.ToArray().Where(p => p.IsProcessed).Count() > 0)
+    {
+        <text>
+        $(document).ready(function () {
+            $("#offer-review input, #offer-review select").attr("disabled", "disabled");
+            
+            $("form").submit(function(){
+                $("#offer-review input, #offer-review select").attr("disabled", "");
+            });
+        });
+        </text> 
+    }
+
+</script>

@@ -1,0 +1,56 @@
+﻿@model Falcon.App.Core.CallCenter.ViewModels.ScreeningInfoViewModel
+
+<fieldset>
+    <legend>Screening Info</legend>
+    <div class="clearfix small-section-inner">
+        <div class="info-row">
+            <div class="info-text-col-50">
+                <b>Last Screening Date: </b>
+                @if (Model != null)
+                { 
+                    <span>@Model.LastScreeningDate.ToShortDateString()</span> 
+                }
+                else { <span>N/A</span> }
+            </div>
+            <div class="info-text-col-50">
+                <b>Screened At: </b>
+                @if (Model != null)
+                {
+                    <span>@Model.HostName, </span>
+                    <span>@Model.EventLocation.StreetAddressLine1, </span>
+                    if(!string.IsNullOrEmpty(Model.EventLocation.StreetAddressLine2)){ <span>@Model.EventLocation.StreetAddressLine2,</span> }
+                    <span> @Model.EventLocation.City</span>
+                    <span> @Model.EventLocation.State</span>
+                    <span> @Model.EventLocation.Country</span>
+                    <span> @Model.EventLocation.ZipCode</span>
+                }
+                else
+                { <span>N/A</span> }
+            </div>
+        </div>
+        <div class="info-row">
+            <div class="info-text-col-50">
+                <b>Result Summary: </b>
+                @if (Model != null)
+                {
+                     <span>@Model.Result</span>
+                }
+                else { <span>N/A</span> }
+            </div>
+            <div class="info-text-col-50">
+                <b>Abnormal Tests: </b>
+                @if(Model==null || Model.ResultSummary==null || Model.ResultSummary.Count() == 0)
+                { <span>N/A</span> }
+                else
+                {
+                    <ul>
+                        @foreach (var summary in Model.ResultSummary)
+                        {
+                            <li><b>@summary.FirstValue : </b><span>@summary.SecondValue</span></li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</fieldset>

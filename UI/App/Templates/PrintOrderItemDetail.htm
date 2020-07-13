@@ -1,0 +1,74 @@
+﻿<table id="PrintOrderItemTracking" class="divgrid_cl">
+    <thead>
+        <tr class="row1" style="font-size: 11px">
+            <th>
+                Print Order Item
+            </th>
+            <th>
+                Shipping Info
+            </th>
+            <th>
+                Shipping Address
+            </th>
+            <th>
+                Acknowledgement
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {#foreach $T as PrintOrderItemViewData}
+        <tr class="smalltxt12" bgcolor="{#cycle values=['#EFF8FD','#F8FCFF']}">
+            <td style="width:130px">
+                <!--Type:<span></span>-->
+                <label class="grayb">Marketing Material:</label><span>{$T.PrintOrderItemViewData.MarketingMaterialType}
+                ({$T.PrintOrderItemViewData.MarketingMaterialName})</span><br />
+                <label class="grayb">QTY:</label><span>{$T.PrintOrderItemViewData.PrintOrderItem.Quantity}</span><br />
+                <label class="grayb">Source Code:</label><span>{$T.PrintOrderItemViewData.PrintOrderItem.SourceCode}</span>
+            </td>
+             {#if $T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo != null}
+            <td style="width:200px">
+             
+                <label class="grayb">Tracking No:</label><br /><span>{$T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.TrackingNumber}</span><br />
+                <label class="grayb">Status:</label><span>
+                {#if $T.PrintOrderItemViewData.PrintOrderItem.Status==18} Placed
+                {#elseif $T.PrintOrderItemViewData.PrintOrderItem.Status==19 }Assigned
+                {#elseif $T.PrintOrderItemViewData.PrintOrderItem.Status==20 }Out For Delivery
+                {#elseif $T.PrintOrderItemViewData.PrintOrderItem.Status==21 }Acknowledged
+                {#elseif $T.PrintOrderItemViewData.PrintOrderItem.Status==22 }Returned
+                {#elseif $T.PrintOrderItemViewData.PrintOrderItem.Status==26 }Delivered
+                {#elseif $T.PrintOrderItemViewData.PrintOrderItem.Status==27 }InTransit
+                {#elseif $T.PrintOrderItemViewData.PrintOrderItem.Status==28}Unknown
+                {#/if}
+                </span><br />
+                <label class="grayb">Shipping Service:</label><span>{$T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ShippingService}</span><br />
+                <label class="grayb">Delivery Date:</label><span>{DateDeserialize($T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ScheduledDeliveryDate).format("shortDate")}</span>
+            </td>
+            <td>
+                <span>{$T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ShipToName} </span>
+                <br />
+                <span>{$T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ShippedToAddress1} </span>
+                <br />
+                <span>{#if $T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ShippedToAddress2 != ""}{$T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ShippedToAddress2}
+                    <br />
+                    {#/if} </span><span>{$T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ShippedToCity}</span>&nbsp;
+                <span>{$T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ShippedToState}</span> <span>{$T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ShippedToZip}</span>
+            </td>
+            <td>
+                {#if $T.PrintOrderItemViewData.PrintOrderItem.Status==21} 
+                 <label class="grayb">Mode:</label><span>
+                    {#if $T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ConfirmationMode==23}  CallCenter
+                    {#elseif $T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ConfirmationMode==24 }Unique URL
+                    {#elseif $T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ConfirmationMode==25 }Email
+                    {#/if}
+                </span><br />
+                 <label class="grayb">Actual Delivery Date:</label><span>{DateDeserialize($T.PrintOrderItemViewData.PrintOrderItem.TrackingInfo.ActualDeliveryDate).format("shortDate")}</span>
+                {#else}-N/A-{#/if}
+            </td>
+            
+            {#else}
+           <td colspan="3" align="center" class="redtxt_default"> Shipping Details are not updated by the vendor.</td>
+            {#/if}
+        </tr>
+       {#/for}
+    </tbody>
+</table>

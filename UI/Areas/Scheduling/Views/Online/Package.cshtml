@@ -1,0 +1,930 @@
+﻿@using Falcon.App.Core.Scheduling.ViewModels
+@using Falcon.App.Core.Scheduling.Enum
+@model OnlineSchedulingSelectPackageEditModel
+@{
+    ViewBag.Title = "Package & Time";
+
+    //var configRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IConfigurationSettingRepository>();
+    //var packageSelectionInfo = Convert.ToBoolean(configRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.PackageSelectionInfo));
+}
+@{Html.BeginForm("Package", "Online", FormMethod.Post);}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/QCTag_Package.cshtml")))
+{
+    @Html.Partial("/Config/Content/Views/Shared/QCTag_Package.cshtml")
+}
+
+<style type="text/css">
+    .no-close .ui-dialog-titlebar-close {
+        display: none;
+    }
+
+    .ui-dialog > .ui-widget-header {
+        background: #47a742;
+        border: #47a742;
+    }
+</style>
+<div class="scheduling-main-container">
+    @Html.Partial("SchedulingProcessHeader", Model.ProcessAndCartViewModel)
+
+    @if (Model.FeedbackMessage != null)
+    {
+        <div class="warning-message">
+            @Model.FeedbackMessage.Message
+        </div>
+    }
+
+    @Html.Partial("OnlineSchedulingSummary", Model.EventCustomerOrderSummaryModel)
+    <div class="container-row" style="display: none;">
+        @Html.Partial("ApplySourceCode", Model.SourceCodeApplyEditModel)
+    </div>
+    <div class="content">
+
+        <div class="highlight_box p10 mb10" id="EditPreferencesDiv" style="display: none;">
+            <div>
+                <div class="left-float">
+                    <h3><strong>You have Selected:</strong></h3>
+                    <div id="edit-product-div">
+                    </div>
+                    <h4 class="txt-grey" id="paid-result-opion" style="display: none;">Free online plus a high-quality color printout of your results at <strong class="txt-green" id="paid-result-opion-price"></strong></h4>
+                    <h4 class="txt-grey" id="online-result-opion" style="display: none;">Online copy of results at <strong class="txt-green">$ 0.00</strong></h4>
+                </div>
+                <div class="right-float">
+                    <a href="javascript:void(0);" onclick='editPreferences();'>
+                        <img src="/Config/Content/Images/edit_preferences_btn.png" width="270" height="39" alt="" />
+                    </a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        @if (Model.RecommendPackage && Model.PackageSelectionVersion == 1)
+        {
+            @Html.Partial("OrderPlaceEditModelVersion1", Model.PackageSelectionEditModel)
+        }
+        else
+        {
+            @Html.Partial("OrderPlaceEditModel", Model.PackageSelectionEditModel)
+        }
+        <div id="event-list">
+        </div>
+
+        <div class="table_box mt15">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th>Appointment Time</th>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        <div class="appointment_widget" id="appointment-div">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" height="167">
+                                <tr>
+                                    <td class="time_slot" valign="top">
+                                        <div class="left-float" style="height: 167px;">
+                                            <img src="/Config/Content/Images/appoint_img.png" width="113" height="167" alt="" />
+                                        </div>
+                                        <div class="left-float p15 ml15" style="width: 415px;">
+                                            <div class="mt10" id="time-slot-container">
+                                            </div>
+                                            <div class="mt15">
+                                                Wish to change your screening event? <a href="javascript:void(0);" onclick="editEvent_Click();">Click here</a> to view other locations.
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </td>
+                                    <td class="time_selected" valign="top">
+                                        <div class="mt10 ml15 pl5">
+                                            <h3>
+                                                @if (Model.EventCustomerOrderSummaryModel != null && Model.EventCustomerOrderSummaryModel.EventDate.HasValue)
+                                                {
+                                                    <strong>You selected <span style="color: #C65E02">@(Model.EventCustomerOrderSummaryModel.EventDate.Value.ToString("MMMM dd, yyyy"))</span> at </strong>
+                                                }
+                                            </h3>
+                                            <h2 class="selected_time_txt mt5" id="appointmenttime-inputbox" style="font-weight: bold; min-height: 30px;">
+                                                @((Model.Appointments != null && Model.Appointments.SelectedAppointmentIds != null && Model.Appointments.SelectedAppointmentIds.Count() > 0) ? Model.ProcessAndCartViewModel.AppointmentTime.Value.ToString("h:mm tt") : "   ")
+                                            </h2>
+                                            @{var settings = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>();}
+                                            <h4 class="txt-grey mt5">If you don’t see a time that is<br />
+                                                convenient to you, please call
+                                            </h4>
+                                            <h1>
+                                                <strong><span class="toll-free-number">@settings.PhoneTollFree</span> </strong>
+                                                <img src="/Config/Content/Images/call_icon.png" width="36" height="33" align="top" alt="" />
+                                            </h1>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="appointment_widget" id="no-appointment-div">
+                            <h2 style="text-align: center; padding-top: 50px;">Please select package/test(s) to view appointment.</h2>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="mt10 pt5 txt-align-right submit-btn-toggle">
+            <input type="button" class="button_grey" value="Back" onclick="goToLocationPage();" />
+            <input type="button" class="button_green ml5" value="Save &amp; Continue &rsaquo;" onclick="manageUpsellDialogs();" />
+        </div>
+        <div class="mt10 pt5 txt-align-right submit-btn-toggle" style="display: none; text-align: right;">
+            <img src="/App/Images/loading.gif" />
+        </div>
+    </div>
+    @if (Model.AskPreQualificationQuestion || Model.RecommendPackage)
+    {
+        <div id="package-selection-info-dialog" class="jdbox" style="display: none;">
+            @Html.Partial("PackageSelectionInfoEditModel", Model.PackageSelectionInfo)
+        </div>
+    }
+</div>
+@* this dialog box will open if customer is below 18 years *@
+<div id="age-dialog-message">
+    <p>
+        Customers below @settings.MinimumAgeForScreening years of age are not allowed for screening. In case of any queries, please call us at&nbsp;@settings.PhoneTollFree
+    </p>
+</div>
+
+@* disclaimer 1 *@
+<div id="disclaimer-emergnecy-message">
+    <p>
+        Due to the symptoms you are experiencing, cardiac screenings may not be appropriate for you. We encourage you to contact you physician or 911 immediately. For more information please call us at 855-435-8378.
+    </p>
+</div>
+@* disclaimer 2 *@
+<div id="disclaimer-diagnosed-heart-problem">
+    <p>
+        Since you are currently under the care of a Cardiologist, the cardiac screenings may not be appropriate for you. We encourage you to follow up with your Cardiologist or Primary Care Physician for further evaluation. For more information please call us at 855-435-8378.
+    </p>
+</div>
+
+@* disclaimer 3 *@
+<div id="disclaimer-normal-message" style="display: none;">
+    <p>
+        Based on your responses, you are at low risk. However, if you would like to continue scheduling an appointment, please continue or you can  <a href="javascript:void(0)" onclick="exitToSiteUrl('disclaimer-normal-message', 'Low Risk')" id="exitbtn">Skip the registration</a>.
+    </p>
+</div>
+
+
+@* disclaimer 4 *@
+<div id="disclaimer-low-risk-message">
+    <p>
+        Based on your responses you exhibit risk which qualifies you to participate in our screenings.
+    </p>
+</div>
+
+
+<script language="javascript" type="text/javascript">
+
+    var slotIds = null;
+
+    function editPreferences()
+    {
+        $("#productUpsellJDiv").dialog("open");
+    }
+
+    function editOrder(toApplySourceCode) {//debugger;
+
+        if (toApplySourceCode == null) {
+            toApplySourceCode = true;
+        }
+
+        var selectedPackage = getSelectedPackage == null ? null : getSelectedPackage();
+        var selectedShipping = getSelectedShipping == null ? null : getSelectedShipping();
+        var selectedProduct = getSelectedProduct == null ? null : getSelectedProduct();
+        var selectedTests = getSelectedTest == null ? null : getSelectedTest();
+        var selectedSourceCode = getSourceCode == null ? null : getSourceCode();
+
+        resetAll();
+
+        if (selectedPackage != null)
+            setPackage(selectedPackage.PackageId, selectedPackage.Price);
+
+        if (selectedShipping != null) {
+            setShippingPrice(selectedShipping.Price);
+        }
+
+        if (selectedTests != null) {
+            var testPrice = 0;
+            for (var i = 0; i < selectedTests.length; i++) {
+                testPrice += Number(selectedTests[i].Price);
+                setSelectedTest(selectedTests[i].TestId, selectedTests[i].Price);
+            }
+        }
+
+        if (selectedProduct != null && selectedProduct.length > 0) {
+            var productPrice = 0;
+            for (var i = 0; i < selectedProduct.length; i++) {
+                productPrice += Number(selectedProduct[i].Price);
+            }
+            setProductPrice(productPrice);
+        }
+        setTotalOrderPrice();
+
+        setOrder(selectedPackage, selectedShipping, selectedTests, selectedProduct, selectedSourceCode);
+
+        if (toApplySourceCode) {
+            applySourceCode();
+        }
+
+        getScreeningTime(selectedPackage, selectedTests);
+        manageForProductinUpsell();
+    }
+
+    function setOrderSummary(){//debugger;
+        var selectedPackage = getSelectedPackage == null ? null : getSelectedPackage();
+        var selectedShipping = getSelectedShipping == null ? null : getSelectedShipping();
+        var selectedProduct = getSelectedProduct == null ? null : getSelectedProduct();
+        var selectedTests = getSelectedTest == null ? null : getSelectedTest();
+        var selectedSourceCode = getSourceCode == null ? null : getSourceCode();
+        setOrder(selectedPackage, selectedShipping, selectedTests, selectedProduct, selectedSourceCode);
+        setEditPreferences();
+    }
+
+    function setEditPreferences(){//debugger;
+
+        var selectedShipping = getSelectedShipping == null ? null : getSelectedShipping();
+        var selectedProduct = getSelectedProduct == null ? null : getSelectedProduct();
+
+        if(selectedShipping != null || selectedProduct != null){
+            $("#EditPreferencesDiv").show();
+            if(selectedShipping !=null)
+            {
+                if (selectedShipping.Id > 0){
+                    $("#paid-result-opion").show();
+                    $("#online-result-opion").hide();
+
+                    $("#paid-result-opion-price").html("");
+                    $("#paid-result-opion-price").html("$ " + selectedShipping.Price);
+                }
+                else if(selectedShipping.Id == 0){
+                    $("#paid-result-opion").hide();
+                    $("#online-result-opion").show();
+                }
+                else{
+                    $("#paid-result-opion").hide();
+                    $("#online-result-opion").hide();
+                }
+            }
+
+            var htmlProduct = "";
+            if(selectedProduct != null)
+            {
+                for (var i = 0; i < selectedProduct.length; i++) {
+                    htmlProduct += "<h4 class=\"mt5 txt-grey\">" + selectedProduct[i].Name +" at <strong class=\"txt-green\">$" + selectedProduct[i].Price +"</strong></h4>";
+                }
+            }
+            $("#edit-product-div").html("");
+            $("#edit-product-div").html(htmlProduct);
+        }
+    }
+
+    $(document).ready(function () {//debugger;
+        _editOrder = function () { editOrder(true); };
+        _acEditOrder = function () { editOrder(false); };
+        _setOrderSummary = function () {setOrderSummary(); };
+
+        $("#ShowOrderSummary").show();
+
+        $('#ShowOrderSummary').click(function () {//debugger;
+            var pos = $('#ShowOrderSummary').position();
+            $("#order_summary_details").css({
+                position: 'absolute',
+                zIndex: 99999,
+                left: (pos.left) + "px",
+                top: (pos.top + 40) + "px"
+            });
+
+            $('#order_summary_details').slideToggle('slow', function () { });
+        });
+
+
+        @if (Model.Appointments != null && Model.Appointments.SelectedAppointmentIds != null && Model.Appointments.SelectedAppointmentIds.Count() > 0)
+        {
+            <text>
+        eval('slotIds = [@(string.Join(",", Model.Appointments.SelectedAppointmentIds))]');
+        </text>
+        }
+        //debugger;
+        var selectedPackage = getSelectedPackage == null ? null : getSelectedPackage();
+        var selectedTests = getSelectedTest == null ? null : getSelectedTest();
+        //renderAppointmentSlots(selectedPackage, selectedTests, false);
+        getScreeningTime(selectedPackage, selectedTests);
+        setCallBackonAppointmentExpiry(resetAppointment);
+
+        setEditPreferences();
+
+        $("#event-list").dialog({ width: 900, autoOpen: false, title: 'Event List', modal: true, resizable: false, draggable: true });
+
+        @{
+            if ((Model.AskPreQualificationQuestion || Model.RecommendPackage) && !Model.PackageSelectionInfo.IsValueFilled && !(Model.PackageSelectionInfo.SkipPreQualificationQuestion && Model.PackageSelectionInfo.IsBasicInfoFilled))
+            {
+            <text>
+        if(selectedPackage == null){
+            $("#package-selection-info-dialog").dialog({ width: 750, autoOpen: false, title: 'Package Selection Info', modal: true, resizable: false, draggable: true,dialogClass: 'no-close' });
+            $("#package-selection-info-dialog").bind('dialogclose', savePackageSelectionAfterDisclaimer);
+            $("#package-selection-info-dialog").dialog("open");
+        }
+        </text>
+            }
+        }
+    });
+
+</script>
+
+<script type="text/javascript" language="javascript">
+    var _appointmentTime = "";
+    var screeningTime = 0;
+
+    function getScreeningTime(selectedPackage, selectedTests) {//debugger;
+
+        var packageId = 0;
+        var testIds = null;
+        if (selectedPackage != null)
+            packageId = selectedPackage.PackageId;
+
+        if (selectedTests != null && selectedTests.length > 0) {
+            testIds = new Array();
+            $.each(selectedTests, function() {
+                testIds.push(this.TestId);
+            });
+        }
+        if (packageId > 0 || (testIds != null && testIds.length > 0)) {
+            $.ajax({
+                url: '/Scheduling/Online/GetScreeningTime',
+                type: 'Post',
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: 'text',
+                data: "{'eventId' : @(Model.EventCustomerOrderSummaryModel.EventId.Value), 'packageId' :" + packageId + ", 'testIds' : " + JSON.stringify(testIds) + "}",
+                success: function (result) {
+                    //debugger;
+                    var currentScreeningTime = parseInt(result);
+                    var isDynamicEvent = '@(Model.IsDynamicScheduling)' == '@(Boolean.TrueString)';
+                    if (isDynamicEvent == false) {
+                        if (screeningTime == 0) {
+                            screeningTime = currentScreeningTime;
+                            renderAppointmentSlots(selectedPackage, selectedTests, false);
+                        }
+                        else {
+                            screeningTime = currentScreeningTime;
+                        }
+                    }
+                    else {
+                        if (screeningTime == 0) {
+                            screeningTime = currentScreeningTime;
+                            renderAppointmentSlots(selectedPackage, selectedTests, false);
+                        }
+                        else if (screeningTime != currentScreeningTime) {
+                            screeningTime = currentScreeningTime;
+                            renderAppointmentSlots(selectedPackage, selectedTests, true);
+                        }
+                    }
+
+                },
+                error: function (arg1, arg2) {
+
+                }
+            });
+
+        }
+        else {
+            screeningTime = 0;
+            renderAppointmentSlots(null, null, false);
+        }
+
+    }
+
+    function renderAppointmentSlots(selectedPackage, selectedTests, isOrderChanged) {//debugger;
+        //debugger;
+        if (selectedPackage != null || selectedTests != null) {
+            if (slotIds == null || isOrderChanged == false) {
+                getSlotView();
+            }
+            else {
+                changeAppointment();
+            }
+        }
+        else {
+            if (slotIds != null) {
+                changeAppointment();
+                slotIds = null;
+                removeSelectedAppointmentInTempcart();
+            }
+            _appointmentTime = "";
+
+            $("#appointmenttime-inputbox").html(_appointmentTime);
+            setAppointmentTime(_appointmentTime);
+
+            $("#time-slot-container").html("");
+            $("#appointment-div").hide();
+            $("#no-appointment-div").show();
+        }
+    }
+
+    function getSlotView() {//debugger;
+
+        var selectedPackage = getSelectedPackage == null ? null : getSelectedPackage();
+        var selectedTests = getSelectedTest == null ? null : getSelectedTest();
+        if (selectedPackage == null && (selectedTests == null || selectedTests.length <1)) {
+            return;
+        }
+
+        var packageId = 0;
+        var testIds = null;
+        if (selectedPackage != null)
+            packageId = selectedPackage.PackageId;
+
+        if (selectedTests != null && selectedTests.length > 0) {
+            testIds = new Array();
+            $.each(selectedTests, function() {
+                testIds.push(this.TestId);
+            });
+        }
+
+        $.ajax({
+            url: '/Scheduling/AppointmentSlot/Select',
+            type: 'Post',
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            dataType: 'html',
+            data: "{'eventId' : @(Model.EventCustomerOrderSummaryModel.EventId.Value), 'screeningTime' :" + screeningTime + ", 'selectedSlotIds' : " + JSON.stringify(slotIds) + ", 'packageId' : " + packageId + ", 'testIds' : " + JSON.stringify(testIds) + "}",
+            success: function (result) {
+                $("#time-slot-container").html(result);
+                $("#appointment-div").show();
+                $("#no-appointment-div").hide();
+
+                _methodReffromParentForSuccessonSelectAppointment = onSuccessSelectAppointment;
+                _methodReffromParentForSuccessonChangeAppointment = onSuccessChangeAppointment;
+                _methodReffromParentForFailureonSelectAppointment = getSlotView;
+
+                _methodReffromParentForSlotRangeSelection = setPreliminaryStartTime;
+                //debugger;
+                var option = $('#time-slot-container #appointmenttime-select option[fromtime="@(Model.PreliminarySelectedTime.HasValue ? Model.PreliminarySelectedTime.Value.ToString() : "")"]');
+                if (option != null && option.length > 0) {
+                    $(option).attr("selected", true);
+                    getSlots();
+                }
+            },
+            error: function (arg1, arg2) {
+
+            }
+        });
+    }
+
+    function onSuccessSelectAppointment(slots) {
+        $(".submit-btn-toggle").toggle();
+        slotIds = new Array();
+        var count = 1;
+        $.each(slots, function () {
+            slotIds.push(this.Id);
+        });
+        //debugger;
+        _appointmentTime = slots[0].StartTimeString;
+
+        $("#appointmenttime-inputbox").html(_appointmentTime);
+        setAppointmentTime(_appointmentTime);
+        getSlotView();
+        setSelectedAppointmentInTempcart();
+    }
+
+    function resetAppointment() {
+        //debugger;
+        slotIds = null;
+        _appointmentTime = "";
+
+        $("#appointmenttime-inputbox").html(_appointmentTime);
+        setAppointmentTime(_appointmentTime);
+        getSlotView();
+    }
+
+    function onSuccessChangeAppointment() {//debugger;
+        slotIds = null;
+        removeSelectedAppointmentInTempcart();
+    }
+
+    function setSelectedAppointmentInTempcart() {//debugger;
+        var guid = getGuid();
+
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            url: '/Scheduling/Online/UpdateCartWithAppointment',
+            data: "{'guid':'" + guid + "','selectedSlotIds' : " + JSON.stringify(slotIds) + "}",
+            success: function (result) {
+                if (result.IsBooked) {
+                    getAppointmentSlotExpiryTimer(result.AppointmentId);
+                    $(".submit-btn-toggle").toggle();
+                }
+                else {
+                    getAppointmentSlotExpiryTimer(0);
+                    alert("The appointment slot selected by you is temporarily booked by another customer registering for the same event. This slot will be available after 15 mins if he/she does not registers for the event. Please choose the next available slot.");
+                    $(".submit-btn-toggle").toggle();
+                    return false;
+                }
+            },
+            error: function () {
+                getAppointmentSlotExpiryTimer(0);
+                $(".submit-btn-toggle").toggle();
+                alert("Some error has occured while booking this slot. Please contact the call center at @(Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>().PhoneTollFree).");
+            }
+        });
+    }
+
+    function removeSelectedAppointmentInTempcart() {//debugger;
+        var guid = getGuid();
+
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            url: '/Scheduling/Online/UpdateCartWithAppointment',
+            data: "{'guid':'" + guid + "','selectedSlotIds' : " + JSON.stringify(slotIds) + "}",
+            success: function (result) {
+                getAppointmentSlotExpiryTimer(0);
+            },
+            error: function () {
+                getAppointmentSlotExpiryTimer(0);
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript" language="javascript">
+    function onClickSelectEvent(eventId) {
+        var zipcode = "";
+        var invitationCode = "";
+        var corpCode = "";
+        var radius = "";
+        var guid = getGuid();
+        var couponCode = "";
+
+        $.ajax({ 'type': 'POST',
+            'dataType': 'json',
+            'url': '/Scheduling/Online/SaveTempCartforSelectLocation?guid=' + guid + '&eventId=' + eventId + '&zipCode=' + zipcode + '&invitationCode=' + invitationCode + '&corpCode=' + corpCode + "&radius=" + radius + "&couponCode=" + couponCode,
+            'data': '{}',
+            'success': function (result) { $("#event-list").dialog("close"); goToPackagePage(); },
+            'error': function () { }
+        });
+    }
+
+    function onClickGetEvents(url) {//debugger;
+
+        var eventId = @(Model.EventCustomerOrderSummaryModel != null && Model.EventCustomerOrderSummaryModel.EventId.HasValue ? Model.EventCustomerOrderSummaryModel.EventId.Value : 0);
+
+        var guid = getGuid();
+
+        if (url != null && url.indexOf("EventId=") < 1) {
+            url += "&EventId=" + eventId;
+        }
+        else {
+            url = '/Scheduling/Online/AvailableLocations?EventId=' + eventId + '&guid=' + guid;
+        }
+
+        $(".search-button-toggle").toggle();
+
+        $("#event-list").html("<div style='width:90%; margin: 10px auto; text-align: center; padding: 30px 0px;'> <img src='/App/Images/loading.gif' alt=''> Loading.... </div>");
+
+        $.ajax({ 'type': 'GET',
+            'dataType': 'html',
+            'url': (url == null ? '/Scheduling/Online/AvailableLocations?EventId=' + eventId + '&SortOrderBy=' + sortOrderBy + '&ZipCode=' + zipcode : url), 'data': '{}',
+            'success': function (result) { $("#event-list").html(result); setMethodRef(onClickGetEvents, onClickSelectEvent); openEventList(); },
+            'error': function () { alert("Some error occured while loading events. Please go back and change events."); }
+        });
+    }
+    function editEvent_Click(){
+        $("#event-list").dialog("open");
+        onClickGetEvents();
+    }
+    function openEventList(){
+        if ($("#event-list").dialog("isOpen") == true) {
+            $("#event-list").dialog("close");
+            $("#event-list").dialog("open");
+        }
+
+    }
+</script>
+
+<script type="text/javascript" language="javascript">
+    function setPreliminaryStartTime(startTime) {//debugger;
+
+        var guid = getGuid();
+        $.ajax({ 'type': 'POST',
+            'dataType': 'json',
+            'url': '/Scheduling/Online/SaveTempCartforPreliminarySelectedTime?guid=' + guid + '&selectedTimeRange=' + startTime,
+            'data': '{}',
+            'success': function (result) {
+            },
+            'error': function () {
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    $(function() {
+        $( "#age-dialog-message" ).dialog({
+            modal: true,
+            width: 400,
+            autoOpen: false,
+            title: 'Minimum Age Alert',
+            buttons: {
+                Close: function() {
+                    $( this ).dialog( "close" );
+                }
+            }
+        });
+
+        @*   $("#disclaimer-normal-message").dialog({
+            modal: true,
+            width: 400,
+            autoOpen: false,
+            title: 'Disclaimer',
+            buttons: [
+                {
+                    text: "Continue",
+                    click: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        }).parent().find('.ui-dialog-buttonset').prepend('<a href="@settings.SiteUrl" style="margin-right:10px;" id="exitbtn">No, I don\'t want to schedule</a>');*@
+
+        $("#disclaimer-low-risk-message").dialog({
+            modal: true,
+            width: 400,
+            autoOpen: false,
+            title: 'Disclaimer',
+            buttons: [
+                {
+                    text: "Continue",
+                    click: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        }).parent().find('.ui-dialog-buttonset').prepend('<a href="javascript:void(0);" onclick="exitToSiteUrlbtn();" risk="Exhibit Risk" style="margin-right:10px;color:#00A7E5;" id="exitbtnExhibitRisk">No, I don\'t want to schedule</a>');
+
+
+        $( "#disclaimer-emergnecy-message" ).dialog({
+            modal: true,
+            width: 400,
+            autoOpen: false,
+            title: 'Disclaimer',
+            buttons:[{
+                text: "Ok",
+                click: function() {
+                    $( this ).dialog( "close" );
+                }
+            }]
+        });
+
+        $("#disclaimer-diagnosed-heart-problem").dialog({
+            modal: true,
+            width: 400,
+            autoOpen: false,
+            title: 'Contact us at 855-435-8378',
+            buttons: [
+                {
+                    text: "Ok",
+                    click: function() {
+                        $(this).dialog("close");
+
+                    }
+                }
+            ]
+        });
+
+
+        $("#age-dialog-message").bind('dialogclose', function (){exitToSiteUrl("age-dialog-message", "Under Age");});
+        $("#disclaimer-emergnecy-message").bind('dialogclose', function (){exitToSiteUrl("disclaimer-emergnecy-message", "Chest Pain");});
+        $("#disclaimer-diagnosed-heart-problem").bind('dialogclose', function (){exitToSiteUrl("disclaimer-diagnosed-heart-problem", "Heart Problem");});
+
+        $("#disclaimer-normal-message").bind('dialogclose', UpdateUserPrefrenceWithPrequalificationQuestion);
+        $("#disclaimer-low-risk-message").bind('dialogclose', UpdateUserPrefrenceWithPrequalificationQuestion);
+
+        @if ((Model.AskPreQualificationQuestion || Model.RecommendPackage) && Model.PackageSelectionInfo.IsValueFilled)
+        {
+            var psInfo = Model.PackageSelectionInfo;
+            <text>
+            var packageSelectionInfo = new Object();
+            packageSelectionInfo.Gender = '@psInfo.Gender';
+            packageSelectionInfo.Dob = '@psInfo.Dob'
+            packageSelectionInfo.SkipPreQualificationQuestion = '@psInfo.SkipPreQualificationQuestion';
+            </text>
+            if (Model.AskPreQualificationQuestion)
+            {
+                <text>
+                packageSelectionInfo.HighBloodPressure = '@psInfo.HighBloodPressure';
+                packageSelectionInfo.HighCholestrol = '@psInfo.HighBloodPressure';
+                packageSelectionInfo.AgeOverPreQualificationQuestion = '@psInfo.AgeOverPreQualificationQuestion';
+                packageSelectionInfo.Smoker = '@psInfo.Smoker';
+                packageSelectionInfo.HeartDisease = '@psInfo.HeartDisease';
+                packageSelectionInfo.Diabetic = '@psInfo.Diabetic';
+                packageSelectionInfo.ChestPain = '@psInfo.ChestPain';
+                packageSelectionInfo.DiagnosedHeartProblem = '@psInfo.DiagnosedHeartProblem';
+                packageSelectionInfo.OverWeight = '@psInfo.OverWeight';        
+                </text>
+                
+                if (!(Model.SkipPreQualificationQuestion && psInfo.IsBasicInfoFilled) && !Model.AgreedWithPrequalificationQuestion)
+                {
+                     <text>savePackageSelectionInfo(packageSelectionInfo);</text>
+                }
+                else if (!Model.SkipPreQualificationQuestion && Model.AgreedWithPrequalificationQuestion)
+                {
+                     <text>SetDisclaimerForNormalCustomer(packageSelectionInfo)</text>
+                }
+            }
+        }
+    });
+
+
+
+
+</script>
+<script type="text/javascript">
+
+    function getAge(dob) {
+        var today = new Date();
+        var birthDate = new Date(dob);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
+    }
+
+    function UpdateUserPrefrenceWithPrequalificationQuestion() {
+        var guid = getGuid();
+
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            url: '/Scheduling/Online/UpdateUserPrefrenceWithPrequalificationQuestion',
+            data: "{'guid':'" + guid + "'}",
+            'success': function () {
+                goToPackagePage();
+            },
+            'error': function () {
+                goToPackagePage();
+            }
+        });
+    }
+
+    function savePackageSelectionAfterDisclaimer() {
+        var guid = getGuid();
+        var packageSelectionInfo = getPackageSelectionInfo();
+
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            url: '/Scheduling/Online/SavePackageSelectionInfo',
+            data: "{'guid':'" + guid + "','packageSelectionInfoEditModel' : " + JSON.stringify(packageSelectionInfo) + "}",
+            'success': function () {
+                savePackageSelectionInfo(packageSelectionInfo);
+            },
+            'error': function () {
+                goToPackagePage();
+            }
+        });
+    }
+    var minAge = '@settings.MinimumAgeForScreening';
+    var maximumAge = 45;
+
+    var answeryes = '@((long)OnlineScreeningQuestionAnswers.AnswerYes)';
+    var answerno = '@((long)OnlineScreeningQuestionAnswers.AnswerNo)';
+
+    var noOfYesAnsweredByCustomer = 0;
+    var noOfNoAnsweredByCustomer = 0;
+
+    function savePackageSelectionInfo(packageSelectionInfo) {
+        $(".disclaimer-normal-message-header").empty();
+        $(".disclaimer-normal-message-header").hide();
+        noOfYesAnsweredByCustomer = 0;
+        noOfNoAnsweredByCustomer = 0;
+        //debugger;
+        if (packageSelectionInfo.SkipPreQualificationQuestion=='@Boolean.TrueString' && packageSelectionInfo.Dob!="" && packageSelectionInfo.Gender>0 ) {
+            goToPackagePage();
+        } else {
+
+            @if (Model.AskPreQualificationQuestion)
+            {
+            <text>
+                showDisclaimerNormalCustomer(packageSelectionInfo);
+
+                if(packageSelectionInfo.ChestPain==answeryes)
+                {
+                    $("#disclaimer-emergnecy-message").dialog("open");
+                }
+                else if (packageSelectionInfo.DiagnosedHeartProblem == answeryes) {
+                    $("#disclaimer-diagnosed-heart-problem").dialog("open");
+                }
+                else if (packageSelectionInfo.Dob!="" && getAge(packageSelectionInfo.Dob)<parseInt(minAge)) {
+                    $("#age-dialog-message").dialog("open");
+                }
+                else if (noOfYesAnsweredByCustomer>=2) {
+                    $("#disclaimer-low-risk-message").dialog("open");
+                }
+                else if (noOfNoAnsweredByCustomer>=6) {
+                    UpdateUserPrefrenceWithPrequalificationQuestion();
+                    $(".disclaimer-normal-message-header").html($("#disclaimer-normal-message").html());
+                    $(".disclaimer-normal-message-header").show();
+                }
+            </text>
+            }
+            else
+            {
+            <text>
+                if (packageSelectionInfo.Dob!="" && getAge(packageSelectionInfo.Dob)<parseInt(minAge)) {
+                    $("#age-dialog-message").dialog("open");
+                }
+                else
+                {
+                    UpdateUserPrefrenceWithPrequalificationQuestion();
+                }
+            </text>                
+            }
+            
+        }
+    }
+
+    function SetDisclaimerForNormalCustomer(packageSelectionInfo) {
+        //debugger;
+        $(".disclaimer-normal-message-header").empty();
+        $(".disclaimer-normal-message-header").hide();
+        showDisclaimerNormalCustomer(packageSelectionInfo);
+        if (noOfNoAnsweredByCustomer >= 6) {
+            $(".disclaimer-normal-message-header").html($("#disclaimer-normal-message").html());
+            $(".disclaimer-normal-message-header").show();
+        }
+    }
+
+    function showDisclaimerNormalCustomer(packageSelectionInfo) {
+
+        //Are you age 45 or older
+        if (packageSelectionInfo.Dob != "" && getAge(packageSelectionInfo.Dob) < parseInt(maximumAge)) {
+            noOfNoAnsweredByCustomer = noOfNoAnsweredByCustomer + 1;
+        } else if (packageSelectionInfo.Dob != "" && getAge(packageSelectionInfo.Dob) >= parseInt(maximumAge)){
+            noOfYesAnsweredByCustomer = noOfYesAnsweredByCustomer + 1;
+        }
+
+        //have you ever been told you have high blood pressure
+        if (packageSelectionInfo.HighBloodPressure == answerno) {
+            noOfNoAnsweredByCustomer = noOfNoAnsweredByCustomer + 1;
+        } else if (packageSelectionInfo.HighBloodPressure == answeryes) {
+            noOfYesAnsweredByCustomer = noOfYesAnsweredByCustomer + 1;
+        }
+
+        //have you ever been told you have elevated cholesterol
+        if (packageSelectionInfo.HighCholestrol == answerno) {
+            noOfNoAnsweredByCustomer = noOfNoAnsweredByCustomer + 1;
+        } else if (packageSelectionInfo.HighCholestrol == answeryes) {
+            noOfYesAnsweredByCustomer = noOfYesAnsweredByCustomer + 1;
+        }
+
+        //Do you currenty smoke or have you smoked in the past
+        if (packageSelectionInfo.Smoker == answerno) {
+            noOfNoAnsweredByCustomer = noOfNoAnsweredByCustomer + 1;
+        }else if (packageSelectionInfo.Smoker == answeryes) {
+            noOfYesAnsweredByCustomer = noOfYesAnsweredByCustomer + 1;
+        }
+
+        //Do you have a family history of any heart realted disease or iliness
+        if (packageSelectionInfo.HeartDisease == answerno) {
+            noOfNoAnsweredByCustomer = noOfNoAnsweredByCustomer + 1;
+        }else if (packageSelectionInfo.HeartDisease == answeryes) {
+            noOfYesAnsweredByCustomer = noOfYesAnsweredByCustomer + 1;
+        }
+
+        //Diabetic
+        if (packageSelectionInfo.Diabetic == answerno) {
+            noOfNoAnsweredByCustomer = noOfNoAnsweredByCustomer + 1;
+        } else if (packageSelectionInfo.Diabetic == answeryes) {
+            noOfYesAnsweredByCustomer = noOfYesAnsweredByCustomer + 1;
+        }
+
+        //OverWeight
+        if (packageSelectionInfo.OverWeight == answerno) {
+            noOfNoAnsweredByCustomer = noOfNoAnsweredByCustomer + 1;
+        } else if (packageSelectionInfo.OverWeight == answeryes) {
+            noOfYesAnsweredByCustomer = noOfYesAnsweredByCustomer + 1;
+        }
+
+    }
+    function exitToSiteUrl(disclaimer, message) {
+        //var disclaimerMsg= $("#" + disclaimer + " p").html();
+        _gaq.push(['_trackEvent', 'Pre-Qualification Question Disclaimer', "Exit", getGuid() + message]);
+        window.location.href = "@settings.SiteUrl";
+    }
+
+    function exitToSiteUrlbtn() {
+        //debugger;
+        var riskMessage= $("#exitbtnExhibitRisk").attr("risk");
+        exitToSiteUrl("", riskMessage);
+    }
+</script>
+@{Html.EndForm();}

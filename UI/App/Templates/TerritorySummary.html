@@ -1,0 +1,19 @@
+﻿<h3>{$T.FirstValue.Name}</h3>
+<h4>Full Description</h4>
+<p>{$T.FirstValue.Description}</p>
+<h4>Owner(s)</h4>
+<div style="margin-left: 1px">
+{#if $T.SecondValue.length > 0}
+    {#foreach $T.SecondValue as OwnerName}
+        {$T.OwnerName}<br />
+    {#/for}
+{#else}
+    N/A
+{#/if}
+</div>
+<h4>Associated Zip Codes</h4>
+<div id="Territory{$T.FirstValue.Id}ZipCodesDiv" style="height: 100px; width: 500px; overflow-y: scroll; border: solid 1px #000000">
+    {#foreach $T.FirstValue.ZipCodes as Code}
+        {$T.Code.Zip}
+    {#/for}
+</div>

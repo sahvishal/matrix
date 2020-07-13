@@ -1,0 +1,5 @@
+﻿<div class="row-flat">
+    <div class="pad-o-8">
+        Showing list of all customers whose order amount is less than <span>{{model.Amount | currency}}</span> and are scheduled in next <span ng-bind="model.NoOfDays"></span> <span ng-bind="model.NoOfDays > 1?'days':'day'"></span>. <button ng-click="UpdateUpsellCriteria(model)">Edit Criteria</button>
+    </div>
+</div>

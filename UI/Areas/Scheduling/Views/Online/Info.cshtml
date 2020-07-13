@@ -1,0 +1,324 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@model Falcon.App.Core.Scheduling.ViewModels.OnlineSchedulingCustomerInfoEditModel
+@{
+    ViewBag.Title = "Info & Payment";
+
+    var settings = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>();
+}
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+<style type="text/css">
+#temrsandconditions-div .tm-header
+{
+    float: left;
+    padding: 5px;
+    width: 98%;
+    font-size: 11pt;
+    /*background-color: #63A160;*/
+    background-color: #1A5EA1;
+    margin-bottom: 5px;
+    color: #F3FDFF;
+    font-weight: bold;
+}
+#temrsandconditions-div .tm-content
+{
+    padding: 5px;
+    font-size: 10pt;
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+/*.ui-widget-content
+{
+    background: #B3D4A7;
+    border: 2px solid #496340;
+}
+
+.ui-widget-header
+{
+    background: #B3D4A7;
+    color: #000000;
+    border: none;
+    font-size: 11pt;
+}*/
+
+
+</style>
+
+@{Html.BeginForm("Info", "Online", FormMethod.Post);}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/QCTag_Info.cshtml")))
+{
+    @Html.Partial("/Config/Content/Views/Shared/QCTag_Info.cshtml")
+}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/QCTag_Payment.cshtml")))
+{
+    @Html.Partial("/Config/Content/Views/Shared/QCTag_Payment.cshtml")
+}
+<script type="text/javascript" language="javascript">
+
+    window.history.forward();
+
+</script>
+
+<script type="text/javascript" src="/Scripts/addresseditmodel.helper.js"></script>
+
+<div class="scheduling-main-container">
+    @Html.Partial("SchedulingProcessHeader", Model.ProcessAndCartViewModel)
+
+    @if (Model.FeedbackMessage != null)
+    {
+        <div class="warning-message">
+            @Model.FeedbackMessage.Message
+        </div>   
+    }
+    @Html.Partial("OnlineSchedulingSummary", Model.EventCustomerOrderSummaryModel)
+    <div class="content">
+        <div class="mb15 mt10">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td width="451" valign="top">
+                        <h3 class="title_green mb10"><strong> CUSTOMER INFORMATION</strong></h3>
+                        @Html.Partial("SchedulingCustomerEditModel", Model.CustomerEditModel)
+                    </td>
+                    <td valign="top">&nbsp;</td>
+                    <td width="451" valign="top">
+                        
+                        @Html.Partial("OnlinePaymentEditModel", Model.PaymentEditModel)
+                    </td>
+                </tr>
+            </table>
+            <div class="mt15">  
+                <div id="coupon-messagebox" style="display: none;">
+                </div>  
+                <div class="clearfix"></div>
+            </div>          
+            <div class="coupon_box mt15">                
+                @{
+                    var configurationRepository = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.IConfigurationSettingRepository>();
+                    var newsletterprompt = Convert.ToBoolean(configurationRepository.GetConfigurationValue(Falcon.App.Core.Enum.ConfigurationSettingName.EnableNewsletterPrompt));
+                }                
+                <div class="left-float p15">
+                    @if (newsletterprompt && Model.EventCustomerOrderSummaryModel !=null && Model.EventCustomerOrderSummaryModel.EventType == EventType.Retail)
+                    {
+                        <h4>
+                            @Html.CheckBoxFor(m => m.RequestForNewsLetter) 
+                            <strong>@Model.RequestForNewsLetterDescription </strong>
+                        </h4>
+                    }
+                    <h4 class="mt10">
+                        @Html.CheckBoxFor(m => m.AcceptTerms)
+                        <strong>
+                            I agree with 
+                            <a href="javascript:void(0);" onclick="$('#temrsandconditions-div').dialog('open');">Terms &amp; conditions and cancellation policy. </a>
+                        </strong>
+                    </h4>
+                </div>
+                <div class="right-float coupon_code">               
+                    @Html.Partial("ApplySourceCode", Model.SourceCodeApplyEditModel)
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="mt10 pt5 txt-align-right submit-btn-toggle">
+            @*<input type="button" class="button_grey" value="Back" onclick="$('.submit-btn-toggle').toggle(); goToPackagePage();" />*@
+            <input type="button" class="button_green ml5" value="Place Order &amp; Continue &rsaquo;" onclick="onClickFinish();" />
+        </div>
+        <div class="mt10 pt5 txt-align-right submit-btn-toggle" style="display: none; text-align: right;">
+            <img src="/App/Images/loading.gif" />
+        </div>
+    </div>      
+</div>
+
+<div id="temrsandconditions-div" style="display: none;">
+    @Html.Partial("/Config/Content/Views/Shared/TermsAndConditions.cshtml")
+    <p style="border-top: solid 1px #1a5ea1; padding-top: 10px; text-align: right;">
+        <input name="Accept1" type="button" id="Accept1" value="Close" class="button_green"
+            onclick="$('#temrsandconditions-div').dialog('close');" />
+    </p>
+</div>
+
+@{Html.EndForm();}
+@* this dialog box will open if customer is below 18 years *@
+<div id="age-dialog-message">
+    <p>
+        Customers below @settings.MinimumAgeForScreening years of age are not allowed for screening. In case of any queries, please call us at&nbsp;@settings.PhoneTollFree
+    </p>
+</div>
+<div id="insurance-eligibility-div-dialog" class="jdbox">
+</div>
+<script type="text/javascript" src="/App/jquery/js/jquery.maskedinput-1.2.2.js"></script>
+<script language="javascript" type="text/javascript">
+
+    var _eventId = 0;
+    var _packageId = 0;
+    var _addOntestIds = new Array();
+    
+    _eventId = '@(Model.EventCustomerOrderSummaryModel.EventId.HasValue ? Model.EventCustomerOrderSummaryModel.EventId.Value : 0)';
+    _packageId = '@(Model.SourceCodeApplyEditModel.Package !=null ? Model.SourceCodeApplyEditModel.Package.FirstValue : 0)';
+    @if (Model.SourceCodeApplyEditModel.SelectedTests != null)
+    {
+        foreach (var test in Model.SourceCodeApplyEditModel.SelectedTests)
+        {
+            <text>
+            _addOntestIds.push(@(test.FirstValue));
+            </text>
+        }
+    }
+
+    $(document).ready(function () {
+        setToSaveProspectCustomer(true, getGuid());
+        fillMarketingSourceWithOption();
+        $("div.phone-number-div input[type=text].phone-number").mask('(999)999-9999');
+        $("div.phoneCell input[type=text].phone-number").mask('(999)999-9999');
+        $('.mask-ssn').mask('***-**-****');
+
+        $("#ShowOrderSummary").show();        
+
+        $('#ShowOrderSummary').click(function () {//debugger;           
+            var pos = $('#ShowOrderSummary').position();
+            $("#order_summary_details").css({
+                position: 'absolute',
+                zIndex: 99999,                
+                left: (pos.left) + "px",
+                top: (pos.top + 40) + "px"
+            });
+
+            $('#order_summary_details').slideToggle('slow', function () { });
+        });
+
+        //payment
+        _acEditOrder = setOrderPrice;
+        $("#temrsandconditions-div").dialog({ width: 600, autoOpen: false, title: 'Terms & Conditions', modal: true, resizable: false, draggable: true });
+        setCallBackonAppointmentExpiry(sendBackToAppointmentSelection);
+
+        if ('@settings.CaptureInsuranceId' == '@Boolean.TrueString' && '@Model.EventCustomerOrderSummaryModel.CaptureInsuranceId' == '@Boolean.TrueString') {
+            showInsuranceInfo(true);
+        }
+        else{
+            showInsuranceInfo(false);
+        }
+        
+    });
+
+    function autoTabPhoneAreaCodeonKeyUp(elementRef) {
+        if (elementRef.val().length >= 3) {
+            var parent = elementRef.parents("div.phone-number-div:first");
+            parent.find("input[type=text].number-after-areacode").focus();
+        }
+    }
+
+    function onClickFinish() {
+        $(".submit-btn-toggle").toggle();
+        var age = getAge($("#DateofBirth").val());
+        if (age < parseInt(minAge)) {
+            $("#age-dialog-message").dialog("open");
+            $(".submit-btn-toggle").toggle();
+            return false;
+        }
+
+        trimName();
+
+        var valPhone = $("#prospectCustomerInputs").find("div.phone-number-div input[type=text].phone-number").val();
+        
+        valPhone = valPhone.replace("(", "");
+        valPhone = valPhone.replace(")", "");
+        valPhone = valPhone.replace(/_/gi, "");
+        valPhone = valPhone.replace(/-/gi, "");
+        
+        $("#prospectCustomerInputs").find("div.phone-number-div input[type=text].phone-number").val(valPhone);
+        
+        
+        var cellNummber = $("div.phoneCell input[type=text].phone-number").val();
+
+        cellNummber = cellNummber.replace("(", "");
+        cellNummber = cellNummber.replace(")", "");
+        cellNummber = cellNummber.replace(/_/gi, "");
+        cellNummber = cellNummber.replace(/-/gi, "");
+        $("div.phoneCell input[type=text].phone-number").val(cellNummber);
+
+        $(".mask-ssn").val($(".mask-ssn").val().replace(/-/gi, ""));
+
+        //payment
+        setCardType();
+        addPayment();
+
+        if (!$("#AcceptTerms").attr("checked")) {
+            alert("Please read and accept our terms and conditions before moving ahead.");
+            $(".submit-btn-toggle").toggle();
+            return false;
+        }
+
+        var result = validateAmount();
+        if (!result) {
+            $(".submit-btn-toggle").toggle();
+            return false;
+        }
+
+        $('form').submit();
+        return true;
+    }
+
+
+    function fillMarketingSourceWithOption(){
+        var optionhtml = "";
+        @{
+             var items = Falcon.App.UI.HtmlHelpers.DropDownHelper.MarketingSources(Model.EventCustomerOrderSummaryModel.Address.ZipCode, Model.CustomerEditModel.MarketingSource, true);
+             foreach (var item in items)
+             {
+                <text>
+                    optionhtml +=  "<option value='@item.Value' @(item.Selected ? "selected=true" : "")>@item.Text</option> ";  
+                </text>
+             }   
+
+            <text>setMarketingSourceSelectBox(optionhtml);</text>
+        }
+    }
+    
+    function setOrderPrice() {//debugger;
+        if (getSourceCode == null) return;
+
+        var sourceCode = getSourceCode();
+        var totalAmount = getTotalOrderPrice();
+        var discountAmount = parseFloat(sourceCode.Amount);
+        var discountedTotal = totalAmount - discountAmount;
+
+        setOrderPricing(totalAmount, discountAmount, discountedTotal);
+
+        reAdjustPayment(discountedTotal.toFixed(2));
+    }
+
+    function sendBackToAppointmentSelection() {
+        alert("The appointment you booked, was temporarily reserved for a limited time. The time has expired.\n Please select another appointment slot.");
+        goToPackagePage();
+    }
+
+
+    $(function () {
+        $("#age-dialog-message").dialog({
+            modal: true,
+            width: 400,
+            autoOpen: false,
+            title: 'Minimum Age Alert',
+            buttons: {
+                Ok: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $("#age-dialog-message").bind('dialogclose', function () { window.location = '@settings.SiteUrl'; });
+    });
+    var minAge = '@settings.MinimumAgeForScreening';
+
+    function getAge(dob) {
+        var today = new Date();
+        var birthDate = new Date(dob);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
+    }
+</script>

@@ -1,0 +1,45 @@
+﻿@model Falcon.App.Core.Users.ViewModels.RoleListModel
+@{
+    Layout = null; 
+}
+<table id="list-view">
+    <thead>
+        <tr>
+            <th>Role</th>
+            <th>Parent Role</th>
+            <th>UserCount</th>
+            <th>
+                &nbsp;
+            </th>
+        </tr>
+    </thead>
+    @{
+        if (Model.Collection != null && Model.Collection.Any())
+        {
+            foreach (var item in Model.Collection)
+            {
+
+                <tr class="editor-row roles-listitem@(item.ParentId > 0 ? " mouse-hand-pointer" : "")">
+                    <td>
+                        <i class="icon-user">&nbsp;</i> <b>@item.Name</b> - (<i>@item.ShortName</i>)
+                    </td>
+                    <td>@(item.ParentId > 0 ? item.ParentRole : "-") </td>
+                    <td>@item.UserCount</td>
+                    <td>
+                        @*<a class="pull-right" href="/AccessControl/Roles/Edit?id=@item.Id">Edit</a>*@
+                        <a class="pull-right" href="javascript:void(0);" onclick="setUpdateDialog(@item.Id)">Edit</a>
+                        
+                        <a class="pull-right" target="_blank" href="/AccessControl/List/Index?roleId=@item.Id">Access</a>
+                    </td>
+                </tr>
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5"></td>
+            </tr>
+        }
+    }
+</table>

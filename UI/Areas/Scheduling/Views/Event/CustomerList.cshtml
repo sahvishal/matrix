@@ -1,0 +1,139 @@
+﻿@model Falcon.App.Core.Scheduling.ViewModels.EventCustomerScheduleModel
+@{
+    ViewBag.Title = "Customer List";
+}
+<div class="exportcsvlink">
+    <a href="/Scheduling/Event/Index?showUpcoming=true">Back </a>&nbsp; &nbsp; &nbsp;
+    <a href="javascript:window.open('/Scheduling/Event/GenerateRoster?EventId=@Model.EventId', 'Event_Routine', 'toolbar=no,location=no,directories=no,status=no,scrolling=auto,scrollbars=yes,menubar=no,width=700,height=500'); void(0);">
+        Generate PDF </a>
+</div>
+<fieldset>
+    <legend><b>Event Id:</b>
+        @Model.EventId</legend>
+    <div>
+        <div class="eventdetail-row">
+            <div class="fieldLabelValue" style="width: 18%;">
+                <label>
+                    Date:
+                </label>
+                @Model.EventDate.ToShortDateString()
+            </div>
+            <div class="fieldLabelValue" style="width: 50%;">
+                <label>
+                    Host:
+                </label>
+                @Model.Location, @Model.Address.ToString()
+            </div>
+            <div class="fieldLabelValue" style="width: 12%;">
+                <label>
+                    Pod:
+                </label>
+                @Model.Vehicle
+            </div>
+            <div class="fieldLabelValue" style="float: right; width: 15%;">
+                <label>
+                    Customer Count:
+                </label>
+                @Model.CustomerCount
+            </div>
+        </div>
+    </div>
+    <div style="clear: both; padding-top: 5px;">
+        @if (Model.Customers != null && Model.Customers.Count() > 0)
+        {
+            <table id="list-view">
+                <tr>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().AppointmentTime)
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().CustomerCode)
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().CustomerName)
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().Package)
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().AdditionalProduct)
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().PhoneHome)
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().PhoneCell)
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().PhoneBusiness)
+                    </th>
+                    <th>
+                        Total Amount
+                    </th>
+                    <th>
+                        @Html.LabelFor(m => m.Customers.FirstOrDefault().AmountDue)
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+                @foreach (var customer in Model.Customers)
+                {
+                    <tr>
+                        <td style="width: 70px;">@customer.AppointmentTime.ToShortTimeString()
+                        </td>
+                        <td>@customer.CustomerCode
+                        </td>
+                        <td>
+                            <a href="/App/CallCenter/CallCenterRep/CallCenterRepCustomerDetails.aspx?CustomerId=@customer.CustomerId&Call=No">
+                                @customer.CustomerName </a>
+                        </td>
+                        <td>@customer.Package
+                        </td>
+                        <td>@customer.AdditionalProduct
+                        </td>
+                        <td>@customer.PhoneHome
+                        </td>
+                        <td>@customer.PhoneCell
+                        </td>
+                        <td>@customer.PhoneBusiness
+                        </td>
+                        <td>
+                            $@customer.TotalAmount.ToString("00.00")
+                        </td>
+                        <td>
+                            $@customer.AmountDue.ToString("00.00")
+                        </td>
+                        <td>
+                            <a href="/App/CallCenter/CallCenterRep/CallCenterRepCustomerDetails.aspx?CustomerId=@customer.CustomerId&Call=No">
+                                Details </a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <h2>
+                No Customers Found
+            </h2>
+        }
+    </div>
+</fieldset>
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

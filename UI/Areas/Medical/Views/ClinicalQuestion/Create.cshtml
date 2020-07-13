@@ -1,0 +1,25 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.ClinicalTemplateEditModel
+@{
+    ViewBag.Title = "Clinical Question Template";
+}
+<h1>
+    Create New Clinical Question Template
+</h1>
+<script language="javascript" type="text/javascript" src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+
+<div class="option-links">
+    <a href="/Medical/ClinicalQuestion/Index">+ Manage Clinical Question Template  </a>
+</div>
+<div id="edit-Model">
+    @Html.Partial("EditModel", Model)
+</div>
+<script type="text/javascript">
+    function loadEditTemplate(templateId) {
+        $.ajax({
+            url: "/Medical/ClinicalQuestion/EditModel?id=" + templateId + "&openNextTab=true",
+            success: function (result) {
+                $("#edit-Model").html(result);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,80 @@
+﻿@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Application
+@using FalconRoles = Falcon.App.Core.Enum
+@{
+    var userSession = IoC.Resolve<ISessionContext>().UserSession;
+    var multipleItemsforSameRole = userSession != null ? userSession.AvailableOrganizationRoles.GroupBy(m => m.RoleId).Select(m => new { m.Key, Count = m.Count() }).Distinct().ToArray() : null; 
+}
+<div>
+    <div id="header-top-bar">
+        @userSession.FullName (@userSession.CurrentOrganizationRole.RoleDisplayName)| 
+        @if (@userSession.CurrentOrganizationRole.GetSystemRoleId == (int)FalconRoles.Roles.Customer)
+        {
+            <a href="/Users/Dashboard/@userSession.CurrentOrganizationRole.RoleAlias">Home</a> <span>|</span>
+            <a href="/App/Customer/UpdateEventCustomerProfile.aspx?Ref=DashBoard">Profile</a>
+        }
+        else
+        {
+            <a href="/Users/Dashboard/@userSession.CurrentOrganizationRole.RoleAlias">Dashboard</a> <span>|</span>
+            <a href="/Users/Profile/Edit/?id=@userSession.CurrentOrganizationRole.UserId&roleId=@userSession.CurrentOrganizationRole.RoleId">Profile</a>                                                                                       
+        }
+        | 
+        <a href="/App/Logoff.aspx">Logout</a>|
+        @if (userSession.AvailableOrganizationRoles.Count() > 1)
+        { 
+            <ul id="drop-down-menu" style="float: right; width: 90px; margin-top: -3px; z-index: 10000; text-align: left;">
+                <li><a href="#">Switch Roles</a>
+                    <ul>
+                        @foreach (var orgRole in userSession.AvailableOrganizationRoles)
+                        {
+                            if (orgRole.OrganizationRoleUserId != userSession.CurrentOrganizationRole.OrganizationRoleUserId)
+                            {
+                            <li><a href="/Users/Role/Switch?roleId=@orgRole.RoleId&organizationId=@orgRole.OrganizationId">@orgRole.RoleDisplayName @(multipleItemsforSameRole.Where(m => m.Key == orgRole.RoleId).Select(m => m.Count).SingleOrDefault() > 1 ? "(" + orgRole.OrganizationName + ")" : "")</a>
+                            </li> 
+                            }
+                        }
+
+                    </ul>
+                </li>
+            </ul>    
+        }
+    </div>
+    <div id="logo">
+        @if (string.IsNullOrEmpty(userSession.CurrentOrganizationRole.LogoFilePathUrl))
+        {
+            <img src="@(IoC.Resolve<ISettings>().SmallLogo)" alt="@(IoC.Resolve<ISettings>().CompanyName)" />
+        }
+        else
+        {
+            <span style="float: left;">
+                <img src="@userSession.CurrentOrganizationRole.LogoFilePathUrl" style="width:200px;" alt="@userSession.CurrentOrganizationRole.OrganizationName" />
+            </span>
+            
+            <span style="float: right;">
+                <img src="@(IoC.Resolve<ISettings>().SmallLogo)" alt="@(IoC.Resolve<ISettings>().CompanyName)" />
+            </span>
+        }
+    </div>
+    @if (!userSession.CurrentOrganizationRole.CheckRole((long)FalconRoles.Roles.Customer))
+    {
+        string extendedRole = String.Empty;
+        if (userSession.CurrentOrganizationRole.CheckRole((long)FalconRoles.Roles.Technician) &&
+                  IoC.Resolve<Falcon.App.Core.Users.ITechnicianRepository>().IsTeamLead(userSession.CurrentOrganizationRole.OrganizationRoleUserId))
+        {
+            extendedRole = "TeamLead";
+        }
+
+        Html.RenderAction(@userSession.CurrentOrganizationRole.RoleAlias + extendedRole, "Menu", new { Area = "" });
+    }
+
+    @if (userSession.CurrentOrganizationRole != null)
+    {
+        @Html.Partial("SessionTimeOut")
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#drop-down-menu > li').bind('mouseover', openDropDown);
+        $('#drop-down-menu > li').bind('mouseout', dropDownTimer);
+    });
+</script>

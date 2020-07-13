@@ -1,0 +1,122 @@
+﻿@import url("footer.css");
+body,html{font:normal 12px arial, helvetica, tahoma;background:#e5ecf3;margin:0;color:#000;line-height:1.5em;height:101%}
+p,span,form{margin:0;padding:0}
+img{border:0}
+.btextblu{font:bold 12px arial;color:#287aa8}
+a:link{font:12px arial;color:#287aa8;text-decoration:underline}
+a:visited{font:12px arial;color:#287aa8;text-decoration:underline}
+a:hover{font:12px arial;color:#f60;text-decoration:underline}
+/**********************************************************  Common Classes Body ***********************************************/
+.defaultdiv_masterpage{float: left; width: 100%}
+/*-Left Pannel-*/
+.leftpnbody{float:left; width:980px; background-color:#fff;}
+.leftpanellnktxt{ float:left; width:160px; font:normal 12px arial; padding-top:5px; padding-bottom:5px; color:#000; text-decoration:underline;}
+.leftpanellnktxt li{float:left; width:140px; padding-left:12px; margin:0px; list-style:&#187}
+.ccrlpanellnktxt {float:left;  padding-top:5px; padding-bottom:5px; margin:0px; list-style:&#187; font:normal 12px arial;  color:#C5C5C5;  text-decoration:underline;}
+.ccrlpanellnktxt li{float:left; width:140px; padding-left:12px; margin:0px; list-style:&#187}
+.leftcontainer_main{ float:left; width:203px; background-color:#fff; margin-top:5px;  }
+.leftcontainer_inner{ width:186px; margin-left:17px; margin-bottom:5px; height:500px; background-color:#fff;}
+.leftcontainerbdr_inner{ float:left; width:184px; border-top: 1px solid #E5E5E5;  border-left: 1px solid #E5E5E5; border-right: 1px solid #E5E5E5; margin-top:5px;}
+.leftcontainerbdrall_inner{ float:left; width:184px; border: 1px solid #E5E5E5; margin-top:5px; padding-bottom:5px;}
+.leftcontainerbdrn_inner{ float:left; width:184px; margin-top:5px;}
+.buttonscon_leftp{ float:left; width:164px; padding-left:10px; padding-right:10px; margin-top:15px;}
+.buttoncontext_leftp{float:left; width:55px; }
+.buttonremove_leftp{float:right; width:55px; }
+.headtxtnotifc_inner{float:left; width:150px; font:bold 12px arial; color:#666; padding-left:10px; text-decoration:underline;}
+.normaltxtleft_inner{float:left; font:normal 12px arial; color:#666; padding-left:10px; padding-right:10px; padding-top:10px;}
+.leftcontainer_header_left{ float:left; background-image: url('../Images/quick-links-left.gif'); width:4px; height:28px }
+.leftcontainer_header_mid{ float:left; background-image: url('../Images/quick-links-mid.gif'); width:175px; height:23px; padding-left:3px; padding-top:5px; color:#000; font-style:normal; font-variant:normal; font-weight:bold; font-size:12px; font-family:arial }
+.leftcontainer_header_right{ float:left; background-image: url('../Images/quick-links-right.gif'); width:4px; height:28px }
+.quicknav_headings{ float:left; background-image: url('../Images/quicknavlinksbg.gif'); width:186px; height:32px; margin-top:5px  }
+.quicknav_headings_topnone{ float:left; background-image: url('../Images/quicknavlinksbg.gif'); width:186px; height:32px  }
+.quicknav_headings_txt{ float:left; padding-left:8px; padding-top:8px; font: bold 12px arial; color:#2E3739; width:150px; }
+.quicknav_arrow{ float:left; padding-left:5px; padding-top:10px; width:20px;}
+.quicknav_data{ float:left; padding: 0px 10px 0px 10px; width:164px;  border-left:1px solid #E5E5E5; border-bottom:1px solid #E5E5E5; border-right:1px solid #E5E5E5; background-color:#F4F4F4; }
+.data_container{float:left; width:155px; padding-bottom:5px; padding-top:10px; }
+.quicknav_data_inputarea{ float:left; padding-left:7px; width:52px;}
+.quicknav_data_input{width:35px; height: 18px; border: 1px solid #D0C873; Background-color:#F2DD68; font: bold 10px tahoma; color:#000;}
+.quicknav_data_txt{ float:left;  margin-left:7px; width:80px; font: bold 12px tahoma; color:#333333; padding-top:3px;}
+.quicknav_headingstwo{ float:left; background-image: url('../Images/quicknavlinksbg.gif'); width:186px; height:32px }
+.search_data_container{float:left; width:155px; padding-bottom:5px; padding-top:25px; }
+.search_data_container1{float:left; width:155px; padding-bottom:5px; padding-top:5px; }
+.inputf_search{ border: 1px solid #7F9DB9; Background-color:#fff; font: normal 12px arial; color:#333; padding:2px; width:142px; margin-left:5px; margin-top:8px;}
+.listmenu_search{ border: 1px solid #7F9DB9; height: 18px; Background-color:#fff; font: normal 12px arial; color:#333; padding:2px; width:150px; margin-left:5px;}
+.search_buttgo{float:left; padding-left:128px;  }
+.titlelnkright_v_prospects {float:right; padding-right:10px; padding-top:5px; font: bold 11px arial; color:#333; text-align:right; }
+.mainbody_inner_aresults{ width:763px; margin-left:14px; margin-bottom:5px;}
+.pclassmvuserleft{float:left; width:178px; padding:5px 0px 5px 5px;}
+.boldtitlemvuserleft{float:left; font-weight:bold;}
+.ntxtmvuserleft{float:left;}
+.mvuserleftlnktxt {float:left; width:150px; padding-top:5px; padding-bottom:5px; margin:0px; list-style:&#187; font:normal 12px arial;  color:#333333;  text-decoration:none;}
+
+
+/* AutoCompleteExtender Classes ************ */
+.AutoExtender
+{
+    font-family: Verdana, Helvetica, sans-serif; 
+    font-size: .8em;
+
+    font-weight: normal; 
+    border:solid 1px #006699;
+
+    line-height:20px; 
+    padding:2px;
+    background-color:White; 
+}
+
+.AutoExtenderList
+{
+    border-bottom:dotted 1px #006699; 
+    cursor:pointer;
+    color:Maroon
+}
+
+.AutoExtenderHighlight
+{
+    color:White; 
+    background-color:#006699;
+    cursor:pointer; 
+}
+.panelcss { overflow:hidden; width:50px; text-overflow:ellipsis; }
+/**********************************************************  Added by rakesh on 15-12-2008 ***********************************************/
+
+.main_area_Payments_adv{ float:right; width:753px; margin-top:5px;}
+.main_row_payments{float:left; width:748px; margin:0px; padding:0px;}
+/**********************************************************  Classes for SalesTeam ***********************************************/
+.wrapper751px_st{float:left; width:751px;}
+.wrapper751px_st .mid{float:left; width:749px; border-left:solid 1px #EFEFEF; border-right:solid 1px #EFEFEF; background:url(../Images/MarketingPartner/midbg-salesteam.gif) repeat-x; background-position:bottom; }
+.wrapper751px_st .mid .leftbox{float:left; width:665px; padding-left:10px; }
+.wrapper751px_st .mid .leftbox .row{float:left; width:665px; margin-top:3px;}
+.wrapper751px_st .mid .rightbox{float:left; width:74px; }
+.orngnametxt_st{font:bold 16px arial; color:#F37C00; float:left; padding-right:5px;}
+.orngnametxt_st a:link{font:bold 16px arial; color:#F37C00; float:left;}
+.orngnametxt_st a:visited{font:bold 16px arial; color:#F37C00; float:left}
+.orngnametxt_st a:hover{font:bold 16px arial; color:#F37C00; float:left;}
+.valuetxt_st{float:left; font:bold 12px arial; color:#000;  width:70px; padding-top:2px;}
+.valuetxtgbld_st{ float:left; width:110px; margin-right:5px; font-weight:bold; color:#666;}
+.lnktxtleft_st{ float:left; font-weight:normal; margin-right:85px; }
+.lnktxtright_st{ float:left; font-weight:normal; }
+.noboard_st{ float:left; width:26px; height:33px; font:bold 18px arial; color:#fff; background:url(../images/MarketingPartner/noboard-bg.gif) no-repeat; padding:10px 0px 0px 17px; }
+/**********************************************************  Classes added by rakesh on 26th mar 2009 ***********************************************/
+.ttextnowidth11px_default{ float:left; width:125px; font-size:11px; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+.ttxtwidthn11px_default{ float:left; width:70px; font-size:11px; margin-right:5px; padding-top:3px; font-weight:normal;}
+.ttext_default{ float:left; width:85px; margin-right:5px; padding-top:3px; font-weight:bold; color:#000;}
+/**********************************************************  Classes added for advocate details on 26th April 2009 ***********************************************/
+.mainwrapper_ad{float:left; width:728px; border-bottom:solid 1px #D9D9D9;}
+.mainwrapperb_ad{float:left; width:728px;}
+.innerswrapperl_ad{float:left; width:235px; border-right:solid 1px #D9D9D9; margin-right:5px; padding-left:5px; height:100px;}
+.innerswrapperl_ad .headtxt{float:left; width:235px; font:bold 14px arial; color:#287AA8;}
+.innerswrapperl_ad .rows{float:left; width:230px; padding-top:2px;}
+.ttext_ad{float:left; color:#666666; margin-right:2px; font-weight:normal;}
+.dtext_ad{float:left; color:#000; font-weight:bold;}
+.innerswrapperm_ad{float:left; width:254px; border-right:solid 1px #D9D9D9; margin-right:5px;  height:100px; }
+.innerswrapperm_ad .headtxt{float:left; width:254px; font:bold 14px arial; color:#287AA8;}
+.innerswrapperm_ad .rows{float:left; width:254px; padding-top:2px;}
+.innerswrapperr_ad{float:left; width:210px; padding-left:5px;  height:100px;}
+.innerswrapperr_ad .headtxt{float:left; width:210px; font:bold 14px arial; color:#287AA8;}
+.innerswrapperr_ad .rows{float:left; width:210px; padding-top:2px;}
+.btxtgrey_adv{float:left; color:#666;}
+/**********************************************************  Classes added for SalesRep details on 4 june 2009 ***********************************************/
+.leftdiv_srd{float:left; width:340px; padding-right:10px; margin-right:15px; border-right:solid 1px #D0D0BF;}
+.leftdiv_srd .row{float:left; width:320px;}
+.leftdiv_srd .row1{float:left; width:320px; padding-top:2px;}

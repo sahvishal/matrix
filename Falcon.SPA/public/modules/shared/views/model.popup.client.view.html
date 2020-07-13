@@ -1,0 +1,15 @@
+﻿<div class="custom-model-popup">
+    <div class="custom-model-popup-title" ng-show="modal.showTitle" ng-bind="modal.Title"></div>
+    <div class="custom-model-popup-content">
+        <p class="text-justify" ng-bind-html="modal.Message"></p>      
+        <hr style="clear: both" />
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="pull-left top-buffer-10 later-finish">
+                    <a href="javascript:void(0)" ng-click="onCancelButton()" ng-show="modal.showCancelButton">{{modal.cancelButtonText}}</a>    
+                </div>
+                <input type="button" ng-click="onOkbutton();" ng-value="modal.OKButtonText" ng-show="modal.showOkButton" class="pull-right btn btn-primary btn-finish">
+            </div>
+        </div>
+    </div>
+</div>

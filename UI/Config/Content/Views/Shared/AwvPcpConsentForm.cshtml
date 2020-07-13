@@ -1,0 +1,176 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.AwvPcpConsentViewModel
+@{
+    Layout = null;
+}
+
+<style type="text/css">
+    .awv_pcp_ConcentForm {
+        font-size: 19px;
+        font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+    }
+</style>
+<div class="awv_pcp_ConcentForm" style="float: left; width: 97%;">
+    <div style="float: left; width: 90%; text-align: left; margin-top: 10px; margin-left: 70px;">
+        <img src="/Config/Content/Images/AWV_header_logo.jpg" style="width: 100%" />
+    </div>
+    <div style="float: left; width: 90%; margin: 0px 20px 10px 70px; ">
+
+        <div style="float: left; width: 99%; margin: 20px 0px 0px 0px;">
+            <b>PLEASE COMPLETE AND SIGN BELOW:</b>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 170px;">Client Name:</span>
+            <span style="float: left; width: 550px; border-bottom: solid 1px #000000;">
+                @Model.CustomerName.ToString()
+            </span>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 170px;">Event Date:</span>
+            <span style="float: left; width: 550px; border-bottom: solid 1px #000000;">
+                @Model.ScreeningDate.Date.ToShortDateString()
+            </span>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 170px;">Date of Birth:</span>
+            <span style="float: left; width: 550px; border-bottom: solid 1px #000000;">
+                @(Model.DateOfBirth.HasValue ? @Model.DateOfBirth.Value.ToShortDateString() : string.Empty)
+            </span>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 170px;">Phone Number:</span>
+            <span style="float: left; width: 550px; border-bottom: solid 1px #000000;">
+                @(Model.PhoneNumber != null ? Model.PhoneNumber.ToString() : string.Empty)
+            </span>
+        </div>
+
+        @*<div style="float: left; width: 99%; margin: 20px 0px 0px 0px;">
+            <b>PHYSICIAN:</b>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 100px;">Name:</span>
+            <span style="float: left; width: 620px; border-bottom: solid 1px #000000;">
+                @(Model.Pcp != null ? Model.Pcp.Name.ToString() : string.Empty)&nbsp;
+            </span>
+        </div>
+
+        @if (Model.Pcp != null && Model.Pcp.Address != null)
+        {
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 100px;">Address:</span>
+                <span style="float: left; width: 620px; border-bottom: solid 1px #000000;">
+                    @Model.Pcp.Address.StreetAddressLine1
+                </span>
+            </div>
+            if (!string.IsNullOrEmpty(Model.Pcp.Address.StreetAddressLine2))
+            {
+                <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                    <span style="float: left; width: 620px; margin-left: 100px; border-bottom: solid 1px #000000; ">
+                        @Model.Pcp.Address.StreetAddressLine2
+                    </span>
+                </div>
+                <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                    <span style="float: left; width: 620px; margin-left: 100px; border-bottom: solid 1px #000000; ">
+                        @Model.Pcp.Address.City, @Model.Pcp.Address.State - @Model.Pcp.Address.ZipCode
+                    </span>
+                </div>
+            }
+            else
+            {
+                <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                    <span style="float: left; width: 620px; margin-left: 100px; border-bottom: solid 1px #000000; ">
+                        @Model.Pcp.Address.City, @Model.Pcp.Address.State - @Model.Pcp.Address.ZipCode
+                    </span>
+                </div>
+                <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                    <span style="float: left; width: 620px; margin-left: 100px; border-bottom: solid 1px #000000; ">
+                    </span>
+                </div>
+            }
+        }
+        else
+        {
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 100px; ">Address:</span>
+                <span style="float: left; width: 620px; border-bottom: solid 1px #000000; ">
+                </span>
+            </div>
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 620px; margin-left: 100px; border-bottom: solid 1px #000000; ">
+                </span>
+            </div>
+            <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+                <span style="float: left; width: 620px; margin-left: 100px; border-bottom: solid 1px #000000; ">
+                </span>
+            </div>
+        }
+
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 230px;">Physician Phone Number:</span>
+            <span style="float: left; width: 490px; border-bottom: solid 1px #000000;">
+                @{
+                    if (Model.Pcp != null && Model.Pcp.Primary != null && Model.Pcp.Primary.AreaCode.Length > 0)
+                    {
+                        <span>@Model.Pcp.Primary.AreaCode</span>
+                    }
+                    else
+                    {
+                        <span style="width:30px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    }
+                }
+                @(Model.Pcp != null && Model.Pcp.Primary != null ? Model.Pcp.Primary.Number : "")
+            </span>
+        </div>
+        <div style="float: left; width: 99%; margin: 10px 0px 10px 0px;">
+            <span style="float: left; width: 230px;">Physician Fax Number:</span>
+            <span style="float: left; width: 490px; border-bottom: solid 1px #000000;">
+                @{
+                    if (Model.Pcp != null && Model.Pcp.Fax != null && Model.Pcp.Fax.AreaCode.Length > 0)
+                    {
+                        <span>@Model.Pcp.Fax.AreaCode</span>
+                    }
+                    else
+                    {
+                        <span style="width:30px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    }
+                }
+                @(Model.Pcp != null && Model.Pcp.Fax != null ? Model.Pcp.Fax.Number : "")
+            </span>
+        </div>*@
+        <div style="float: left; width: 720px; margin: 50px 0px 10px 0px;">
+            I hereby authorize Matrix Medical Network to send my results directly to my physician.
+        </div>
+        <div style="float: left; width: 91%; margin: 50px 0px 30px 0px;">
+            @if (!string.IsNullOrWhiteSpace(Model.SignatureImageUrl))
+            {
+                <span style="float: left; width: 70px; line-height: 90px;"><b style="background-color: #ccc;">Signed:&nbsp;</b></span>
+                <span style="float: left; width: 450px;">
+                    <img src="@Model.SignatureImageUrl" style="height: 90px; vertical-align: middle;" />
+                </span>
+            }
+            else
+            {
+                <span style="float: left; width: 70px; height: 90px"><b style="background-color: #ccc;">Signed:&nbsp;</b></span>
+                <span style="float: left; width: 450px;">
+                    <span style="float: left; width: 450px; border-bottom: solid 1px #000000;">&nbsp;</span>
+                </span>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.ConsentSignedDate))
+            {
+                <span style="float: left; width: 50px; line-height: 90px;"><b style="background-color: #ccc;">Date:&nbsp;</b></span>
+                <span style="float: left; width: 40px; line-height: 90px;">@Model.ConsentSignedDate</span>
+            }
+            else
+            {
+                <span style="float: left; width: 50px;"><b style="background-color: #ccc;">Date:&nbsp;</b></span>
+                <span style="float: left; width: 40px; border-bottom: solid 1px #000000;">&nbsp;</span>
+                <span style="float: left; width: 40px; border-bottom: solid 1px #000000;">/</span>
+                <span style="float: left; width: 60px; border-bottom: solid 1px #000000;">/</span>
+            }
+        </div>
+    </div>
+
+</div>
+<div style="float: left; width: 100%; text-align: left; padding-top: 45px; margin: 0; margin-top: 358px; ">
+    <img src="/Config/Content/Images/AWV_footer_logo.jpg" style="width: 900px;height: 129px;" />
+</div>

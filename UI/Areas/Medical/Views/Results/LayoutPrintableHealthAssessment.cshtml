@@ -1,0 +1,22 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <script src="/scripts/jquery-1.5.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/Scripts/jquery-ui-1.8.12.custom.min.js"></script>
+    <script type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+    <link type="text/css" rel="Stylesheet" href="/App/StyleSheets/MedicalHistory.css" />
+    <link type="text/css" rel="Stylesheet" href="/Config/Content/Styles/HealthAssesmentForm.css" />
+    @RenderSection("css", false)
+</head>
+<body style="overflow: auto">
+    <div class="parentdiv">
+        @RenderBody()
+    </div>
+</body>
+@* please put all scripts at the end *@
+@RenderSection("scripts", false)
+</html>

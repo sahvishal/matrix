@@ -1,0 +1,107 @@
+﻿@using Falcon.App.Core.Extensions
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical
+@model Falcon.App.Core.Medical.ViewModels.SurveyTemplateEditModel
+
+<style type="text/css">
+    .grouptable-haf {
+        width: 95%;
+        margin: 10px 0px;
+        table-layout: fixed;
+    }
+
+        .grouptable-haf th, .grouptable-haf td {
+            text-align: left;
+        }
+
+            .grouptable-haf th.cbox {
+                width: 40px;
+            }
+</style>
+
+<div class="content-main-column" style="padding-left: 10px; width: 95%;">
+    @Html.HiddenFor(m => m.Id)
+    <div class="editor-row">
+        <div class="editor-column" style="width: 42%">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Name) @Html.ValidationMessageFor(m => m.Name)
+            </div>
+            @Html.TextBoxFor(m => m.Name, new { @style = "width:95%" })
+        </div>
+    </div>
+    <div class="editor-row" style="margin-top: 10px;">
+        <div class="editor-column">
+            @Html.CheckBoxFor(m => m.IsPublished) Is Published
+        </div>
+    </div>
+
+    <div id="Survey-Question-Container" style="clear: both;">
+        @Html.ValidationMessageFor(m => m.Questions)
+        <fieldset>
+            <legend>
+                <h2>
+                    Questions
+                </h2>
+            </legend>
+            @if (Model.Questions !=null && Model.Questions.Any())
+            {
+                <table>
+                    @{
+                        foreach (var question in Model.Questions)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.CheckBoxFor(m => question.IsSelected)
+                                    <input type="hidden" value="@question.Id" class="questionId" />
+                                </td>
+                                <td>
+                                    <span>@question.Question</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            }
+        </fieldset>
+
+    </div>
+
+    <div id="selectedQuestionsContainer" style="display: none;">
+    </div>
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script id="selectedQuestionsTemplate" type="text/x-jquery-tmpl">
+    <div style="display:none;">
+        <input type="hidden" name="Questions.Index" value="${Id}" />
+        <input type="text" name="Questions[${Id}].Id" value="${Id}" />
+    </div>
+</script>
+<script type="text/javascript" language="javascript">
+    var selectedQuestions = new Object();
+
+    function RenderSelectedTests() {
+        $("#selectedQuestionsContainer").empty();
+        $.each(selectedQuestions, function (key, terr) {
+            $("#selectedQuestionsTemplate").tmpl(terr).appendTo("#selectedQuestionsContainer");
+        });
+    }
+
+    function SelectQuestion() {
+        $("#Survey-Question-Container input[type='checkbox']:checked").each(function () {
+            var question = new Object();
+            var val = $(this).closest("td").find("input.questionId").val();
+            question.Id = val;
+            selectedQuestions[val] = question;
+        });
+
+        RenderSelectedTests();
+    }
+
+    function SubmitQuestions() {
+        SelectQuestion();
+        $("#Submit").click();
+    }
+
+   
+</script>

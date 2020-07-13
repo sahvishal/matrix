@@ -1,0 +1,826 @@
+@using Falcon.App.Core.Medical.ViewModels
+
+@model HealthAssessmentEditModel
+
+<style type="text/css">
+    
+    .question-label-block-single .question-label-block {
+        width: 97%;
+        padding-left: 10px;
+    }
+    .question-label-block-single .radio-inline-block {
+        padding-left: 20px;
+    }
+</style>
+@if (Model.HasPhysicalActivityHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("<div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>")
+        <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+            <b>Physical Activity</b>
+        </div>
+}
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block" >
+        I get at least 150 minutes of moderate-intensity aerobic activity each week. (ex: brisk walking, cycling, jogging, swimming), OR at least 75 minutes of vigorous-intensity aerobic activity each week.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1049" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1049" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1049" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1049" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1049" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1049" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1049" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I do resistance exercises 2 days a week or more.  (ex: free weights, resistance machines, push-ups)
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1050" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1050" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1050" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1050" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1050" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1050" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1050" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I do stretching exercises at least 2-3 days a week. (ex: stretching each major muscle group for 20-30 seconds)
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1051" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1051" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1051" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1051" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1051" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1051" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1051" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I limit sitting for extended periods of time.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1052" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1052" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1052" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1052" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1052" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1052" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1052" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+@if (Model.HasPhysicalActivityHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("</div>")
+}
+
+@if (Model.HasNutritionHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("<div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>")
+        <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+            <b>Nutrition</b>
+        </div>
+}
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I eat a variety of foods every day.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1053" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1053" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1053" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1053" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1053" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1053" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1053" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I make sure that at least half of my plate is vegetables and fruits at every meal.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1054" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1054" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1054" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1054" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1054" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1054" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1054" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I limit the amount of saturated and trans fat I eat.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1055" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1055" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1055" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1055" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1055" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1055" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1055" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I limit the amount of salty snacks, added salt, and processed foods I eat.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1056" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1056" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1056" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1056" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1056" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1056" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1056" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I limit the amount of sugar I eat. (including sweet snacks and desserts, candy, and sugared beverages)
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1057" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1057" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1057" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1057" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1057" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1057" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1057" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+        <div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I drink plenty of water each day. (9 cups/day for women; 13 cups/day for men)
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1058" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1058" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1058" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1058" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1058" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1058" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1058" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+   
+@if (Model.HasNutritionHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("</div>")
+}
+
+@if (Model.HasStressHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+   @Html.Raw(" <div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>")
+        <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+            <b>Stress</b>
+        </div>
+   
+}
+
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I enjoy the work/job I do.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1059" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1059" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1059" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1059" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1059" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1059" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1059" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I can relax and express my feelings.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1060" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1060" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1060" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1060" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1060" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1060" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1060" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I prepare for events in life that will likely be stressful.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1061" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1061" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1061" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1061" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1061" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1061" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1061" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I try to relieve stress through healthy activities such as exercise or talking with a friend.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1062" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1062" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1062" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1062" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1062" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1062" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1062" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I sleep about 7-9 hours each night.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1063" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1063" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1063" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1063" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1063" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1063" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1063" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+
+@if (Model.HasStressHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("</div>")
+}
+
+@if (Model.HasTobacoHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("<div class='section-withborder' style='margin-bottom: 3px; padding: 0px;page-break-before: always;'>")
+        <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+            <b>Tobacco</b>
+        </div>
+}
+<div class="sequence-block alternate-color">
+    <div class="front-radio-block">
+        <span>
+            <input type="radio" ctrl_answer="Yes" name="question-1064" />
+            Yes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="No" name="question-1064" />
+            No
+        </span>
+        <span style="margin-right: 0px;">
+            <input type="radio" ctrl_answer="Not Answered" name="question-1064" />
+            Not Answered
+        </span>
+    </div>
+    <div class="question-label-block">
+        I currently smoke cigarettes regularly or occassionally.
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1064" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color">
+    <div class="front-radio-block">
+        <span>
+            <input type="radio" ctrl_answer="Yes" name="question-1065" />
+            Yes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="No" name="question-1065" />
+            No
+        </span>
+        <span style="margin-right: 0px;">
+            <input type="radio" ctrl_answer="Not Answered" name="question-1065" />
+            Not Answered
+        </span>
+    </div>
+    <div class="question-label-block">
+        I currently use tobacco products other than cigarettes such as cigars, pipes, hookas, or smokeless tobacco.
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1065" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color">
+    <div class="front-radio-block">
+        <span>
+            <input type="radio" ctrl_answer="Yes" name="question-1066" />
+            Yes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="No" name="question-1066" />
+            No
+        </span>
+        <span style="margin-right: 0px;">
+            <input type="radio" ctrl_answer="Not Answered" name="question-1066" />
+            Not Answered
+        </span>
+    </div>
+    <div class="question-label-block">
+        I used to be a regular cigarette smoker.
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1066" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        If you were a former smoker, how long has it been since you have quit?
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Less than one year" name="question-1067" />
+            Less than one year
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="1-9 years" name="question-1067" />
+            1-9 years
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="10-15 years" name="question-1067" />
+            10-15 years
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Over 15 years" name="question-1067" />
+            Over 15 years
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="NotApplicable" name="question-1067" />
+            Not Applicable
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1067" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1067" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+
+@if (Model.HasTobacoHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("</div>")
+}
+@if (Model.HasAlcoholAndDrugHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("<div class='section-withborder' style='margin-bottom: 3px; padding: 0px;'>")
+        <div style="border-bottom: solid 1px #000000; background-color: #ECECED; padding-left: 10px;">
+            <b>Alcohol and Drugs</b>
+        </div>
+       
+}
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I avoid drinking alcoholic beverages, or I drink no more than 1 drink a day (for women) or 2 drinks a day (for men).
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1068" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1068" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1068" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1068" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1068" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1068" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1068" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I avoid using alcohol or drugs as a way to cope with life's problems.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1069" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1069" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1069" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1069" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1069" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1069" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1069" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I read and follow directions when using prescribed and over-the-counter drugs.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1070" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1070" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1070" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1070" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1070" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1070" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1070" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+<div class="sequence-block alternate-color question-label-block-single">
+    <div class="question-label-block">
+        I responsibly take all prescription medications as directed by my physician.
+    </div>
+    <div class="radio-inline-block">
+        <span>
+            <input type="radio" ctrl_answer="Almost always" name="question-1071" />
+            Almost always
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Often" name="question-1071" />
+            Often
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Sometimes" name="question-1071" />
+            Sometimes
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Rarely" name="question-1071" />
+            Rarely
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Never" name="question-1071" />
+            Never
+        </span>
+        <span>
+            <input type="radio" ctrl_answer="Not Answered" name="question-1071" />
+            Not Answered
+        </span>
+    </div>
+    <input type="text" style="display: none" class="questionid" value="1071" />
+    <input type="text" style="display: none" class="default-answer" />
+    <input type="text" style="display: none" class="control-type" value="" />
+</div>
+
+@if (Model.HasAlcoholAndDrugHkynQuestions && (Model.IsHKynPurchased || Model.IsBioCheckAssessmentPurchased) && Model.ShowNewHKynForm)
+{
+    @Html.Raw("</div>")
+}

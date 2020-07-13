@@ -1,0 +1,11 @@
+﻿@model Falcon.App.Core.Scheduling.ViewModels.GiftCertificateViewModel
+@{
+    Layout = "LayoutPrintableHealthAssessment.cshtml";
+}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/GiftCertificateForAccount.cshtml")))
+{
+    <div style="width: 900px">
+        @Html.Partial("/Config/Content/Views/Shared/GiftCertificateForAccount.cshtml", Model)
+    </div>
+}

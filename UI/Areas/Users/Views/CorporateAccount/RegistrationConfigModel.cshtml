@@ -1,0 +1,2572 @@
+﻿@using System.Linq
+@using Falcon.App.Core.Application
+@using Falcon.App.Core.Application.Enum
+@using Falcon.App.Core.CallQueues.Enum
+@using Falcon.App.Core.Communication.Enum
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Users.Enum
+@using Falcon.App.Core.Users.ViewModels
+@using Falcon.App.DependencyResolution
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.Core.Users.Enum
+
+@model RegistrationConfigEditModel
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+
+    if (Model.FeedbackMessage != null && Model.FeedbackMessage.MessageType == UserInterfaceMessageType.Success)
+    {
+        <text>
+            <script type="text/javascript">
+                $("#tabs").tabs({ selected: 2 });
+                $("#tab-content").empty();
+            </script>
+        </text>
+    }
+}
+@{
+    var toolTipRepository = IoC.Resolve<IToolTipRepository>();
+    var insuranceIdLabel = toolTipRepository.GetToolTipContentByTag(Falcon.App.Core.Enum.ToolTipType.InsuranceIdLabel);
+    insuranceIdLabel = string.IsNullOrEmpty(insuranceIdLabel) ? "Insurance Id" : insuranceIdLabel;
+}
+
+<style type="text/css">
+    .mini-container {
+        border: none !important;
+        background: inherit !important;
+    }
+
+    #divRowAccountCallQueueSetting ul {
+        padding-left: 10px;
+    }
+
+        #divRowAccountCallQueueSetting ul li {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+    #CheckOutPhoneNumberContainer ul {
+        padding-right: 10px;
+    }
+
+        #CheckOutPhoneNumberContainer ul li {
+            margin-bottom: 10px;
+            list-style: none;
+            display: inline-block;
+            margin-right: 25px;
+        }
+</style>
+
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="/Content/JavaScript/validations.js?v=@DateTime.Now.Ticks"></script>
+<script type="text/javascript">
+    var fileTypeExtention = ['jpg', 'jpeg', 'png', 'gif'];
+
+    var selectedShippings = new Object();
+    @if (Model.ShippingOptionIds != null && Model.ShippingOptionIds.Any())
+    {
+        <text>
+    var shipping = new Object();
+    </text>
+        foreach (var shippingOptionId in Model.ShippingOptionIds)
+        {
+            <text>
+    {
+        shipping = new Object();
+        shipping.Id = '@shippingOptionId';
+        selectedShippings[shipping.Id] = shipping;
+    }
+    </text>
+        }
+    }
+
+    function FillShipping(sourceCheckbox) {//debugger;
+        var checkedBox = $(sourceCheckbox);
+        var val = checkedBox.parent().find("input:hidden").val();
+        if (sourceCheckbox.checked) {
+            shipping = new Object();
+            shipping.Id = val;
+            selectedShippings[val] = shipping;
+
+        }
+        else {
+            if (selectedShippings[val] != null) {
+                delete selectedShippings[val];
+            }
+        }
+        RenderShipping();
+    }
+
+    function RenderShipping() {
+        $("#selectedShippingContainer").empty();
+        $.each(selectedShippings, function (key, terr) {
+            $("#selectedShippingTemplate").tmpl(terr).appendTo("#selectedShippingContainer");
+        });
+    }
+
+    var packageList = new Object();
+
+    @if (!Model.OrganizationPackageList.IsNullOrEmpty())
+    {
+        foreach (var item in Model.OrganizationPackageList)
+        {
+            <text>
+    var packageItem = new Object();
+    packageItem.PackageId = '@item.Id';
+    packageItem.Name = '@item.Name';
+    packageItem.Gender = '@item.Gender';
+    packageItem.GenderDescription = '@item.Gender.GetDescription()';
+    packageItem.Key = '@item.Id';
+    packageItem.IsRecommended = false;
+    packageList[packageItem.Key] = packageItem;
+    </text>
+        }
+    }
+
+    var assignedPackages = new Object();
+    @if ((Model.DefaultPackages != null) && (Model.DefaultPackages.Any()))
+    {
+
+        foreach (var defaultPackage in Model.DefaultPackages)
+        {
+            <text>
+    {
+        var packageObj = new Object();
+        packageObj.PackageId = '@defaultPackage.PackageId';
+        packageObj.Name = '@defaultPackage.PackageName';
+        packageObj.GenderDescription = '@defaultPackage.Gender.GetDescription()';
+        packageObj.Gender = '@defaultPackage.Gender';
+        packageObj.IsRecommended =@(defaultPackage.IsRecommended ? "true" : "false")
+        packageObj.Key = '@defaultPackage.PackageId';
+        assignedPackages[packageObj.Key] = packageObj;
+    }
+    </text>
+        }
+    }
+
+    function assignPackagetoAccount() {
+
+        var key = $("#package").val();
+        // var packageObj = { "Id": $("#package").val(), "Name": $("#package option:selected").text(), "Key": key };
+        if (key == -1) {
+            alert("Please select a Package.");
+            return false;
+        }
+
+        if (assignedPackages[key] != null) {
+            alert("Package already selected.");
+            $("#package option").first().attr("selected", true);
+            return false;
+        }
+        else
+            assignedPackages[key] = packageList[key];
+
+        $("#package option").first().attr("selected", true);
+
+        //$(".info-box").hide();
+        $("#divInfoBoxPackage").hide();
+
+
+        renderAssignedPackages();
+        return false;
+    }
+
+    function renderAssignedPackages() {
+        $("#userPackageContainer div.mini-container").remove();
+        $.each(assignedPackages, function (key, packageObj) {
+
+            $("#assignedPackageTemplate").tmpl(packageObj).appendTo("#userPackageContainer");
+        });
+    }
+
+    function removeFileLink(ctrlRef, controlIdString, viewLinkControlElement) {
+        ctrlRef.hide();
+        $("input[type=hidden][id*='" + controlIdString + "']").val(0);
+        viewLinkControlElement.hide();
+    }
+
+    function checkInsuranceId() {
+        if ($("input[id*='CaptureInsuranceId']").is(":checked") == false) {
+            $("input[id*='InsuranceIdRequired']").attr("checked", false);
+            $("input[id*='InsuranceIdRequired']").attr("disabled", "disabled");
+            $("input[id*='MemberIdLabel']").attr("disabled", "disabled");
+        } else {
+            $("input[id*='InsuranceIdRequired']").removeAttr("disabled");
+            $("input[id*='MemberIdLabel']").removeAttr("disabled");
+        }
+    }
+
+    var testList = new Object();
+
+    @if (!Model.OrganizationTestList.IsNullOrEmpty())
+    {
+        foreach (var test in Model.OrganizationTestList)
+        {
+            <text>
+    var testItem = new Object();
+    testItem.TestId = '@test.Id';
+    testItem.Name = '@test.Name';
+    testItem.Gender = '@test.Gender';
+    testItem.GenderDescription = '@test.Gender.GetDescription()';
+    testItem.Key = '@test.Id';
+    testList[testItem.Key] = testItem;
+    </text>
+        }
+    }
+
+    var assignedTests = new Object();
+    @if ((Model.DefaultTests != null) && (Model.DefaultTests.Any()))
+    {
+
+        foreach (var defaultTest in Model.DefaultTests)
+        {
+            <text>
+    {
+        var testObj = new Object();
+        testObj.TestId = '@defaultTest.TestId';
+        testObj.Name = '@defaultTest.TestName';
+        testObj.GenderDescription = '@defaultTest.Gender.GetDescription()';
+        testObj.Gender = '@defaultTest.Gender';
+        testObj.Key = '@defaultTest.TestId';
+        assignedTests[testObj.Key] = testObj;
+    }
+    </text>
+    }
+    }
+
+    function assignTesttoAccount() {
+
+        var key = $("#test").val();
+
+        if (key == -1) {
+            alert("Please select a Test.");
+            return false;
+        }
+
+        if (assignedTests[key] != null) {
+            alert("Test already selected.");
+            $("#test option").first().attr("selected", true);
+            return false;
+        }
+        else
+            assignedTests[key] = testList[key];
+
+        $("#test option").first().attr("selected", true);
+
+        //$(".info-box").hide();
+        $("#divInfoBoxTest").hide();
+
+        renderAssignedTests();
+        return false;
+    }
+
+    function renderAssignedTests() {
+        $("#userTestContainer div.mini-container").remove();
+        $.each(assignedTests, function (key, testObj) {
+            $("#assignedTestTemplate").tmpl(testObj).appendTo("#userTestContainer");
+        });
+    }
+
+
+</script>
+<script type="text/javascript">
+    //Account CallCenter Organization script start
+    var accountCallCenterOrganizationList = new Array();
+    @if (Model.AccountCallCenterOrganization != null && Model.AccountCallCenterOrganization.Count()>0)
+    {
+        foreach (var item in Model.AccountCallCenterOrganization)
+        {
+            <text>
+    {
+        var accountCallCenterOrganization = new Object();
+        accountCallCenterOrganization.OrganizationId = '@item.OrganizationId';
+        accountCallCenterOrganization.OrganizationName = '@item.OrganizationName';
+        accountCallCenterOrganization.Key = '@item.Id';
+        accountCallCenterOrganizationList.push(accountCallCenterOrganization);
+    }
+    </text>
+        }
+    }
+
+    @if (Model.RestrictHealthPlanData) {
+        <text>
+    $("#divRestrictHealthPlanData").show();
+    </text>
+    }
+    else {
+        <text>
+    $("#divRestrictHealthPlanData").hide();
+    </text>
+    }
+
+    function renderAccountCallCenterOrganization() {
+        $("#AccountCallCenterOrganizationContainer div.mini-container").remove();
+        $.each(accountCallCenterOrganizationList, function (key, organizationObj) {
+            $("#accountCallCenterOrganizationTemplate").tmpl(organizationObj).appendTo("#AccountCallCenterOrganizationContainer");
+        });
+    }
+
+    function assignAccountCallCenterOrganization() {
+
+        var organizationId = $("#callCenterOrganization").val();
+
+        if (organizationId == -1) {
+            alert("Please select an organization.");
+            return false;
+        }
+
+
+        var isOrganizationAlreadyAdded = false;
+        $(accountCallCenterOrganizationList).each(function (index, obj) {
+            try {
+                if (parseInt(obj.OrganizationId) == organizationId) {
+                    isOrganizationAlreadyAdded = true;
+                }
+            }
+            catch (ex) { isOrganizationAlreadyAdded = false; }
+        });
+        if (isOrganizationAlreadyAdded) {
+
+            alert("Selected Organization is already added.");
+            $("#callCenterOrganization option").first().attr("selected", true);
+            return false;
+        }
+        else {
+            var accountCallCenterOrganization = new Object();
+            accountCallCenterOrganization.OrganizationId = organizationId;
+            accountCallCenterOrganization.OrganizationName = $("#callCenterOrganization option:selected").text();
+            accountCallCenterOrganization.Key = accountCallCenterOrganizationList.length;
+            accountCallCenterOrganizationList.push(accountCallCenterOrganization);
+        }
+
+        $("#callCenterOrganization option").first().attr("selected", true);
+        $("#divInfoBoxAccountCallCenterOrganization").hide();
+        renderAccountCallCenterOrganization();
+        return false;
+    }
+
+    function removeAccountCallCenterOrganization(element) {
+
+        var id = parseInt($(element).closest("div.mini-container").find("[name$='AccountCallCenterOrganization.Index']").val());
+        var organizationId = parseInt($(element).closest("div.mini-container").find("[name$='OrganizationId']").val());
+
+        $($(element).closest("li")).remove();
+
+        var tempList = new Array();
+        var key = 0;
+        $(accountCallCenterOrganizationList).each(function (index, obj) {
+            try {
+                if (parseInt(obj.Key) != id) {
+                    obj.Key = key;
+                    tempList.push(obj);
+                    key = key + 1;
+                }
+            }
+            catch (ex) { }
+        });
+
+        accountCallCenterOrganizationList = tempList;
+        var aco = accountCallCenterOrganizationList.filter(function (item) {
+            return item.OrganizationId == organizationId;
+        });
+
+        if (aco.length == 0) {
+            for (var i = 0; i < states.length; i++)
+                if (states[i].OrganizationId === "" + organizationId + "") {
+                    states.splice(i, 1);
+                    break;
+                }
+        }
+
+        renderAccountCallCenterOrganization();
+
+        if (accountCallCenterOrganizationList.length == 0) {
+            accountCallCenterOrganizationList = new Array();
+            $("#divInfoBoxAccountCallCenterOrganization").show();
+        }
+
+        return false;
+    }
+
+    function hideShowAccountCallCenterOrganization() {
+        if ($("#chkRestrictHealthPlanData").is(":checked")) {
+            $("#divRestrictHealthPlanData").show();
+        } else {
+            $("#divRestrictHealthPlanData").hide();
+        }
+
+        accountCallCenterOrganizationList = new Array();
+        $("#callCenterOrganization option").first().attr("selected", true);
+        renderAccountCallCenterOrganization();
+    }
+</script>
+<script type="text/javascript">
+
+    var testReviewableByPhysicianMasterList = new Object();
+
+    @if (!Model.TestReviewableByPhysicianMasterList.IsNullOrEmpty())
+    {
+        foreach (var test in Model.TestReviewableByPhysicianMasterList)
+        {
+            <text>
+    var testNotReviewableItem = new Object();
+    testNotReviewableItem.TestId = '@test.Id';
+    testNotReviewableItem.Name = '@test.Name';
+    testNotReviewableItem.Gender = '@test.Gender';
+    testNotReviewableItem.GenderDescription = '@test.Gender.GetDescription()';
+    testNotReviewableItem.Key = '@test.Id';
+    testReviewableByPhysicianMasterList[testNotReviewableItem.Key] = testNotReviewableItem;
+    </text>
+        }
+    }
+
+    var testNotReviewableByPhysicianList = new Object();
+    @if ((Model.TestNotReviewableByPhysician != null) && (Model.TestNotReviewableByPhysician.Any()))
+    {
+
+        foreach (var test in Model.TestNotReviewableByPhysician)
+        {
+            <text>
+    {
+        var testNotReviewableByPhysicianObj = new Object();
+        testNotReviewableByPhysicianObj.TestId = '@test.Id';
+        testNotReviewableByPhysicianObj.Name = '@test.Name';
+        testNotReviewableByPhysicianObj.GenderDescription = '@test.Gender.GetDescription()';
+        testNotReviewableByPhysicianObj.Gender = '@test.Gender';
+        testNotReviewableByPhysicianObj.Key = '@test.Id';
+        testNotReviewableByPhysicianList[testNotReviewableByPhysicianObj.Key] = testNotReviewableByPhysicianObj;
+    }
+    </text>
+        }
+    }
+
+
+    function assignNotReviewableTesttoAccount() {
+
+        var key = $("#testNotReviewable").val();
+
+        if (key == -1) {
+            alert("Please select a Test.");
+            return false;
+        }
+
+        if (testNotReviewableByPhysicianList[key] != null) {
+            alert("Test already selected.");
+            $("#testNotReviewable option").first().attr("selected", true);
+            return false;
+        }
+        else
+            testNotReviewableByPhysicianList[key] = testReviewableByPhysicianMasterList[key];
+
+        $("#testNotReviewable option").first().attr("selected", true);
+
+        //$(".info-box").hide();
+        $("#divInfoBoxTestNotReviewable").hide();
+
+
+        renderNotReviewableTests();
+        return false;
+    }
+
+    function renderNotReviewableTests() {
+        $("#testNotReviewableContainer div.mini-container").remove();
+        $.each(testNotReviewableByPhysicianList, function (key, testObj) {
+            $("#notReviewableTestTemplate").tmpl(testObj).appendTo("#testNotReviewableContainer");
+        });
+    }
+
+</script>
+<script type="text/javascript">
+
+    var additionalFieldList = new Array();
+
+    var keycounter = 0;
+
+    keycounter = 0;
+    @if ((Model.AccountAdditionalFields != null) && (Model.AccountAdditionalFields.Any()))
+    {
+
+        foreach (var additionalFields in Model.AccountAdditionalFields)
+        {
+            var AdditionalName = ((AdditionalFieldsEnum)additionalFields.AdditionalFieldId).GetDescription();
+
+            <text>
+    {
+        var additionalFieldsObj = new Object();
+        additionalFieldsObj.AdditionalFieldId = '@additionalFields.AdditionalFieldId';
+        additionalFieldsObj.DisplayName = '@additionalFields.DisplayName';
+        additionalFieldsObj.AdditionalFieldName = '@AdditionalName';
+        additionalFieldsObj.Key = keycounter;
+        additionalFieldList.push(additionalFieldsObj);
+        $("#chkAdditionalField").attr("checked", true);
+        ShowHideAdditionalField();
+        keycounter = keycounter + 1;
+    }
+    </text>
+        }
+    }
+
+
+
+    function assignAccountAdditionalFields() {
+
+        var key = $("#ddlAdditionalFields").val();
+
+        if (parseInt(key) == -1) {
+            alert("Please select a Field.");
+            return false;
+        }
+
+        if (checkIfAdditionalFieldAlreadySelected(parseInt(key))) {
+            alert("Field already selected.");
+            $("#ddlAdditionalFields option").first().attr("selected", true);
+            return false;
+        }
+        else {
+            createAdditionfiledObject();
+        }
+
+        $("#ddlAdditionalFields option").first().attr("selected", true);
+
+        $("#divInfoBoxAdditionalFields").hide();
+
+        renderAdditionalFields();
+        return false;
+    }
+
+    function checkIfAdditionalFieldAlreadySelected(additionalFieldId) {
+
+        var isAlreadySelected = false;
+        if (additionalFieldList != null && additionalFieldList.length > 0) {
+
+            $(additionalFieldList).each(function (index, obj) {
+
+                if (parseInt(obj.AdditionalFieldId) === additionalFieldId && isAlreadySelected == false) {
+                    isAlreadySelected = true;
+                }
+            });
+        }
+        return isAlreadySelected;
+    }
+
+    function createAdditionfiledObject() {
+
+        var key = $("#ddlAdditionalFields").val();
+        var text = $("#ddlAdditionalFields option:selected").text();
+
+        var itemAlreadyAdded = $("#additionalFieldsContainer").find(".mini-container").length;
+
+        var additionalFieldsObj = new Object();
+        additionalFieldsObj.AdditionalFieldId = key;
+        additionalFieldsObj.DisplayName = '';
+        additionalFieldsObj.AdditionalFieldName = text;
+        additionalFieldsObj.Key = itemAlreadyAdded;
+        additionalFieldList.push(additionalFieldsObj);
+
+        var keys = new Array();
+        $(additionalFieldList).each(function (index, obj) {
+            obj.Key = index;
+            keys.push(parseInt(obj.AdditionalFieldId));
+        });
+        keys.sort();
+        var sortedAdditionalFieldList = new Array();
+
+        $(keys).each(function (index, keyobj) {
+            $(additionalFieldList).each(function (indexinner, obj) {
+                if (parseInt(obj.AdditionalFieldId) == keyobj) {
+                    obj.Key = index;
+                    sortedAdditionalFieldList.push(obj);
+                }
+
+            });
+        });
+        additionalFieldList = new Array();
+        additionalFieldList = sortedAdditionalFieldList;
+    }
+
+    function renderAdditionalFields() {
+        $("#additionalFieldsContainer div.mini-container").remove();
+        $.each(additionalFieldList, function (key, additionalfieldsObj) {
+            $("#additionalFieldTemplate").tmpl(additionalfieldsObj).appendTo("#additionalFieldsContainer");
+        });
+    }
+    function ShowHideAdditionalField() {
+        if ($("#chkAdditionalField").is(":checked")) {
+            $("#divaddtionalFields").show();
+        } else {
+            additionalFieldList = new Array();
+            renderAdditionalFields();
+            $("#divaddtionalFields").hide();
+        }
+    }
+
+    function RemoveAdditionalFields(element) {
+
+        var additionalFieldId = parseInt($(element).closest(".mini-container").find("[name$='AdditionalFieldId']").val());
+
+        $($(element).closest(".mini-container")).remove();
+        var tempList = new Array();
+        var key = 0;
+        $(additionalFieldList).each(function (index, obj) {
+            if (parseInt(obj.AdditionalFieldId) != additionalFieldId) {
+                obj.Key = key;
+                tempList.push(obj);
+                key = key + 1;
+            }
+        });
+
+        additionalFieldList = tempList;
+
+        renderAdditionalFields();
+
+        if ($.isEmptyObject(additionalFieldList)) {
+            $("#divInfoBoxAdditionalFields").show();
+        }
+
+        return false;
+    }
+</script>
+
+<fieldset>
+    <legend>
+        <h3>
+            Registration Settings
+        </h3>
+    </legend>
+
+    @Html.HiddenFor(m => m.AccountId)
+    @Html.HiddenFor(m => m.OrganizationName)
+    <style type="text/css">
+        input[type=checkbox] {
+            vertical-align: middle;
+            position: relative;
+            bottom: 1px;
+        }
+    </style>
+
+    @*Organization Logo Section*@
+    <div class="editor-row">
+        <div class="small-text">
+            Organization Logo
+        </div>
+        @{
+            var vd = new ViewDataDictionary
+            {
+                TemplateInfo = new TemplateInfo
+                {
+                    HtmlFieldPrefix = "LogoImage"
+                }
+            };
+            vd["fileTypeExtention"] = "png,jpg,gif,tiff,tif,bmp,svc,jpeg";
+            @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.LogoImage, vd)
+
+        }
+
+    </div>
+    <div class="editor-row" style="font-size: 8pt; padding-left: 25px">
+        *<i> Upload only images (best resolution: 200 X 60) </i>
+    </div>
+    <hr />
+    @*<div class="editor-row">
+            <div style="width: 30%; float: left;">
+                    @Html.CheckBoxFor(m => m.AllowOnlineRegistration) Allow Online Registration <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                    <div class="prop-tip-info" style="display: none;">
+                        If selected, customers will be allowed to register online on the corporate account sponsored event.
+                    </div>
+                </div>
+
+        </div>*@
+
+    <div class="editor-row" style="margin-top: 10px;">
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.ShowSponsoredByUrl) Show Sponsored By Logo
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, the corporate logo uploaded will appear during online checkout on an event sponsored by corporate account.
+            </div>
+        </div>
+        <div style="width: 33%; float: left;">
+            @Html.CheckBoxFor(m => m.AllowPreQualifiedTestOnly) Allow Pre-Qualified Package/Test Only
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected then customers will only be allowed to register with pre-approved test/package. The call center agents and technician won't be able to update the selected.
+            </div>
+        </div>
+        <div style="width: 33%; float: left">
+            @if (Model.AllowPreQualifiedTestOnly)
+            {
+                @Html.CheckBoxFor(m => m.AllowTechnicianUpdatePreQualifiedTests) <text>Allow Update Added Package/Tests</text>
+            }
+            else
+            {
+                @Html.CheckBoxFor(m => m.AllowTechnicianUpdatePreQualifiedTests, new { @disabled = "disabled" }) <text>Allow Update Added Package/Tests</text>
+            }
+
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected then call center agents and technician will be able to add additional tests/package for the customers on the event.
+                They won't be able to remove the pre-approved test/package.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row" style="margin-top: 10px;">
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.AllowPrePayment) Allow Pre Payment
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected then customers will have the option to pay at the time of registration. If not, then they will have to pay on the day of event.
+            </div>
+        </div>
+        <div style="width: 33%; float: left;display:none">
+            @Html.CheckBoxFor(m => m.RecommendPackage) Recommend Package
+        </div>
+        @if (Model.ShowAskPreQualificationQuestionSetting)
+        {
+            <div style="width: 30%; float: left;">
+                @Html.CheckBoxFor(m => m.AskPreQualificationQuestion) Ask Pre-Qualification Question
+                <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                <div class="prop-tip-info" style="display: none;">
+                    If selected, then user will be asked to fill pre-qualification at the time of registering the customer on a corporate sponsored event.
+                </div>
+            </div>
+        }
+    </div>
+    <div class="editor-row" style="margin-top: 10px;">
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.CaptureHaf, new { onclick = "showHideHafOnline();" }) Capture HAF
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, the customers will have the link to fill the HAF for the event.
+            </div>
+        </div>
+        <div style="width: 33%; float: left;" class="capture-haf-online">
+            @Html.CheckBoxFor(m => m.CaptureHafOnline) Capture HAF Online
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then the customers registering online will view the page to fill HAF.
+            </div>
+        </div>
+        <div style="width: 30%; float: left;" class="capture-haf-online">
+            @Html.CheckBoxFor(m => m.ShowHafFooter) Print HAF Consent
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will print the HAF consent form along with Bulk HAF.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row" style="margin-top: 10px;">
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.SendWelcomeEmail) Send Welcome Mail
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will send a welcome email (username and password) to customers registering on corporate account sponsored event.
+            </div>
+        </div>
+    </div>
+
+    @*Send Appointment Mail Section*@
+    <div class="editor-row" style="margin-top: 10px;">
+        <div style="width: 25%; float: left;">
+            @Html.CheckBoxFor(m => m.SendAppointmentMail) Send Appointment Mail
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will send an appointment confirmation and appointment reminder email to customers registered on corporate account sponsored event.
+                The email sent will be based on the templates selected in "Appointment Confirmation Mail Template" and "Appointment Reminder Mail Template" field.
+            </div>
+        </div>
+        <div style="width: 38%; float: left;">
+            Appointment Confirmation Mail Template <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                The email template selected will be sent as appointment confirmation email to customers registered on corporate sponsored event.
+            </div>
+            @Html.DropDownListFor(m => m.AppointmentConfirmationMailTemplateId, DropDownHelper.GetEmailTemplatesByNotificationTypeAlias(NotificationTypeAlias.AppointmentConfirmationWithEventDetails, Model.AppointmentConfirmationMailTemplateId), new { @style = "width:99%;" }) @Html.ValidationMessageFor(m => m.AppointmentConfirmationMailTemplateId)
+        </div>
+        <div style="width: 36%; float: left;">
+            Appointment Reminder mail Template <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                The email template selected will be sent as appointment reminder email to customers registered on corporate sponsored event.
+            </div>
+            @Html.DropDownListFor(m => m.AppointmentReminderMailTemplateId, DropDownHelper.GetEmailTemplatesByNotificationTypeAlias(NotificationTypeAlias.ScreeningReminderMail, Model.AppointmentReminderMailTemplateId), new { @style = "width:99%;" }) @Html.ValidationMessageFor(m => m.AppointmentReminderMailTemplateId)
+        </div>
+    </div>
+
+    @*Enable/Disable SMS Section*@
+    <div class="editor-row" style="margin-top: 10px;">
+        <div style="width: 25%; float: left;">
+            @Html.CheckBoxFor(m => m.EnableSms, new { @onclick = "showHideEnableSMSDiv();" }) Enable SMS
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will send text messages to customers registered on corporate account sponsored event.
+                The SMS sent will be based on the templates selected in "Confirmation SMS Template" and "Reminder SMS Template" field.
+            </div>
+        </div>
+        <div style="width: 35%; float: left; display: @(Model.EnableSms ? "block" : "none")" id="confirmationSmsTemplate">
+            Confirmation SMS Template <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                The SMS template selected will be sent as appointment confirmation SMS to customers registered on corporate sponsored event.
+            </div>
+            @Html.DropDownListFor(m => m.ConfirmationSmsTemplateId, DropDownHelper.GetEmailTemplatesByNotificationTypeAlias(NotificationTypeAlias.AppointmentConfirmation, Model.ConfirmationSmsTemplateId), new { @style = "width:90%;" }) @Html.ValidationMessageFor(m => m.ConfirmationSmsTemplateId)
+        </div>
+        <div style="width: 35%; float: left; display: @(Model.EnableSms ? "block" : "none")" id="reminderSmsTemplate">
+            Reminder SMS Template <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                The SMS template selected will be sent as appointment reminder SMS to customers registered on corporate sponsored event.
+            </div>
+            @Html.DropDownListFor(m => m.ReminderSmsTemplateId, DropDownHelper.GetEmailTemplatesByNotificationTypeAlias(NotificationTypeAlias.AppointmentReminder, Model.ReminderSmsTemplateId), new { @style = "width:90%;" }) @Html.ValidationMessageFor(m => m.ReminderSmsTemplateId)
+        </div>
+        <div style="width: 40%; float: left; display: @(Model.EnableSms ? "block" : "none")" id="maxSms">
+            Max SMS per template <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">Maximum number of text messages per template sent to a customer registered on corporate sponsored event.</div>
+            @Html.TextBoxFor(m => m.MaxSmsCount, new { @style = "width: 40px;", @maxlength = 3 }) @Html.ValidationMessageFor(m => m.MaxSmsCount)
+        </div>
+    </div>
+
+    @*Capture Insurance Id Section*@
+    <div class="editor-row" style="margin-top: 10px;">
+        <div style="width: 25%; float: left;">
+            @Html.CheckBoxFor(m => m.CaptureInsuranceId) Capture @insuranceIdLabel
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, system will ask the customer to enter Member ID at the time of registration on the corporate sponsored event.
+            </div>
+        </div>
+        <div style="width: 22%; float: left;">
+            @Html.TextBoxFor(m => m.MemberIdLabel, new { @placeholder = "Member Id Label" })
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                The value entered in the field will appear as Member ID label for the field to capture Member ID info when registering a customer for an event.
+            </div>
+        </div>
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.InsuranceIdRequired) Is @insuranceIdLabel required
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, system will force the customer to enter Member ID at the time of registration on the corporate sponsored event.
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-row" style="margin-top: 10px">
+        <div style="width: 30%; float: left">
+            @Html.CheckBoxFor(m => m.EnableImageUpsell) Enable image upsell
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, system will prompt the user for image upsell (if not purchased) during registration.
+            </div>
+        </div>
+        <div style="width: 33%; float: left;">
+            @Html.CheckBoxFor(m => m.HicNumberRequired) Is Medicare Id required
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, system will force the customer to enter the Medicare ID during registration.
+            </div>
+        </div>
+        <div style="width: 33%; float: left">
+            @Html.CheckBoxFor(m => m.GenerateBatchLabel) Generate Batch Label
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then admin and technician user will have a link to generate batch labels for customers registered on the event on the Manage Events page.
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="width: 30%; float: left">
+            @Html.CheckBoxFor(m => m.AllowVerifiedMemebersOnly) Only Allow Verified Members
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then only verified members would be able to register for event online.
+            </div>
+        </div>
+        <div style="width: 33%; float:left">
+            @Html.CheckBoxFor(m => m.AttachQualityAssuranceForm) Attach Quality Assurance Form
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate a Quality Assurance form when generating the Bulk HAF for the event.
+            </div>
+        </div>
+        <div style="width: 33%; float:left">
+            @Html.CheckBoxFor(m => m.AttachCongitiveClockForm) Attach Congitive Clock Form
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate a Cognitive Clock  form when generating the Bulk HAF for the event.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 30%; float: left">
+            @Html.CheckBoxFor(m => m.AttachChronicEvaluationForm) Attach Chronic Evaluation Form
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate a Chronic Evaluation  form when generating the Bulk HAF for the event.
+            </div>
+        </div>
+        <div style="width: 33%; float:left">
+            @Html.CheckBoxFor(m => m.AttachParicipantConsentForm) Attach Participant Consent Form
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate a Participation Consent form when generating the Bulk HAF for the event.
+            </div>
+        </div>
+        <div style="width: 33%; float:left">
+            @Html.CheckBoxFor(m => m.UpsellTest) Upsell Test
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will show a page/section to upsell test for the customers registering online on a corporate account sponsored event.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 30%; float:left;">
+            @Html.CheckBoxFor(m => m.DefaultSelectionBasePackage) Default Selection Base Package
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then the lowest price package will appear as default selected for call center agents when registering a customer for an corporate account sponsored event.
+            </div>
+        </div>
+        <div style="width: 33%; float: left">
+            @Html.CheckBoxFor(m => m.AskClinicalQuestions, new { onclick = "showHideClinicalQuestionsDdlDiv();" }) Ask Clinical Questions
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then link to enter clinical questions will appear for call center agents when registering a customer on an event or when adjusting the order of the customer on a corporate account sponsored event.
+            </div>
+        </div>
+        <div style="width: 33%; float:left;display: none;" id="clinicalQuestionsDdlDiv">
+            Clinical Questions Template <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                Template selected will be shown in clinical questionnaire question.
+            </div>
+            @Html.HiddenFor(m => m.OldClinicalQuestionTemplateId)
+            @Html.DropDownListFor(m => m.ClinicalQuestionTemplateId, DropDownHelper.GetHafTemplateByCategory(HealthAssessmentTemplateCategory.ClinicalQuestions, Model.ClinicalQuestionTemplateId > 0 ? Model.ClinicalQuestionTemplateId : -1)) @Html.ValidationMessageFor(m => m.ClinicalQuestionTemplateId)
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 30%; float:left;">
+            @Html.CheckBoxFor(m => m.SlotBooking) Slot Booking
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;"></div>
+        </div>
+        <div style="width: 33%; float: left">
+            @Html.CheckBoxFor(m => m.BookPcpAppointment, new { onclick = "showHideBookAppointmentAfterDiv();" }) Book Pcp Appointment
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then call center agent and technician would be able to book PCP appointment for the customer registered on corporate account sponsored event.
+            </div>
+        </div>
+        <div style="width: 33%; float:left;display:@(Model.BookPcpAppointment?"block":"none")" id="showHideBookAppointmentAfterDiv">
+            Book Appointment After @Html.TextBoxFor(m => m.NumberOfDays, new { @style = "width: 40px;", @maxlength = 3 }) of Days @Html.ValidationMessageFor(m => m.NumberOfDays)
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">PCP appointment can be booked after X number of day(s).</div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 30%; float:left;">
+            @Html.CheckBoxFor(m => m.ScreeningInfo) Print Screening Info
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will print a page with patient screening info along with Bulk HAF.
+            </div>
+        </div>
+        <div style="width: 33%; float: left">
+            @Html.CheckBoxFor(m => m.PatientWorkSheet) Print Patient WorkSheet
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will print Patient worksheet along with Bulk HAF. Also a link will appear for technician on Event Customer List page.
+            </div>
+        </div>
+        <div style="width: 33%; float: left">
+            @Html.CheckBoxFor(m => m.GenerateFluPneuConsentForm) Generate Flu/Pneumonia  Consent Form
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will print Flu/Pneumonia page along with Bulk HAF. Also a link will appear for the technician on Event Customer list page.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row" style="clear:both;">
+        <div style="width: 30%; float:left;">
+            @Html.CheckBoxFor(m => m.AttachOrderRequisitionForm) Attach Order Requisition Form
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate an Order Requisition form along with Bulk HAF.
+            </div>
+        </div>
+        <div style="width: 33%; float:left;">
+            @Html.CheckBoxFor(m => m.AttachGiftCard, new { onclick = "showHideGiftCardAmountDiv();" }) Attach Gift Card to Batch HAF
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate GIFT CARD page with the amount specified along with Bulk HAF.
+            </div>
+        </div>
+        <div id="giftCardAmmountDiv" style="width: 33%; float: left;@(Model.AttachGiftCard?"display:block;":"display:none")">
+            Gift Card Amount (In $) @Html.TextBoxFor(m => m.GiftCardAmount, new { @style = "width: 40px;", onblur = "validatenumber(this);" }) @Html.ValidationMessageFor(m => m.GiftCardAmount)
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">Gift Card of $(x) amount will be print along with Bulk HAF Printing.</div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 30%; float:left;">
+            @Html.CheckBoxFor(m => m.ShowBarrier) Show Barrier
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will show add barrier link on ECL page.
+            </div>
+        </div>
+        <div style="width: 33%; float:left;">
+            @Html.CheckBoxFor(m => m.LockEvent) Lock Event
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will lock events before the specified number of days. A locked event will be marked as Suspended in the system.
+            </div>
+        </div>
+        <div style="width: 33%; float: left" id="lockEventDiv">
+            Lock Event Before <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">event will be marked suspended and lock before X number of day(s).</div>
+            @Html.DropDownListFor(m => m.LockEventDaysCount, DropDownHelper.GetNumericList(7, Model.LockEventDaysCount ?? 0)) Days @Html.ValidationMessageFor(m => m.LockEventDaysCount)
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.PrintPcpAppointmentForBulkHaf) Print Pcp Appointment with Bulk HAF
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate the PCP Appointment Letter along with Bulk HAF for the event.
+            </div>
+        </div>
+        <div style="width: 33%; float: left;">
+            @Html.CheckBoxFor(m => m.PrintAceForm) Print ACE Form with Bulk HAF
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate the Annual Comprehensive Exam along with Bulk HAF for the event.
+            </div>
+        </div>
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.PrintMipForm) Print MIP Form with Bulk HAF
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate the Member Information Profile along with Bulk HAF for the event.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.AllowRegistrationWithImproperTags) Allow Patients With Improper Tags
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will allow registrations of patients with tags other than Account tags.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row" style="clear:both;">
+        <div style="width: 33%; float:left;">
+            @Html.CheckBoxFor(m => m.CaptureSurvey, new { @class = "CaptureSurvey" }) Capture Survey
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate the Uploaded Survey form along with Bulk HAF for the event.
+            </div>
+        </div>
+        <div style="width: 33%; float: left" id="surveyPdfdiv">
+            Survey PDF
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">Survey Form uploaded here will be printed along with Bulk HAF for the event.</div>
+            <span class="reqiredmark"><sup>*</sup></span>@Html.ValidationMessageFor(m => m.SurveyPdf)
+            @{
+                var vdcs = new ViewDataDictionary
+                {
+                    TemplateInfo = new TemplateInfo
+                    {
+                        HtmlFieldPrefix = "SurveyPdf"
+                    }
+                };
+                vdcs["fileTypeExtention"] = "pdf";
+
+                @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.SurveyPdf, vdcs)
+
+            }
+        </div>
+    </div>
+    <div class="editor-row" style="clear:both;">
+        <div style="width: 30%; float:left;">
+            @Html.CheckBoxFor(m => m.ShowCallCenterScript, new { @class = "ShowCallCenterScript" }) Show Call Center Script
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will allow user to upload a script which will be available to the Call Center Agent to read during call.
+            </div>
+        </div>
+        <div style="width: 34%; float: left" id="callCenterPdfdiv">
+            Call Center Script
+            <span class="reqiredmark"><sup>*</sup></span>@Html.ValidationMessageFor(m => m.CallCenterScriptPdf)
+            @{
+                var vdccs = new ViewDataDictionary
+                {
+                    TemplateInfo = new TemplateInfo
+                    {
+                        HtmlFieldPrefix = "CallCenterScriptPdf"
+                    }
+                };
+                vdccs["fileTypeExtention"] = "pdf";
+
+                @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.CallCenterScriptPdf, vdccs)
+
+            }
+        </div>
+        <div style="width: 30%; float: left" id="confirmationPdfdiv">
+            Confirmation Call Script
+            <span class="reqiredmark"><sup>*</sup></span>@Html.ValidationMessageFor(m => m.ConfirmationScriptPdf)
+            @{
+                var vdcsp = new ViewDataDictionary
+                {
+                    TemplateInfo = new TemplateInfo
+                    {
+                        HtmlFieldPrefix = "ConfirmationScriptPdf"
+                    }
+                };
+                vdcsp["fileTypeExtention"] = "pdf";
+
+                @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.ConfirmationScriptPdf, vdcsp)
+
+            }
+        </div>
+
+        @*<div style="width: 20%; float: left" id="inboundCallScriptPdfdiv">
+                Inbound Call Script
+                <span class="reqiredmark"><sup>*</sup></span>@Html.ValidationMessageFor(m => m.InboundCallScriptPdf)
+                @{
+                    var vdibcsp = new ViewDataDictionary
+                    {
+                        TemplateInfo = new TemplateInfo
+                        {
+                            HtmlFieldPrefix = "InboundCallScriptPdf"
+                        }
+                    };
+                    vdibcsp["fileTypeExtention"] = "pdf";
+
+                    @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.InboundCallScriptPdf, vdibcsp)
+
+                }
+            </div>*@
+
+
+    </div>
+    <div class="editor-row" style="clear:both;">
+        <div style="width: 30%; float:left;">
+            @Html.CheckBoxFor(m => m.PrintCheckList, new { @class = "PrintCheckList" }) Print Check List
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will generate the Check List form along with Bulk HAF for the event.
+            </div>
+        </div>
+
+        <div style="width: 33%; float: left" id="checklistPdfdiv">
+            Check List Pdf
+            @*<span class="reqiredmark"><sup>*</sup></span>@Html.ValidationMessageFor(m => m.CheckListPdf)*@
+            @{
+                var vdchfp = new ViewDataDictionary
+                {
+                    TemplateInfo = new TemplateInfo
+                    {
+                        HtmlFieldPrefix = "ChecklistPdf"
+                    }
+                };
+                vdcsp["fileTypeExtention"] = "pdf";
+
+                @Html.Partial("/Areas/FileManager/Views/Uploader/Index.cshtml", Model.CheckListPdf, vdchfp)
+
+            }
+        </div>
+
+    </div>
+    <div class="editor-row">
+        <div style="float: left; width: 30%;">
+            @Html.CheckBoxFor(m => m.PrintMicroalbuminForm) Print Microalbumin Lab Form
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will print Microalbumin Lab Form along with Bulk HAF. Also a link will appear for technician on Event Customer List page.
+            </div>
+        </div>
+        <div style="float: left; width: 30%;">
+            @Html.CheckBoxFor(m => m.PrintIFOBTForm) Print IFOBT Lab Form
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will print IFOBT Lab Form along with Bulk HAF. Also a link will appear for technician on Event Customer List page.
+            </div>
+        </div>
+        <div style="float: left; width: 30%;">
+            @Html.CheckBoxFor(m => m.PrintLoincLabData) Print Loinc Lab Data
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will print Loinc Lab Data along with Bulk HAF.
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="float: left; width: 30%;" id="sendPatientDataToAces">
+            @Html.CheckBoxFor(m => m.SendPatientDataToAces, new { @onclick = "enableDisableClientId();" }) Send Patient Data to ACES
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will send patient's data to ACES.
+            </div>
+        </div>
+
+        <div style="float: left; width: 30%;" id="clientIdDiv">
+            @Html.TextBoxFor(m => m.ClientId, new { @maxlength = 4, @placeholder = "Client Id", @title = "Client Id" })<br />
+            @Html.ValidationMessageFor(m => m.ClientId)
+        </div>
+
+        <div style="float: left; width: 30%;" id="AcesClientShortNameDiv">
+            @Html.TextBoxFor(m => m.AcesClientShortName, new { @maxlength = 20, @placeholder = "Aces Client Short Name", @title = "Aces Client Short Name" })<br />
+            @Html.ValidationMessageFor(m => m.AcesClientShortName)
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="float: left; width: 30%;" id="divSendConsentData">
+            @Html.CheckBoxFor(m => m.SendConsentData, new { @id = "chkSendConscentData" }) Send Consent Data
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will send patient's data to ACES.
+            </div>
+        </div>
+    </div>
+
+
+    <div class="editor-row" style="clear:both">
+        <div style="width: 30%; float:left;">
+            @Html.CheckBoxFor(m => m.IsHealthPlan, new { onclick = "showHideShowHRAQuestionnaireDiv()" }) Is Health Plan <span class="reqiredmark"><sup>*</sup></span> <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then the account will be flagged as "HealthPlan" in the system.
+            </div>
+        </div>
+        <div style="width: 34%; float:left;display:@(Model.IsHealthPlan?"block":"none")" id="confirmationBeforeEventDiv">
+            Confirm appointment @Html.TextBoxFor(m => m.EventConfirmationBeforeDays, new { @style = "width: 40px;", @maxlength = 3 }) days before event @Html.ValidationMessageFor(m => m.EventConfirmationBeforeDays)
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">Appointment confirmation can be made by Call Center X number of day(s) before event.</div>
+        </div>
+        <div style="width: 32%; float:left;display:@(Model.IsHealthPlan?"block":"none")" id="confirmationBeforeAppointmentMinutesDiv">
+            Confirm @Html.TextBoxFor(m => m.ConfirmationBeforeAppointmentMinutes, new { @style = "width: 40px;", @maxlength = 4 }) minutes before appointment @Html.ValidationMessageFor(m => m.ConfirmationBeforeAppointmentMinutes)
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">Appointment confirmation can be made by Call Center X minutes before the scheduled time.</div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.ShowGiftCertificateOnEod) Show Gift Card on EOD <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then only the GC validation should appear on the event in EOD checklist.
+            </div>
+        </div>
+        <div style="width: 30%; float: left;">
+            @Html.CheckBoxFor(m => m.WarmTransfer) Warm Transfer <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then call center agent can mark patient for Home visit request.
+            </div>
+        </div>
+    </div>
+    <div class="editor-row">
+        <div style="float: left; width: 30%;" id="">
+            @Html.CheckBoxFor(m => m.AcesToHipIntake, new { @onclick = "enableDisableAcesToHipIntake();" }) Aces To Hip Intake
+            <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then system will upload ACES Members.
+            </div>
+        </div>
+
+        <div style="float: left; width: 30%;" id="acesToHipIntakeShortNameDiv">
+            @Html.TextBoxFor(m => m.AcesToHipIntakeShortName, new { @maxlength = 50, @placeholder = "Aces To Hip Intake Short Name", @title = "Aces To Hip Intake Short Name" })<br />
+            @Html.ValidationMessageFor(m => m.AcesToHipIntakeShortName)
+        </div>
+        <div style="width: 30%; float: left; @(Model.IsHealthPlan ? "display:block;" : "display:none")" id="dvChaperone">
+            @Html.CheckBoxFor(m => m.ShowChaperonForm) Show Chaperone Form <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+            <div class="prop-tip-info" style="display: none;">
+                If selected, then at ECL a link will be shown in Action and Patient can sign Chaperone Form on KIOSK App.
+            </div>
+        </div>
+    </div>
+
+    <div class="editor-row">
+        <div style="width: 100%; float: right;@(Model.IsHealthPlan ? "display:block;" : "display:none")" id="ShowHRAQuestionnaireDiv">
+
+            <div style="float: left; width: 20%;">
+                HRA CHAT Questionnaire Type
+            </div>
+            <br />
+            @Html.HiddenFor(m => m.QuestionnaireType)
+            @Html.HiddenFor(m => m.IsShowHraQuestionnaire)
+            @if (Model.ChatStartDate.HasValue)
+            {
+                @Html.Hidden("previousStartDate", Model.ChatStartDate.Value.ToString("MM/dd/yyyy"))
+                @Html.HiddenFor(m => m.HasChatStartDate)
+            }
+            <div>
+                <input type="radio" id="questionnaireTypeNone" name="ShowHRALinkChatLinkSelected" @((Model.QuestionnaireType == QuestionnaireType.None) ? "checked='checked'" : "") value="true" />
+                <label for="ShowLinknone">None</label>
+            </div>
+            <div>
+                @if (Model.IsShowHraQuestionnaire)
+                {
+                    <input type="radio" id="questionnaireTypeHra" name="ShowHRALinkChatLinkSelected" @((Model.QuestionnaireType == QuestionnaireType.HraQuestionnaire) ? "checked='checked'" : "") value="false" />
+                }
+                else
+                {
+                    <input type="radio" id="questionnaireTypeHra" disabled="disabled" name="ShowHRALinkChatLinkSelected" @((Model.QuestionnaireType == QuestionnaireType.HraQuestionnaire) ? "checked='checked'" : "") value="false" />
+                }
+
+                <label for="ShowHraQuestionnaire">Show HRA Questionnaire</label> <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                <div class="prop-tip-info" style="display: none;">
+                    If selected, then the link 'HRA Questionnaire' will get appear on ECL, Customer Details, Customer Registration (call center) page.
+                </div>
+            </div>
+            <div>
+                <input type="radio" id="questionnaireTypeChat" name="ShowHRALinkChatLinkSelected" @((Model.QuestionnaireType == QuestionnaireType.ChatQuestionnaire) ? "checked='checked'" : "") value="false" />
+                <label for="ShowChatQuestionnaire">Show CHAT Questionnaire</label> <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                <div class="prop-tip-info" style="display: none;">
+                    If selected, then the link 'CHAT Questionnaire' will get appear on ECL, Customer Details, Customer Registration (call center) page.
+                </div>
+                @if (Model.HasChatStartDate)
+                {
+                    <input type="text" value="@Model.ChatStartDate.Value.ToString("MM/dd/yyyy")" disabled="disabled" />
+                    <span class="reqiredmark"><sup>*</sup></span>
+                    @Html.HiddenFor(m => m.ChatStartDate)
+                }
+                else
+                {
+                    if (Model.QuestionnaireType != QuestionnaireType.ChatQuestionnaire)
+                    {
+                        @Html.TextBoxFor(m => m.ChatStartDate, new { @placeholder = "CHAT Start Date", @title = "CHAT Start Date", @class = "datePicker", @disabled = "disabled" })
+                        <span class="reqiredmark"><sup>*</sup></span>
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.ChatStartDate, new { @placeholder = "CHAT Start Date", @title = "CHAT Start Date", @class = "datePicker" })
+                        <span class="reqiredmark"><sup>*</sup></span>
+                    }
+                     @Html.ValidationMessageFor(m => m.ChatStartDate)
+                }
+                @*@Html.TextBox("ChatStartDate", Model.ChatStartDate.HasValue ? Model.ChatStartDate.Value.ToString("MM/dd/yyyy") : "", new { @placeholder = "CHAT Start Date", @title = "CHAT Start Date", @class = "datePicker", @readonly = "readOnly" })*@
+
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+    <div class="editor-row verify-on-fileds">
+        <fieldset>
+            <legend>
+                <h3>Verify Using</h3>
+            </legend>
+            <div style="width: 100%; clear: both; height: 25px;">
+                <div style="width: 30%; float: left; margin-right: 10px">@Html.CheckBoxFor(m => m.MemberId) Member Id <span class="reqiredmark"><sup>*</sup></span>@Html.ValidationMessageFor(m => m.MemberId) </div>
+                <div style="width: 30%; float: left; margin-right: 10px">@Html.CheckBoxFor(m => m.DateOfBirth) Date of Birth <span class="reqiredmark"><sup>*</sup></span> @Html.ValidationMessageFor(m => m.DateOfBirth)</div>
+                <div style="width: 30%; float: left; margin-right: 10px; margin-top: 2px;">@Html.CheckBoxFor(m => m.ZipCode) Customer Zip Code</div>
+            </div>
+            <div style="width: 100%; height: 25px; clear: both;">
+                <div style="width: 30%; float: left; margin-right: 10px">@Html.CheckBoxFor(m => m.FirstName) First Name</div>
+                <div style="width: 30%; float: left; margin-right: 10px">@Html.CheckBoxFor(m => m.LastName) Last Name</div>
+                <div style="width: 30%; float: left; margin-right: 10px">@Html.CheckBoxFor(m => m.Email) Email</div>
+            </div>
+
+        </fieldset>
+    </div>
+
+    @*Customer Tag Section*@
+
+    <div class="editor-row">
+        <fieldset>
+            <legend>
+                <h3>Verification Source</h3>
+            </legend>
+            <div style="width: 30%; padding-left: 10px;float:left;">
+                Customers Tagged As:<span class="reqiredmark"><sup>*</sup></span> <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                <div class="prop-tip-info" style="display: none;">
+                    The value entered in the field will be used to tag customers associated with the corporate/healthplan account.
+                </div>
+                <br />
+                @if (Model.IsCustomerTagInUse)
+                {
+                    @Html.TextBoxFor(m => m.Tag, new { @readonly = true })
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.Tag)
+                }  @Html.ValidationMessageFor(m => m.Tag)
+            </div>
+        </fieldset>
+    </div>
+    <script id="assignedPackageTemplate" type="text/x-jquery-tmpl">
+        <div class='mini-container' style="border: 1px solid gray !important;">
+            <div style="float: left; margin-right: 20px;">
+                <h4>${Name}</h4>
+            </div>
+            [<a href="#" data-key="${Key}" class="unAssign">Remove</a> | {{if !IsRecommended}} <a href="javascript:void(0);" data-key="${Key}" data-value="${Gender}" class="recommended">Mark as Recommended</a>{{/if}} {{if IsRecommended}} <a href="javascript:void(0);" data-key="${Key}" data-value="${Gender}" class="unRecommend">Recommended</a>{{/if}} ]
+            <div style="clear: both; float: left; width: 25%;">Available For Gender: <b>${GenderDescription}</b> </div>
+
+            <div style="display: none;">
+                <input type="hidden" name="DefaultPackages.Index" value="${Key}" />
+                <input type="text" name="DefaultPackages[${Key}].PackageId" value="${PackageId}" />
+                <input type="text" name="DefaultPackages[${Key}].Name" value="${Name}" />
+                <input type="text" name="DefaultPackages[${Key}].Gender" value="${Gender}" />
+                <input type="text" name="DefaultPackages[${Key}].IsRecommended" value="${IsRecommended}" />
+            </div>
+        </div>
+    </script>
+
+    <div class="editor-row">
+        <fieldset>
+            <legend>
+                <h3>Default Packages</h3>
+            </legend>
+            @Html.ValidationMessageFor(m => m.DefaultPackages)
+            @Html.Partial("AttachPackageMiniForm")
+            <div id="userPackageContainer">
+                @if (Model.DefaultPackages == null)
+                {
+                    <div class="info-box" id="divInfoBoxPackage">
+                        No Package is associated to this account. Click on the attach package link.
+                    </div>
+                }
+                else
+                {
+                    <script type="text/javascript" language="javascript">
+                        renderAssignedPackages();
+                    </script>
+                }
+            </div>
+        </fieldset>
+        @* Form to add a new role the user *@
+    </div>
+
+    <script id="assignedTestTemplate" type="text/x-jquery-tmpl">
+        <div class='mini-container' style="border: 1px solid gray !important;">
+            <div style="float: left; margin-right: 20px;">
+                <h4>${Name}</h4>
+            </div>
+            [<a href="#" data-key="${Key}" class="unAssignTest">Remove</a>]
+            <div style="clear: both; float: left; width: 25%;">Available For Gender: <b>${GenderDescription}</b> </div>
+
+            <div style="display: none;">
+                <input type="hidden" name="DefaultTests.Index" value="${Key}" />
+                <input type="text" name="DefaultTests[${Key}].TestId" value="${TestId}" />
+                <input type="text" name="DefaultTests[${Key}].Name" value="${Name}" />
+                <input type="text" name="DefaultTests[${Key}].Gender" value="${Gender}" />
+            </div>
+        </div>
+    </script>
+    <div class="editor-row">
+        <fieldset>
+            <legend>
+                <h3>Default Tests</h3>
+            </legend>
+            @Html.ValidationMessageFor(m => m.DefaultTests)
+            @Html.Partial("AttachTestMiniForm")
+            <div id="userTestContainer">
+                @if (Model.DefaultTests == null)
+                {
+                    <div class="info-box" id="divInfoBoxTest">
+                        No Test is associated to this account. Click on the attach test link.
+                    </div>
+                }
+                else
+                {
+                    <script type="text/javascript" language="javascript">
+                        renderAssignedTests();
+                    </script>
+                }
+            </div>
+        </fieldset>
+    </div>
+
+    <script id="notReviewableTestTemplate" type="text/x-jquery-tmpl">
+        <div class='mini-container' style="border: 1px solid gray !important;">
+            <div style="float: left; margin-right: 20px;">
+                <h4>${Name}</h4>
+            </div>
+            [<a href="#" data-key="${Key}" class="unAssignReviewableTest">Remove</a>]
+            <div style="display: none;">
+                <input type="hidden" name="TestNotReviewableByPhysician.Index" value="${Key}" />
+                <input type="text" name="TestNotReviewableByPhysician[${Key}].Id" value="${TestId}" />
+                <input type="text" name="TestNotReviewableByPhysician[${Key}].Name" value="${Name}" />
+                <input type="text" name="TestNotReviewableByPhysician[${Key}].Gender" value="${Gender}" />
+            </div>
+        </div>
+    </script>
+    <div class="editor-row">
+        <fieldset>
+            <legend>
+                <h3>Tests Not Reviewable By Physician</h3>
+            </legend>
+            @Html.Partial("TestNotReviewableMiniForm")
+            <div id="testNotReviewableContainer">
+                @if (Model.TestNotReviewableByPhysician == null)
+                {
+                    <div class="info-box" id="divInfoBoxTestNotReviewable">
+                        No Test is associated to this account. Click on the attach test link.
+                    </div>
+                }
+                else
+                {
+                    <script type="text/javascript" language="javascript">
+                        renderNotReviewableTests();
+                    </script>
+                }
+            </div>
+        </fieldset>
+    </div>
+
+    @if (Model.ShippingOptions != null && Model.ShippingOptions.Any())
+    {
+        <hr />
+        <fieldset>
+            <legend>
+                <h3>Shipping Options:</h3>
+            </legend>
+            @foreach (var shippingOption in Model.ShippingOptions)
+            {
+                <div class="editor-row">
+                    @if (Model.ShippingOptionIds != null && Model.ShippingOptionIds.Contains(shippingOption.Id))
+                    {
+                        <input type="checkbox" id="@shippingOption.Id" checked="checked" onclick="FillShipping(this);" /> @shippingOption.Name
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="@shippingOption.Id" onclick="FillShipping(this);" /> @shippingOption.Name
+                    }
+                    <input type="hidden" value="@shippingOption.Id" />
+                </div>
+            }
+        </fieldset>
+
+
+        if (Model.ShippingOptionIds != null && Model.ShippingOptionIds.Any())
+        {
+            <script type="text/javascript" language="javascript">
+
+                (function () { RenderShipping(); })();
+            </script>
+        }
+        <div id="selectedShippingContainer" style="display: none;">
+        </div>
+    }
+    <script id="additionalFieldTemplate" type="text/x-jquery-tmpl">
+        <div class='mini-container' style="border: 1px solid gray !important;">
+            <div style="float: left; margin-right: 20px; white-space:nowrap;">
+                ${AdditionalFieldName}  &nbsp; <input type="text" name="AccountAdditionalFields[${Key}].DisplayName" value="${DisplayName}" class="displaynameclass" onblur="updateDisplayName(this)" maxlength="200" /> &nbsp; [<a href="#" data-key="${Key}" class="unAssignAdditionalfield">Remove</a>]
+            </div>
+
+            <div style="display: none;">
+                <input type="hidden" name="AccountAdditionalFields.Index" value="${Key}" />
+                <input type="hidden" name="AccountAdditionalFields[${Key}].AdditionalFieldId" value="${AdditionalFieldId}" />
+                <br />
+                <input type="hidden" name="AccountAdditionalFields[${Key}].AdditionalFieldName" value="${AdditionalFieldName}" />
+            </div>
+        </div>
+    </script>
+    <div class="editor-row">
+        <fieldset>
+            <legend>
+                <h3>Additional Fields</h3>
+            </legend>
+            @Html.CheckBoxFor(m => m.IsAdditionalField, new { @id = "chkAdditionalField", @onclick = "ShowHideAdditionalField();" }) Insert Additional Fields
+            @Html.ValidationMessageFor(m => m.AccountAdditionalFields)
+            <div id="divaddtionalFields" style="@(Model.IsAdditionalField ? "display:block;" : "display:none;")clear:both;">
+                @Html.Partial("AdditionalFieldsMiniForm")
+                <div id="additionalFieldsContainer">
+                    @if (Model.AccountAdditionalFields == null)
+                    {
+                        <div class="info-box" id="divInfoBoxAdditionalFields">
+                            No Additional Fields is associated to this account. Click on the add Additional Fields.
+                        </div>
+                    }
+                    else
+                    {
+                        @Html.EditorFor(m => m.AccountAdditionalFields)
+                    }
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    @*Start checkout phone number*@
+    <script id="checkOutPhoneNumbersTemplate" type="text/x-jquery-tmpl">
+        {{each(s, state) States}}
+        <div class="mini-container">
+            <fieldset>
+                <legend>
+                    <strong>${state.Name}</strong>
+                </legend>
+                <ul>
+                    {{each(i, item) CheckOutPhoneNumber}}
+                    {{if item.StateID == state.StateID}}
+                    <li>
+                        <input type="text" name="AccountCheckoutPhoneNumbers[${item.Key}].CheckoutPhoneNumber" class="mask-phone txtCheckoutPhoneNumber" value="${item.CheckoutPhoneNumber}" readonly="readonly" />
+                        &nbsp; [<a href="javascript:void(0)" data-key="${item.Key}" onclick="RemoveCheckOutPhoneNumber(this);" class="unAssignCheckOutPhoneNumber">Remove</a>]
+                        <input type="hidden" name="AccountCheckoutPhoneNumbers.Index" value="${item.Key}" />
+                        <input type="hidden" name="AccountCheckoutPhoneNumbers[${item.Key}].StateID" value="${item.StateID}" />
+                        <input type="hidden" name="AccountCheckoutPhoneNumbers[${item.Key}].StateName" value="${item.StateName}" />
+                        <input type="hidden" name="AccountCheckoutPhoneNumbers[${item.Key}].AccountCheckoutPhoneNumberID" value="${item.Key}" />
+                        <br />
+                    </li>
+                    {{/if}}
+                    {{/each}}
+                </ul>
+            </fieldset>
+        </div>
+        {{/each}}
+    </script>
+    <div class="editor-row">
+        <fieldset>
+            <legend>
+                <h3>Checkout Phone Numbers</h3>
+            </legend>
+            <input type="checkbox" id="chkAddStateWisePhoneNumber" onclick="ShowStateWisePhoneNumber();" /> Add State Wise Phone Number
+
+            <div id="divStateWisePhoneNumber">
+                @Html.Partial("AccountCheckoutPhoneNumberMiniForms")
+                <div id="CheckOutPhoneNumberContainer">
+                    @if (Model.AccountCheckoutPhoneNumbers == null)
+                    {
+                        <div class="info-box" id="divInfoBoxCheckOutPhoneNumber">
+                            No Phone number is associated with this account. Click on the add link.
+                        </div>
+                    }
+                    else
+                    {
+                        var States = Model.AccountCheckoutPhoneNumbers.Select(x => new { StateID = x.StateID, Name = x.StateName }).Distinct();
+                        int counter = 0;
+                        foreach (var state in States)
+                        {
+                            <div class="mini-container">
+                                <fieldset>
+                                    <legend>
+                                        <strong>@state.Name</strong>
+                                    </legend>
+                                    <ul>
+                                        @foreach (var number in Model.AccountCheckoutPhoneNumbers.Where(x => x.StateID == state.StateID))
+                                        {
+                                            <li>
+                                                <input type="text" name="AccountCheckoutPhoneNumbers[@counter].CheckoutPhoneNumber" class="mask-phone txtCheckoutPhoneNumber" value="@number.CheckoutPhoneNumber" readonly="readonly" />
+                                                &nbsp; [<a href="javascript:void(0)" data-key="@number.AccountCheckoutPhoneNumberID" onclick="RemoveCheckOutPhoneNumber(this);">Remove</a>]
+                                                @Html.ValidationMessageFor(m => number.CheckoutPhoneNumber)
+                                                <input type="hidden" name="AccountCheckoutPhoneNumbers[@counter].StateID" value="@number.StateID" />
+                                                <input type="hidden" name="AccountCheckoutPhoneNumbers[@counter].StateName" value="@number.StateName" />
+                                                <input type="hidden" name="AccountCheckoutPhoneNumbers[@counter].CheckoutPhoneNumber" value="@number.CheckoutPhoneNumber" />
+                                                <input type="hidden" name="AccountCheckoutPhoneNumbers[@counter].AccountCheckoutPhoneNumberID" value="@number.AccountCheckoutPhoneNumberID" />
+                                            </li>
+                                            counter++;
+                                        }
+                                    </ul>
+                                </fieldset>
+                            </div>
+                        }
+                        @*@Html.EditorFor(m => m.AccountCheckoutPhoneNumbers)*@
+                    }
+                </div>
+            </div>
+            <div class="editor-row" id="divDefaulPhoneNumber">
+                <div style="width: 45%; float: left; margin-top:10px">
+                    Checkout Phone Number
+                    <input type="text" value='@(Model.CheckoutPhoneNumber != null ? Model.CheckoutPhoneNumber.DomesticPhoneNumber : "")' class="checkout-phone-number mask-phone" id="txtDefaultPhoneNumber" />
+                    <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                    <div class="prop-tip-info" style="display: none;">
+                        The number entered here will be displayed as helpline number for customers registering online for the corporate account sponsored event.
+                    </div>
+                </div>
+                <div class="checkout-PhoneNumber">
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    @*End checkout phone number*@
+
+
+    @*Start Account Call Queue Setting*@
+
+    <div id="divRowAccountCallQueueSetting" class="editor-row">
+        <fieldset>
+            <legend>
+                <h3>Account Call Queue Settings</h3>
+            </legend>
+            <div id="divAccountCallQueueSetting">
+                <div id="AccountCallQueueSettingContainer">
+                    @if (Model.AccountCallQueueSettings == null)
+                    {
+                        <div class="info-box" id="divInfoBoxAccountCallQueueSetting">
+                            No setting is associated with this account. Click on the add link.
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="float: left; margin-bottom: 10px; width: 100%;">
+                            <div style="float: left; margin-bottom: 10px; width: 40%;">
+                                <span>Set Max Contact Per </span>
+
+                                <input type="radio" value="true" name="IsMaxAttemptPerHealthPlan" @(Model.IsMaxAttemptPerHealthPlan ? "checked=checked" : "") onchange="showHideMaxAttempt(true);" /> Health Plan
+                                <input type="radio" value="false" name="IsMaxAttemptPerHealthPlan" @(!Model.IsMaxAttemptPerHealthPlan ? "checked=checked" : "") onchange="showHideMaxAttempt(false);" /> Call Queue
+
+                            </div>
+                            <div style="float: left; margin-bottom: 10px; width: 50%;" id="maxAttemptDiv">
+                                <span>Max call contact per patient&nbsp;&nbsp;</span>
+                                @Html.TextBoxFor(m => m.MaxAttempt, new { @class = "maxAttempt", @style = "width:12%;" })
+                                <span class="info-tip" style="vertical-align: middle;"><img title="Info" alt="Info" src="/App/Images/info-icon.gif"></span>
+                                @Html.ValidationMessageFor(m => m.MaxAttempt)
+                                <div class="prop-tip-info" style="display: none;">
+                                    Maximum number of calls that can be made to a patient from Call Queue.
+                                </div>
+                            </div>
+                        </div>
+
+                        @Html.ValidationMessageFor(m => m.AccountCallQueueSettings)
+
+                        var accountCallQueueSettings = Model.AccountCallQueueSettings.Where(x => x.CallQueueName != HealthPlanCallQueueCategory.AppointmentConfirmation).Select(x => new { x.CallQueueId, x.CallQueueName }).Distinct();
+                        int counter = 0;
+                        foreach (var item in accountCallQueueSettings)
+                        {
+                            <fieldset>
+                                <legend><strong>@item.CallQueueName</strong></legend>
+                                <ul>
+
+                                    @foreach (var accountCallQueueSettingEditModel in Model.AccountCallQueueSettings.Where(x => x.CallQueueId == item.CallQueueId))
+                                    {
+                                        <li>
+                                            <span class="@(accountCallQueueSettingEditModel.SuppressionTypeId == (long)CallQueueSuppressionType.MaxAttempts ? " max-attempt-label":"")">@Html.DisplayFor(m => accountCallQueueSettingEditModel.SuppressionDescription)</span>
+                                            @if (accountCallQueueSettingEditModel.SuppressionTypeId != (long)CallQueueSuppressionType.MaxAttempts)
+                                            {
+                                                <text>
+                                                    <input type="text" class="isNumericOnly txtNoOfDays" name="AccountCallQueueSettings[@counter].NoOfDays" value="@accountCallQueueSettingEditModel.NoOfDays" style="width: 50px" /> Days
+                                                </text>
+                                            }
+                                            else
+                                            {
+                                                <input type="text" class="isNumericOnly max-attempt" name="AccountCallQueueSettings[@counter].NoOfDays" value="@accountCallQueueSettingEditModel.NoOfDays" style="width: 50px" />
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(accountCallQueueSettingEditModel.ToolTipInfo))
+                                            {
+                                                <span class="info-tip @(accountCallQueueSettingEditModel.SuppressionTypeId == (long)CallQueueSuppressionType.MaxAttempts ? " max-attempt-tip":"")" style="vertical-align: middle;"><img alt="Info" src="/App/Images/info-icon.gif"></span>
+
+                                                if (accountCallQueueSettingEditModel.SuppressionTypeId != (long)CallQueueSuppressionType.MaxAttempts)
+                                                {
+                                                    <div class="prop-tip-info" style="display: none;">
+                                                        This will contain following disposition <br />
+                                                        @Html.Raw(accountCallQueueSettingEditModel.ToolTipInfo)
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="prop-tip-info" style="display: none;">
+                                                        @Html.Raw(accountCallQueueSettingEditModel.ToolTipInfo)
+                                                    </div>
+                                                }
+                                            }
+                                            <br />
+                                            @Html.ValidationMessageFor(m => accountCallQueueSettingEditModel.NoOfDays)
+                                        </li>
+                                        <div style="display:none;">
+                                            <input type="hidden" name="AccountCallQueueSettings[@counter].CallQueueId" value="@accountCallQueueSettingEditModel.CallQueueId" />
+                                            <input type="hidden" name="AccountCallQueueSettings[@counter].CallQueueName" value="@accountCallQueueSettingEditModel.CallQueueName" />
+                                            <input type="hidden" name="AccountCallQueueSettings[@counter].SuppressionTypeId" value="@accountCallQueueSettingEditModel.SuppressionTypeId" />
+                                            <input type="hidden" name="AccountCallQueueSettings[@counter].SuppressionDescription" value="@accountCallQueueSettingEditModel.SuppressionDescription" />
+                                        </div>
+                                            counter++;
+                                    }
+                                </ul>
+                            </fieldset>
+                            <br />
+                        }
+                    }
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    @*End Account Call Queue Setting*@
+
+    @*Start Account CallCenter Organization*@
+
+    <div id="divAccountCallCenterOrganization" class="editor-row">
+        <script id="accountCallCenterOrganizationTemplate" type="text/x-jquery-tmpl">
+            <div class='mini-container' style="border: 1px solid gray !important;">
+                <div style="float: left; margin-right: 20px;">
+                    <h4>${OrganizationName}</h4>
+                </div>
+                [<a href="javascript:void(0)" data-key="${Key}" onclick="removeAccountCallCenterOrganization(this);" class="unAssignAccountCallCenterOrganization">Remove</a>]
+                <div style="display: none;">
+                    <input type="hidden" name="AccountCallCenterOrganization.Index" value="${Key}" />
+                    <input type="text" name="AccountCallCenterOrganization[${Key}].OrganizationId" value="${OrganizationId}" />
+                    <input type="text" name="AccountCallCenterOrganization[${Key}].OrganizationName" value="${OrganizationName}" />
+                </div>
+            </div>
+        </script>
+        <div class="editor-row">
+            <fieldset>
+                <legend>
+                    <h3>Account Call Center Organization</h3>
+                </legend>
+                @Html.CheckBoxFor(m => m.RestrictHealthPlanData, new { onclick = "hideShowAccountCallCenterOrganization()", @id = "chkRestrictHealthPlanData" }) Restrict Health Plan Data
+                @Html.ValidationMessageFor(m => m.AccountCallCenterOrganization)
+                <div id="divRestrictHealthPlanData">
+                    @Html.Partial("AccountCallCenterOrganizationMiniForm")
+                    <div id="AccountCallCenterOrganizationContainer">
+                        @if (Model.AccountCallCenterOrganization == null)
+                        {
+                            <div class="info-box" id="divInfoBoxAccountCallCenterOrganization">
+                                No organization is associated to this account.
+                            </div>
+                        }
+                        else
+                        {
+                            <script type="text/javascript" language="javascript">
+                                renderAccountCallCenterOrganization();
+                            </script>
+                        }
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    @*End Account CallCenter Organization*@
+
+</fieldset>
+<script type="text/javascript">
+    function showHideHafOnline() {
+        if ($("input[type='checkbox'][id='CaptureHaf']").is(":checked")) {
+            $(".capture-haf-online").show();
+        } else {
+            $(".capture-haf-online").hide();
+            $("input[type='checkbox'][id='CaptureHafOnline']").attr("checked", false);
+            $("input[type='checkbox'][id='ShowHafFooter']").attr("checked", false);
+        }
+
+    }
+</script>
+<script id="selectedShippingTemplate" type="text/x-jquery-tmpl">
+    <div style="display: none;">
+        <input type="hidden" name="ShippingOptionIds.Index" value="${Id}" />
+        <input type="text" name="ShippingOptionIds[${Id}]" value="${Id}" />
+    </div>
+</script>
+
+<script id="checkoutPhoneNumber" type="text/x-jquery-tmpl">
+    <input type="hidden" name="CheckoutPhoneNumber.AreaCode" value="${AreaCode}" />
+    <input type="hidden" name="CheckoutPhoneNumber.Number" value="${Number}" />
+</script>
+
+<script type="text/javascript">
+    function showHideClinicalQuestionsDdlDiv() {
+        if ($("input[type='checkbox'][id='AskClinicalQuestions']").is(":checked")) {
+            $("#clinicalQuestionsDdlDiv").show();
+        } else {
+            $("#clinicalQuestionsDdlDiv").hide();
+            $("input[type='checkbox'][id='AskClinicalQuestions']").attr("checked", false);
+        }
+    }
+</script>
+
+
+@* End- Set Shipping Options *@
+<script type="text/javascript" language="javascript">
+
+    function showAllPackages() {//debugger;
+        var url = "";
+        if ($("#ShowRetailPackages").attr("checked")) {
+            url = "/Marketing/Package/GetAllPackages";
+        }
+        else {
+            url = "/Marketing/Package/GetCorporatePackages";
+        }
+
+        $.getJSON(url, null, function (allPackages) {
+            $("#package").empty();
+            $("#package").append("<option value='-1'>-- Select Packages --</option>");
+            $.each(allPackages, function (index, packageObj) {
+                $("#package").append("<option value='" + packageObj.SecondValue + "'>" + packageObj.FirstValue + "</option>");
+            });
+        });
+    }
+
+    function enableVerificationfields(enable) {
+        if (enable) {
+            $(".verify-on-fileds input[type='checkbox']").each(function () {
+                $(this).removeAttr("disabled");
+            });
+        } else {
+            $(".verify-on-fileds input[type='checkbox']").each(function () {
+                $(this).attr("checked", false);
+                $(this).attr("disabled", "disabled");
+            });
+        }
+    }
+
+
+
+    function showHideGiftCardAmountDiv() {
+        if ($("#AttachGiftCard").is(":checked")) {
+            $("#giftCardAmmountDiv").show();
+            $("#GiftCardAmount").val(0);
+
+        } else {
+            $("#giftCardAmmountDiv").hide();
+            $("#GiftCardAmount").val(0);
+        }
+    }
+
+    function showHideBookAppointmentAfterDiv() {
+        if ($("#BookPcpAppointment").is(":checked")) {
+            $("#showHideBookAppointmentAfterDiv").show();
+        } else {
+            $("#showHideBookAppointmentAfterDiv").hide();
+            $("#NumberOfDays").val('');
+        }
+    }
+    function showHideShowHRAQuestionnaireDiv() {
+        if ($("#IsHealthPlan").is(":checked")) {
+            $("#ShowHRAQuestionnaireDiv").show();
+            $("#divRowAccountCallQueueSetting").show();
+            $("#confirmationBeforeEventDiv").show();
+            $("#confirmationBeforeAppointmentMinutesDiv").show();
+            $("#divAccountCallCenterOrganization").show();
+            $("#divSendConsentData").show();
+            $("#dvChaperone").show();            
+        } else {
+            $("#ShowHRAQuestionnaireDiv").hide();
+            $("#divRowAccountCallQueueSetting").hide();
+            $("#confirmationBeforeEventDiv").hide();
+            $("#confirmationBeforeAppointmentMinutesDiv").hide();
+            $("#divAccountCallCenterOrganization").hide();
+            $("#chkRestrictHealthPlanData").attr("checked", "");
+            $("#divSendConsentData").hide();
+            $("#chkSendConscentData").attr("checked", "");
+            hideShowAccountCallCenterOrganization();
+            $("#QuestionnaireType").val('@((long)Falcon.App.Core.Users.Enum.QuestionnaireType.None)');
+            $("#dvChaperone").hide();
+        }
+    }
+
+    function showHideEnableSMSDiv() {
+        if ($("#EnableSms").is(":checked")) {
+            $("#confirmationSmsTemplate").show();
+            $("#reminderSmsTemplate").show();
+            $("#maxSms").show();
+        } else {
+            $("#confirmationSmsTemplate").hide();
+            $("#reminderSmsTemplate").hide();
+            $("#maxSms").hide();
+
+            $("#ConfirmationSmsTemplateId").val("-1");
+            $("#ReminderSmsTemplateId").val("-1");
+            $("#MaxSmsCount").val("");
+        }
+    }
+
+    (function () {
+        $('.mask-phone').mask('(999)-999-9999');
+        $("#addPackage").click(assignPackagetoAccount);
+
+        $("#addTest").click(assignTesttoAccount);
+
+        $("#addNotReviewableTest").click(assignNotReviewableTesttoAccount);
+
+        $("input[id*='CaptureInsuranceId']").bind("click", function () { checkInsuranceId(); });
+
+        $("#btnAdditionalFields").click(assignAccountAdditionalFields);
+
+        checkInsuranceId();
+
+        $("a.unAssign").live("click", function () {
+            $(this).parents("div.mini-container:first").remove();
+
+            delete assignedPackages[$(this).attr('data-key')];
+            if ($.isEmptyObject(assignedPackages)) {
+                //$(".info-box").show();
+                $("#divInfoBoxPackage").show();
+            }
+            return false;
+        });
+
+        $("a.unAssignTest").live("click", function () {
+            $(this).parents("div.mini-container:first").remove();
+
+            delete assignedTests[$(this).attr('data-key')];
+            if ($.isEmptyObject(assignedTests)) {
+                //$(".info-box").show();
+                $("#divInfoBoxTest").show();
+            }
+            return false;
+        });
+
+        $("a.unAssignReviewableTest").live("click", function () {
+            $(this).parents("div.mini-container:first").remove();
+
+            delete testNotReviewableByPhysicianList[$(this).attr('data-key')];
+            if ($.isEmptyObject(testNotReviewableByPhysicianList)) {
+                $("#divInfoBoxTestNotReviewable").show();
+            }
+            return false;
+        });
+
+        if ($("#ShowRetailPackages").attr("checked")) {
+            showAllPackages();
+        }
+
+        $("input[id*='AllowVerifiedMemebersOnly']").click(function () {
+            enableVerificationfields($(this).is(":checked"));
+        });
+        @if (!Model.AllowVerifiedMemebersOnly)
+        {
+            <text>
+        enableVerificationfields(false);
+        </text>
+        }
+        $("#AllowOnlineRegistration").click(function () {
+            if ($(this).is(":checked")) {
+                $(".checkout-phone-number").removeAttr("disabled");
+            } else {
+                $(".checkout-phone-number").attr("disabled", "disabled");
+                $(".checkout-phone-number").val('');
+            }
+        });
+        $("a.unAssignAdditionalfield").live("click", function () {
+            var element = $(this);
+
+            var additionalFieldId = parseInt($(element).closest(".mini-container").find("[name$='AdditionalFieldId']").val());
+
+            $($(element).closest(".mini-container")).remove();
+            var tempList = new Array();
+            var key = 0;
+            $(additionalFieldList).each(function (index, obj) {
+                if (parseInt(obj.AdditionalFieldId) != additionalFieldId) {
+                    obj.Key = key;
+                    tempList.push(obj);
+                    key = key + 1;
+                }
+            });
+
+            additionalFieldList = tempList;
+
+            renderAdditionalFields();
+
+            if ($.isEmptyObject(additionalFieldList)) {
+                $("#divInfoBoxAdditionalFields").show();
+            }
+
+            return false;
+
+        });
+
+        showHideHafOnline();
+        showHideClinicalQuestionsDdlDiv();
+    })();
+
+    var male = '@Gender.Male';
+    var Female = '@Gender.Female';
+    var Both = '@Gender.Unspecified';
+
+    function MarkAsRecommended(selectedKey, gender) {
+
+        if (gender == Both) {
+            $.each(assignedPackages, function (key) {
+                assignedPackages[key].IsRecommended = (selectedKey == "") ? assignedPackages[key].IsRecommended : false;
+
+            });
+        }
+
+        $.each(assignedPackages, function (key, item) {
+
+            if (item.Key == selectedKey) {
+                assignedPackages[key].IsRecommended = true;
+            }
+            else if (item.Gender == gender || item.Gender == Both) {
+                assignedPackages[key].IsRecommended = (selectedKey == "") ? assignedPackages[key].IsRecommended : false;
+            }
+
+        });
+        renderAssignedPackages();
+    }
+
+    $("a.recommended").live("click", function () {
+        MarkAsRecommended($(this).attr('data-key'), $(this).attr('data-value'));
+        return false;
+    });
+
+    $("a.unRecommend").live("click", function () {
+        var key = $(this).attr('data-key');
+        assignedPackages[key].IsRecommended = false;
+        renderAssignedPackages();
+    });
+    $("#CaptureSurvey").change(function () {
+        $(this).is(":checked") ? $("#surveyPdfdiv").show() : $("#surveyPdfdiv").hide();
+    });
+    $("#ShowCallCenterScript").change(function () {
+        if ($(this).is(":checked")) {
+            $("#callCenterPdfdiv").show();
+            $("#confirmationPdfdiv").show();
+            $("#inboundCallScriptPdfdiv").show();
+        } else {
+            $("#callCenterPdfdiv").hide();
+            $("#confirmationPdfdiv").hide();
+            $("#inboundCallScriptPdfdiv").hide();
+        }
+    });
+
+    $("#PrintCheckList").change(function () {
+        $(this).is(":checked") ? $("#checklistPdfdiv").show() : $("#checklistPdfdiv").hide();
+    });
+
+    $("#LockEvent").change(function () {
+        $(this).is(":checked") ? $("#lockEventDiv").show() : $("#lockEventDiv").hide();
+    });
+
+    $(document).ready(function () {
+
+        $("#CaptureSurvey").is(":checked") ? $("#surveyPdfdiv").show() : $("#surveyPdfdiv").hide();
+        $("#LockEvent").is(":checked") ? $("#lockEventDiv").show() : $("#lockEventDiv").hide();
+        $("#PrintCheckList").is(":checked") ? $("#checklistPdfdiv").show() : $("#checklistPdfdiv").hide();
+
+        if ($("#ShowCallCenterScript").is(":checked")) {
+            $("#callCenterPdfdiv").show();
+            $("#confirmationPdfdiv").show();
+            $("#inboundCallScriptPdfdiv").show();
+        } else {
+            $("#callCenterPdfdiv").hide();
+            $("#confirmationPdfdiv").hide();
+            $("#inboundCallScriptPdfdiv").hide();
+        }
+
+        @if (Model.IsMaxAttemptPerHealthPlan)
+        {
+            <text>
+        $("#divRowAccountCallQueueSetting").find(".max-attempt").hide();
+        $("#divRowAccountCallQueueSetting").find(".max-attempt-label").hide();
+        $("#divRowAccountCallQueueSetting").find(".max-attempt-tip").hide();
+        $("#maxAttemptDiv").show();
+        </text>
+        }
+        else {
+            <text>
+        $("#maxAttemptDiv").hide();
+        $("#divRowAccountCallQueueSetting").find(".max-attempt").show();
+        $("#divRowAccountCallQueueSetting").find(".max-attempt-label").show();
+        $("#divRowAccountCallQueueSetting").find(".max-attempt-tip").show();
+        </text>
+        }
+
+        //for ClientId disable Toggle
+        if ($("#SendPatientDataToAces").is(":checked")) {
+            $("#ClientId").attr("disabled", false);
+            $("#AcesClientShortName").attr("disabled", false);
+
+        } else {
+            //$("#ClientId").val("");
+            $("#ClientId").val('');
+            $("#AcesClientShortName").val('');
+
+            $("#ClientId").attr("disabled", true);
+            $("#AcesClientShortName").attr("disabled", true);
+
+        }
+
+        if ($("#AcesToHipIntake").is(":checked")) {
+            $("#AcesToHipIntakeShortName").attr("disabled", false);
+
+        } else {
+            $("#AcesToHipIntakeShortName").val('');
+            $("#AcesToHipIntakeShortName").attr("disabled", true);
+        }
+
+        $("#questionnaireTypeNone").click(function () {
+            if ('@Model.CurrentQuestionnaireType' != '@QuestionnaireType.None') {
+                if (confirm('Are you sure enabling None option ? If you enable this then you will not seen any Questionnaire (Chat/HRA) link.')) {
+                    setQuestionnaireTypeNone();
+                } else {
+                    return false;
+                }
+            } else {
+                setQuestionnaireTypeNone();
+            }
+
+        });
+
+        function setQuestionnaireTypeNone() {
+            $("#QuestionnaireType").val('@(QuestionnaireType.None)');
+            $("#ChatStartDate").val('');
+            $("#ChatStartDate").attr('disabled', true);
+        }
+        $("#questionnaireTypeHra").click(function () {
+
+            $("#QuestionnaireType").val('@(QuestionnaireType.HraQuestionnaire)');
+            $("#ChatStartDate").val('');
+            $("#ChatStartDate").attr('disabled', true);
+
+        });
+        $("#questionnaireTypeChat").click(function () {
+            if ('@Model.CurrentQuestionnaireType' == '@(QuestionnaireType.HraQuestionnaire)') {
+                if (!confirm('Are you sure enabling Chat Questionnaire ? If you enable this then you will never be able to revert it back.')) {
+                    return false;
+                }
+            }
+
+            $("#ChatStartDate").val('');
+            $("#ChatStartDate").attr('disabled', false);
+            $("#ChatStartDate").attr('readonly', false);
+
+            $("#QuestionnaireType").val('@(QuestionnaireType.ChatQuestionnaire)');
+            if ('@Model.CurrentQuestionnaireType' == '@(QuestionnaireType.ChatQuestionnaire)') {
+
+                if ($("#previousStartDate").val() != "") {
+                    $("#ChatStartDate").val($("#previousStartDate").val());
+                }
+
+                $("#ChatStartDate").attr('disabled', true);
+                $("#ChatStartDate").attr('readonly', true);
+            }
+
+        });
+
+    });
+
+    function validatenumber(el) {
+        var regex = /^[0-9]*(?:\.\d{1,2})?$/;    // allow only numbers [0-9]
+        if (!regex.test(el.value)) {
+            alert('allowed only numeric value upto two decimal points only');
+            el.focus();
+        }
+    }
+
+    $("#AllowPreQualifiedTestOnly").click(function () {
+        if ($(this).is(":checked")) {
+            $("#AllowTechnicianUpdatePreQualifiedTests").removeAttr("disabled");
+        } else {
+            $("#AllowTechnicianUpdatePreQualifiedTests").attr("disabled", "disabled");
+            $("#AllowTechnicianUpdatePreQualifiedTests").attr("checked", false);
+        }
+    });
+
+
+</script>
+
+<script type="text/javascript">
+    $(".info-tip").qtip({
+        content: {
+            title: function (api) {
+                return "";
+            },
+            text: function (api) {
+                return $(this).parent().find('.prop-tip-info').html();
+            }
+        },
+        style: {
+            width: '300px'
+        },
+        position: {
+            viewport: $("#registration-model"),
+            adjust: {
+                method: 'shift'
+            }
+        },
+    });
+    function updateDisplayName(element) {
+
+        var additionalFieldId = parseInt($(element).closest(".mini-container").find("[name$='AdditionalFieldId']").val());
+        var tempList = new Array();
+        $(additionalFieldList).each(function (index, obj) {
+
+            if (parseInt(obj.AdditionalFieldId) === additionalFieldId) {
+                obj.DisplayName = $(element).val();
+            }
+
+            tempList.push(obj);
+        });
+
+        additionalFieldList = tempList;
+    }
+
+</script>
+
+<script type="text/javascript">
+    var checkOutPhoneNumberList = new Array();
+    var states = new Array();
+    @if ((Model.AccountCheckoutPhoneNumbers != null) && (Model.AccountCheckoutPhoneNumbers.Any()))
+    {
+        foreach (var item in Model.AccountCheckoutPhoneNumbers)
+        {
+            <text>
+    {
+        var checkOutPhoneNumberObj = new Object();
+        checkOutPhoneNumberObj.StateID = '@item.StateID';
+        checkOutPhoneNumberObj.StateName = '@item.StateName';
+        checkOutPhoneNumberObj.CheckoutPhoneNumber = '@item.CheckoutPhoneNumber';
+        checkOutPhoneNumberObj.Key = '@item.AccountCheckoutPhoneNumberID';
+        checkOutPhoneNumberList.push(checkOutPhoneNumberObj);
+    }
+    </text>
+        }
+
+        foreach (var item in Model.AccountCheckoutPhoneNumbers.Select(x => new { StateID = x.StateID, Name = x.StateName }).Distinct())
+        {
+            <text>
+    var state = new Object();
+    state.StateID = '@item.StateID';
+    state.Name = '@item.Name';
+    states.push(state);
+    </text>
+        }
+
+    }
+
+    if (checkOutPhoneNumberList.length > 0) {
+        $("#divStateWisePhoneNumber").show();
+        $("#divDefaulPhoneNumber").hide();
+        $("#chkAddStateWisePhoneNumber").attr("checked", "checked");
+    }
+    else {
+        $("#divStateWisePhoneNumber").hide();
+        $("#divDefaulPhoneNumber").show();
+    }
+
+
+    function createCheckOutPhoneNumberObject() {
+        var stateID = $("#ddlStates").val();
+        var phoneNumber = $("#txtCheckoutPhoneNumber").val();
+
+        if (states.length > 0) {
+
+            var acpn = checkOutPhoneNumberList.filter(function (item) {
+                return item.StateID == stateID;
+            });
+            if (acpn.length == 0) {
+                var state = new Object();
+                state.StateID = "" + stateID + "";
+                state.Name = "" + $("#ddlStates option:selected").text() + "";
+                states.push(state);
+            }
+        }
+        else {
+            var state = new Object();
+            state.StateID = "" + stateID + "";
+            state.Name = "" + $("#ddlStates option:selected").text() + "";
+            states.push(state);
+        }
+
+        var checkOutPhoneNumberObj = new Object();
+        checkOutPhoneNumberObj.StateID = stateID;
+        checkOutPhoneNumberObj.StateName = $("#ddlStates option:selected").text();
+        checkOutPhoneNumberObj.CheckoutPhoneNumber = phoneNumber;
+        checkOutPhoneNumberObj.Key = checkOutPhoneNumberList.length;
+        checkOutPhoneNumberList.push(checkOutPhoneNumberObj);
+
+
+
+    }
+    function assignCheckOutPhoneNumber() {
+
+        var stateID = $("#ddlStates").val();
+        var acpn = checkOutPhoneNumberList.filter(function (item) {
+            return item.StateID == stateID;
+        });
+
+        if (acpn.length >= 5) {
+            alert('You can not add more than 5 phone number on a state.');
+            $("#ddlStates option").first().attr("selected", true);
+            $("#txtCheckoutPhoneNumber").val('');
+            return false;
+        }
+
+        var phoneNumber = ($("#txtCheckoutPhoneNumber").val()).replace(/\D/g, '');
+
+        if (stateID == -1) {
+            alert("Please select a State.");
+            return false;
+        }
+        if (phoneNumber == "") {
+            alert("Please enter checkout phone number.");
+            return false;
+        }
+
+        var isNumberAlreadyAdded = false;
+        $(checkOutPhoneNumberList).each(function (index, obj) {
+            try {
+                if (parseInt(obj.StateID) == stateID && (obj.CheckoutPhoneNumber).replace(/\D/g, '') == phoneNumber) {
+                    isNumberAlreadyAdded = true;
+                }
+            }
+            catch (ex) { isNumberAlreadyAdded = false; }
+        });
+        if (isNumberAlreadyAdded) {
+
+            alert("Phone number is already added on selected state.");
+            $("#ddlStates option").first().attr("selected", true);
+            $("#txtCheckoutPhoneNumber").val('');
+            return false;
+        }
+        else {
+            createCheckOutPhoneNumberObject();
+        }
+
+        //$("#ddlStates option").first().attr("selected", true);
+        $("#txtCheckoutPhoneNumber").val('');
+        //$(".info-box").hide();
+        $("#divInfoBoxCheckOutPhoneNumber").hide();
+        renderAccountCheckoutPhoneNumbers();
+        return false;
+    }
+
+    function renderAccountCheckoutPhoneNumbers() {
+        $("#CheckOutPhoneNumberContainer .mini-container").remove();
+
+        var checkOutNumberModel = new Object();
+        checkOutNumberModel.States = states;
+        checkOutNumberModel.CheckOutPhoneNumber = checkOutPhoneNumberList;
+
+        $("#checkOutPhoneNumbersTemplate").tmpl(checkOutNumberModel).appendTo("#CheckOutPhoneNumberContainer");
+
+        $('.mask-phone').unmask();
+        $('.mask-phone').mask('(999)-999-9999');
+    }
+    $("#btnCheckOutPhoneNumber").click(assignCheckOutPhoneNumber);
+
+    function RemoveCheckOutPhoneNumber(element) {
+
+        var accountCheckoutPhoneNumberID = parseInt($(element).closest("li").find("[name$='AccountCheckoutPhoneNumberID']").val());
+        var stateID = parseInt($(element).closest("li").find("[name$='StateID']").val());
+
+
+        //debugger;
+        $($(element).closest("li")).remove();
+        //delete checkOutPhoneNumberList[$(element).attr('data-key')];
+
+        var tempList = new Array();
+        var key = 0;
+        $(checkOutPhoneNumberList).each(function (index, obj) {
+            try {
+                if (parseInt(obj.Key) != accountCheckoutPhoneNumberID) {
+                    obj.Key = key;
+                    tempList.push(obj);
+                    key = key + 1;
+                }
+            }
+            catch (ex) { }
+        });
+
+        checkOutPhoneNumberList = tempList;
+        var acpn = checkOutPhoneNumberList.filter(function (item) {
+            return item.StateID == stateID;
+        });
+
+        if (acpn.length == 0) {
+            for (var i = 0; i < states.length; i++)
+                if (states[i].StateID === "" + stateID + "") {
+                    states.splice(i, 1);
+                    break;
+                }
+        }
+
+        renderAccountCheckoutPhoneNumbers();
+
+        if (checkOutPhoneNumberList.length == 0) {
+            checkOutPhoneNumberList = new Array();
+            $("#divInfoBoxCheckOutPhoneNumber").show();
+        }
+
+        return false;
+    }
+
+    function ShowStateWisePhoneNumber() {
+        if ($("#chkAddStateWisePhoneNumber").is(":checked")) {
+            $("#divStateWisePhoneNumber").show();
+            $("#divDefaulPhoneNumber").hide();
+        } else {
+            $("#divStateWisePhoneNumber").hide();
+            $("#divDefaulPhoneNumber").show();
+        }
+        $(".checkout-phone-number").val('');
+        checkOutPhoneNumberList = new Array();
+        states = new Array();
+        $("#ddlStates option").first().attr("selected", true);
+        $("#txtCheckoutPhoneNumber").val('');
+        renderAccountCheckoutPhoneNumbers();
+    }
+
+    $(".isNumericOnly").keydown(function (e) {
+        return KeyPress_NumericAllowedOnly(e);
+    });
+
+    if ($("#IsHealthPlan").is(":checked")) {
+        $("#divRowAccountCallQueueSetting").show();
+        $("#divAccountCallCenterOrganization").show();
+        $("#divSendConsentData").show();
+    } else {
+        $("#divRowAccountCallQueueSetting").hide();
+        $("#divAccountCallCenterOrganization").hide();
+        $("#divSendConsentData").hide();
+    }
+
+    function showHideMaxAttempt(isMaxAttemptPerHealthPlan) {
+        if (isMaxAttemptPerHealthPlan) {
+            $("#divRowAccountCallQueueSetting").find(".max-attempt").hide();
+            $("#divRowAccountCallQueueSetting").find(".max-attempt-label").hide();
+            $("#divRowAccountCallQueueSetting").find(".max-attempt-tip").hide();
+            $("#maxAttemptDiv").show();
+        } else {
+            $("#maxAttemptDiv").hide();
+            $("#MaxAttempt").removeClass("input-validation-error");
+            $(".field-validation-error").hide();
+            $("#divRowAccountCallQueueSetting").find(".max-attempt").show();
+            $("#divRowAccountCallQueueSetting").find(".max-attempt-label").show();
+            $("#divRowAccountCallQueueSetting").find(".max-attempt-tip").show();
+        }
+    }
+
+    function enableDisableClientId() {
+        if ($("#SendPatientDataToAces").is(":checked")) {
+
+            $("#ClientId").attr("disabled", false);
+            $("#AcesClientShortName").attr("disabled", false);
+
+        }
+        else {
+
+            $("#ClientId").val('');
+            $("#AcesClientShortName").val('');
+
+            $("#ClientId").attr("disabled", true);
+            $("#AcesClientShortName").attr("disabled", true);
+        }
+    }
+
+    function enableDisableAcesToHipIntake() {
+        if ($("#AcesToHipIntake").is(":checked")) {
+
+            $("#AcesToHipIntakeShortName").attr("disabled", false);
+
+        }
+        else {
+            $("#AcesToHipIntakeShortName").val('');
+            $("#AcesToHipIntakeShortName").attr("disabled", true);
+        }
+    }
+
+    $(document).ready(function () {
+
+        var minimumDate = new Date();
+        minimumDate.setDate(minimumDate.getDate() + 1);
+
+        $("#ChatStartDate").datepicker({
+            minDate: minimumDate,
+            dateFormat: 'mm/dd/yy'
+        });
+
+        if ($("#IsShowHraQuestionnaire").val() == 'True') {
+            $("#isShowHraQuestionnaire").attr('disabled', false);
+        }
+        else {
+            $("#isShowHraQuestionnaire").attr('disabled', true);
+            $("#questionnaireTypeNone").attr('disabled', true);
+            //$("#ChatStartDate").attr('disabled', true);
+        }
+
+    });
+
+</script>

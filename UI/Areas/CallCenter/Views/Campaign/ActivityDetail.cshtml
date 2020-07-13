@@ -1,0 +1,135 @@
+@using Falcon.App.Core.Application.Extension
+@using Falcon.App.Core.CallCenter.Enum
+@using Falcon.App.Core.CallCenter.ViewModels
+@model CampaignAcivityDetailViewModel
+
+@{
+    ViewBag.Title = "Activity Detail";
+}
+<html>
+<head>
+    <title>Activity Detail</title>
+</head>
+<body>
+    <h1>
+        Activity Detail
+    </h1>
+
+    <div style="">
+        @if (Model != null)
+        {
+            if (Model.Campaign.IsPublished && Model.Campaign.EndDate > DateTime.Today)
+            {
+                <div style="float: right; clear: both; float: right; font-size: 12px;padding-bottom:10px;font-weight:bold;">
+                    <span style="float: right; font-size: 12px"><a href="javascript:void(0)" onclick="getActivity(0,@Model.Campaign.Id)">Add New Activity</a></span>
+                </div>
+            }
+
+            <div style="clear: both;">
+                <div style="float: left; padding-bottom:5px;">
+                    <div style="width:550px;word-wrap:break-word;">
+                        <b>Campaign Name:</b>
+                        @Model.Campaign.Name
+                    </div>
+                </div>
+                @*<div style="float: left; width: 300px; padding-bottom:5px;">
+                        <b>Code:</b>
+                        @Model.Campaign.CampaignCode
+                    </div>*@
+                <div style="float: right; width: 300px; padding-bottom:5px;">
+                    <span style="float: left; width: 150px;">
+                        <b>Start Date:</b>
+                        @Model.Campaign.StartDate.ToShortDateString()
+                    </span>
+                    <span style="float: left; width: 150px;">
+                        <b>End Date:</b>
+                        @Model.Campaign.EndDate.ToShortDateString()
+                    </span>
+                </div>
+            </div>
+
+
+            <hr style="clear:both;" />
+            if (Model.CampaignActivity != null && Model.CampaignActivity.Any())
+            {
+                <ul style="padding: 0;margin: 0px">
+                    @foreach (var activity in Model.CampaignActivity)
+                    {
+                        <li style="list-style-type: none;">
+                            <div style="float: left; width:50%; padding: 5px 10px; border: solid 1px #000000; ">
+                                <div style="width: 50%;float: left;"><b> Activity Type</b>: @(activity.ActivityType.GetDescription())</div>
+                                <div style="width: 50%;float: left;"><b> Activity Date</b>: @activity.ActivityDate.ToShortDateString()</div>
+
+                                @if (activity.ActivityType == CampaignActivityType.DirectMail)
+                                {
+                                    <b> Mail Type:</b> <text> @activity.DirectMailType <br /></text>
+
+                                    if (activity.AssignmentAgent != null && activity.AssignmentAgent.Any())
+                                    {
+                                        <b style="float:left;">Assigned To:</b>
+                                        <div style="float:left;padding-left: 10px;padding-bottom:2px;">
+                                            @foreach (var agents in activity.AssignmentAgent)
+                                            {
+                                                <div style="padding-bottom: 2px;">@agents</div>
+                                            }
+                                        </div>
+                                    }
+                                }
+                                <div style="float:right;clear: both;">
+
+                                    @if (activity.IsEditable)
+                                    {
+                                        <a href="javascript:void(0)" onclick="getActivity(@activity.ActivityId,@Model.Campaign.Id)">Edit</a>
+                                    }
+                                </div>
+
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No Activity</span>
+            }
+        }
+        else
+        {
+            <span>Invalid Campaign</span>
+        }
+    </div>
+    <div style="display: none">
+        <div id="edit-campaignActivity-dialog">
+            <img src="/App/Images/loading.gif" />
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#edit-campaignActivity-dialog').dialog({ width: 500, height: 'auto', autoOpen: false, modal: true, title: 'Edit Campaign Activity', resizable: true, draggable: true });
+        });
+
+        function getActivity(activityId, campaignId) {
+            $('#edit-campaignActivity-dialog').html('<img src="/App/Images/loading.gif" />');
+            $('#edit-campaignActivity-dialog').dialog('open');
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html", url: "/CallCenter/Campaign/EditActivity?activityId=" + activityId + "&campaignId=" + campaignId,
+                data: '{}',
+                success: function (result) {
+                    $('#edit-campaignActivity-dialog').html(result);
+
+                }, error: function (a, b, c) { }
+            });
+        }
+
+        function closePopup() {
+            $('#edit-campaignActivity-dialog').html('');
+            $('#edit-campaignActivity-dialog').dialog("close");
+        }
+        function SavedSucessFully() {
+            closePopup();
+        }
+    </script>
+</body>
+</html>

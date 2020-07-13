@@ -1,0 +1,30 @@
+@using Falcon.App.Core.CallCenter.Enum
+@using Falcon.App.Core.CallCenter.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+@model UpdatePublishedCampaignEditModel
+@{
+    Layout = null;
+}
+<script language="javascript" type="text/javascript" src="/Content/JavaScript/StartUp.js"></script>
+
+<div>
+    @Html.HiddenFor(m => m.CampaignStartDate)
+    @Html.HiddenFor(m => m.CampaignId)
+</div>
+<div class="editor-row">
+    <div class="editor-label">
+        <span tabindex="1">Start Date</span> @Html.ValidationMessageFor(m => m.CampaignStartDate)
+    </div>
+    @Html.TextBoxFor(m => m.CampaignStartDate, new { @class = "datePicker", @style = "width:240px; ",@disabled="disabled" })
+</div>
+<div class="editor-row">
+    <div class="editor-label">
+        <span tabindex="2">End Date</span> @Html.ValidationMessageFor(m => m.CampaignEndDate)
+    </div>
+    @Html.TextBoxFor(m => m.CampaignEndDate, new { @class = "datePicker", @style = "width:240px;" })
+</div>
+<script type="text/javascript">
+    function closePopup() {
+        $('#edit-campaign').dialog("close");
+    }
+</script>

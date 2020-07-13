@@ -1,0 +1,264 @@
+﻿@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.UI.HtmlHelpers
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical
+@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentTemplateEditModel
+@{
+    var healthAssessmentRepositry = IoC.Resolve<IHealthAssessmentRepository>();
+
+    bool showOnlyClinicalQuestion = Model.Category == (long)HealthAssessmentTemplateCategory.ClinicalQuestions;
+    var questionGroups = healthAssessmentRepositry.GetAllQuestionGroupWithQuestion(showOnlyClinicalQuestion);
+}
+<style type="text/css">
+    .grouptable-haf {
+        width: 95%;
+        margin: 10px 0px;
+        table-layout: fixed;
+    }
+
+        .grouptable-haf th, .grouptable-haf td {
+            text-align: left;
+        }
+
+            .grouptable-haf th.cbox {
+                width: 40px;
+            }
+</style>
+
+<div class="content-main-column" style="padding-left: 10px; width: 95%;">
+    @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.Category)
+    <div class="editor-row">
+        <div class="editor-column" style="width: 42%">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Name) @Html.ValidationMessageFor(m => m.Name)
+            </div>
+            @Html.TextBoxFor(m => m.Name, new { @style = "width:95%" })
+        </div>
+        @if (!showOnlyClinicalQuestion)
+        {
+            <div class="editor-column">
+                <div class="editor-label">
+                    @Html.LabelFor(m => m.TemplateType) @Html.ValidationMessageFor(m => m.TemplateType)
+                </div>
+                @Html.DropDownListFor(m => m.TemplateType, DropDownHelper.HealthAssessmentTemplateTypes())
+            </div>
+        }
+
+    </div>
+    <div class="editor-row" style="margin-top: 10px;">
+        @if (!showOnlyClinicalQuestion)
+        {
+
+            <div class="editor-column">
+                @Html.CheckBoxFor(m => m.IsDefault) Is Default
+            </div>
+            <div class="editor-column">
+                @Html.CheckBoxFor(m => m.IsPublished) Is Published
+            </div>
+            <div class="editor-column">
+                @Html.CheckBoxFor(m => m.IsActive) Is Active
+            </div>
+        }
+        else
+        {
+            @Html.HiddenFor(m => m.IsDefault)
+            @Html.HiddenFor(m => m.IsPublished)
+            @Html.HiddenFor(m => m.IsActive)
+        }
+
+    </div>
+
+
+    <div class="editor-row" style="margin-top: 10px;">
+        <div class="editor-field">
+            <div class="editor-label">
+                @Html.LabelFor(m => m.Notes)
+            </div>
+            @Html.TextAreaFor(m => m.Notes, new { style = "width:95%;" })
+        </div>
+    </div>
+    <div style="clear: both;">
+        @Html.ValidationMessageFor(m => m.SelectedQuestionIds)
+        <fieldset>
+            <legend>
+                <h2>
+                    Questions
+                </h2>
+            </legend>
+            @if (questionGroups != null && questionGroups.Count() > 0)
+            {
+                foreach (var questionGroup in questionGroups)
+                {
+                    var displaySequences = questionGroup.Questions.OrderBy(q => q.DisplaySequence).Select(q => q.DisplaySequence).Distinct().ToArray();
+
+                    <table class="grouptable-haf">
+                        <tr>
+                            <th class="cbox">
+                                <input type="checkbox" class="group-question" onclick="SelectAllQuestion(this);" />
+                            </th>
+                            <th>
+                                @(questionGroups.Count() == 1 ? "Select All" : questionGroup.Name)
+                            </th>
+                        </tr>
+                        @foreach (var displaySequence in displaySequences)
+                        {
+                            var sameSequenceQuestions = questionGroup.Questions.Where(q => q.DisplaySequence == displaySequence && q.IsActive).OrderBy(q => q.Id).Select(q => q).ToArray();
+                            var firstQuestion = sameSequenceQuestions.First();
+                            <tr>
+                                <td>
+                                    @if (Model.SelectedQuestionIds != null && Model.SelectedQuestionIds.Contains(firstQuestion.Id))
+                                    {
+                                        <input type="checkbox" class="question-checkbox" checked="checked" onclick="SelectQuestion(this);" />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" class="question-checkbox" onclick="SelectQuestion(this);" />
+                                    }
+                                </td>
+                                <td>
+                                    @foreach (var question in sameSequenceQuestions)
+                                    {
+                                        <input type="hidden" value="@question.Id" class="question-id" />
+                                    }
+                                    @if (firstQuestion.Id == 70 || firstQuestion.Id == 1008)
+                                    {
+                                        <span>
+                                            @(firstQuestion.Question + " " + string.Join(",", sameSequenceQuestions.Where(q => q.Id != firstQuestion.Id).Select(q => q.Question).ToArray()))
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>@(firstQuestion.Question)</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                }
+            }
+        </fieldset>
+    </div>
+
+    <div id="selectedQuestionsContainer" style="display: none;">
+    </div>
+</div>
+<script type="text/javascript" src="/Scripts/jquery.tmpl.min.js"></script>
+<script id="selectedQuestionsTemplate" type="text/x-jquery-tmpl">
+    <div style="display:none;">
+        <input type="hidden" name="SelectedQuestionIds.Index" value="${Id}" />
+        <input type="text" name="SelectedQuestionIds[${Id}]" value="${Id}" />
+    </div>
+</script>
+<script type="text/javascript" language="javascript">
+    var selectedQuestions = new Object();
+    @if ((Model.SelectedQuestionIds != null) && (Model.SelectedQuestionIds.Count() > 0))
+    {
+        <text>
+    var question = new Object();
+    </text>
+        foreach (var selectedQuestion in Model.SelectedQuestionIds)
+        {
+            <text>
+    {
+        question = new Object();
+        question.Id = @selectedQuestion;
+        selectedQuestions[question.Id] = question;
+    }
+    </text>
+        }
+    }
+
+    function RenderSelectedTests() {//debugger;
+        $("#selectedQuestionsContainer").empty();
+        $.each(selectedQuestions, function (key, terr) {
+            $("#selectedQuestionsTemplate").tmpl(terr).appendTo("#selectedQuestionsContainer");
+        });
+    }
+
+    function SelectQuestion(sourceCheckbox){//debugger;
+        var checkedBox = $(sourceCheckbox);
+        var questionIdHiddenFields = checkedBox.parents("tr:first").find(".question-id");
+        if($(sourceCheckbox).is(':checked')){
+            $.each(questionIdHiddenFields, function(key, questionIdHiddenField){
+                var val = $(questionIdHiddenField).val();
+                question = new Object();
+                question.Id = val;
+                selectedQuestions[val] = question;
+            });
+            CheckGroupQuestionCheckBox(sourceCheckbox);
+        }
+        else{
+            $.each(questionIdHiddenFields, function(key, questionIdHiddenField){
+                var val = $(questionIdHiddenField).val();
+                if(selectedQuestions[val]  != null){
+                    delete selectedQuestions[val];
+                    checkedBox.parents("table:first").find(".group-question").attr("checked",false);
+                }
+            });
+        }
+        RenderSelectedTests();
+    }
+
+
+
+    function SelectAllQuestion(allQuestionCheckBox)
+    {//debugger;
+        if($(allQuestionCheckBox).is(':checked'))
+        {
+            var childquestions = $(allQuestionCheckBox).parents("table:first").find(".question-checkbox");
+            $(childquestions).each(function(){
+                if ($(this).is(':checked')==false)
+                {
+                    $(this).attr('checked',true);
+                    $(this).click();
+                    $(this).attr('checked',true);
+                }
+            });
+        }
+        else
+        {
+            var childquestions = $(allQuestionCheckBox).parents("table:first").find(".question-checkbox");
+            $(childquestions).each(function(){
+                if ($(this).is(':checked'))
+                {
+                    $(this).attr('checked',false);
+                    $(this).click();
+                    $(this).attr('checked',false);
+                }
+            });
+        }
+    }
+
+    function CheckGroupQuestionCheckBox(sourceCheckbox){//debugger;
+        var allSelected = true;
+        var groupQuestionCheckbox = $(sourceCheckbox).parents("table:first").find(".group-question")
+
+        var childquestions = $(sourceCheckbox).parents("table:first").find(".question-checkbox");
+        $.each(childquestions, function(){
+            if ($(this).is(':checked') == false)
+                allSelected = false;
+        });
+        $(groupQuestionCheckbox).attr('checked',allSelected);
+    }
+
+    function CheckQuestionCheckBox()
+    {//debugger;
+        var groupQuestions = $(".group-question");
+        $.each(groupQuestions, function(){
+            var allSelected = true;
+            var childquestions = $(this).parents("table:first").find(".question-checkbox");
+            $.each(childquestions, function(){
+                if ($(this).is(':checked')==false)
+                    allSelected = false;
+            });
+            $(this).attr('checked',allSelected);
+        });
+
+    }
+</script>
+
+@if (Model.SelectedQuestionIds != null && Model.SelectedQuestionIds.Count() > 0)
+{
+    <script type="text/javascript" language="javascript">            $(document).ready(function () { RenderSelectedTests(); CheckQuestionCheckBox(); });        </script>
+}

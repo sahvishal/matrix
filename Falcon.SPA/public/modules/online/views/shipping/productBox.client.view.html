@@ -1,0 +1,35 @@
+﻿<div class="delivery-option clearfix upsale-block">
+    <div class="col-md-1 small-block no-padding-small">
+        <img class="img-height-width" src="Images/small-ultrasound.gif" />
+    </div>
+    <div class="col-md-11 no-padding-small">
+        <div class="text-justify left-buffer-20 right-buffer-10">
+            <h4 class="semibold no-margin ng-binding">Want to receive images of Ultrasound screening?</h4>
+            <div class="top-buffer-10" ng-bind="productdetail.ShortDescription"> </div>
+            <div class="clearfix top-buffer-10 bottom-buffer-10">
+                <strong>
+                    Price: <span class="price-text" ng-bind="productdetail.Price | currency"></span>
+                    <span class="pull-right"><input type="checkbox" ng-model="productdetail.isChecked" ng-check="productdetail.isChecked" ng-click="productOptionChanged()" /> Add to Cart</span>
+                </strong>
+            </div>
+        </div>
+    </div>
+    <!--<span class="delivery-image ultrasound"></span>
+        <div class="col-md-12" >
+            <h4 ng-bind="productdetail.Name"></h4>
+            <p ng-bind="productdetail.ShortDescription"></p>
+        </div>
+        <div class="col-lg-12">
+            <h4 class="pull-left" >Price: <span ng-bind="productdetail.Price | currency"></span></h4>
+
+            <div class="pull-right">
+                <div class="styled-radio small ">
+                    <input type="radio" name="productdetail_{{productdetail.ProductId}}" ng-checked="productdetail.isChecked === true" ng-model="productdetail.isChecked" ng-value="true" ng-change="productOptionChanged()" /> <label>Yes</label>
+                </div>
+                <div class="styled-radio small ">
+                    <input type="radio" name="productdetail_{{productdetail.ProductId}}" ng-checked="productdetail.isChecked !== true" ng-model="productdetail.isChecked" ng-value="false" ng-change="productOptionChanged()" /> <label>No</label>
+                </div>
+            </div>
+        </div>-->
+</div>
+

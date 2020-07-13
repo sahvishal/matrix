@@ -1,0 +1,40 @@
+﻿@using Falcon.App.UI.HtmlHelpers
+@model Falcon.App.Core.Operations.ViewModels.EventStaffAssignmentListModelFilter
+
+<div style="padding-left:5px;overflow:hidden;">
+
+    <div class="editor-column" style="width:14%">
+        <div class="small-text">
+            @Html.LabelFor(x => x.Month)
+        </div>
+        @Html.DropDownListFor(x => x.Month, DropDownHelper.Months((Model != null ? Model.Month : -1)))
+    </div>
+
+    <div class="editor-column" style="width:9%">
+        <div class="small-text">
+            @Html.LabelFor(x => x.Year)
+        </div>
+        @Html.TextBoxFor(x => x.Year, new { @style = "width:50px;" })
+    </div>
+
+    <div class="editor-column" style="width:15%">
+        <div class="small-text">
+            @Html.LabelFor(x => x.PodId)
+        </div>
+        @Html.DropDownListFor(x => x.PodId, DropDownHelper.Pods(Model != null ? Model.PodId : -1))
+    </div>
+
+    <div class="editor-column" style="width:20%">
+        <div class="small-text">
+            @Html.LabelFor(m => m.StaffId)
+        </div>
+        @Html.DropDownListFor(x => x.StaffId, DropDownHelper.UsersHavingTechnicianRole(false, Model != null ? Model.StaffId : -1))
+    </div>
+
+    @Html.HiddenFor(x => x.DefaultView)
+    @Html.HiddenFor(x => x.DefaultCalendarView)
+    @Html.HiddenFor(x => x.Date)
+    <div class="editor-column" style="padding-top:10px;text-align:center">
+        @Html.ActionLink("Clear", "Index", "Schedule") |  @Html.SubmitButton("Search")
+    </div>
+</div>   

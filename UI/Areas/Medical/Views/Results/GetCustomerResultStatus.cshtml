@@ -1,0 +1,128 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.Core.Medical.Domain
+@using Falcon.App.Core.Extensions
+@model IEnumerable<EventCustomerResultStatusListModel>
+@{
+    Layout = null;
+    var settings = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>();
+}
+@if (Model != null && Model.Count() > 0)
+{
+    <div style="width: 100%;">
+        <a id="showTestStateLegends" style="float: right; font-size: 13px;" href="javascript:void(0);" onclick="showTestStateLegends();">Help text</a>
+    </div>
+    
+    foreach (var eventCustomer in Model)
+    {
+        <div style="width: 100%; margin-top: 25px;">
+            <span style="float: left;"><b>Event Id : </b>@eventCustomer.EventId</span>
+            <span style="float: right;"><b>Event Date : </b>@eventCustomer.EventDate.ToShortDateString()</span>
+        </div>
+        <div style="width:100%; overflow-x: scroll">
+            @{ var isNewResultFlow = eventCustomer.EventDate >= settings.ResultFlowChangeDate; }
+            <table id="list-view">
+                <tr>
+                    @foreach (var test in eventCustomer.EventTests)
+                    {
+                        <th style="text-align: center;">
+                            @test.Alias
+                        </th>
+                    }
+                </tr>
+                <tr>
+                    @foreach (var customer in eventCustomer.Customers)
+                    {
+                        foreach (var test in eventCustomer.EventTests)
+                        {
+                            var customerTest = customer.TestResults.Where(t => t.TestId == test.Id).FirstOrDefault();
+                            if (customerTest == null)
+                            {
+                                <td style="text-align: center;">
+                                    N/A
+                                </td>
+                            }
+                            else
+                            {
+                                <td style="text-align: center;">
+                                    @if (isNewResultFlow)
+                                    {
+                                        <img src="/App/Images/NewResultState/@(customerTest.State.ToString()).png" alt="@customerTest.State.GetDescription()" class="result-state" />
+                                    }
+                                    else
+                                    {
+                                        <img src="/App/Images/ResultState/@(customerTest.State.ToString()).gif" alt="@customerTest.State.GetDescription()" class="result-state" />
+                                    }
+                                    <span style="display: none;" class="result-state-header">@customerTest.Label </span>
+                                    <span style="display: none;" class="result-state-data">
+                                        <b>
+                                            @customerTest.State.GetDescription()
+                                        </b>
+                                        @if (!string.IsNullOrWhiteSpace(customerTest.ConductedBy))
+                                        {
+                                            <br />
+                                            <b>Conducted by: </b>
+                                            @customerTest.ConductedBy
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(customerTest.EvaluatedBy))
+                                        {
+                                            <br />
+                                            <b>Physician: </b>
+                                            @customerTest.EvaluatedBy
+                                        }
+                                    </span>
+                                </td>
+                            }
+                        }
+                    }
+                </tr>
+            </table>
+        </div>
+    }
+    <br />
+    @*@Html.Partial("TestStateLegends")*@
+}
+else
+{
+    <h2>
+        No results for customer.
+    </h2>
+}
+
+<div id="testStateLegendsDiv" title="Test State - Explained">
+    @Html.Partial("CustomerTestStateLegends")
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("table#list-view tr:even").addClass("alt-row");
+
+        $('#testStateLegendsDiv').dialog({
+            autoOpen: false, modal: false, width: 980, height: 420, top: 600, closeOnEscape: true
+        });
+    });
+
+
+    $(function () {
+        $("tr:not(:has(th))").hover(function () {
+            $(this).addClass('row-hover');
+        },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+    });
+
+    $('.result-state').qtip({
+        content: {
+            title: function (api) {
+                return $(this).parent().find('span.result-state-header').html();
+            },
+            text: function (api) {
+                return $(this).parent().find('span.result-state-data').html();
+            }
+        }
+    });
+
+    function showTestStateLegends() {
+        $("#testStateLegendsDiv").dialog('open');
+    }
+</script>

@@ -1,0 +1,36 @@
+<form id="zipsearch" name="zipsearch" method="post">
+<script type="text/javascript">
+	function goLink(frm) {
+		var zip = frm.elements['zipcode'];
+		var link = 'http://qa-app.preventionhealth.org/Public/Events?m=25';
+		if (zip.value != '') { link = link + '&z=' + zip.value; }
+		return link;
+	}
+	
+function handleEnter(frm, e) {
+	var charCode;
+	if (e && e.which)
+		{ 
+			charCode = e.which; 
+		}
+	else if (window.event)
+		{ 
+			e = window.event; charCode = e.keyCode; 
+		}
+	if (charCode == 13) 
+		{
+			window.location = goLink(frm); return false 
+		};
+	return true;
+} 
+</script>
+<div>
+	<h3>Locate a screening near you</h3>
+		<label>
+			<input type="text" id="zipcode" onkeypress="return handleEnter(this.form,event);" style="height: 25px; width: 100px; vertical-align: middle; border: 2px solid #75BFDD;" placeholder="Enter Zip Code">
+		</label>
+		<label>
+			<input type="button" id="locate" value="Locate" onclick="location.href=goLink(this.form);" style="width: 75px;">
+		</label>
+</div>
+</form>

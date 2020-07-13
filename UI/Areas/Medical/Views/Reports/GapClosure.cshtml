@@ -1,0 +1,150 @@
+﻿@using Falcon.App.Core.Extensions
+@using System.Linq;
+@using Falcon.App.Core.Scheduling.ViewModels;
+
+@model GapsClosureListModel
+@{
+    ViewBag.Title = "Gaps Closure Report";
+}
+<h1>Gaps Closure Report</h1>
+<script src="/Scripts/reportexportqueue.js"></script>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("GapClosure", "Reports", FormMethod.Get);}
+    @Html.Partial("GapClosureModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();}
+</div>
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+
+        @if (Model.PagingModel.NumberOfItems > 1000)
+        {
+            <a href="javascript:void(0);" onclick='return requestReport("/Medical/ReportsQueue/GapsClosureReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+                Export CSV
+            </a>
+        }
+        else
+        {
+            <a target="_blank" href="/Medical/ExportableReports/GapClosure?id=@Guid.NewGuid().ToString()&@Request.QueryString">Export CSV</a>
+        }
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+    <div style="overflow-x: auto; width: 100%; float: left;">
+        <table id="list-view" style="width:100%;">
+            <tr>
+                <th>
+                    Customer Id
+                </th>
+                <th>
+                    First Name
+                </th>
+                <th>
+                    Middle Name
+                </th>
+                <th>
+                    Last Name
+                </th>
+                <th>
+                    Member Id
+                </th>
+                <th>
+                    HICN
+                </th>
+                <th>
+                    Healthplan
+                </th>
+                <th>
+                    Event Id
+                </th>
+                <th>
+                    Event Date
+                </th>
+                <th>
+                    Pod(s)
+                </th>
+                <th>
+                    Pre-approved Test
+                </th>
+                <th>
+                    Test Performed
+                </th>
+            </tr>
+            @foreach (var item in Model.Collection)
+            {
+                <tr>
+                    <td>
+                        @item.CustomerId
+                    </td>
+                    <td>
+                        @item.FirstName
+                    </td>
+                    <td>
+                        @item.MiddleName
+                    </td>
+                    <td>
+                        @item.LastName
+                    </td>
+                    <td>
+                        @item.MemberId
+                    </td>
+                    <td>
+                        @item.Hicn
+                    </td>
+                    <td>
+                        @item.HealthPlan
+                    </td>
+                    <td>
+                        @item.EventId
+                    </td>
+                    <td>
+                        @item.EventDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @item.PodNumber
+                    </td>
+                    <td>
+                       @item.PreApprovedTest
+                    </td>
+                    <td>
+                        @item.ResultStatus 
+                        @if (!string.IsNullOrEmpty(item.Reason))
+                        {
+                            <br/><b>Reason:</b> @item.Reason
+                        }
+                        @if(!string.IsNullOrEmpty(item.Notes))
+                        {
+                            <br /><b>Notes:</b> @item.Notes
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div>
+        <h2>
+            No Records found.
+        </h2>
+    </div>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+    </script>
+}

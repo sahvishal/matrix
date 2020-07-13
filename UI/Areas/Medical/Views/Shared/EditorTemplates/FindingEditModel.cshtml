@@ -1,0 +1,12 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@model FindingEditModel
+<div class="finding-item">
+    <span class="checkbox"> <input type="checkbox" @(Model.IsSelected ? "checked" : "")/> </span> <span class="label"> @Model.Label </span> <span class="description"> @Model.Description </span>
+    @Html.HiddenFor(m => m.IsSelected)
+    @Html.HiddenFor(m => m.ResultFindingId)
+    @Html.HiddenFor(m => m.FindingId)
+
+    @Html.HiddenFor(m => m.MaxValue)
+    @Html.HiddenFor(m => m.MinValue)
+
+</div>

@@ -1,0 +1,81 @@
+﻿@using Falcon.App.Core.Scheduling.Enum
+@using Falcon.App.Core.Scheduling.ViewModels
+@model OnlineSchedulingConfirmationInfo
+@{
+    ViewBag.Title = "Confirmation";
+    var settings = Falcon.App.DependencyResolution.IoC.Resolve<Falcon.App.Core.Application.ISettings>();
+}
+
+@{Html.BeginForm("Confirmation", "Online", FormMethod.Post);}
+@Html.HiddenFor(m => m.ProcessAndCartViewModel.CartGuid)
+<div class="scheduling-main-container">
+    @Html.Partial("SchedulingProcessHeader", Model.ProcessAndCartViewModel)
+    <div class="content">
+        <div class="table_box">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th>Confirmation</th>
+                </tr>
+                <tr>
+                    <td valign="top">
+                        <div class="p15">
+                            <h1 class="txt-green"><strong><em>Thank you for choosing @settings.CompanyName</em></strong></h1>
+                        </div>
+                        <div class="mt10">
+                            <div class="left-float confirm_preview_box" style="width:620px;">
+                                <div class="confirm_preview_box_header">
+                                    <div class="left-float">
+                                  	    <h3>Click to print the confirmation receipt.</h3>
+                                  	</div>                                    
+                                    <div class="right-float">                                
+                                        <a href="javascript:void(0);" class="ml5 pl5" onclick="printConfirmation(@Model.EventId, @Model.CustomerId);"><img src="/Config/Content/Images/print_icon.png" width="33" height="30" alt="" /></a>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="preview p15">
+                                    @Html.Partial("AppointmentConfirmation", Model.ConfirmationViewModel)
+                                </div>
+                            </div>
+                            <div class="right-float" style="width:300px;">
+                                <a href="javascript:void(0);" onclick="printConfirmation(@Model.EventId, @Model.CustomerId);" class="confirmation_btn_blue"><span class="txt">Print appointment details</span></a><br /><br />
+                                @if (Model.EventType == EventType.Retail)
+                                {
+                                    <a href="Javascript:void(0);" onclick="$('form').submit();" class="confirmation_btn_orange"><span class="txt">Sign up another person</span></a> 
+                                }
+                                @if(Model.IsHaffilled)
+                                {
+                                    <br /><br /> 
+                                    <a href="@Model.PrintUrl" target="_blank" class="confirmation_btn_blue"><span class="txt">Print Health Assessment Form</span></a>
+                                }                              
+                            </div>                                                        
+                            <div class="right-float" style="width:300px;">
+                                @Html.Partial("/Config/Content/Views/Shared/ThankYouContent.cshtml")
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="mt10 pt5 txt-align-right">
+            <a href="@settings.SiteUrl">
+                <span class="button_green ml5" style="text-align: center;">Finish &rsaquo;</span>
+            </a>
+        </div>
+    </div>
+</div>
+@{Html.EndForm();}
+<script type="text/javascript" language="javascript">
+    function printConfirmation(eventId, customerId) {
+        var url = "/Communication/AppointmentConfirmation?eventId=" + eventId + "&customerId=" + customerId;
+        window.open(url, "AppointmentConfirmation_" + customerId, "width=680, height=700, resizable=0, scrollbars=1");
+    }
+
+//    function printHaf() {
+//        var guid = getGuid();
+//        var url = "/Scheduling/Online/PrintHealthAssessmentForm?guid=" + guid;
+//        window.open(url, "PrintHealthassessmentForm", "width=680, height=700, resizable=0, scrollbars=1")
+//    }
+</script>
+
+

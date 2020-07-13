@@ -1,0 +1,147 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.DependencyResolution
+@using Falcon.App.Core.Medical.ViewModels
+@model HealthAssessmentHeaderEditModel
+@{
+    Layout = null;
+
+    var settings = IoC.Resolve<ISettings>();
+}
+<style type="text/css">
+    .full-width {
+        float: left;
+        width: 865px;
+        margin-top: 5px;
+    }
+
+    .threeColmn-width {
+        float: left;
+        width: 250px;
+    }
+
+    .bold-underline {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .underline {
+        text-decoration: underline;
+    }
+
+    .row-margin {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding-left: 20px;
+    }
+
+    .participationConcentForm {
+        font-size: 11.5pt;
+        font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+    }
+</style>
+
+<div id="info" class="participationConcentForm" style="float: left; width: 97%; margin-top: 30px; page-break-before: always;">
+    <div class="full-width">
+        <center>
+            <img src="@settings.LargeLogo" style="text-align: center" />
+        </center>
+
+    </div>
+    <div class="full-width row-margin" style="margin-top: 15px;">
+        <div style="width: 300px;">
+            <b>Date:</b>
+            <input type="text" style="width: 25px" value="@Model.EventDate.Month" /> /<input type="text" style="width: 25px" value="@Model.EventDate.Day" /> /<input type="text" style="width: 40px" value="@Model.EventDate.Year" />
+        </div>
+    </div>
+    <div class="full-width row-margin" style="margin-top: 15px;">
+        <div style="width: 300px;float: left;">
+            <b>Name: Last</b> <input type="text" style="width: 170px" value="@Model.CustomerName.LastName" />
+        </div>
+        <div class="threeColmn-width">
+            <b>First</b> <input type="text" style="width: 175px" value="@Model.CustomerName.FirstName" />
+        </div>
+        <div class="threeColmn-width">
+            <b>Date of Birth:</b>
+            <input type="text" style="width: 25px" value="@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("MM") : "")" /> /
+            <input type="text" style="width: 25px" value="@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("dd") : "")" /> /
+            <input type="text" style="width: 40px" value="@(Model.DateofBirth.HasValue ? Model.DateofBirth.Value.ToString("yyyy") : "")" />
+        </div>
+    </div>
+    <div class="full-width row-margin" style="text-align: center;margin-top: 20px;">
+        <h2>PARTICIPATION CONSENT</h2>
+    </div>
+    <div class="full-width row-margin">
+        <p>
+            By signing below, you authorize the personnel of Matrix Medical Network Plus PC (&#34;Matrix Medical Network&#34;) to perform the tests being offered. You also understand and agree that:
+        </p>
+        <div style="width: 100%">
+            <ol>
+                <li style="margin-top: 20px;">
+                    I agree to follow up with my personal care physician (&#34;PCP&#34;) to receive the results of any tests, and to ensure that today&#8217;s findings are included in any treatment plan designed by my PCP.
+                </li>
+                <li style="margin-top: 10px;">
+                    The responsibility for initiating follow-up exams to confirm the results of these tests and obtain professional medical assistance is mine alone and not that of any organization associated with this testing.
+                </li>
+                <li style="margin-top: 10px;">
+                    Sonography has many limitations and may not find many abnormalities. This sonogram may be limited by many reasons, such as body shape, weight and position. Although the sonogram is a helpful diagnostic tool,
+                    it should not be considered absolute proof of the absence of an abnormality.
+                </li>
+                <li style="margin-top: 10px;">
+                    If a blood sample is required, I hereby consent to the drawing of a blood sample for the purpose of testing.
+                </li>
+            </ol>
+        </div>
+    </div>
+    @*<div class="full-width row-margin">
+        <p>
+            <b>Note:</b>The test results and other information provided by Matrix Medical Network are not intended to be, and are not a substitute for, professional medical advice.  Always seek the advice of your physician, nurse, or other qualified health care provider before you undergo any treatment or for answers to any questions you may have regarding a medical condition. Nothing contained in the health information provided by Matrix Medical Network is intended to be used for medical diagnosis or treatment without first consulting with your physician.
+        </p>
+
+    </div>*@
+    <div class="full-width row-margin">
+        <p>
+            Confidentiality Statement: Confidentiality of data relating to individual clients and visitors to Matrix Medical Network&#8217;s mobile testing units, including their identity, is respected by Matrix Medical Network. Matrix Medical Network makes every 
+            effort possible not only to honor, but to exceed the legal requirements of medical/health information privacy that applies to the Health Insurance Portability and Accountability Act of 1996, public law 104-191. 
+            Services are completely confidential. I have received and understand the Notice of Privacy Practices and attest that all information provided above is correct.
+        </p> 
+    </div>
+    @*<div class="full-width row-margin">
+            <p>
+                I have received and understand the Notice of Privacy Practices and attest that all information provided above is correct.
+            </p>
+        </div>*@
+    <div class="full-width row-margin" style="margin-top: 20px;">
+        @if (Model.ParticipationConsent != null && !string.IsNullOrWhiteSpace(Model.ParticipationConsent.SignatureImageUrl))
+        {
+            <div style="background-color: #ccc; width: 660px;">
+                <b>Signature:</b><img src="@Model.ParticipationConsent.SignatureImageUrl" style="height: 90px; vertical-align: middle;" /><b>Date:</b><span>@Model.ParticipationConsent.ConsentSignedDate</span>
+            </div>
+        }
+        else
+        {
+            <div style="background-color: #ccc; width: 660px;">
+                <b>Signature:</b><input type="text" style="width: 300px; background-color: #ccc; border: 0; border-bottom: 1px solid black; " /><b>Date:</b><input type="text" style="width: 30px; background-color: #ccc; border: 0; border-bottom: 1px solid black;" />/<input type="text" style="width: 30px; background-color: #ccc; border: 0; border-bottom: 1px solid black;" />/<input type="text" style="width: 30px;background-color: #ccc; border: 0; border-bottom: 1px solid black;" />
+            </div>
+        }
+    </div>
+    <div class="full-width row-margin">
+        <u>Insurance, payment information and assignment of benefits</u>
+    </div>
+    <div class="full-width row-margin">
+        I request Matrix Medical Network to submit claims on my behalf to my insurance company, Medicare, or other third party payor for my care and authorize the disclosure of health information to the extent necessary to obtain payment for those services.
+    </div>
+    <div class="full-width row-margin" style="margin-top: 20px;">
+        @if (Model.ParticipationConsent != null && !string.IsNullOrWhiteSpace(Model.ParticipationConsent.InsuranceSignatureImageUrl))
+        {
+            <div style="background-color: #ccc; width: 660px;">
+                <b>Signature:</b><img src="@Model.ParticipationConsent.InsuranceSignatureImageUrl" style="height: 90px; vertical-align: middle;" /> <b>Date:</b><span>@Model.ParticipationConsent.InsuranceConsentSignedDate</span>
+            </div>
+        }
+        else
+        {
+            <div style="background-color: #ccc; width: 660px;">
+                <b>Signature:</b><input type="text" style="width: 300px; background-color: #ccc; border: 0; border-bottom: 1px solid black; " /> <b>Date:</b><input type="text" style="width: 30px; background-color: #ccc; border: 0; border-bottom: 1px solid black;" />/<input type="text" style="width: 30px; background-color: #ccc; border: 0; border-bottom: 1px solid black;" />/<input type="text" style="width: 30px;background-color: #ccc; border: 0; border-bottom: 1px solid black;" />
+            </div>
+        }
+    </div>
+</div>

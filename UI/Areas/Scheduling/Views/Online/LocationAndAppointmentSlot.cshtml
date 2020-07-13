@@ -1,0 +1,219 @@
+﻿@model Falcon.App.Core.Scheduling.ViewModels.OnlineSchedulingLocationAndAppointmentEditModel
+@{
+    ViewBag.Title = "LocationAndAppointmentSlot";
+}
+<script language="javascript" src="/App/jquery/js/jquery.bb.watermark.js"></script>
+@{Html.BeginForm("LocationAndAppointmentSlot", "Online", FormMethod.Post);}
+
+@if (File.Exists(Server.MapPath("/Config/Content/Views/Shared/QCTag_Location.cshtml")))
+{
+    @Html.Partial("/Config/Content/Views/Shared/QCTag_Location.cshtml")
+}
+<div class="scheduling-main-container">   
+    @Html.Partial("SchedulingProcessHeader", Model.ProcessAndCartViewModel)
+
+    @if (Model.FeedbackMessage != null)
+    {
+        <div class="warning-message">
+            @Model.FeedbackMessage.Message
+        </div>   
+    }
+    <div class="content">
+        <div class="event-list-toggle" >
+            <div class="mb10 mt10">
+                <div class="left-float">                
+                    @if (string.IsNullOrEmpty(Model.Events.Filter.InvitationCode) || (!string.IsNullOrEmpty(Model.Events.Filter.InvitationCode) && !string.IsNullOrEmpty(Model.Events.Filter.ZipCode)))
+                    {
+                        @Html.DropDownListFor(m => m.Events.SortOrderBy, Falcon.App.UI.HtmlHelpers.DropDownHelper.SortOrderByRanges(), new { @class="grey", @style = "width:240px;"  })
+                    }
+                </div>
+                <div class="right-float">
+                    @if (string.IsNullOrEmpty(Model.Events.Filter.InvitationCode) || (!string.IsNullOrEmpty(Model.Events.Filter.InvitationCode) && !string.IsNullOrEmpty(Model.Events.Filter.ZipCode)))
+                    {                    
+                        @Html.TextBoxFor(m => m.Events.Filter.ZipCode, new { @class = "grey zip-search", @value = "Enter your Zip Code" })
+                        <input type="button" class="button_green search-button-toggle" onclick="onClickGetEvents();" value="Search" />
+                        <img src="/App/Images/loading.gif" alt="Loading ..." class="search-button-toggle" style="display: none;" />
+                        @Html.HiddenFor(m => m.Events.Filter.Radius)
+                    }
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div id="event-list">
+                 @Html.Partial("AvailableLocations", Model.Events)
+            </div>
+        </div>
+        <div id="selected-event-div" style="margin-top:5px;">
+            @if (Model.SelectedEvent != null && Model.SelectedEvent.EventId > 0)
+            {
+                @Html.Partial("SelectedLocation", Model.SelectedEvent)
+            }
+        </div>            
+        @Html.HiddenFor(m => m.Events.Filter.InvitationCode)
+        @Html.HiddenFor(m => m.Events.Filter.CorpCode)
+        @Html.HiddenFor(m => m.CouponCode)
+        @Html.HiddenFor(m => m.Version)
+        @Html.HiddenFor(m => m.SelectedEvent.EventId)
+
+        <div class="submit-btn-toggle" style="text-align: right; margin-top:10px;">             
+            <input type="button" class="button_green" value="Next" onclick="onclick_SubmitButton();" />                
+        </div>
+        <div class="submit-btn-toggle" style="display: none; text-align: right; margin-top:10px;">
+            <img src="/App/Images/loading.gif" alt="" />
+        </div>
+    </div>    
+    <div id="no-events-dialog-div">
+    </div>
+    <script language="javascript" type="text/javascript">
+
+        function ShowEventRequestForm() {
+            
+            if (!isEventListEmpty()) {
+                return;
+            }
+
+            $.ajax({ 'type': 'GET',
+                'dataType': 'html',
+                'url': '/Scheduling/Online/EventRequest?zipCode=@(Model.Events.Filter.ZipCode)',
+                'data': '{}',
+                'success': function (result) { $("#no-events-dialog-div").html(result); $('#no-events-dialog-div').dialog('open'); },
+                'error': function () { }
+            });
+            return false;
+        }
+
+        var toggleOption = 'fade';
+
+        function locationAndTimeToggle(){
+            //$(".event-list-toggle").toggle(toggleOption);
+            $("#selected-event-div .select-time-selectedevent-action").parent().toggle();            
+        }
+
+        $(document).ready(function () {
+            try {
+                setMethodRef(onClickGetEvents, onClickSelectEvent);                                
+            }
+            catch (e) {
+            }
+
+            @if (Model.SelectedEvent == null)
+            {                
+                <text> 
+                ShowEventRequestForm();
+                </text>
+            }
+            else
+            {
+                <text>  $("#selected-event-div .select-time-selectedevent-action").parent().hide(); onClickGetEvents();</text>
+            }
+                        
+            $("#selected-event-div .select-time-selectedevent-action").click(function(){
+                locationAndTimeToggle();
+            });
+
+
+            $('.zip-search').keypress(function (evt) {
+                var key = (evt.which ? evt.which : ((evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : 0)));
+                window.status = "Code: " + key;
+                if (key == 13) {
+                    $(".search-button").click();
+                    return false;
+                }
+            });
+
+            $("select[id*='SortOrderBy']").change(function () { onClickGetEvents(null); });
+
+            $('#no-events-dialog-div').dialog({ width: 650, autoOpen: false, title: 'Event Request Form', resizable: false, draggable: true, modal: true });
+        });
+
+        function onClickGetEvents(url) {//debugger;
+            var zipcode = $.trim($('.zip-search').val());
+            var invitationCode = $("input[type=hidden][id*='InvitationCode']").val();
+            var radius = $("input[type=hidden][id*='Radius']").val();
+            if (zipcode.length < 1 && invitationCode.length < 1) {
+                return;
+            }
+
+            var eventId = $("input[type=hidden][id*='EventId']").val();
+
+            var sortOrderBy = $("select[id*='SortOrderBy'] option:selected").val();
+            var corpCode = $("input[type=hidden][id*='CorpCode']").val();
+
+            if (url != null && url.indexOf("EventId=") < 1) {
+                url += "&EventId=" + eventId;
+            }
+            else {
+                url = '/Scheduling/Online/AvailableLocations?EventId=' + eventId + '&SortOrderBy=' + sortOrderBy + '&ZipCode=' + zipcode + '&InvitationCode=' + invitationCode + '&Radius=' + radius;
+            }
+
+            $(".search-button-toggle").toggle();
+
+            $("#event-list").html("<div style='width:90%; margin: 10px auto; text-align: center; padding: 30px 0px;'> <img src='/App/Images/loading.gif' alt=''> Loading.... </div>");
+
+            $.ajax({ 'type': 'GET',
+                'dataType': 'html',
+                'url': (url == null ? '/Scheduling/Online/AvailableLocations?EventId=' + eventId + '&SortOrderBy=' + sortOrderBy + '&ZipCode=' + zipcode : url), 'data': '{}',
+                'success': function (result) { $("#event-list").html(result); setMethodRef(onClickGetEvents, onClickSelectEvent); $(".search-button-toggle").toggle(); ShowEventRequestForm(); },
+                'error': function () { $(".search-button-toggle").toggle(); }
+            });
+        }
+
+        function onClickSelectEvent(eventId) {
+            $(".submit-btn-toggle").toggle();
+
+            var zipcode = $.trim($('.zip-search').val());
+            var invitationCode = $("input[type=hidden][id*='InvitationCode']").val();
+            var corpCode = $("input[type=hidden][id*='CorpCode']").val();
+            var radius = $("input[type=hidden][id*='Radius']").val();
+            var guid = getGuid();
+            var couponCode = $("input[type=hidden][id*='CouponCode']").val();
+            var version = $("input[type=hidden][id*='Version']").val();
+
+            $.ajax({ 'type': 'POST',
+                'dataType': 'json',
+                'url': '/Scheduling/Online/SaveTempCartforSelectLocation?guid=' + guid + '&eventId=' + eventId + '&zipCode=' + zipcode + '&invitationCode=' + invitationCode + '&corpCode=' + corpCode + "&radius=" + radius + "&couponCode=" + couponCode + "&v=" + version,
+                'data': '{}',
+                'success': function (result) { getSelectedEvent(eventId); },
+                'error': function () { $(".submit-btn-toggle").toggle();}
+            });
+        }
+
+        function getSelectedEvent(eventId){
+            $.ajax({ 'type': 'GET',
+                'dataType': 'html',
+                'url': '/Scheduling/Online/SelectedLocation?eventId=' + eventId, 
+                'data': '{}',
+                'success': function (result) { 
+                    
+                    $("#selected-event-div").html(result); 
+                    
+                    $("#selected-event-div .select-time-selectedevent-action").click(function(){
+                        locationAndTimeToggle();
+                    });
+
+                    $(".submit-btn-toggle").toggle();
+
+                    locationAndTimeToggle(); 
+                    setEventId(eventId);                     
+                    window.location = "#selected-event-div";
+                },
+                'error': function () {$(".submit-btn-toggle").toggle(); }
+            });
+        }
+
+    </script>
+   
+    <script language="javascript" type="text/javascript">        
+
+        function setEventId(eventId) {//debugger;
+            $("input[type=hidden][id*='EventId']").val(eventId);            
+        }
+    </script>    
+</div>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".zip-search").watermark({ 'text': 'Choose a Zip Code', 'bg_image': '/App/images/magnifying_glass_icon.png', 'color': '#999999', 'fontSize': '9pt', 'top': '290px', 'left': '1190px' });
+    });
+    function onclick_SubmitButton() { $(".submit-btn-toggle").toggle(); $('form').submit(); } 
+    
+</script>
+@{Html.EndForm();}

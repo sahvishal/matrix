@@ -1,0 +1,211 @@
+﻿@using Falcon.App.Core.Application
+@using Falcon.App.Core.Extensions
+@using Falcon.App.Core.Sales.ViewModels
+@model HospitalPartnerEventListModel
+
+@if (Model.Collection != null && !Model.Collection.IsNullOrEmpty())
+{
+    @Html.DisplayFor(m => m.PagingModel)               
+    <table id="list-view">
+        <tr>
+            <th style="text-align:center">
+                Event Location
+            </th>
+            <th style="text-align:center">
+                Date
+            </th>
+            <th style="text-align:right">
+                Screened Customers
+            </th>
+            <th style="text-align:right">
+                Normals
+            </th>
+            <th style="text-align:right">
+                Abnormals
+            </th>
+            <th style="text-align:right">
+                Criticals
+            </th>         
+            <th style="text-align:right">
+                Urgent
+            </th>                 
+            <th style="text-align:right;">
+                Action
+            </th>
+        </tr>
+        @foreach (var hospitalPartnerEvent in Model.Collection)
+        {
+            var userSession = Falcon.App.DependencyResolution.IoC.Resolve<ISessionContext>().UserSession;
+            <tr>
+                <td>@hospitalPartnerEvent.HostAddress</td>
+                <td style="text-align:right">@hospitalPartnerEvent.EventDate.ToShortDateString()</td>
+                <td style="text-align:right">@hospitalPartnerEvent.ScreenedCustomers</td>
+                <td style="text-align:right">@hospitalPartnerEvent.NormalCustomers</td>
+                <td style="text-align:right">@hospitalPartnerEvent.AbnormalCustomers</td>
+                <td style="text-align:right">@hospitalPartnerEvent.CriticalCustomers</td>
+                <td style="text-align:right">@hospitalPartnerEvent.UrgentCustomers</td>
+                <td style="text-align:right; width:70px;">
+                    @if (userSession.CurrentOrganizationRole.GetSystemRoleId == (long)Falcon.App.Core.Enum.Roles.HospitalPartnerCoordinator)
+                    {
+                        <a href="/Sales/HospitalPartner/EventCustomers?eventId=@hospitalPartnerEvent.EventId&hospitalPartnerId=@userSession.CurrentOrganizationRole.OrganizationId">View</a>
+                        <br />
+                    }
+                    else if (userSession.CurrentOrganizationRole.GetSystemRoleId == (long)Falcon.App.Core.Enum.Roles.HospitalFacilityCoordinator)
+                    {
+                        <a href="/Sales/HospitalPartner/EventCustomers?eventId=@hospitalPartnerEvent.EventId&hospitalFacilityId=@userSession.CurrentOrganizationRole.OrganizationId">View</a>
+                        <br />
+                    }
+
+                    <a href="javascript:void(0);" onclick="addNotes(@hospitalPartnerEvent.EventId);">Add Notes</a>
+                    <br />
+                    @{var hasNotes = hospitalPartnerEvent.Notes != null && hospitalPartnerEvent.Notes.Count() > 0 ? true : false;}
+                    
+                    <a id="Id_@(hospitalPartnerEvent.EventId)" href="javascript:void(0)" class="notes-detail" style='display:@(hasNotes?"block":"none")'><b>Notes</b></a>
+                    <div class="notes-div" style="display:none;">
+                        @if(hasNotes)
+                        {
+                            foreach (var note in hospitalPartnerEvent.Notes)
+                            {
+                                <div style="float: left; width: 400px;"> 
+                                    <span style="float: left; width: 190px;"><b>On: </b>@(note.EnteredOn.HasValue? note.EnteredOn.Value.ToShortDateString():string.Empty)</span>
+                                    <span style="float: right; width: 190px;"><b>By: </b>@note.CreatedByUser</span>
+                                </div>
+                                <div style="float: left; width: 400px; border-bottom: solid 1px; margin-bottom:10px; padding-top:2px;"><b>Notes: </b>@note.Note</div> <br />
+                            }
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <div><h2>No Records found!</h2></div>
+}
+
+<div id="event-notes-dialog" title="Add Notes">
+    <div>
+        <textarea id="event-notes" rows="5" cols="50"></textarea>
+    </div>
+    <div class="event-notes-buttons" style="text-align: right;">
+        <button id="save-event-notes" style="width: 70px; height: 25px;" onclick="saveEventNotes(); return false;">
+            Save
+        </button>
+    </div>
+    <div class="event-notes-buttons" style="display: none; text-align: right;">
+        <img src="/App/Images/loading.gif" alt="" />
+        Updating
+    </div>
+</div>
+<link href="/Content/Styles/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/jquery.qtip.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("table#list-view tr:even").addClass("alt-row");
+    });
+
+
+    $(function () {
+        $("tr:not(:has(th))").hover(function () {
+            $(this).addClass('row-hover');
+        },
+        function () {
+            $(this).removeClass('row-hover');
+        });
+    });
+
+    $('.notes-detail').qtip({
+        position: {
+            my: 'right top'
+        },
+        content: {
+            title: "Notes",
+            text: function (api) {
+                return $(this).parent().find('.notes-div').html();
+            }
+        },
+        style: {
+            width: '400px'
+        }
+    });
+</script>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#event-notes-dialog').dialog({ width: 480, autoOpen: false, title: 'Add Notes', resizable: false, draggable: true });
+    });
+
+    var eventId = 0;
+
+    function addNotes(theEventId) {
+        eventId = theEventId;
+        $("#event-notes").val('');
+        $('#event-notes-dialog').dialog('open');
+    }
+
+    function saveEventNotes() {
+        $(".event-notes-buttons").toggle();
+        if (eventId > 0) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                url: "/Sales/HospitalPartner/SaveEventNotes",
+                data: "{'eventId' : '" + eventId + "', 'text' : '" + $("#event-notes").val().replace(/'/gi, "\\\'").replace(/"/gi, "\\\"") + "'}",
+                success: function (result) {
+                    alert("Updated!");
+                    $(".event-notes-buttons").toggle();
+                    $('#event-notes-dialog').dialog('close');
+                    loadNotes(eventId);
+                },
+                error: function (a, b, c) {
+                    if (a.status == 401) {
+                        alert('You do not have permission to Save Notes!');
+                    }
+                    else
+                        {alert("Some error occured while saving Notes! \nPlease try again or contact the support team!");}
+                    $(".event-notes-buttons").toggle();
+                    $('#event-notes-dialog').dialog('close');
+                }
+            });
+        }
+    }
+</script>
+<script src="/App/JavascriptFiles/JSonHelper.js" type="text/javascript"></script>
+<script type="text/javascript" language="javascript">
+    function loadNotes(theEventId) {
+        if (theEventId > 0) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: "/Sales/HospitalPartner/GetEventNotes",
+                data: "{'eventId' : '" + theEventId + "'}",
+                success: function (result) {
+                    var notesString = "";
+                    if (result.length > 0) {
+                        for (var i = 0; i < result.length; i++) {                                
+                            notesString += "<div style='float: left; width: 400px;'>";
+                            notesString += "<span style='float: left; width: 190px;'><b>On: </b>" + (correctDateExpression(result[i].EnteredOn).getMonth() + 1) + "/" + correctDateExpression(result[i].EnteredOn).getDate() + "/" + correctDateExpression(result[i].EnteredOn).getFullYear() + "</span>";
+                            notesString += "<span style='float: right; width: 190px;'><b>By: </b>" + result[i].CreatedByUser + "</span>";
+                            notesString += "</div>";
+                            notesString += "<div style='float: left; width: 400px; border-bottom: solid 1px; margin-bottom:10px; padding-top:2px;'><b>Notes: </b>" + result[i].Note + "</div> <br />";
+                        }
+                    }
+                    $("#Id_" + theEventId).parent().find('.notes-div').html(notesString);
+                    if (notesString != "") {
+                        $("#Id_" + theEventId).show();
+                    }
+                },
+                error: function (a, b, c) {
+                    if (a.status == 401) {
+                        alert('You do not have permission to Get Notes!');
+                    } 
+                }
+            });
+        }
+    }
+</script>

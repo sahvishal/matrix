@@ -1,0 +1,121 @@
+﻿<script type="text/javascript" src="/Scripts/jquery.cookie.js"></script>
+<div id="dvSessionTimeoutDialog" style="min-height: 0 !important;display: none;" >
+    <div>Your Session is about to expire</div>
+    <div>Time Left: <span id="spanSessionTimerCountDown"></span></div>
+    <div style="text-align: center;margin-top: 20px;">
+        <input type="button" value="Continue" class="btn btn-info" onclick="javascript: $('#dvSessionTimeoutDialog').dialog('close');" />
+        <input type="button" value="Logout" class="btn" onclick="javascript: SessionManagerLogout();" />
+    </div>
+</div>
+<script type="text/javascript">
+    var SessionManagerLogout = function () {
+        window.location.href = "/App/Default.aspx";
+    };
+    $(document).ready(function () {
+        var cookie = $.cookie('exptimer');
+        if (cookie != null) {
+            var sessionTimeout = cookie.substr(0, cookie.indexOf('&'));
+            var str = cookie.substr(sessionTimeout.length + 1);
+            var strSplit = str.split('&');
+
+            var lastActivityTime = new Date(getValueForCookieQuery(strSplit, "lasttime"));
+
+            lastActivityTimeFlag = lastActivityTime;
+            $('#dvSessionTimeoutDialog').dialog({
+                autoOpen: false,
+                title: "Timeout warning",
+                modal: true,
+                show: "slow",
+                width: 300,
+                height: 'auto',
+                close: function () {
+                    
+                    $.ajax({
+                        url: '/Login/RefreshSession', contentType: "application/json; charset=utf-8", dataType: 'json', type: 'Get'
+                    });
+                }
+            });
+            //if (getValueForCookieQuery(strSplit, "enabletimer").toString().toLowerCase() == "true")
+            //    setInterval(function () { SessionMonitoring(); }, 1000);
+        }
+    });
+
+    var lastActivityTimeFlag = "";
+    var SessionTimeoutCounterSeconds = 0;
+    var popupDisplayed = false;
+    var sessionTimeoutDifference = 0;
+    var logoutInProgress = false;
+
+    var SessionMonitoring = function () {
+        SessionTimeoutCounterSeconds++;
+        var cookie = $.cookie('exptimer');
+        if (cookie != null) {
+            var sessionTimeout = cookie.substr(0, cookie.indexOf('&'));
+            var str = cookie.substr(sessionTimeout.length + 1);
+            var strSplit = str.split('&');
+            
+            var warningTime = new Date(getValueForCookieQuery(strSplit, "warningtime"));
+            var sessionTimeoutTime = new Date(getValueForCookieQuery(strSplit, "logoutat"));
+            var lastActivityTimeCounter = new Date(getValueForCookieQuery(strSplit, "lasttime"));
+            if (getValueForCookieQuery(strSplit, "enabletimer").toString().toLowerCase() == "true") {
+                if (lastActivityTimeFlag.toString() == new Date(getValueForCookieQuery(strSplit, "lasttime")).toString()) {
+
+                    sessionTimeoutDifference = (sessionTimeoutTime.getTime() - lastActivityTimeCounter.getTime()) / 1000;
+                    $('#spanSessionTimerCountDown').text(sessionTimeoutDifference - SessionTimeoutCounterSeconds);
+                    lastActivityTimeCounter = new Date(lastActivityTimeCounter.getTime() + (1000 * SessionTimeoutCounterSeconds));
+
+                    if (getValueForCookieQuery(strSplit, "enabletimer").toString().toLowerCase() == "true") {
+                        if (lastActivityTimeCounter > warningTime) {
+                            if (!popupDisplayed) {
+                                $('#dvSessionTimeoutDialog').dialog('open');
+                                popupDisplayed = true;
+                            }
+                        }
+                        if (lastActivityTimeCounter < warningTime) {
+                            if (popupDisplayed) {
+                                
+                                if ($("#dvSessionTimeoutDialog").dialog("isOpen")) {
+                                    $('#dvSessionTimeoutDialog').dialog('close');
+                                }
+                                popupDisplayed = false;
+                            }
+                        }
+
+                        if (lastActivityTimeCounter > sessionTimeoutTime) {
+                            if (!logoutInProgress) {
+                                logoutInProgress = true;
+                                window.location.href = "/App/Default.aspx";
+                              
+                            }
+                        }
+                    }
+                } else {
+                    var cookie1 = $.cookie('exptimer');
+                    var sessionTimeout1 = cookie.substr(0, cookie1.indexOf('&'));
+                    var str1 = cookie.substr(sessionTimeout1.length + 1);
+                    var strSplit1 = str1.split('&');
+                    lastActivityTimeFlag = new Date(getValueForCookieQuery(strSplit1, "lasttime"));
+                    SessionTimeoutCounterSeconds = 0;
+                }
+            } else {
+
+                //console.log("1. Loging/Exit");
+                if (!logoutInProgress) {
+                    logoutInProgress = true;
+                    //  console.log("2. Loging/Exit");
+                   // window.location.href = "/Users/Login/Exit";
+                    window.location.href = "/App/Default.aspx";
+                }
+            }
+        }
+    };
+
+    var getValueForCookieQuery = function (strSplit, key) {
+        for (var i = 0; i < strSplit.length; i++) {
+            var splitParam = strSplit[i].split('=');
+            if (splitParam[0] == key)
+                return splitParam[1];
+        }
+        return "";
+    };
+</script>

@@ -1,0 +1,106 @@
+﻿@using Falcon.App.Core.Extensions  
+@model Falcon.App.Core.Scheduling.ViewModels.TestsBookedListModel 
+@{
+    ViewBag.Title = "Test Booked";
+}
+
+<h1>Test Booked</h1>
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+<script src="/Scripts/reportexportqueue.js"></script>
+<div id="ExportToCsvMessage" style="display:none;">
+</div>
+<div id="list-filter">
+    @{Html.BeginForm("TestsBooked", "Reports", FormMethod.Get);}
+    @Html.Partial("TestsBookedListModelFilter", new ViewDataDictionary(Model.Filter))
+    @{Html.EndForm();} 
+</div> 
+@if (Model != null && !Model.Collection.IsNullOrEmpty())
+{
+    <div class="exportcsvlink">
+        @if (Model.PagingModel.NumberOfItems > 1000)
+{
+    <a href="javascript:void(0);" onclick='return requestReport("/Scheduling/ReportsQueue/TestsBookedReport?@Request.QueryString","ExportToCsvMessage",@Model.PagingModel.NumberOfItems);'>
+        Export CSV
+    </a>
+}
+else
+{
+            <a target="_blank" href="/Scheduling/ExportableReports/TestsBooked?id=@System.Guid.NewGuid().ToString()&@Request.QueryString">Export CSV </a>
+        }
+        
+    </div>
+    @Html.DisplayFor(m => m.PagingModel)
+
+    <table id="list-view">
+        <tr> 
+            <th style="width:350px;">
+                Event Info
+            </th>
+            <th style="width:230px;">
+                Customer Info
+            </th>
+            <th>
+                @Html.LabelFor(m => m.Collection.FirstOrDefault().TestName)
+            </th>
+        </tr>
+        @foreach (var testPerformed in Model.Collection)
+        {
+            <tr> 
+                <td style="width:350px;">
+                    <b>Id: </b> @testPerformed.EventId
+                    <br />
+                    <b>Name: </b>@testPerformed.EventName
+                    <br />
+                    <b>Date: </b>@testPerformed.EventDate.ToShortDateString()
+                    <br />
+                    <b>Pod: </b>@testPerformed.PodName
+                </td>
+                <td style="width:230px;">
+                    <b>Id: </b> @testPerformed.CustomerId
+                    <br />
+                    <b>Name: </b>@testPerformed.CustomerName
+                </td>
+                <td>
+                    @testPerformed.TestName
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.DisplayFor(m => m.PagingModel)
+}
+else
+{
+    <h2>
+        No Records Found!
+    </h2>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("table#list-view tr:even").addClass("alt-row");
+        });
+
+
+        $(function () {
+            $("tr:not(:has(th))").hover(function () {
+                $(this).addClass('row-hover');
+            },
+            function () {
+                $(this).removeClass('row-hover');
+            });
+        });
+
+
+        var currentDate = new Date();
+        $(".eventFilterDate").val(function (index, value) { return value.indexOf(" ") > 0 ? value.substr(0, value.indexOf(" ")) : value; }).datepicker({
+            changeMonth: true,
+            changeYear: true, 
+            minDate: currentDate
+        });
+    </script>
+}

@@ -1,0 +1,205 @@
+﻿@using Falcon.App.Core.Medical.Enum
+@using Falcon.App.Core.Medical.ViewModels
+@model WellMedAttestationListModel
+@if (Model.LayoutForPrint)
+{
+    Layout = null;
+}
+@{
+    ViewBag.Title = "WellMed Attestation Form";
+}
+<style type="text/css">
+    fieldset {
+        margin-top: 5px;
+        padding: 5px;
+    }
+
+    tr td {
+        padding-top: 5px;
+        padding-left: 10px;
+    }
+</style>
+<div style="padding-left: 15px;@(Model.LayoutForPrint ? "width: 850px;" : "width:950px;")">
+    <div class="eventdetail-row">
+        <h2>
+            Attestation Form
+        </h2>
+        <div class="eventdetail-row">
+            <div class="fieldLabelValue" style="width: 67%;float: left;">
+                <label style="width: 100px;font-weight: bold;float: left;">
+                    Patient Name:
+                </label>
+                <div style="width: 400px; display: inline-block; border-bottom: solid 1px;float: left;">@Model.CustomerName</div>
+            </div>
+            <div class="fieldLabelValue" style="width: 30%;float: left;">
+                <label style="width: 100px;font-weight: bold;float: left;">
+                    Patient DOB :
+                </label>
+                <div style="width: 120px; display: inline-block; border-bottom: solid 1px;float: left;">@(Model.CustomerDob.HasValue ? Model.CustomerDob.Value.ToShortDateString() : "")</div>
+            </div>
+        </div>
+        <div class="eventdetail-row">
+            <label style="width: 100px;font-weight: bold;float: left;">
+                DOS :
+            </label>
+            <div style="width: 120px; display: inline-block; border-bottom: solid 1px;float: left;">@Model.EventDate.ToShortDateString()</div>
+        </div>
+    </div>
+    <div id="AttestationTemplate" style="clear: both;padding-top: 10px;">
+        <div style="margin-right: 20px;@(Model.LayoutForPrint?"":"max-height:600px;overflow-y:auto;overflow-x:hidden;")">
+
+            @if (Model.Attestations != null && Model.Attestations.Any())
+            {
+                var pageIndex = 1;
+                foreach (var attestation in Model.Attestations)
+                {
+
+                    if (pageIndex > 4 && Model.LayoutForPrint)
+                    {
+
+                        <div style="page-break-before: always;padding-left: 3px;padding-top: 10px;clear: both">
+                            <b style="font-size: 24px;">Attestation Form</b> (continued)
+                        </div>
+                        pageIndex = 1;
+                    }
+                    pageIndex++;
+                    <fieldset>
+                        <legend>Attestation</legend>
+
+                        <table style="width: 100%">
+                            <tr>
+                                <td style="width: 50%">
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 118px;float: left;">Diagnosis code: </span>
+                                        <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;">
+                                            @attestation.DiagnosisCode&nbsp;
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 112px;float: left;">Diagnosis Date: </span>
+                                        <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;">
+                                            @attestation.DiagnosisDate.ToShortDateString()&nbsp;
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 118px;float: left;">Full Printed Name: </span>
+                                        <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;">
+                                            @attestation.FullPrintedName&nbsp;
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span class="editor-label" style="display: inline-block;width: 112px;float: left;">Reference Date: </span>
+                                        <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;">
+                                            @attestation.ReferenceDate.ToShortDateString()&nbsp;
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="float: left">
+                                    <div style="float: left">
+                                        <input name="@(attestation.Id)" type="radio" @(attestation.StatusId == (int)WellmedAttestationStatus.Agree ? "checked='checked'" : "") disabled="disabled" /> Agree
+                                    </div>
+                                    <div style="float: left">
+                                        <input name="@(attestation.Id)" type="radio" @(attestation.StatusId == (int)WellmedAttestationStatus.Disagree ? "checked='checked'" : "") disabled="disabled" /> Disagree
+                                    </div>
+                                    <div style="float: left">
+                                        <input name="@(attestation.Id)" type="radio" @(attestation.StatusId == (int)WellmedAttestationStatus.Resolved ? "checked='checked'" : "") disabled="disabled" /> Resolved
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div style="padding-top: 10px;">
+                                        <div class="editor-label">Provider Signature</div>
+                                        @if (attestation.ProviderSignatureImage.FileName != "")
+                                        {
+                                            <div>
+                                                <img src="@(attestation.ProviderSignatureImage.Url + attestation.ProviderSignatureImage.FileName)" alt="@attestation.ProviderSignatureImage.Caption" style="width: 170px; height: 70px" />
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                }
+            }
+            else
+            {
+                <fieldset>
+                    <legend>Attestation</legend>
+
+                    <table style="width: 100%">
+                        <tr>
+                            <td style="width: 50%">
+                                <div>
+                                    <span class="editor-label" style="display: inline-block;width: 118px;float: left;">Diagnosis code: </span>
+                                    <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <span class="editor-label" style="display: inline-block;width: 112px;float: left;">Diagnosis Date: </span>
+                                    <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <span class="editor-label" style="display: inline-block;width: 118px;float: left;">Full Printed Name: </span>
+                                    <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <span class="editor-label" style="display: inline-block;width: 112px;float: left;">Reference Date: </span>
+                                    <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;">&nbsp;</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="float: left">
+                                <div style="float: left">
+                                    <input type="radio" disabled="disabled" /> Agree
+                                </div>
+                                <div style="float: left">
+                                    <input type="radio" disabled="disabled" /> Disagree
+                                </div>
+                                <div style="float: left">
+                                    <input type="radio" disabled="disabled" /> Resolved
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div style="padding-top: 10px;">
+                                    <div class="editor-label">Provider Signature</div>
+                                    <div style="width: 200px; display: inline-block; border-bottom: solid 1px;float: left;padding-top: 10px;">&nbsp;</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </fieldset>
+            }
+        </div>
+    </div>
+    @if (!Model.LayoutForPrint)
+    {
+        <div class="submit-button-row" style="padding-right: 30px">
+            <a href="/Medical/Results/ResultStatusList?EventId=@Model.EventId">Close</a>
+        </div>
+    }
+</div>

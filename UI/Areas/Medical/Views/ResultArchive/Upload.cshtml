@@ -1,0 +1,162 @@
+﻿@using Falcon.App.Core.Medical.ViewModels
+@using Falcon.App.UI.HtmlHelpers
+
+@model ResultArchiveUploadEditModel 
+
+@{
+    ViewBag.Title = "Upload Results Archive for Event";
+}
+
+@section css
+{
+    <link rel="stylesheet" href="/Content/Styles/jquery.fileupload-ui.css" />
+}
+
+<h1>Result Archive Upload</h1>
+
+@if (Model != null)
+{
+    @Html.Partial("Message", new ViewDataDictionary(Model.FeedbackMessage))
+}
+
+
+<div class="content-main-column" style="width:625px;">
+
+    <fieldset>
+        <legend>Upload Result Archive</legend>
+        <div id="fileupload">
+            @{Html.BeginForm("ProcessUpload", "ResultArchive", FormMethod.Post, new { enctype = "multipart/form-data" });}
+
+                @Html.HiddenFor(x => x.Id)
+                @Html.HiddenFor(x => x.File.Path)
+                @Html.HiddenFor(x => x.File.FileSize)
+            
+                <div class="editor-label">
+                    @Html.LabelFor(x => x.EventId) @Html.ValidationMessageFor(x => x.EventId)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(x => x.EventId) 
+                </div>
+
+                <div class="fileupload-buttonbar">
+                    <label class="fileinput-button">
+                        <span>Select File for Upload ...</span>
+                        <input type="file" name="files[]" multiple="multiple" />
+                        </label>     
+			        <div class="fileupload-progressbar"></div>
+                </div>
+
+            @{Html.EndForm();}
+            <div class="fileupload-content">
+                <table class="files"></table>
+            </div>
+        </div>
+
+        <div class="submit-button-row">
+            <a href="/Medical/ResultArchive/">Close </a>
+        </div>
+    </fieldset>
+</div>
+
+
+<script id="template-upload" type="text/x-jquery-tmpl">
+    <tr class="template-upload{{if error}} ui-state-error{{/if}}">
+        <td class="preview"></td>
+        <td class="name">${name}</td>
+        <td class="size">${sizef}</td>
+        {{if error}}
+            <td class="error" colspan="2">Error:
+                {{if error === 'maxFileSize'}}File is too big
+                {{else error === 'minFileSize'}}File is too small
+                {{else error === 'acceptFileTypes'}}Filetype not allowed
+                {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
+                {{else}}${error}
+                {{/if}}
+            </td>
+        {{else}}
+            <td class="progress"><div></div></td>            
+        {{/if}}
+        <td class="cancel"><button>Cancel</button></td>
+    </tr>
+</script>
+
+<script id="template-download" type="text/x-jquery-tmpl">
+    <tr class="template-download{{if error}} ui-state-error{{/if}}">
+        {{if error}}
+            <td></td>
+            <td class="name">${FileName}</td>
+            <td class="size">${sizef}</td>
+            <td class="error" colspan="2">Error:
+                {{if error === 1}}File exceeds upload_max_filesize (php.ini directive)
+                {{else error === 2}}File exceeds MAX_FILE_SIZE (HTML form directive)
+                {{else error === 3}}File was only partially uploaded
+                {{else error === 4}}No File was uploaded
+                {{else error === 5}}Missing a temporary folder
+                {{else error === 6}}Failed to write file to disk
+                {{else error === 7}}File upload stopped by extension
+                {{else error === 'maxFileSize'}}File is too big
+                {{else error === 'minFileSize'}}File is too small
+                {{else error === 'acceptFileTypes'}}Filetype not allowed
+                {{else error === 'maxNumberOfFiles'}}Max number of files exceeded
+                {{else error === 'uploadedBytes'}}Uploaded bytes exceed file size
+                {{else error === 'emptyResult'}}Empty file upload result
+                {{else}}${error}
+                {{/if}}
+            </td>
+        {{else}}
+            <td class="preview">               
+              <a href="${Url}" target="_blank"><img src="/Content/Images/Icons/success_icon.png"></a>
+            </td>
+            <td class="name">
+                <a href="${Url}">${FileName}</a>
+            </td>
+            <td class="size">${Size}</td>
+            <td colspan="2"></td>
+        {{/if}}        
+    </tr>
+</script>
+
+@section scripts
+{
+    <script src="/Scripts/jquery.tmpl.min.js"></script>
+    <script src="/Scripts/jquery.iframe-transport.js"></script>
+    <script src="/Scripts/jquery.fileupload.js"></script>
+    <script src="/Scripts/jquery.fileupload-ui.js"></script>
+    <script type="text/javascript">
+        var xhr;
+        $(function () {
+            // Initialize the jQuery File Upload widget:
+            $('#fileupload').fileupload({
+                autoUpload: false,
+                maxNumberOfFiles: 1,
+                maxChunkSize: 2500000,
+                Type: /(\.|\/)(zip|mp3)$/i
+            });
+
+
+            $('#fileupload').bind('fileuploadadd', function (e, data) {
+
+                var fileName = data.files[0].name;
+                var size = data.files[0].size;
+
+                var url = "/Medical/ResultArchive/CreateResultArchive?eventId=" + $("#EventId").val() + "&fileName=" + fileName + "&fileSize=" + size;
+                $.getJSON(url, null, function (editModel) {
+
+                    if (editModel.EventId < 1) {
+                        alert("Please provide a valid Event Id!");
+                        window.location = "/Medical/ResultArchive/Upload";
+                        return;
+                    }
+
+                    $("#Id").val(editModel.Id);
+                    $("#File_Path").val(editModel.File.Path);
+                    $("#File_FileSize").val(editModel.File.FileSize);
+
+                    data.submit();
+
+                });
+            });
+        });
+
+    </script>
+}

@@ -1,0 +1,119 @@
+﻿@model Falcon.App.Core.Medical.ViewModels.HealthAssessmentHeaderEditModel
+<style type="text/css">
+    .phqform table {
+        border-collapse: collapse;
+    }
+
+    .phqform th {
+        text-align: center;
+    }
+
+    .phqform table, .phqform th, .phqform td {
+        border: 1px solid black;        
+    }
+
+    .phqform .bold {
+        font-weight: bold;
+    }
+
+    .phqform .title-text {
+        font-size: 30px;
+    }
+
+    .phqform .cell {
+        background-color: #A8A8A8;
+    }
+    .phqform tr{
+        height: 0.3px;
+    }
+   
+   
+</style>
+@{
+    bool isPrint = ViewData["IsPrintable"] != null && Convert.ToBoolean(ViewData["IsPrintable"]);
+
+    bool IsPhqPurchased = ViewData["IsPhqPurchased"] != null && Convert.ToBoolean(ViewData["IsPhqPurchased"]);
+}
+@if (IsPhqPurchased && isPrint)
+{
+    <div style="padding-top: 40px; page-break-before: always">
+
+        <div style="font-size: 20px; font-weight: bold; width: 100%; text-align: center">PATIENT HEALTH QUESTIONNAIRE (PHQ-9)</div>
+        <div style="width: 100%; padding-top: 10px; padding-bottom: 10px">
+            <div style="width: 660px; float: left;">
+                <span style="float: left;">Name:</span>
+                <div style="width: 610px; border-bottom: solid black 1px; float: left;">@Model.CustomerName</div>
+            </div>
+            <div style="width: 190px; padding-left: 30px; float: left">
+                <span style="float: left;">Date:</span>
+                <div style="width: 150px; border-bottom: solid black 1px">@DateTime.Now.Date.ToShortDateString()</div>
+            </div>
+        </div>
+        <div class='phq-question-container'>
+        </div>
+        <div class="phqform">
+            <table>
+                <tr style="font-size: 17px;">
+                    <td class="cell" style="width:20%;" align="center">
+                        <span class="bold">Total Score</span>
+                    </td>
+
+                    <td class="cell" style="width:40%;" align="left">
+                        <span class="bold">&nbsp;Depression Severity</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <span class="bold">0-4</span>
+                    </td>
+
+                    <td align="left">
+                        <span class="bold">&nbsp;None</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <span class="bold">5-9</span>
+                    </td>
+
+                    <td align="left">
+                        <span class="bold">&nbsp;Mild</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <span class="bold">10-14</span>
+                    </td>
+
+                    <td align="left">
+                        <span class="bold">&nbsp;Moderate</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <span class="bold">15-19</span>
+                    </td>
+
+                    <td align="left">
+                        <span class="bold">&nbsp;Moderately Severe</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <span class="bold">20-27</span>
+                    </td>
+
+                    <td align="left">
+                        <span class="bold">&nbsp;Severe</span>
+                    </td>
+                </tr>
+            </table>
+            <p>Copyright &copy; 1999 Pfizer inc. All rights reserved. Reproduced with permission. PRIME-MD&copy; is a trademark of Pfizer inc. A2663B 10-04-2005</p>
+
+        </div>
+      
+       
+
+          
+        </div>
+}
